@@ -1,0 +1,13 @@
+.idea/
+target/
+out/
+*.class
+*.pdf
+*.out
+*.aux
+.eclipse/
+DS_STORE
+descktop.ini
+node_modules/
+
+
