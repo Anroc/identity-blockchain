@@ -1,0 +1,11 @@
+
+# latex related exclusions
+*.aux
+*.bbl
+*.log
+*.pdf
+*.out
+*.lof
+*.toc
+*.big
+*.blg
