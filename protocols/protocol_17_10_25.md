@@ -3,31 +3,31 @@
 
 ## Intern 
 ##### Discuss: What is the scope?
-* POC only one usecase shell be fullfilled
-* What is missing policy management
+* POC only one use case shall be fulfilled
+* What is policy management missing
 
-## Extern 
+## External 
 
 #### Whishes
-* !! self-suverain
- * define the properties of this term
- * maybe take information to service
- * what can i do with my information
- * what are digital identities
+* !! self-sovereign
+  * define the properties of this term
+  * maybe take information to service
+  * what can I do with my information
+  * what are digital identities
 * write down a list of personal information about a person
- * catorize who needs to verify which information
- * who verify thats correct
- * who can change information
- * compaire which approach is usfull for which information
- * who has permissions to change data
+  * categorize who needs to verify which information
+  * who verify that's correct
+  * who can change information
+  * compare which approach is useful for which information
+  * who has permissions to change data
 * client is not defined, can be everything
 
 #### Presented
-* group based authentication system to annonmize people
+* group based authentication system to anonymize people
  * trust is established in users
- * problem: permising change is difficult
- * gantt-shart
-  * Whish
+ * problem: permission change is difficult
+ * gantt-chart
+  * Wish
    * Sprint planung
    * Evolution phase
     * users that interact with the system
