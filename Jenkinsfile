@@ -20,7 +20,7 @@ pipeline {
     }
     post {
     	always {
-    		archive DOCUMENTATION_DIR + DOCUMENT_NAME + ".pdf"
+    		archiveArtifacts artifacts: DOCUMENTATION_DIR + DOCUMENT_NAME + ".pdf", fingerprint: true
     	}
     }
 }
