@@ -36,6 +36,7 @@ across providers and treatment sites
 on top
 * problem because of "hard" forks
 
+Fokus auf wie die smart contracts aussehen.
 
 
 
