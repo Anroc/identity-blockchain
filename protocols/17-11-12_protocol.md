@@ -49,4 +49,4 @@ Date: ```12.11.2017```
     * private information disclosed to 1 party
     * expiry date for different types of dates
 
-![New concept](assets/17-11-12_protocol-8be33.png)
+![new_concept](assets/17-11-12_protocol-8be33.png)
