@@ -1,3 +1,8 @@
+// These 2 need to be authorized using jenkins script approval
+// http://your.jenkins.host/scriptApproval/
+import groovy.json.JsonOutput
+import java.util.Optional
+
 
 // Documentation step varibales
 DOCUMENT_NAME = "main"
@@ -20,6 +25,8 @@ node {
                 archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
             }
         }
+
+        currentBuild.result = 'SUCCESS'
     } catch (e) {
         currentBuild.result = 'FAILURE'
         throw e
@@ -47,7 +54,33 @@ def notifySlack(String buildStatus = 'STARTED') {
         color = '#FF9FA1'
     }
 
-    def msg = "${buildStatus}: `${env.JOB_NAME}` #${env.BUILD_NUMBER}:\n${env.BUILD_URL}"
+    slackSend("${buildStatus}", "#gitlab"
+    [[
+       title: "${env.BRANCH_NAME} build #${env.BUILD_NUMBER}",
+       color: color,
+       text: "`${env.JOB_NAME}`: " + buildStatus + "\n${env.BUILD_URL}"
+    ]])
+}
 
-    slackSend(color: color, message: msg)
+
+
+// Add whichever params you think you'd most want to have
+// replace the slackURL below with the hook url provided by
+// slack when you configure the webhook
+
+def slackSend(text, channel, attachments) {
+
+    //your  slack integration url
+    def slackURL = ' https://hooks.slack.com/services/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' 
+    //from the jenkins wiki, you can updload an avatar and
+    //use that one
+    def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/327683/JENKINS?version=1&modificationDate=1302750804000'
+    
+    def payload = JsonOutput.toJson([text      : text,
+                                     channel   : channel,
+                                     username  : "jenkins",
+                                     icon_url: jenkinsIcon,
+                                     attachments: attachments])
+                                     
+    sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
 }
