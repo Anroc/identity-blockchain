@@ -35,7 +35,7 @@
 		* (Bank/private Daten) - ü 18
 		* (Gesundheitsakte) - HIV Positiv
 * Einarbeitung in Ethereum/Solidity/sonstige Technologien
-* 
+ 
 * ToDo AM Sonntag:
 	* Task Definition
 	* IT - Infrastruktur
