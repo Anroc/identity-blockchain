@@ -4,45 +4,44 @@
 
 * Client
   * has encrypted signed message
-  * signed with private key of goverment
-  * has public key of goverment
+  * signed with private key of government
+  * has public key of government
   * knows his PIN
-* Goverment
+* Government
   * Has private/public key
 
 ## Setup:
 
 * Client
-  * Signed (private Key of Goverment)
+  * Signed (private Key of Government)
     * message ("It's me!")
-  * symmetic encrypted (PIN) attributes
+  * symmetric encrypted (PIN) attributes
 
 * eID Verification Service
-  * private key (Goverment)
+  * private key (Government)
 
 ## Flow
 
-1. Client dencryptes information with PIN
+1. Client de-encrypts information with PIN
 2. Client generates nonce
 3. Client encrypts nonce and Signed message with public key of Goverment
-4. Goverment decrypts message
+4. Government decrypts message
 5. verifies that nonce was not yet used
 6. verifies signature
 7. Sends success message
 
 # Register Contract
 
-## Prerequirements:
+## Pre-requirements:
 
-* Authorized Adress Dictionary
+* Authorized Address Dictionary
 * Authorized Key Dictionary
-
-* Exisiting
+* Existing:
   * database
   * provider API
-  * ethereum client
+  * Ethereum client
   * eID verification mechanism
-  * basic fontend
+  * basic frontend
 
 
 ## Task Description
@@ -76,23 +75,23 @@ The Issuer shell be the government or an similar, verified Identity Provider.
 * Create Public/Private key pair
 * Receive user information from the IDP
 * Verify signature
-* Dencrypt response
+* De-encrypt response
 * create eID login
 
 #### Blockchain client
 
-* Create eth Addres
+* Create eth Address
 * use private key pair from logic
 * Create the smart contract
   * IDP can only approve
-* Issue a reasonable amout
+* Issue a reasonable amount
 
 ### Provider
 
 #### Database
 
 * Query users attributes
-* Save users identificators (ethID, pubKey)
+* Save users' identificators (ethID, pubKey)
 
 #### Logic
 
@@ -132,9 +131,9 @@ The Issuer shell be the government or an similar, verified Identity Provider.
   * Generate strong keys
   * Save and encrypt key with users PIN in file or database
 
-* Securty definments
+* Security definments
   * SHA 256 for hashing
-  * 2048-Bit RSA key cryto
+  * 2048-Bit RSA key crypto
   * User information needs to be encrypted
   * Information must be stored in a secure way
   * Secure against replay attacks
