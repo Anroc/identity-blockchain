@@ -41,11 +41,11 @@ def notifySlack(String buildStatus = 'STARTED') {
     }
 
     slackSend("${buildStatus}", "#gitlab"
-    [[
+    [
        title: "${env.BRANCH_NAME} build #${env.BUILD_NUMBER}",
        color: color,
        text: "`${env.JOB_NAME}`: " + buildStatus + "\n${env.BUILD_URL}"
-    ]])
+    ])
 }
 
 
