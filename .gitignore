@@ -5,6 +5,10 @@ target/
 out/
 *.class
 .eclipse/
+.gradle
+build/
+*.jar
+!gradle-wrapper.jar
 
 # os specific
 DS_STORE
