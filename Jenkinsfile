@@ -33,11 +33,11 @@ def slackPrepare(String buildStatus = 'STARTED') {
     if (buildStatus == 'STARTED') {
         color = '#D4DADF'
     } else if (buildStatus == 'SUCCESS') {
-        color = '#BDFFC3'
+        color = '#2cc939'
     } else if (buildStatus == 'UNSTABLE') {
-        color = '#FFFE89'
+        color = '#fc983a'
     } else {
-        color = '#FF9FA1'
+        color = '#dd2e31'
     }
 
     notifySlack("${buildStatus}", "gitlab",
