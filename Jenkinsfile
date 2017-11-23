@@ -1,7 +1,6 @@
 // These 2 need to be authorized using jenkins script approval
 // http://your.jenkins.host/scriptApproval/
 import groovy.json.JsonOutput
-import java.util.Optional
 
 // Add whichever params you think you'd most want to have
 // replace the slackURL below with the hook url provided by
@@ -41,11 +40,11 @@ def notifySlack(String buildStatus = 'STARTED') {
     }
 
     slackSend("${buildStatus}", "#gitlab"
-    [
+    [[
        title: "${env.BRANCH_NAME} build #${env.BUILD_NUMBER}",
        color: color,
        text: "`${env.JOB_NAME}`: " + buildStatus + "\n${env.BUILD_URL}"
-    ])
+    ]])
 }
 
 
