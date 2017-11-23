@@ -12,10 +12,7 @@ def notifySlack(text, channel, attachments) {
     def slackURL = ' https://hooks.slack.com/services/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' 
     //from the jenkins wiki, you can updload an avatar and
     //use that one
-    // def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/327683/JENKINS?version=1&modificationDate=1302750804000'
-    def jenkinsIcon = 'http://afonsof.com/jenkins-material-theme/images/logo.svg'
-    
-
+    def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/327683/JENKINS?version=1&modificationDate=1302750804000'
 
     def payload = JsonOutput.toJson([text      : text,
                                      channel   : channel,
