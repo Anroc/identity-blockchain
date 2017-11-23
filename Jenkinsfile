@@ -55,7 +55,7 @@ DOCUMENTATION_DIR = "./documentation/paper"
 
 node {
     try {
-        slackPrepare()
+        notifySlack("Success!", "gitlab", [])
 
         stage('build documentation') {
             steps {
@@ -76,6 +76,6 @@ node {
         currentBuild.result = 'FAILURE'
         throw e
     } finally {
-        slackPrepare(currentBuild.result)
+        // slackPrepare(currentBuild.result)
     }
 }
