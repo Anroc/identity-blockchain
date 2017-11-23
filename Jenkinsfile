@@ -58,11 +58,9 @@ node {
         slackPrepare()
 
         stage('build documentation') {
-            steps {
-                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-                dir (DOCUMENTATION_DIR) {
-                    sh "./make"
-                }
+            echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+            dir (DOCUMENTATION_DIR) {
+                sh "./make"
             }
         }
         post {
