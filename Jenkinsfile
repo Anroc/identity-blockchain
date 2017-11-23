@@ -63,10 +63,8 @@ node {
                 sh "./make"
             }
         }
-        post {
-            always {
-                archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
-            }
+        stage('collect artifacts') {
+            archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
         }
 
         currentBuild.result = 'SUCCESS'
