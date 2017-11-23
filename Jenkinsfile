@@ -58,16 +58,15 @@ node {
 		slackPrepare()
 
 		stage "documentation"
-		node {
-			stage('build') {
-				echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-				dir (DOCUMENTATION_DIR) {
-					sh "./make"
-				}
+		node('remote') {
+			stage "build"
+			echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+			dir (DOCUMENTATION_DIR) {
+				sh "./make"
 			}
-			stage('artifacts') {
-				archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
-			}
+			
+			stage "artifacts" 
+			archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
 		}
 
 		currentBuild.result = 'SUCCESS'
