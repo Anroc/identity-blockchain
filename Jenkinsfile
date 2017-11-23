@@ -15,12 +15,12 @@ def notifySlack(text, channel, attachments) {
     def jenkinsIcon = 'https://wiki.jenkins-ci.org/download/attachments/327683/JENKINS?version=1&modificationDate=1302750804000'
 
     def payload = JsonOutput.toJson([text      : text,
-                                     channel   : channel,
-                                     username  : "jenkins",
-                                     icon_url: jenkinsIcon,
-                                     attachments: attachments
-                                     ])
-                                     
+    	channel   : channel,
+    	username  : "jenkins",
+    	icon_url: jenkinsIcon,
+    	attachments: attachments
+    	])
+
     sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
 }
 
@@ -31,20 +31,20 @@ def slackPrepare(String buildStatus = 'STARTED') {
     def color
 
     if (buildStatus == 'STARTED') {
-        color = '#D4DADF'
+    	color = '#D4DADF'
     } else if (buildStatus == 'SUCCESS') {
-        color = '#2cc939'
+    	color = '#2cc939'
     } else if (buildStatus == 'UNSTABLE') {
-        color = '#fc983a'
+    	color = '#fc983a'
     } else {
-        color = '#dd2e31'
+    	color = '#dd2e31'
     }
 
     notifySlack("${buildStatus}", "gitlab",
     [[
-       title: "${env.BRANCH_NAME} build #${env.BUILD_NUMBER}",
-       color: color,
-       text: "`${env.JOB_NAME}`: " + buildStatus + "\n${env.BUILD_URL}"
+    	title: "${env.BRANCH_NAME} build #${env.BUILD_NUMBER}",
+    	color: color,
+    	text: "`${env.JOB_NAME}`: " + buildStatus + "\n${env.BUILD_URL}"
     ]])
 }
 
@@ -54,24 +54,27 @@ DOCUMENT_NAME = "main"
 DOCUMENTATION_DIR = "./documentation/paper"
 
 node {
-    try {
-        slackPrepare()
+	try {
+		slackPrepare()
 
-        stage('build documentation') {
-            echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-            dir (DOCUMENTATION_DIR) {
-                sh "./make"
-            }
-        }
-        stage('collect artifacts') {
-            archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
-        }
+		stage "documentation"
+		node {
+			stage('build') {
+				echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+				dir (DOCUMENTATION_DIR) {
+					sh "./make"
+				}
+			}
+			stage('artifacts') {
+				archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
+			}
+		}
 
-        currentBuild.result = 'SUCCESS'
-    } catch (e) {
-        currentBuild.result = 'FAILURE'
-        throw e
-    } finally {
-        slackPrepare(currentBuild.result)
-    }
-}
+		currentBuild.result = 'SUCCESS'
+		} catch (e) {
+			currentBuild.result = 'FAILURE'
+			throw e
+		} finally {
+			slackPrepare(currentBuild.result)
+		}
+	}
