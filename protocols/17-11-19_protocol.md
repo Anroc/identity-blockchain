@@ -39,8 +39,10 @@ Date: ```19.11.2017```
 
 # ToDo
 ## Everyone
-  * Prepare rough sketch of tasks to be done for own part of the project
-  * Some preparatory reading of material
+  * complete epics
+
+## Oskar
+  * summarize MedRec paper
 
 ## Micha
   * Write down use cases that describe the models
