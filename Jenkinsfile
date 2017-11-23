@@ -40,7 +40,7 @@ def slackPrepare(String buildStatus = 'STARTED') {
         color = '#FF9FA1'
     }
 
-    notifySlack("${buildStatus}", "gitlab"
+    notifySlack("${buildStatus}", "gitlab",
     [[
        title: "${env.BRANCH_NAME} build #${env.BUILD_NUMBER}",
        color: color,
@@ -55,7 +55,7 @@ DOCUMENTATION_DIR = "./documentation/paper"
 
 node {
     try {
-        notifySlack("Success!", "gitlab", [])
+        slackPrepare()
 
         stage('build documentation') {
             steps {
@@ -76,6 +76,6 @@ node {
         currentBuild.result = 'FAILURE'
         throw e
     } finally {
-        // slackPrepare(currentBuild.result)
+        slackPrepare(currentBuild.result)
     }
 }
