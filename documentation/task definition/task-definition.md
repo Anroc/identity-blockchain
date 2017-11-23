@@ -1,34 +1,98 @@
-# eID MockUp
+# Setup
 
-## Prerequirements:
+## Requirements
 
-* Client
-  * has encrypted signed message
-  * signed with private key of government
-  * has public key of government
-  * knows his PIN
-* Government
-  * Has private/public key
+* None
 
-## Setup:
+## Task description
 
-* Client
-  * Signed (private Key of Government)
-    * message ("It's me!")
-  * symmetric encrypted (PIN) attributes
+Scope of this task is it to setup all nessecary infrastructure. This includes the 
+setup of a database, setup of the ethereum adapter and implementing a cypht engine.
+When this epic is done it shell be possible to interact with the different components:
+Logic, EBA and database. The frontend itself sell be ready to start implementing a
+web view. 
 
-* eID Verification Service
-  * private key (Government)
+## Components
 
-## Flow
+### User
 
-1. Client de-encrypts information with PIN
-2. Client generates nonce
-3. Client encrypts nonce and Signed message with public key of Goverment
-4. Government decrypts message
-5. verifies that nonce was not yet used
-6. verifies signature
-7. Sends success message
+#### Frontend
+
+* Setup a frontend server to render web requests
+* Define REST-API and define JSON layout
+
+or
+
+* Read and understand how to setup web pages in Spring MVC
+
+#### Database
+
+* Evaluate database types Schema less vs Relational
+* Implement SpringBoot database adapter
+* Define model layout
+* Need to be able to save models in Database
+
+#### Logic
+
+* Generate Public/Private keys
+* Verify signatures
+* Generate signatures
+* push user claims into database
+
+#### Blockchain client
+
+* Create ethereum address
+* Use private key of logic
+* Evaluate what is possible with SmartContracts and Transactions
+* Implement basic pulling from blockchain
+
+### Provider
+
+#### Database
+
+* Query users attributes
+
+#### Logic
+
+* Define REST-API to send user claims
+
+#### Blockchain client
+
+# Discovery Service
+
+## Requirements
+
+* Crypt engine to verify signatures
+
+## Task definition
+
+The discovery service is a service where a entity can query for provider. 
+This is done by mapping the ethereum address to a Public-key, IP-Address and Port.
+With this information the entity can request the defined ProviderAPI to communicate
+off-blockchain with other providers. Each provider shell on boot-up register himself
+to this discovery service to participate in the network.
+
+In the first version this Service shell be implemented centralized, but in that way
+that it can be replaced or migrated to an decentralized component. 
+
+## Components
+
+### Discovery Service
+
+* Implement hash-map
+  * mapping ethAddress to public key, IP and port
+
+### User
+
+#### Logic
+
+* implement logic to query discovery service
+
+### Provider
+
+##### Logic
+
+* implement logic to register to discovery service
 
 # Register Contract
 
@@ -72,16 +136,11 @@ The Issuer shell be the government or an similar, verified Identity Provider.
 
 #### Logic
 
-* Create Public/Private key pair
 * Receive user information from the IDP
-* Verify signature
-* De-encrypt response
 * create eID login
 
 #### Blockchain client
 
-* Create eth Address
-* use private key pair from logic
 * Create the smart contract
   * IDP can only approve
 * Issue a reasonable amount
@@ -95,16 +154,11 @@ The Issuer shell be the government or an similar, verified Identity Provider.
 
 #### Logic
 
-* Create public/private key pair
 * Verify eID of client
-* Verify Signature of request
-* Encrypt response
 * Send user claims to user
 
 #### Blockchain client
 
-* Create eth Address
-* use private key pair from logic
 * Approve Register Contract
 
 -----------------
@@ -137,3 +191,37 @@ The Issuer shell be the government or an similar, verified Identity Provider.
   * User information needs to be encrypted
   * Information must be stored in a secure way
   * Secure against replay attacks
+
+------------------
+
+# eID MockUp
+
+## Prerequirements:
+
+* Client
+  * has encrypted signed message
+  * signed with private key of government
+  * has public key of government
+  * knows his PIN
+* Government
+  * Has private/public key
+
+## Setup:
+
+* Client
+  * Signed (private Key of Government)
+    * message ("It's me!")
+  * symmetric encrypted (PIN) attributes
+
+* eID Verification Service
+  * private key (Government)
+
+## Flow
+
+1. Client de-encrypts information with PIN
+2. Client generates nonce
+3. Client encrypts nonce and Signed message with public key of Goverment
+4. Government decrypts message
+5. verifies that nonce was not yet used
+6. verifies signature
+7. Sends success message
