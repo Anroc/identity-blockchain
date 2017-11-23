@@ -6,7 +6,7 @@ import groovy.json.JsonOutput
 // replace the slackURL below with the hook url provided by
 // slack when you configure the webhook
 
-def slackSend(text, channel, attachments) {
+def notifySlack(text, channel, attachments) {
 
     //your  slack integration url
     def slackURL = ' https://hooks.slack.com/services/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' 
@@ -18,12 +18,13 @@ def slackSend(text, channel, attachments) {
                                      channel   : channel,
                                      username  : "jenkins",
                                      icon_url: jenkinsIcon,
-                                     attachments: attachments])
+                                     attachments: attachments
+                                     ])
                                      
     sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
 }
 
-def notifySlack(String buildStatus = 'STARTED') {
+def slackPrepare(String buildStatus = 'STARTED') {
     // Build status of null means success.
     buildStatus = buildStatus ?: 'SUCCESS'
 
@@ -39,7 +40,7 @@ def notifySlack(String buildStatus = 'STARTED') {
         color = '#FF9FA1'
     }
 
-    slackSend("${buildStatus}", "#gitlab"
+    notifySlack("${buildStatus}", "gitlab"
     [[
        title: "${env.BRANCH_NAME} build #${env.BUILD_NUMBER}",
        color: color,
@@ -54,7 +55,7 @@ DOCUMENTATION_DIR = "./documentation/paper"
 
 node {
     try {
-        notifySlack()
+        slackPrepare()
 
         stage('build documentation') {
             steps {
@@ -75,6 +76,6 @@ node {
         currentBuild.result = 'FAILURE'
         throw e
     } finally {
-        notifySlack(currentBuild.result)
+        slackPrepare(currentBuild.result)
     }
 }
