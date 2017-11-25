@@ -67,11 +67,14 @@ node {
             }
             stage('collect artifacts') {
                 archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
-            },
+            }
+        },
+        java: {
             stage('gradle test') {
                 echo "test"
             }
         }
+
         currentBuild.result = 'SUCCESS'
     } catch (e) {
         currentBuild.result = 'FAILURE'
