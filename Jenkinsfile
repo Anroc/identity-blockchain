@@ -60,11 +60,7 @@ node {
         stage('build documentation') {
             echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
             dir (DOCUMENTATION_DIR) {
-                //sh "pwd"
-                sh "pdflatex main.tex"
-                sh "biber main"
-                sh "pdflatex main.tex"
-                //sh "./make"
+                sh('./make.sh')
             }
         }
         stage('collect artifacts') {
