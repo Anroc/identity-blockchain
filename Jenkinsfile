@@ -56,11 +56,12 @@ DOCUMENTATION_DIR = "./documentation/paper"
 node {
     try {
         slackPrepare()
+        checkout scm
 
         stage('build documentation') {
             echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
             dir (DOCUMENTATION_DIR) {
-                sh('make.sh')
+                sh('pwd; la -l; ./make.sh')
             }
         }
         stage('collect artifacts') {
