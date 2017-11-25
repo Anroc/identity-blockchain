@@ -78,7 +78,7 @@ node {
                     try {
                         sh('./gradlew test')
                     } finally {
-                        ([$class: 'JUnitResultArchiver', testResults: '**/test-results/test/*.xml'])
+                        step([$class: 'JUnitResultArchiver', testResults: '**/test-results/test/*.xml'])
                     }
                 }
             }
