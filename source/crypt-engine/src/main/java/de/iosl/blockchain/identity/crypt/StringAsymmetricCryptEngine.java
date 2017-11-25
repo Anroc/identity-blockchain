@@ -1,69 +1,24 @@
 package de.iosl.blockchain.identity.crypt;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.*;
 
-/**
- * Shared component for encryption and decryption of messages.
- */
-@Data
 @Slf4j
-@RequiredArgsConstructor
-public class CryptEngine {
+public class StringAsymmetricCryptEngine extends AsymmetricCryptEngine<String> {
 
-	public static final String ALGORITHM = "RSA";
-	public static final int DEFAULT_BIT_SECURITY = 1024;
-	public static final String CHAR_ENCODING = "UTF-8";
-	private KeyPair asymmetricCipherKeyPair;
-
-	private final int bitSecurity;
-
-	public CryptEngine() {
-		this(DEFAULT_BIT_SECURITY);
-		Security.addProvider(new BouncyCastleProvider());
+	public StringAsymmetricCryptEngine(int bitSecurity) {
+		super(bitSecurity);
 	}
 
-	private KeyPair getAsymmetricCipherKeyPair() {
-		if (asymmetricCipherKeyPair == null) {
-			this.asymmetricCipherKeyPair = generateKeyPair();
-		}
-
-		return this.asymmetricCipherKeyPair;
-	}
-
-	/**
-	 * Generates a new RSA key pair.
-	 *
-	 * @return a new Key Pair
-	 */
-	public KeyPair generateKeyPair() {
-		KeyPairGenerator keyGen;
-		try {
-			keyGen = KeyPairGenerator.getInstance(ALGORITHM);
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
-		keyGen.initialize(this.bitSecurity);
-		return keyGen.generateKeyPair();
-	}
-
-	public PublicKey getPublicKey() {
-		return getAsymmetricCipherKeyPair().getPublic();
-	}
-
-	public PrivateKey getPrivateKey() {
-		return getAsymmetricCipherKeyPair().getPrivate();
+	public StringAsymmetricCryptEngine() {
+		super();
 	}
 
 	/**
@@ -76,6 +31,7 @@ public class CryptEngine {
 	 * @throws InvalidKeyException on wrong cipher instance
 	 * @throws IllegalBlockSizeException on wrong alignment
 	 */
+	@Override
 	public String encrypt(String data, Key key) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
 		try {
 			return new String(
@@ -97,18 +53,9 @@ public class CryptEngine {
 	 * @throws InvalidKeyException on wrong cipher instance
 	 * @throws IllegalBlockSizeException on wrong alignment
 	 */
+	@Override
 	public String decrypt(String data, Key key) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
 		return new String(process(Base64.decode(data), key, Cipher.DECRYPT_MODE), Charset.forName(CHAR_ENCODING));
-	}
-
-	private byte[] process(byte[] data, Key key, int mode) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-		try {
-			Cipher cipher = Cipher.getInstance(ALGORITHM);
-			cipher.init(mode, key);
-			return cipher.doFinal(data);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	/**
@@ -116,38 +63,17 @@ public class CryptEngine {
 	 * To do so this method will call {@link #getSHA256Hash(String)} to create a SHA-256
 	 * hash of the given message. Then this hash will be digitally signed with the private key.
 	 *
-	 * @param plain the plain string that shell be singed
+	 * @param data the plain string that shell be singed
 	 * @return the base64 encoded MAC
 	 * @throws BadPaddingException on padding mismatch
 	 * @throws InvalidKeyException on wrong cipher instance
 	 * @throws IllegalBlockSizeException on wrong alignment
 	 */
-	public String sign(String plain) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-		String hash = getSHA256Hash(plain);
+	@Override
+	public String sign(String data) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+		String hash = getSHA256Hash(data);
 
 		return encrypt(hash, getPrivateKey());
-	}
-
-	/**
-	 * Verifies a MAC for the given plain string and with the given public key.
-	 *
-	 * @param mac the mac that shell be verified
-	 * @param plain the plain message backed by the mac
-	 * @param publicKey the public key that created the mac
-	 * @return true if the signature is verified, else flase
-	 * @throws BadPaddingException on padding mismatch
-	 * @throws InvalidKeyException on wrong cipher instance
-	 * @throws IllegalBlockSizeException on wrong alignment
-	 */
-	public boolean isSignatureAuthentic(String mac, String plain, PublicKey publicKey) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
-		String hash = getSHA256Hash(plain);
-
-		try {
-			return decrypt(mac, publicKey).equals(hash);
-		} catch (GeneralSecurityException e) {
-			log.warn("Could not decrypt mac with public key.", e);
-			return false;
-		}
 	}
 
 	/**
@@ -156,6 +82,7 @@ public class CryptEngine {
 	 * @param plain the string that shell be hashed
 	 * @return the base64 encoded hash
 	 */
+	@Override
 	public String getSHA256Hash(String plain) {
 		try {
 			return new String(
@@ -164,6 +91,28 @@ public class CryptEngine {
 			);
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Verifies a MAC for the given plain string and with the given public key.
+	 *
+	 * @param mac the mac that shell be verified
+	 * @param data the plain message backed by the mac
+	 * @param publicKey the public key that created the mac
+	 * @return true if the signature is verified, else flase
+	 * @throws BadPaddingException on padding mismatch
+	 * @throws InvalidKeyException on wrong cipher instance
+	 * @throws IllegalBlockSizeException on wrong alignment
+	 */
+	public boolean isSignatureAuthentic(String mac, String data, PublicKey publicKey) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
+		String hash = getSHA256Hash(data);
+
+		try {
+			return decrypt(mac, publicKey).equals(hash);
+		} catch (GeneralSecurityException e) {
+			log.warn("Could not decrypt mac with public key.", e);
+			return false;
 		}
 	}
 }
