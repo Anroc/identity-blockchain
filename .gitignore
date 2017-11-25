@@ -1,0 +1,29 @@
+# java exclusions
+
+.idea/
+target/
+out/
+*.class
+.eclipse/
+.gradle
+build/
+*.jar
+!gradle-wrapper.jar
+
+# os specific
+DS_STORE
+descktop.ini
+
+# frontend
+node_modules/
+
+# latex related exclusions
+*.aux
+*.bbl
+*.log
+*.pdf
+*.out
+*.lof
+*.toc
+*.big
+*.blg

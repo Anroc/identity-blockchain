@@ -1,0 +1,43 @@
+\chapter{Related Work}
+\label{cha:relatedwork}
+
+\section{uPort}
+Uport is a blockchain-based, decentralized pulic key infrastructure which a high focus on self sovereignity. Uport, in comparision to our solution, relies excplicitly not on a centralized thrid party to verify user data.\cite[p. 2]{uPortWhitePaper}
+Identity information are stored in an off-blockchain data storage that is link via the hash of the user information to the blockchain. 
+
+Uport is strictly build arround three smart contracts. 
+\begin{enumerate}
+\item \textbf{Controller Contract:} This contract interacts with the user and verfies the signatures of assoziated with his digital identity.
+
+It further also serves for key recovery and collects approvals from the deligators -- known trusted nodes -- to verify the new key generated in case of loss.
+The proxy contract acts on its behalf. 
+
+\item \textbf{Proxy Contract:}
+Forwards the request to an application contract. This step is needed to create a static entry point.
+The biggest adventage in this contract is the fact that in case of the key or identity loss the proxy still remains the same and can help in key and wallet recovery.
+
+This contract can also regulate the spendings done by users to maintain the balance of power and prevent the creation of super nodes or mining comunities.
+
+However, users are able to change the owner of the proxy contract or simply forward an transaction to an external address\cite[p. 6]{uPortWhitePaper}.
+
+\item \textbf{uPort Registry:}
+For registration the registration contract is called to link the hash of the users data to the off-blockchain data storage. The hash can later be used to validate data integrity. 
+
+For data lookup this entity knows where the off-blockchain data storages are located.
+
+\end{enumerate}
+
+To authenticate against a thrid party service the off-blockchain data can be used with a self signed signature to create a web-token. This token would then contain all nessecary information to identify the user against a thrid party and can even be verified via tha hash stored in the blockchain.
+
+To setup a new device key in case the old key got stolen the recovery contract is used to create together with the new device key an updated user adress in the controller contract. This information gets porpulated until it arrives in the off-blockchain data storage. This action is timed boxed so that the recovery process is limited to a timeslot. This recovery process is triggered by the \textit{recovery quantom contract} where trusted entities (friends or family) can collectivly vote to change the main address of the users controller contract. To prevent an attacker to change the member of quorums in the meantime, the time lock also locks the quorum members.
+
+Another implemented use case is how identity information are connected to the already existing identity profile in the blockchain. Uport porvides the possibilit of a two factore verification where you can claim a specific service account and provide a proof that you own this account in the data that you write into the off-blockchain storage. In this way everyone will know that indeed you craeted this entry and also that the account belongs to you since you provided this proof. A proof can be as simple as writing a certain string publicly into your profile. 
+
+Since uPort is aimed to be user friendly the acceptance of requests is made faily easly. To accept a transaction the user scans the QRCode of his transaction partner, accepts the conditions and sends the result to the requesting entity.
+
+
+% Each user has its own proxy contract 
+% To do so the controller contract saves two entries:
+% First the users address and seconds the revocery 
+% address.
+
