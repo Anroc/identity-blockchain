@@ -58,16 +58,20 @@ node {
         slackPrepare()
         checkout scm
 
-        stage('build documentation') {
-            echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-            dir (DOCUMENTATION_DIR) {
-                sh('./make.sh')
+        parallel documentation: {
+            stage('pdflatex & biber') {
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                dir (DOCUMENTATION_DIR) {
+                    sh('./make.sh')
+                }
+            }
+            stage('collect artifacts') {
+                archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
+            },
+            stage('gradle test') {
+                echo "test"
             }
         }
-        stage('collect artifacts') {
-            archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
-        }
-
         currentBuild.result = 'SUCCESS'
     } catch (e) {
         currentBuild.result = 'FAILURE'
