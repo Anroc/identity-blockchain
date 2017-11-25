@@ -52,6 +52,7 @@ def slackPrepare(String buildStatus = 'STARTED') {
 // Documentation step varibales
 DOCUMENT_NAME = "main"
 DOCUMENTATION_DIR = "./documentation/paper"
+SOURCE_DIR = "./source"
 
 node {
     try {
@@ -65,13 +66,21 @@ node {
                     sh('./make.sh')
                 }
             }
-            stage('collect artifacts') {
+            stage('artifacts') {
                 archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
             }
         },
         java: {
             stage('gradle test') {
-                echo "test"
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                dir (SOURCE_DIR) {
+                    sh('./gradlew assemble')
+                    try {
+                        sh('./gradlew test')
+                    } finally {
+                        ([$class: 'JUnitResultArchiver', testResults: '**/test-results/test/*.xml'])
+                    }
+                }
             }
         }
 
