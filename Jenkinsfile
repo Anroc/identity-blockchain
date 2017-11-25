@@ -61,7 +61,7 @@ node {
         stage('build documentation') {
             echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
             dir (DOCUMENTATION_DIR) {
-                sh('pwd; la -l; ./make.sh')
+                sh('./make.sh')
             }
         }
         stage('collect artifacts') {
