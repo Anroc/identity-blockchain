@@ -1,7 +1,9 @@
 # Setup
 
 ## Requirements
-
+* setup registrar epic
+* setup meta epic
+* setup discovery service
 
 ## Task description
 
@@ -10,7 +12,7 @@ This includes:
 
 * the creation of clouser
 * their belonging claims (and the creation of those claims),
-* the definition, where to find the clouser and who authorized to sign the corresponding clouser,
+* the definition, where to find the clouser and who is authorized to sign the corresponding clouser,
 * the creation of a clouser request,
 * the storing of clousers in the database on client side and the creation on provider side
 * the interaction between the user and at least one provider 
@@ -21,36 +23,33 @@ This includes:
 
 ## Components
 
-
 ### Provider (who want's a clouser)
 
 #### Logic
-* provide services in the form of api?
-* define, which kind of clouser is necessary for each service
+* define endpoint to initalize clouser request
 * handle user's request which either contains a clouser or the adress of a provider who verifies the clouser
-	* if no clouser, send clouser request to provider adress
+	* if no clouser, send clouser request to provider address
 
 
 ### User
 
 #### Frontend
-* create an view where the user see all clouser
-* create an view where the user see all the clouser requests and where he can deny or accept those requests
+* create an view where the user see's all his clousers
+* create an view where the user see's all the clouser requests and where he can deny or accept those requests
 
 #### Database
 * save clouser
 * save claims
-* define queries regarding requesting provider
+* define queries regarding which provider provides which clousers
 
 #### Logic
 * manage interaction
-	* send service request
-	* handle respsonse and identifiy necessary clouser
+	* handle respsonse and identifiy necessary clousers
 	* if clouser exists send clouser, if not send verifying provider adresse
-	* provide interface which get's all the clousers
+	* provide interface which receice a clousers
 * push user claims and clousers into database
-* get user claims and clousers from the db and provide's it for the FE
-* manages users decision if want's to accept or deny a clouser request 
+* get user claims and clousers from the db and forward it to the FE
+* manage user decision if want's to accept or deny a clouser request 
 
 #### Blockchain client
 * create approval response and forward it to blockchain
