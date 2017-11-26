@@ -18,8 +18,8 @@ web view.
 
 #### Frontend
 
-* Setup a frontend server to render web requests
-* Define REST-API and define JSON layout
+* Setup a frontend server to render web requests (react, angular etc)
+* Define REST-API
 
 or
 
@@ -37,7 +37,8 @@ or
 * Generate Public/Private keys
 * Verify signatures
 * Generate signatures
-* push user claims into database
+* push user claims/attributes into database
+* define JSON layout for FE
 
 #### Blockchain client
 
