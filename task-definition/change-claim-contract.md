@@ -19,41 +19,47 @@ This smart-contract is used to verify the attribute change. After the user verif
 
 * Provide change attribute view
   * List of linked entities (**that user has data with**) for easy access (maybe read provider entries from database and match with distributed table)
+  * _what do you mean with linked entities. Do you mean, that a for each attribute the correspnding provider should be shown?_
     * List of attributes to be changed
     * New value field
 * Main view
   * Display status of change-attribute
+  * _maybe optional? why do we need it_
 
 #### Database
 * Replace jsonblobs on updates
-  * _Verify that only requested attribute was changed?_
 * Provide list of provider-entities user has data with and "position" in database
+* _what do you mean with "position"_
 
 #### Logic
 * Forward change-attribute_DATA jsonblob to Database
-  * _Verify that only requested attribute was changed?_
+  * verify that only requested attribute was changed?
+  * verify changed attribute
+  * verify signiture of provider, who changed the data
 * Forward change-attribute_REQUEST to Frontend
 
-####PrivComm API
+#### Provider API
 * Send change-attribute request
 
 #### Blockchain client
 * Approve attribute-change contract
-* Poll for new contracts
+* Poll for new change attribute contracts
 
 ### Provider
 
 #### Database
-* Change attribute for requesting user to received values
-* Attribute whether an attribute is changeable itself (**user should only be able to change certain attributes himself**)
+* Change attributes for requesting user to received values
 
 #### Logic
+* verify if change is valid (e.g.: for change name, there should be a "heiratsurkunde" in the "bürgeramt")
 * Forward change-attribute_OK to Database
+* check if user is authorzied to change certain attributes (**user should only be able to change certain attributes himself**)
+* trigger blockchain client to set up change attribute contract
 
 #### Blockchain client
 * Create attribute-change contract
 * Issue a reasonable amount
 * Poll for updates
 
-#### PrivComm API
+#### Provider API
 * Offer change_attribute endpoint
