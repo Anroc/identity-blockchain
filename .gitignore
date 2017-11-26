@@ -11,7 +11,7 @@ build/
 !gradle-wrapper.jar
 
 # os specific
-DS_STORE
+.DS_STORE
 descktop.ini
 
 # frontend
