@@ -28,8 +28,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.16.18")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile project(":crypt-engine")
     compile project(":lib")
+    compile project(":crypt-engine")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compileOnly("org.projectlombok:lombok:1.16.18")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 }

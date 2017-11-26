@@ -4,25 +4,26 @@ import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.symmetric.SymmetricCryptEngine;
 import lombok.RequiredArgsConstructor;
 import org.bouncycastle.util.encoders.Base64;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 
 public class KeyConverter {
 
-	public KeyProducer from(String base64) {
+	public static KeyProducer from(String base64) {
 		return new KeyProducer(Base64.decode(base64));
 	}
 
+	public static KeyProducer from(Key key) {
+		return new KeyProducer(key.getEncoded());
+	}
+
+
 	@RequiredArgsConstructor
-	public class KeyProducer {
+	public static class KeyProducer {
 
 		private final byte[] key;
 
@@ -44,6 +45,10 @@ public class KeyConverter {
 
 		public SecretKey toSymmetricKey() {
 			return new SecretKeySpec(key, 0, key.length, SymmetricCryptEngine.ALGORITHM);
+		}
+
+		public String toBase64() {
+			return new String(Base64.encode(key));
 		}
 	}
 }

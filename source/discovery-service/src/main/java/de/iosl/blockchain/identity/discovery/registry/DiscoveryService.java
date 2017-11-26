@@ -31,5 +31,8 @@ public class DiscoveryService {
 		return registry.containsKey(ethID);
 	}
 
+	public void dropEntries() {
+		registry = new HashMap<>();
+	}
 
 }

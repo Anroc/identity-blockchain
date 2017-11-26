@@ -13,7 +13,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URL;
 
-@RestController("/provider")
+@RestController
+@RequestMapping("/provider")
 public class DiscoveryController {
 
 	@Autowired
@@ -28,7 +29,7 @@ public class DiscoveryController {
 		);
 	}
 
-	@PostMapping("/")
+	@PostMapping()
 	public ResponseEntity<URL> createEntry(@Valid @RequestBody RegistryEntry registryEntry, HttpServletRequest request) {
 		if( ! validator.isValid(registryEntry)) {
 			throw new ServiceException("Permission denied.", HttpStatus.FORBIDDEN);
