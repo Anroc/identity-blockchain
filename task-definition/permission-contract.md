@@ -1,5 +1,7 @@
 # Setup
 
+_please add new task description and complete requirements_
+
 ## Requirements
 
 * Meta-Epic
@@ -7,12 +9,12 @@
     * 
 
 ## Task description
-
 Scope of this task is it to setup all nessecary infrastructure. This includes the 
 setup of a database, setup of the ethereum adapter and implementing a cypht engine.
 When this epic is done it shell be possible to interact with the different components:
 Logic, EBA and database. The frontend itself sell be ready to start implementing a
 web view. 
+
 
 ## Components
 
@@ -54,12 +56,9 @@ web view.
 
 #### Blockchain client
 
-* Use generated ethereum address
 * Use other party's url
-* Use basic pulling from blockchain
-* Permission Request
-    * Create smart contract asking for 
-    user's permission of sharing certain data
+* _what do you mean with party_
+* polling permission request
 * Permission Approval
     * Create smart contract answering
     permission request
@@ -72,6 +71,12 @@ web view.
 #### Database
 
 * save permission request
+
+#### Blockchain client
+
+* Permission request:
+    * Create smart contract asking for user's permission of sharing certain data
+* poll user permission response
 
 #### Logic
 
