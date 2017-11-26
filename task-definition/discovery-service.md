@@ -6,7 +6,7 @@
 
 ## Task definition
 
-The discovery service is a service where a entity can query for provider. 
+The discovery service is a service where a entity can query for a provider. 
 This is done by mapping the ethereum address to a Public-key, IP-Address and Port.
 With this information the entity can request the defined ProviderAPI to communicate
 off-blockchain with other providers. Each provider shell on boot-up register himself
@@ -20,7 +20,9 @@ that it can be replaced or migrated to an decentralized component.
 ### Discovery Service
 
 * Implement hash-map
-  * mapping ethAddress to public key, IP and port
+  * mapping ethAddress to public key, IP (Domain) and port
+* validate new/updated provider address
+* provide API where user can find proider IP based on the ethereum address
 
 ### User
 
