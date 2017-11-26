@@ -52,19 +52,36 @@ def slackPrepare(String buildStatus = 'STARTED') {
 // Documentation step varibales
 DOCUMENT_NAME = "main"
 DOCUMENTATION_DIR = "./documentation/paper"
+SOURCE_DIR = "./source"
 
 node {
     try {
         slackPrepare()
+        checkout scm
 
-        stage('build documentation') {
-            echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-            dir (DOCUMENTATION_DIR) {
-                sh "./make"
+        parallel documentation: {
+            stage('pdflatex & biber') {
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                dir (DOCUMENTATION_DIR) {
+                    sh('./make.sh')
+                }
             }
-        }
-        stage('collect artifacts') {
-            archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
+            stage('artifacts') {
+                archiveArtifacts artifacts: "**/" + DOCUMENT_NAME + ".pdf", fingerprint: true
+            }
+        },
+        java: {
+            stage('gradle test') {
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                dir (SOURCE_DIR) {
+                    sh('./gradlew assemble')
+                    try {
+                        sh('./gradlew test')
+                    } finally {
+                        step([$class: 'JUnitResultArchiver', testResults: '**/test-results/test/*.xml'])
+                    }
+                }
+            }
         }
 
         currentBuild.result = 'SUCCESS'
