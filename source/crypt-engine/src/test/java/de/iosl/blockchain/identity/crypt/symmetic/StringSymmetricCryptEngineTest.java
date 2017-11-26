@@ -1,5 +1,9 @@
-package de.iosl.blockchain.identity.crypt;
+package de.iosl.blockchain.identity.crypt.symmetic;
 
+import de.iosl.blockchain.identity.crypt.CryptEngine;
+import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
+import de.iosl.blockchain.identity.crypt.symmetric.StringSymmetricCryptEngine;
+import de.iosl.blockchain.identity.crypt.symmetric.SymmetricCryptEngine;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,14 +12,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StringSymmetricCryptEngineTest {
 
-	private StringSymmetricCryptEngine stringCryptEngine;
+	private SymmetricCryptEngine<String> stringCryptEngine;
 
 	private static final String MESSAGE = "Hello world!";
 	private static final String MESSAGE_UTF_8 = "Hüllü wörld!";
 
 	@Before
 	public void setup() {
-		stringCryptEngine = new StringSymmetricCryptEngine(128);
+		stringCryptEngine = CryptEngine.generate()
+				.with(128)
+				.string()
+				.aes();
 	}
 
 	@Test
@@ -42,7 +49,7 @@ public class StringSymmetricCryptEngineTest {
 		encryptDecrypt(stringCryptEngine, message);
 	}
 
-	private void encryptDecrypt(StringSymmetricCryptEngine engine, String message) throws Exception {
+	private void encryptDecrypt(SymmetricCryptEngine<String> engine, String message) throws Exception {
 		String encryptedBase64 = engine.encrypt(message, engine.getSymmetricCipherKey());
 		byte[] encryptedText = Base64.decode(encryptedBase64);
 

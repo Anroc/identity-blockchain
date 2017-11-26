@@ -1,13 +1,14 @@
-package de.iosl.blockchain.identity.crypt;
+package de.iosl.blockchain.identity.crypt.asymmetic;
 
+import de.iosl.blockchain.identity.crypt.CypherProcessor;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.security.*;
 
 /**
@@ -15,7 +16,7 @@ import java.security.*;
  */
 @Data
 @Slf4j
-public abstract class AsymmetricCryptEngine<T> {
+public abstract class AsymmetricCryptEngine<T> extends CypherProcessor {
 
 	public static final String ALGORITHM = "RSA";
 	public static final int DEFAULT_BIT_SECURITY = 1024;
@@ -123,13 +124,8 @@ public abstract class AsymmetricCryptEngine<T> {
 	 */
 	abstract public boolean isSignatureAuthentic(String mac, T data, PublicKey publicKey) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException;
 
-	protected byte[] process(byte[] data, Key key, int mode) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-		try {
-			Cipher cipher = Cipher.getInstance(ALGORITHM);
-			cipher.init(mode, key);
-			return cipher.doFinal(data);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-			throw new RuntimeException(e);
-		}
+	@Override
+	public String getAlgorithm() {
+		return ALGORITHM;
 	}
 }

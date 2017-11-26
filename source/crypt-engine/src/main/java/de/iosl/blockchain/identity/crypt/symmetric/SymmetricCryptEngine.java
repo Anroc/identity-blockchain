@@ -1,6 +1,8 @@
-package de.iosl.blockchain.identity.crypt;
+package de.iosl.blockchain.identity.crypt.symmetric;
 
-import lombok.Data;
+import de.iosl.blockchain.identity.crypt.CypherProcessor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -8,11 +10,14 @@ import javax.crypto.*;
 import java.security.*;
 
 @Slf4j
-public abstract class SymmetricCryptEngine<T> {
+public abstract class SymmetricCryptEngine<T> extends CypherProcessor {
 
+	@Getter
 	public static final String ALGORITHM = "AES";
 	public static final int DEFAULT_BIT_SECURITY = 256;
 	public static final String CHAR_ENCODING = "UTF-8";
+
+	@Setter
 	private Key symmetricCipherKey;
 
 	private final int bitSecurity;
@@ -74,13 +79,8 @@ public abstract class SymmetricCryptEngine<T> {
 	 */
 	abstract public T decrypt(String data, Key key) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException;
 
-	protected byte[] process(byte[] data, Key key, int mode) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-		try {
-			Cipher cipher = Cipher.getInstance(ALGORITHM);
-			cipher.init(mode, key);
-			return cipher.doFinal(data);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-			throw new RuntimeException(e);
-		}
+	@Override
+	public String getAlgorithm() {
+		return ALGORITHM;
 	}
 }

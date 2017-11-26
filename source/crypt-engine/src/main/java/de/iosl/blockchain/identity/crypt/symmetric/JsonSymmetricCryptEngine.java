@@ -1,23 +1,29 @@
-package de.iosl.blockchain.identity.crypt;
+package de.iosl.blockchain.identity.crypt.symmetric;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.iosl.blockchain.identity.crypt.CryptEngine;
+import de.iosl.blockchain.identity.crypt.CypherProcessor;
+import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
+import de.iosl.blockchain.identity.crypt.asymmetic.StringAsymmetricCryptEngine;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.PublicKey;
 
-public class JsonAsymmetricCryptEngine extends AsymmetricCryptEngine<Object> {
+public class JsonSymmetricCryptEngine extends SymmetricCryptEngine<Object> {
 
 	private final ObjectMapper objectMapper;
-	private final StringAsymmetricCryptEngine stringCryptEngine;
+	private final SymmetricCryptEngine<String> stringCryptEngine;
 
-	public JsonAsymmetricCryptEngine(int bitSecurity) {
+	public JsonSymmetricCryptEngine(int bitSecurity) {
 		super(bitSecurity);
 		this.objectMapper = new ObjectMapper();
-		this.stringCryptEngine = new StringAsymmetricCryptEngine(bitSecurity);
+		this.stringCryptEngine = CryptEngine.from(getSymmetricCipherKey()).with(bitSecurity).string().aes();
 	}
 
 	@Override
@@ -27,26 +33,23 @@ public class JsonAsymmetricCryptEngine extends AsymmetricCryptEngine<Object> {
 
 	@Override
 	public Object decrypt(String data, Key key) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
-		return stringCryptEngine.decrypt(objectToString(data), key);
+		try {
+			return objectMapper.reader().readValue(
+					stringCryptEngine.decrypt(data, key)
+			);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 	}
 
 	public <T> T decrypt(String data, Key key, Class<T> clazz) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
-		return (T) decrypt(data, key);
-	}
-
-	@Override
-	public String sign(Object data) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-		return stringCryptEngine.sign(objectToString(data));
-	}
-
-	@Override
-	public String getSHA256Hash(Object data) {
-		return stringCryptEngine.getSHA256Hash(objectToString(data));
-	}
-
-	@Override
-	public boolean isSignatureAuthentic(String mac, Object data, PublicKey publicKey) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
-		return stringCryptEngine.isSignatureAuthentic(mac, objectToString(data), publicKey);
+		try {
+			return objectMapper.reader().forType(clazz).readValue(
+					stringCryptEngine.decrypt(data, key)
+			);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 	}
 
 	private String objectToString(Object data) {

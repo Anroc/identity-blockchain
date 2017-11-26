@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.crypt;
+package de.iosl.blockchain.identity.crypt.symmetric;
 
 import org.bouncycastle.util.encoders.Base64;
 
@@ -14,10 +14,6 @@ public class StringSymmetricCryptEngine extends SymmetricCryptEngine<String> {
 
 	public StringSymmetricCryptEngine(int bitSecurity) {
 		super(bitSecurity);
-	}
-
-	public StringSymmetricCryptEngine() {
-		super();
 	}
 
 	/**

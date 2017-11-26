@@ -1,5 +1,6 @@
-package de.iosl.blockchain.identity.crypt;
+package de.iosl.blockchain.identity.crypt.asymmetic;
 
+import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.util.encoders.Base64;
 
