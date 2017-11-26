@@ -29,7 +29,7 @@ The Issuer shell be the government or an similar, verified Identity Provider.
 #### Frontend
 
 * Provide register view
-  * Password to encrypt database and access client
+  * password field to encrypt database and access client
 * Main view
   * Display success/failure of claim verification
 
@@ -47,14 +47,14 @@ The Issuer shell be the government or an similar, verified Identity Provider.
 
 * Create the smart contract
   * IDP can only approve
-* Issue a reasonable amount
+* Issue a reasonable amount for transaction
 
 ### Provider
 
 #### Database
 
-* Query users attributes
-* Save users' identificators (ethID, pubKey)
+* Query users attributes and corresponding ethereum addess
+* Save user's identificators (ethID, pubKey)
 
 #### Logic
 
