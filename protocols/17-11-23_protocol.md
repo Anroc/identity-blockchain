@@ -1,4 +1,4 @@
-Date: ```22.11.2017```
+Date: ```23.11.2017```
 
 # Attendance
   * Timo
@@ -6,16 +6,6 @@ Date: ```22.11.2017```
   * Michael
   * Oskar
 
-# current thoughts about the stack
-
-* Test-RPC (npm) for implementing dummy ethereum chain with
-    all roles 
-    * docker-container
-    * Outlook: Geth for actual Ethereum blockchain
-* Web3J (backend): Blockchain Entry point (Interface / EBA)
-* backend consists of: crypto-environment, database abstraction,
-    modul off-blockchain transaction
-    
 # Task Definition
 
 * tasks as GitLab issues
@@ -34,16 +24,22 @@ Date: ```22.11.2017```
         * providerAPI
         * (maybe frontend)
 
-# Present tomorrow
+# Presented the following:
 
 * show process change attribute
 * technology stack
 * use case (timo.io, micha.io)
 * show epics
 
-# Done
+# Use Case:
 
-## bank
+* marriage
+* divorce
+
+# Question:
+
+* wie allgemein kann so ein smart contract gehalten werden
+* von spezifisch zu generisch halten
 
 # ToDo
 ## Everyone
