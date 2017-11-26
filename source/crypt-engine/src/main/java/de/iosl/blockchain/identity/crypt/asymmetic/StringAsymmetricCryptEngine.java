@@ -106,7 +106,7 @@ public class StringAsymmetricCryptEngine extends AsymmetricCryptEngine<String> {
 	 * @throws InvalidKeyException on wrong cipher instance
 	 * @throws IllegalBlockSizeException on wrong alignment
 	 */
-	public boolean isSignatureAuthentic(String mac, String data, PublicKey publicKey) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
+	public boolean isSignatureAuthentic(String mac, String data, PublicKey publicKey) {
 		String hash = getSHA256Hash(data);
 
 		try {

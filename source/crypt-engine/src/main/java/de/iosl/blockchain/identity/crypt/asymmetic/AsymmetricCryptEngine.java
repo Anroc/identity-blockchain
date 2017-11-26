@@ -4,6 +4,7 @@ import de.iosl.blockchain.identity.crypt.CypherProcessor;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -14,13 +15,13 @@ import java.security.*;
 /**
  * Shared component for encryption and decryption of messages.
  */
-@Data
 @Slf4j
 public abstract class AsymmetricCryptEngine<T> extends CypherProcessor {
 
 	public static final String ALGORITHM = "RSA";
 	public static final int DEFAULT_BIT_SECURITY = 1024;
 	public static final String CHAR_ENCODING = "UTF-8";
+	@Setter
 	private KeyPair asymmetricCipherKeyPair;
 
 	private final int bitSecurity;
@@ -34,7 +35,7 @@ public abstract class AsymmetricCryptEngine<T> extends CypherProcessor {
 		Security.addProvider(new BouncyCastleProvider());
 	}
 
-	private KeyPair getAsymmetricCipherKeyPair() {
+	public KeyPair getAsymmetricCipherKeyPair() {
 		if (asymmetricCipherKeyPair == null) {
 			this.asymmetricCipherKeyPair = generateKeyPair();
 		}
@@ -117,12 +118,9 @@ public abstract class AsymmetricCryptEngine<T> extends CypherProcessor {
 	 * @param mac the mac that shell be verified
 	 * @param data the plain message backed by the mac
 	 * @param publicKey the public key that created the mac
-	 * @return true if the signature is verified, else flase
-	 * @throws BadPaddingException on padding mismatch
-	 * @throws InvalidKeyException on wrong cipher instance
-	 * @throws IllegalBlockSizeException on wrong alignment
+	 * @return true if the signature is verified, else false
 	 */
-	abstract public boolean isSignatureAuthentic(String mac, T data, PublicKey publicKey) throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException;
+	abstract public boolean isSignatureAuthentic(String mac, T data, PublicKey publicKey);
 
 	@Override
 	public String getAlgorithm() {

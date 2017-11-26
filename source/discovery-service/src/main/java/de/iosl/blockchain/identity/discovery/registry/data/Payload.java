@@ -9,7 +9,7 @@ public class Payload {
 
 	private String ethID;
 	private String publicKey;
-	private String ip;
+	private String domainName;
 	private int port;
 
 }

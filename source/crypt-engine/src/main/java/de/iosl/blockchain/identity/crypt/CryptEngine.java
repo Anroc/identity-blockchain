@@ -1,6 +1,8 @@
 package de.iosl.blockchain.identity.crypt;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
+import de.iosl.blockchain.identity.crypt.asymmetic.JsonAsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.asymmetic.StringAsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.symmetric.JsonSymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.symmetric.StringSymmetricCryptEngine;
@@ -20,6 +22,7 @@ public class CryptEngine {
 
 	private CryptEngine(Key key, KeyPair keyPair) {
 		this.key = key;
+		this.keyPair = keyPair;
 		this.bitSecurity = -1;
 	}
 
@@ -67,12 +70,12 @@ public class CryptEngine {
 			if(clazz.equals(String.class)) {
 				engine = (SymmetricCryptEngine<T>) new StringSymmetricCryptEngine(
 						bitSecurity == -1 ?
-								StringSymmetricCryptEngine.DEFAULT_BIT_SECURITY
+								SymmetricCryptEngine.DEFAULT_BIT_SECURITY
 								: bitSecurity);
 			} else {
 				engine = (SymmetricCryptEngine<T>) new JsonSymmetricCryptEngine(
 						bitSecurity == -1 ?
-								StringSymmetricCryptEngine.DEFAULT_BIT_SECURITY
+								SymmetricCryptEngine.DEFAULT_BIT_SECURITY
 								: bitSecurity);
 			}
 
@@ -82,11 +85,27 @@ public class CryptEngine {
 			return engine;
 		}
 
-		public AsymmetricCryptEngine<String> rsa() {
-			return new StringAsymmetricCryptEngine(
-					bitSecurity == -1 ?
-							StringAsymmetricCryptEngine.DEFAULT_BIT_SECURITY
-							: bitSecurity);
+		public AsymmetricCryptEngine<T> rsa() {
+
+			AsymmetricCryptEngine<T> engine;
+
+			if(clazz.equals(String.class)) {
+				engine = (AsymmetricCryptEngine<T>) new StringAsymmetricCryptEngine(
+						bitSecurity == -1 ?
+								AsymmetricCryptEngine.DEFAULT_BIT_SECURITY
+								: bitSecurity);
+			} else {
+				engine = (AsymmetricCryptEngine<T>) new JsonAsymmetricCryptEngine(
+						bitSecurity == -1 ?
+								AsymmetricCryptEngine.DEFAULT_BIT_SECURITY
+								: bitSecurity);
+			}
+
+			if(keyPair != null) {
+				engine.setAsymmetricCipherKeyPair(keyPair);
+			}
+			return engine;
+
 		}
 
 	}

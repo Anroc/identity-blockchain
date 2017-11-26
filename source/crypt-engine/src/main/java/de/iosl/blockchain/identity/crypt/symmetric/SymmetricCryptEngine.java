@@ -12,7 +12,6 @@ import java.security.*;
 @Slf4j
 public abstract class SymmetricCryptEngine<T> extends CypherProcessor {
 
-	@Getter
 	public static final String ALGORITHM = "AES";
 	public static final int DEFAULT_BIT_SECURITY = 256;
 	public static final String CHAR_ENCODING = "UTF-8";

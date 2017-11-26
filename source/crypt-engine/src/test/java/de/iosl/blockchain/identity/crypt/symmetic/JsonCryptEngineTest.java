@@ -2,6 +2,7 @@ package de.iosl.blockchain.identity.crypt.symmetic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
+import de.iosl.blockchain.identity.crypt.TestEntity;
 import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.symmetric.JsonSymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.symmetric.SymmetricCryptEngine;
@@ -53,12 +54,5 @@ public class JsonCryptEngineTest {
 		TestEntity decrypt = engine.decrypt(encryptedBase64, engine.getSymmetricCipherKey(), TestEntity.class);
 
 		assertThat(decrypt).isEqualTo(data);
-	}
-
-	@Data
-	@AllArgsConstructor
-	static class TestEntity {
-		private String field;
-		private int number;
 	}
 }
