@@ -7,70 +7,70 @@
 
 ## Task description
 
-The goal of this task is to enable the clouser functionality.
+The goal of this task is to enable the closure functionality.
 This includes:
 
-* the creation of clouser
+* the creation of closure
 * their belonging claims (and the creation of those claims),
-* the definition, where to find the clouser and who is authorized to sign the corresponding clouser,
-* the creation of a clouser request,
-* the storing of clousers in the database on client side and the creation on provider side
+* the definition, where to find the closure and who is authorized to sign the corresponding closure,
+* the creation of a closure request,
+* the storing of closures in the database on client side and the creation on provider side
 * the interaction between the user and at least one provider 
-	* the storing of the clouser request within the blockchain and how the user get's the request
-	* storing the approval to create a clouser and also how the provider get's the approval
-* the possibility for the user to accept or approve the creation of a clouser
-* and the possibility for the user to see all clousers regarding him
+	* the storing of the closure request within the blockchain and how the user get's the request
+	* storing the approval to create a closure and also how the provider get's the approval
+* the possibility for the user to accept or approve the creation of a closure
+* and the possibility for the user to see all closures regarding him
 
 ## Components
 
-### Provider (who want's a clouser)
+### Provider (who wants a closure)
 
 #### Logic
-* define endpoint to initalize clouser request
-* handle user's request which either contains a clouser or the adress of a provider who verifies the clouser
-	* if no clouser, send clouser request to provider address
+* define endpoint to initialize closure request
+* handle user's request which either contains a closure or the address of a provider who verifies the closure
+	* if no closure, send closure request to provider address
 
 
 ### User
 
 #### Frontend
-* create an view where the user see's all his clousers
-* create an view where the user see's all the clouser requests and where he can deny or accept those requests
+* create an view where the user see's all his closures
+* create an view where the user see's all the closure requests and where he can deny or accept those requests
 
 #### Database
-* save clouser
+* save closure
 * save claims
-* define queries regarding which provider provides which clousers
+* define queries regarding which provider provides which closures
 
 #### Logic
 * manage interaction
-	* handle respsonse and identifiy necessary clousers
-	* if clouser exists send clouser, if not send verifying provider adresse
-	* provide interface which receice a clousers
-* push user claims and clousers into database
-* get user claims and clousers from the db and forward it to the FE
-* manage user decision if want's to accept or deny a clouser request 
+	* handle response and identify necessary closures
+	* if closure exists send closure, if not send verifying provider adresse
+	* provide interface which receive a closures
+* push user claims and closures into database
+* get user claims and closures from the db and forward it to the FE
+* manage user decision if want's to accept or deny a closure request 
 
 #### Blockchain client
 * create approval response and forward it to blockchain
-* implement pulling of clouser request from blockchain
+* implement pulling of closure request from blockchain
 
 
 ### Provider (provider who verifies data)
 
 #### Database
 * Query users attributes
-* maybe safe clouser of certain user
+* maybe safe closure of certain user
 
 #### Blockchain provider
 
-* create clouser request and forward it to blockchain (contract)
+* create closure request and forward it to blockchain (contract)
 * implement pulling of approval response from blockchain (contract)
 
 #### Logic
 
-* provide interface where other providers can send their clouser requests
-* verifiy clouser request (is user >18) an therefore get data from db
-* check user's response whether he agreed on the clouser request
-* create clouser with [userid, condition, result, timestamp]
-* send clouser to user / alternatively provide api where user can get clouser
+* provide interface where other providers can send their closure requests
+* verifiy closure request (is user >18) an therefore get data from db
+* check user's response whether he agreed on the closure request
+* create closure with [userid, condition, result, timestamp]
+* send closure to user / alternatively provide api where user can get closure
