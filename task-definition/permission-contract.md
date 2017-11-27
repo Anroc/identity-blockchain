@@ -1,19 +1,34 @@
-# Setup
+# Permission Contract
 
+## Setup
+
+### Requirements
 _please add new task description and complete requirements_
 
 ## Requirements
 
 * Meta-Epic
-* specifially: 
-    * 
+    * Plain frontend setup
+    * Existing database
+    * Communication with database
+    * Key generation
+    * Blockchain client
+    * REST-API for off-blockchain communication
 
-## Task description
-Scope of this task is it to setup all nessecary infrastructure. This includes the 
-setup of a database, setup of the ethereum adapter and implementing a cypht engine.
-When this epic is done it shell be possible to interact with the different components:
-Logic, EBA and database. The frontend itself sell be ready to start implementing a
-web view. 
+### Task description
+
+Scope of the permission contract is to set up everything mandatory for both
+requesting and answering permission.
+The permission request process means that a 3rd party asks the provider 
+for the permission to use the user's data. The provider then forwards the request
+to the user through the blockchain.
+
+The permission request will be visible in the blockchain and logged in all parties'
+databases.
+
+The answering process involves the user approving or denying the request and
+sending that answer off-blockchain to the provider, who will then forward the
+information to the provider.
 
 
 ## Components
@@ -31,7 +46,6 @@ web view.
         content what is requested
 * render specific section for requesting permission
 * render specific section for permission approval
-
 * Define REST-API and define JSON layout specifically designed
     for permission requests
 
@@ -68,9 +82,15 @@ web view.
 
 ### Provider
 
+#### Frontend
+
+* none
+
 #### Database
 
-* save permission request
+* save 3rd party's permission request
+* save user's permission answer
+* (save potential query results)
 
 #### Blockchain client
 
@@ -80,4 +100,22 @@ web view.
 
 #### Logic
 
-* Define permission specific REST-API
+1. Set up
+    * Define permission specific REST-API
+    * Implement smart contract with asking for permission
+    * Implement database querying interface
+2. Connect it
+    * Trigger permission contract when 3rd party asks for data and save
+        it to db
+    * Asynchronously wait for user's answer
+    * When answer is denial, forward denial to 3rd party
+    * When answer is approval, query database and send results together with
+        approval to 3rd party
+
+### 3rd party
+
+#### Frontend
+
+* give option to request permission from user (from own database)
+    to simulate 3rd party
+* section where answer is displayed
