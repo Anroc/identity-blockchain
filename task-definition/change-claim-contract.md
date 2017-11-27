@@ -18,18 +18,16 @@ This smart-contract is used to verify the attribute change. After the user verif
 #### Frontend
 
 * Provide change attribute view
-  * List of linked entities (**that user has data with**) for easy access (maybe read provider entries from database and match with distributed table)
-  * _what do you mean with linked entities. Do you mean, that a for each attribute the correspnding provider should be shown?_
+  * List of linked entities (**that user has data with**) for easy access (maybe read provider entries from database and match with distributed table).
+  Match each attribute to the provider who sent this claim (probably to the domain). Since after registration we receive a jsonblob with all attributes a provider has, we should be able to link all of these attributes to this entity, to act as a filter for the frontend
     * List of attributes to be changed
     * New value field
 * Main view
-  * Display status of change-attribute
-  * _maybe optional? why do we need it_
+  * *Optional: Display status of change-attribute. Asynchronous process on the side of the provider and user should be informed whether the change is still ongoing, has been accepted or denied*
 
 #### Database
 * Replace jsonblobs on updates
-* Provide list of provider-entities user has data with and "position" in database
-* _what do you mean with "position"_
+* *How do we store the data? Can we simply put all json blobs into the db and the engine creates the model for each blob itself or do we have to define a model for each provider jsonblob ourself?*
 
 #### Logic
 * Forward change-attribute_DATA jsonblob to Database
