@@ -3,9 +3,6 @@
 ## Setup
 
 ### Requirements
-_please add new task description and complete requirements_
-
-## Requirements
 
 * Meta-Epic
     * Plain frontend setup
@@ -38,12 +35,9 @@ information to the provider.
 #### Frontend
 
 * Add functionality for answering permission
-    * approval
-    * denial
-    * third option?
+    * approval/denial/potential_third_option
 * Add functionality for creating permission request
-    * should contain:
-        content what is requested
+    * should contain content what is requested
 * render specific section for requesting permission
 * render specific section for permission approval
 * Define REST-API and define JSON layout specifically designed
@@ -57,7 +51,7 @@ information to the provider.
     * who was involved in the request
     * what are their addresses
     * what role are you in it
-    * was is approved/denied/???
+    * was is approved/denied/other_option
     * status (e.g. resolved/pending)
 
 #### Logic
@@ -70,15 +64,13 @@ information to the provider.
 
 #### Blockchain client
 
-* Use other party's url
-* _what do you mean with party_
-* polling permission request
-* Permission Approval
-    * Create smart contract answering
-    permission request
-    * establish connection to 3rd party directly
-    * transfer demanded information
-
+* Use provider's url for off-blockchain connection
+* Polling permission request
+* Permission Response
+    * Create smart contract responding to
+        permission request
+    * Establish connection to 3rd party directly
+    * In case of approval transfer demanded information
 
 ### Provider
 
