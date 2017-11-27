@@ -11,6 +11,8 @@
     * Key generation
     * Blockchain client
     * REST-API for off-blockchain communication
+* Registrar Contract
+* Discovery Service
 
 ### Task description
 
