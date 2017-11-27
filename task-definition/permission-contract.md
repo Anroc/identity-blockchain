@@ -27,6 +27,7 @@ The answering process involves the user approving or denying the request and
 sending that answer off-blockchain to the provider, who will then forward the
 information to the provider.
 
+
 ## Components
 
 ### User
@@ -34,12 +35,9 @@ information to the provider.
 #### Frontend
 
 * Add functionality for answering permission
-    * approval
-    * denial
-    * third option?
+    * approval/denial/potential_third_option
 * Add functionality for creating permission request
-    * should contain:
-        content what is requested
+    * should contain content what is requested
 * render specific section for requesting permission
 * render specific section for permission approval
 * Define REST-API and define JSON layout specifically designed
@@ -53,7 +51,7 @@ information to the provider.
     * who was involved in the request
     * what are their addresses
     * what role are you in it
-    * was is approved/denied/???
+    * was is approved/denied/other_option
     * status (e.g. resolved/pending)
 
 #### Logic
@@ -66,18 +64,13 @@ information to the provider.
 
 #### Blockchain client
 
-* Use generated ethereum address
-* Use other party's url
-* Use basic pulling from blockchain
-* Permission Request
-    * Create smart contract asking for 
-    user's permission of sharing certain data
-* Permission Approval
-    * Create smart contract answering
-    permission request
-    * establish connection to 3rd party directly
-    * transfer demanded information
-
+* Use provider's url for off-blockchain connection
+* Polling permission request
+* Permission Response
+    * Create smart contract responding to
+        permission request
+    * Establish connection to 3rd party directly
+    * In case of approval transfer demanded information
 
 ### Provider
 
@@ -90,6 +83,12 @@ information to the provider.
 * save 3rd party's permission request
 * save user's permission answer
 * (save potential query results)
+
+#### Blockchain client
+
+* Permission request:
+    * Create smart contract asking for user's permission of sharing certain data
+* poll user permission response
 
 #### Logic
 
