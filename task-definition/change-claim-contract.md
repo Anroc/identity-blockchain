@@ -27,7 +27,7 @@ This smart-contract is used to verify the attribute change. After the user verif
 
 #### Database
 * Replace jsonblobs on updates
-* *How do we store the data? Can we simply put all json blobs into the db and the engine creates the model for each blob itself or do we have to define a model for each provider jsonblob ourself?*
+* *Have to define the model for each separate jsonblob ourselves*
 
 #### Logic
 * Forward change-attribute_DATA jsonblob to Database
