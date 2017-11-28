@@ -21,6 +21,10 @@ public class KeyConverter {
 		return new KeyProducer(key.getEncoded());
 	}
 
+	public static KeyProducer from(byte[] key) {
+		return new KeyProducer(key);
+	}
+
 
 	@RequiredArgsConstructor
 	public static class KeyProducer {
