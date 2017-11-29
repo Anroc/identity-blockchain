@@ -85,7 +85,7 @@ node {
         }
 
         stage('deploy') {
-            if(${env.BRANCH_NAME} == "dev" || ${env.BRANCH_NAME} == "15-task-ops-build-docker-container-for-discovery-service") {
+            if("${env.BRANCH_NAME}" == "dev" || "${env.BRANCH_NAME}" == "15-task-ops-build-docker-container-for-discovery-service") {
                 echo "Restarting docker container 'srv01.snet.tu-berlin.de'"
                 sshagent (credentials: ['d76de830-c6b6-4aee-b397-5d8465864f17']) {
                     sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ./restart_infrastructure.sh'
