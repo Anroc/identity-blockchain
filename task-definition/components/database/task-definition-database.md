@@ -1,22 +1,19 @@
 # Epics
 
-## change-claim-contract
+# Setup & Discovery
+* Basic database setup
+* Connection DB and springboot
+* Database layout for users and providers/third parties
+  * same or different?
+* *Optional: Database for discovery service*
+
+## registrar-contract
 ### User
-* Replace jsonblobs on updates
-* *Have to define the model for each separate jsonblob ourselves*
+* Able to save verified user claims
 
 ### Provider
-* Change attributes for requesting user to received values
-
-## closure-registrar-contract
-### User
-* save closure
-* save claims
-* define queries regarding which provider provides which closures
-
-### Provider
-* Query users attributes
-* maybe safe closure of certain user
+* Query users attributes and corresponding ethereum addess
+* Save user's identificators (ethID, pubKey)
 
 ## permission-contract
 ### User
@@ -34,18 +31,28 @@
 * save user's permission answer
 * (save potential query results)
 
-## registrar-contract
+## closure-registrar-contract
 ### User
-* Able to save verified user claims
+* save closure
+* save claims
+* define queries regarding which provider provides which closures
 
 ### Provider
-* Query users attributes and corresponding ethereum addess
-* Save user's identificators (ethID, pubKey)
+* Query users attributes
+* maybe safe closure of certain user
+
+## change-claim-contract
+### User
+* Replace jsonblobs on updates
+* *Have to define the model for each separate jsonblob ourselves*
+
+### Provider
+* Change attributes for requesting user to received values
 
 # Summary across all epics
 
 ## User
-* save closures and claims in form of json files to database
+* save closures and claims in form of json files to database []
   * additional required information:
     * which provider provides which claim or closure
   * create model for each separate provider initial-data-json that is sent during the registrar-contract process
