@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,9 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.utils.Numeric;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -105,5 +109,62 @@ public class DiscoveryControllerRestTest {
 		ResponseEntity<?> responseEntity = restTemplate.getForEntity("/provider/" + ETH_ID, RegistryEntry.class);
 
 		assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.NOT_FOUND);
+	}
+
+	@Test
+	public void getEntriesTest() {
+		discoveryService.putEntry(registryEntry);
+
+		RegistryEntry otherEntry = new RegistryEntry(
+				new Payload(
+						"asd",
+						"asd",
+						"bagutette.management",
+						3
+				),
+				null
+		);
+
+		discoveryService.putEntry(otherEntry);
+
+		ResponseEntity<List<RegistryEntry>> responseEntity = restTemplate.exchange(
+				"/provider",
+				HttpMethod.GET,
+				HttpEntity.EMPTY,
+				new ParameterizedTypeReference<List<RegistryEntry>>() {}
+		);
+
+		assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+		assertThat(responseEntity.getBody()).hasSize(2);
+	}
+
+	@Test
+	public void getEntriesWithQueryParameterTest() {
+		discoveryService.putEntry(registryEntry);
+
+		RegistryEntry otherEntry = new RegistryEntry(
+				new Payload(
+						"asd",
+						"asd",
+						"bagutette.management",
+						3
+				),
+				null
+		);
+
+		discoveryService.putEntry(otherEntry);
+
+		Map<String, String> maps = new HashMap<>();
+		maps.put("domainName", DOMAIN);
+		ResponseEntity<List<RegistryEntry>> responseEntity = restTemplate.exchange(
+				"/provider?domainName=" + DOMAIN,
+				HttpMethod.GET,
+				HttpEntity.EMPTY,
+				new ParameterizedTypeReference<List<RegistryEntry>>() {}
+		);
+
+		assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+		assertThat(responseEntity.getBody()).hasSize(1);
+		assertThat(responseEntity.getBody().get(0)).isEqualTo(registryEntry);
 	}
 }

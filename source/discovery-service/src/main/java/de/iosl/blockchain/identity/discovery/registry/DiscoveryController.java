@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/provider")
@@ -27,6 +29,13 @@ public class DiscoveryController {
 		return discoveryService.getEntry(ethID).orElseThrow(
 				() -> new ServiceException("Could not find ethID [%s].", HttpStatus.NOT_FOUND, ethID)
 		);
+	}
+
+	@GetMapping()
+	public List<RegistryEntry> getEntries(@RequestParam(value = "domainName", defaultValue = "") final String domainName) {
+		return discoveryService.getEntries().stream().filter(registerEntry ->
+				domainName.isEmpty() || registerEntry.getPayload().getDomainName().equals(domainName)
+		).collect(Collectors.toList());
 	}
 
 	@PostMapping()

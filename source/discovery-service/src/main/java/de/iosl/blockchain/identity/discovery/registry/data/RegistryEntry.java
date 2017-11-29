@@ -19,5 +19,4 @@ public class RegistryEntry {
 	@Valid
 	@NotNull
 	private ECSignature signature;
-	;
 }
