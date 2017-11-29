@@ -3,9 +3,6 @@ package de.iosl.blockchain.identity.crypt.symmetric;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
-import de.iosl.blockchain.identity.crypt.CypherProcessor;
-import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
-import de.iosl.blockchain.identity.crypt.asymmetic.StringAsymmetricCryptEngine;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -13,7 +10,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.PublicKey;
 
 public class JsonSymmetricCryptEngine extends SymmetricCryptEngine<Object> {
 

@@ -3,8 +3,6 @@ package de.iosl.blockchain.identity.discovery.registry.data;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.NotBlank;
-import org.web3j.crypto.ECDSASignature;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

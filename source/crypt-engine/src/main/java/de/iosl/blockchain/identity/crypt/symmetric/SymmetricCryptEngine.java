@@ -1,12 +1,13 @@
 package de.iosl.blockchain.identity.crypt.symmetric;
 
 import de.iosl.blockchain.identity.crypt.CypherProcessor;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import java.security.*;
 
 @Slf4j

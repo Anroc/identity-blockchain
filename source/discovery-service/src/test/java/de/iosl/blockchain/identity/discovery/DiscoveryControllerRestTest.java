@@ -1,7 +1,5 @@
 package de.iosl.blockchain.identity.discovery;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.discovery.registry.DiscoveryService;
 import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
@@ -20,7 +18,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.web3j.crypto.*;
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.Keys;
+import org.web3j.crypto.Sign;
+import org.web3j.crypto.WalletUtils;
 import org.web3j.utils.Numeric;
 
 import java.io.File;

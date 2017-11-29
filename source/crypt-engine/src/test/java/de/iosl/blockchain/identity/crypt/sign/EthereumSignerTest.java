@@ -1,17 +1,13 @@
 package de.iosl.blockchain.identity.crypt.sign;
 
-import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.TestEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.web3j.crypto.*;
-import org.web3j.utils.Numeric;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.interfaces.ECKey;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
