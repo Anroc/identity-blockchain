@@ -19,10 +19,11 @@
 ## Client
 
 * Registration
-    * [ ] Provide register view
-      * [ ] password field to encrypt database and access client
-    * [ ] Main view
-      * [ ] Display success/failure of claim verification
+  * [ ] Provide register view
+    * [ ] password field to encrypt database and access client
+  * [ ] Main view
+    * [ ] Display success/failure of claim verification
+  * [ ] Show all received claims after registration
 * Closure Registration
     * [ ] create a view where the user sees all his closures
     * [ ] create a view where the user sees all the closure requests 
@@ -44,6 +45,8 @@
     * [ ] Render specific section for permission approval
     * [ ] Define REST-API and define JSON layout specifically 
         designed for permission requests
+
+* [ ] add new provider, domain name eingeben und wie registrar contract
 
 ## 3rd Party
 
