@@ -28,6 +28,7 @@ dependencies {
     compile("org.bouncycastle:bcprov-jdk15on:1.58")
     compile("org.springframework.boot:spring-boot-starter:1.5.8.RELEASE")
     compile("com.fasterxml.jackson.core:jackson-databind:2.9.2")
+    compile("org.web3j:core:3.1.1")
     testCompile("junit:junit:4.12")
     testCompile("org.assertj:assertj-core:3.4.1")
 }

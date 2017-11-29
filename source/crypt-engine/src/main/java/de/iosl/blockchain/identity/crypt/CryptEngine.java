@@ -1,6 +1,5 @@
 package de.iosl.blockchain.identity.crypt;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.asymmetic.JsonAsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.asymmetic.StringAsymmetricCryptEngine;

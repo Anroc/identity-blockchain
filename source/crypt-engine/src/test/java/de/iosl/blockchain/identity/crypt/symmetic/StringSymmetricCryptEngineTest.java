@@ -2,7 +2,6 @@ package de.iosl.blockchain.identity.crypt.symmetic;
 
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
-import de.iosl.blockchain.identity.crypt.symmetric.StringSymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.symmetric.SymmetricCryptEngine;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.Before;
