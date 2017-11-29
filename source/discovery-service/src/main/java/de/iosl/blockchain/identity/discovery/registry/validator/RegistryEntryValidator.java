@@ -14,11 +14,22 @@ public class RegistryEntryValidator {
 	private EthereumSigner algorithm = new EthereumSigner();
 
 	public boolean isValid(@NonNull RegistryEntry registryEntry) {
-		return isSignatureValid(registryEntry.getPayload(), registryEntry.getSignature(), registryEntry.getPayload().getEthID());
+		return isSignatureValid(registryEntry.getPayload(), registryEntry.getSignature(), registryEntry.getPayload().getEthID())
+				&& isRequestApprovedByEntity(registryEntry.getPayload());
 	}
 
 	private boolean isSignatureValid(@NonNull Payload payload, @NonNull ECSignature signature, @NonNull String address) {
 		Sign.SignatureData signatureData = signature.toSignatureData();
 		return algorithm.verifySignature(payload, signatureData, address);
+	}
+
+	public boolean isRequestApprovedByEntity(@NonNull Payload payload) {
+		/* TODO: implement
+		 * 1. Request user with given eth ID
+		 * 2. Create Contract
+		 * 3. wait for user approval
+		 * 4. return response
+		 */
+		return true;
 	}
 }
