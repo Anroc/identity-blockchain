@@ -38,8 +38,8 @@ public class EthereumSignerTest {
 		TestEntity testEntity = new TestEntity("field", 1337);
 
 		Sign.SignatureData data = signer.sign(testEntity, eckeyPair);
-		BigInteger publicKey = signer.verifySignature(testEntity, data, eckeyPair.getPublicKey());
+		boolean isValid = signer.verifySignature(testEntity, data, eckeyPair.getPublicKey());
 
-		assertThat(publicKey).isEqualTo(eckeyPair.getPublicKey());
+		assertThat(isValid).isTrue();
 	}
 }
