@@ -4,17 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.crypt.asymmetic.StringAsymmetricCryptEngine;
 import lombok.NoArgsConstructor;
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.ec.CustomNamedCurves;
-import org.bouncycastle.crypto.params.ECDomainParameters;
-import org.bouncycastle.crypto.params.ECPublicKeyParameters;
-import org.bouncycastle.crypto.signers.ECDSASigner;
-import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
-import org.bouncycastle.math.ec.ECPoint;
-import org.web3j.crypto.ECDSASignature;
 import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Keys;
 import org.web3j.crypto.Sign;
+import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 import java.security.SignatureException;
@@ -39,11 +32,27 @@ public class EthereumSigner {
 		return Sign.signMessage(hash(payload), ecKeyPair);
 	}
 
-	public BigInteger verifySignature(Object payload, Sign.SignatureData signatureData) {
+	public boolean verifySignature(Object payload, Sign.SignatureData signatureData, BigInteger publicKey) {
+		return publicKey.equals(publicKeyFromSignature(payload, signatureData));
+	}
+
+	public boolean verifySignature(Object payload, Sign.SignatureData signatureData, String address) {
+		return address.equals(
+				addressFromPublicKey(
+						publicKeyFromSignature(payload, signatureData)
+				)
+		);
+	}
+
+	private BigInteger publicKeyFromSignature(Object payload, Sign.SignatureData signatureData) {
 		try {
 			return Sign.signedMessageToKey(hash(payload), signatureData);
 		} catch (SignatureException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static String addressFromPublicKey(BigInteger publicKey) {
+		return Numeric.prependHexPrefix(Keys.getAddress(publicKey));
 	}
 }

@@ -40,7 +40,6 @@ public class DiscoveryControllerRestTest {
 	private static final String DOMAIN = "example.com";
 	private static final int PORT = 3003;
 	private static String ETH_ID;
-	private static String ETH_PUBLIC_KEY;
 	private static String PUBLIC_KEY;
 	private static Credentials credentials;
 
@@ -56,7 +55,6 @@ public class DiscoveryControllerRestTest {
 		credentials = WalletUtils.loadCredentials("asd", file);
 
 		ETH_ID = Numeric.prependHexPrefix(Keys.getAddress(credentials.getEcKeyPair().getPublicKey()));
-		ETH_PUBLIC_KEY = KeyConverter.fromECDSA(credentials.getEcKeyPair().getPublicKey());
 		PUBLIC_KEY = "SOME_PUBLIC_KEY";
 
 		ALGORITHM = new EthereumSigner();
@@ -80,6 +78,15 @@ public class DiscoveryControllerRestTest {
 
 		assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.CREATED);
 		assertThat(discoveryService.getEntry(ETH_ID).get()).isEqualTo(registryEntry);
+	}
+
+	@Test
+	public void createEntryFailsWithForbidden() {
+		registryEntry.getPayload().setEthID("OTHER_VALUE");
+
+		ResponseEntity<?> responseEntity = restTemplate.exchange("/provider", HttpMethod.POST, new HttpEntity<>(registryEntry), Object.class);
+
+		assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.FORBIDDEN);
 	}
 
 	@Test
