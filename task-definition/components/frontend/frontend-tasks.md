@@ -45,14 +45,8 @@
     * [ ] Define REST-API and define JSON layout specifically 
         designed for permission requests
 
-## Provider
-
-
 ## 3rd Party
 
-* Registration
-* Closure Registration
-* Change Claim
 * Request Permission
     * [ ] Give option to request permission from user (from own database)
         to simulate 3rd party
