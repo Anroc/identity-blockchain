@@ -7,6 +7,7 @@ import org.bouncycastle.util.encoders.Base64;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.math.BigInteger;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
@@ -23,6 +24,16 @@ public class KeyConverter {
 
 	public static KeyProducer from(byte[] key) {
 		return new KeyProducer(key);
+	}
+
+	public static BigInteger fromECDSA(String base64) {
+		return new BigInteger(Base64.decode(base64));
+	}
+
+	public static String fromECDSA(BigInteger bigInteger) {
+		return new String(
+				Base64.encode(bigInteger.toByteArray())
+		);
 	}
 
 

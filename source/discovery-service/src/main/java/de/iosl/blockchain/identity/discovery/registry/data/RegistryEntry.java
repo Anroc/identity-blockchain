@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
+import org.web3j.crypto.ECDSASignature;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -17,6 +18,8 @@ public class RegistryEntry {
 	@NotNull
 	private Payload payload;
 
-	@NotBlank
-	private String mac;
+	@Valid
+	@NotNull
+	private ECSignature signature;
+	;
 }

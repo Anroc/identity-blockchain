@@ -2,6 +2,7 @@ package de.iosl.blockchain.identity.discovery.registry.data;
 
 import lombok.*;
 
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

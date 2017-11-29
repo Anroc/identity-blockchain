@@ -1,0 +1,45 @@
+package de.iosl.blockchain.identity.crypt.sign;
+
+import de.iosl.blockchain.identity.crypt.KeyConverter;
+import de.iosl.blockchain.identity.crypt.TestEntity;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.web3j.crypto.*;
+import org.web3j.utils.Numeric;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.interfaces.ECKey;
+
+import static org.assertj.core.api.Java6Assertions.assertThat;
+
+public class EthereumSignerTest {
+
+	private static final String FILE = "sample_wallet.json";
+
+	private ECKeyPair eckeyPair;
+	private EthereumSigner signer;
+
+	@Before
+	public void loadWallet() throws IOException, CipherException {
+		signer = new EthereumSigner();
+
+		ClassPathResource resource = new ClassPathResource(FILE);
+		File file = resource.getFile();
+
+		Credentials credentials = WalletUtils.loadCredentials("asd", file);
+		eckeyPair = credentials.getEcKeyPair();
+	}
+
+	@Test
+	public void signAndVerifySignature() {
+		TestEntity testEntity = new TestEntity("field", 1337);
+
+		Sign.SignatureData data = signer.sign(testEntity, eckeyPair);
+		BigInteger publicKey = signer.verifySignature(testEntity, data);
+
+		assertThat(publicKey).isEqualTo(eckeyPair.getPublicKey());
+	}
+}

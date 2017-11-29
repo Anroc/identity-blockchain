@@ -1,9 +1,10 @@
 package de.iosl.blockchain.identity.discovery;
 
-import de.iosl.blockchain.identity.crypt.CryptEngine;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
-import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
+import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.discovery.registry.DiscoveryService;
+import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
 import de.iosl.blockchain.identity.discovery.registry.data.Payload;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
 import org.junit.Before;
@@ -13,11 +14,16 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.web3j.crypto.*;
+import org.web3j.utils.Numeric;
+
+import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,28 +36,40 @@ public class DiscoveryControllerRestTest {
 	@Autowired
 	private DiscoveryService discoveryService;
 
-	private static AsymmetricCryptEngine<Object> ENGINE;
-
-	private static final String ETH_ID = "ETH_ID";
+	private static final String FILE = "sample_wallet.json";
 	private static final String DOMAIN = "example.com";
 	private static final int PORT = 3003;
+	private static String ETH_ID;
+	private static String ETH_PUBLIC_KEY;
 	private static String PUBLIC_KEY;
+	private static Credentials credentials;
 
-	private String mac;
+	private static EthereumSigner ALGORITHM;
+
 	private RegistryEntry registryEntry;
 
 	@BeforeClass
-	public static void init() {
-		ENGINE = CryptEngine.generate().json().rsa();
-		PUBLIC_KEY = KeyConverter.from(ENGINE.getPublicKey()).toBase64();
+	public static void init() throws Exception {
+		ClassPathResource resource = new ClassPathResource(FILE);
+		File file = resource.getFile();
+
+		credentials = WalletUtils.loadCredentials("asd", file);
+
+		ETH_ID = Numeric.prependHexPrefix(Keys.getAddress(credentials.getEcKeyPair().getPublicKey()));
+		ETH_PUBLIC_KEY = KeyConverter.fromECDSA(credentials.getEcKeyPair().getPublicKey());
+		PUBLIC_KEY = "SOME_PUBLIC_KEY";
+
+		ALGORITHM = new EthereumSigner();
 	}
 
 	@Before
 	public void setup() throws Exception {
 		Payload payload = new Payload(ETH_ID, PUBLIC_KEY, DOMAIN, PORT);
 
-		mac = ENGINE.sign(payload);
-		registryEntry = new RegistryEntry(payload, mac);
+		Sign.SignatureData signature = ALGORITHM.sign(payload, credentials.getEcKeyPair());
+		ECSignature ecSignature = ECSignature.fromSignatureData(signature);
+
+		registryEntry = new RegistryEntry(payload, ecSignature);
 
 		discoveryService.dropEntries();
 	}

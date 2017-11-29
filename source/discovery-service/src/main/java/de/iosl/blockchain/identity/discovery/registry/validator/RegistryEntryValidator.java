@@ -1,26 +1,35 @@
 package de.iosl.blockchain.identity.discovery.registry.validator;
 
-import de.iosl.blockchain.identity.crypt.CryptEngine;
-import de.iosl.blockchain.identity.crypt.KeyConverter;
-import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
+import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
+import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
+import de.iosl.blockchain.identity.discovery.registry.data.Payload;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
+import org.web3j.crypto.Keys;
+import org.web3j.crypto.Sign;
+import org.web3j.utils.Numeric;
 
-import java.security.PublicKey;
+import java.math.BigInteger;
 
 @Component
 public class RegistryEntryValidator {
 
-	public boolean isValid(@NonNull RegistryEntry registryEntry) {
-		PublicKey publicKey = KeyConverter.from(registryEntry.getPayload().getPublicKey()).toPublicKey();
+	private EthereumSigner algorithm = new EthereumSigner();
 
-		AsymmetricCryptEngine<Object> cryptEngine = CryptEngine.instance().json().rsa();
-		return cryptEngine.isSignatureAuthentic(registryEntry.getMac(), registryEntry.getPayload(), publicKey);
+	public boolean isValid(@NonNull RegistryEntry registryEntry) {
+		String extractedAddress = ethAddressFromSignature(registryEntry.getPayload(), registryEntry.getSignature());
+		return extractedAddress.equals(registryEntry.getPayload().getEthID());
 	}
 
-	private boolean validateEthereumAdress(@NonNull String ethID, @NonNull PublicKey publicKey) {
-		// todo: implement
-		return true;
+	private String ethAddressFromSignature(@NonNull Payload payload, @NonNull ECSignature signature) {
+		Sign.SignatureData signatureData = signature.toSignatureData();
+
+		BigInteger publicKey = algorithm.verifySignature(payload, signatureData);
+		return addressFromPublicKey(publicKey);
+	}
+
+	public String addressFromPublicKey(BigInteger publicKey) {
+		return Numeric.prependHexPrefix(Keys.getAddress(publicKey));
 	}
 }
