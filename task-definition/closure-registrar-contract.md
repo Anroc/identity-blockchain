@@ -34,8 +34,8 @@ This includes:
 ### User
 
 #### Frontend
-* create an view where the user see's all his closures
-* create an view where the user see's all the closure requests and where he can deny or accept those requests
+* create a view where the user sees all his closures
+* create a view where the user sees all the closure requests and where he can deny or accept those requests
 
 #### Database
 * save closure
