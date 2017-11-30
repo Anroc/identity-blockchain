@@ -1,4 +1,4 @@
-group 'discovery-serivce'
+group 'discovery-service'
 version '1.0-SNAPSHOT'
 
 buildscript {
