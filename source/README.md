@@ -1,5 +1,6 @@
-## Gralde Wrapper
+## Gradle Wrapper
 
+Initialize gradle wrapper:
 ```
-gradle wrapper --gradle-version 4.3.2
+gradle wrapper --gradle-version 4.3.1
 ```
