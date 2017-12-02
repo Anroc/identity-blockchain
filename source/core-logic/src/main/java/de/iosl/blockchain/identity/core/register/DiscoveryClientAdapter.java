@@ -1,10 +1,13 @@
 package de.iosl.blockchain.identity.core.register;
 
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
-import feign.*;
+import feign.Param;
+import feign.QueryMap;
+import feign.RequestLine;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface DiscoveryClientAdapter {
 
@@ -15,5 +18,8 @@ public interface DiscoveryClientAdapter {
 
 	@RequestLine("POST " + PROVIDER_PATH)
 	void register(RegistryEntry registryEntry);
+
+	@RequestLine("GET " + PROVIDER_PATH + "/{ethId}")
+	Optional<RegistryEntry> getEntry(@Param("ethID") String ethId);
 
 }

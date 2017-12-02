@@ -18,7 +18,7 @@ public class DiscoveryClientAdapterFactory {
 	public DiscoveryClientAdapter connect() {
 		String url = String.format("%s://%s:%d",
 				blockchainIdentityConfig.getProtocol(),
-				blockchainIdentityConfig.getAddress(),
+				blockchainIdentityConfig.getDiscoveryService().getAddress(),
 				blockchainIdentityConfig.getDiscoveryService().getPort());
 
 		return Feign.builder()
