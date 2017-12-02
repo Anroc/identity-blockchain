@@ -9,6 +9,8 @@ out/
 build/
 *.jar
 !gradle-wrapper.jar
+!local_policy.jar
+!US_export_policy.jar
 
 # os specific
 .DS_STORE
