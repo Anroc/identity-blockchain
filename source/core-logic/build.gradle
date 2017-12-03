@@ -39,6 +39,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("io.github.openfeign:feign-core:9.1.0")
     compile("io.github.openfeign:feign-gson:9.1.0")
+    compile('org.springframework.security:spring-security-core:2.0.2')
     compile project(":crypt-engine")
     compile project(":discovery-service")
     compile project(":lib")
