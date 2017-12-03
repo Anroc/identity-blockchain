@@ -46,6 +46,7 @@ dependencies {
     testCompile("org.assertj:assertj-core:3.4.1")
     testCompile("org.mockito:mockito-core:2.+")
     optional("org.springframework.boot:spring-boot-configuration-processor")
+    compile ("org.springframework.data:spring-data-couchbase:3.0.2.RELEASE")
 }
 
 compileJava.dependsOn(processResources)

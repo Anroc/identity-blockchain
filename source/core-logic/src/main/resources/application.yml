@@ -1,9 +1,15 @@
 spring:
   application.name: Blockchain-Identity-Logic
   profiles.active: default
+  couchbase:
+    bootstrap-hosts: localhost
+    bucket:
+      name: beer-sample
+      password:
 
 blockchain.identity:
   protocol: http
+
 
 ---
 spring:
@@ -15,6 +21,9 @@ blockchain.identity:
   discoveryService:
     port: 8101
     address: localhost
+  database:
+    port: 8091
+    address: srv01.snet.tu-berlin.de
 ---
 spring:
     profiles: production
@@ -24,4 +33,7 @@ blockchain.identity:
     address: srv01.snet.tu-berlin.de
   discoveryService:
     port: 8101
+    address: srv01.snet.tu-berlin.de
+  database:
+    port: 8091
     address: srv01.snet.tu-berlin.de
