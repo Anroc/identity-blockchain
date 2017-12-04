@@ -1,9 +1,11 @@
 package de.iosl.blockchain.identity.core.register;
 
 import de.iosl.blockchain.identity.core.register.data.LoginRequest;
+import de.iosl.blockchain.identity.core.register.data.LoginResponse;
 import de.iosl.blockchain.identity.core.register.keychain.KeyChainService;
 import de.iosl.blockchain.identity.core.register.registry.DiscoveryClient;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
+import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.KeyPair;
 import java.util.UUID;
 
@@ -25,8 +28,10 @@ public class RegisterController {
 	@Autowired
 	private DiscoveryClient discoveryClient;
 
+	private static final String ETHEREUM_ADDR_MOCK = EthereumSigner.addressFromPublicKey(BigInteger.valueOf(98_123_612_091_28L));
+
 	@PostMapping("/register")
-	public String register(@RequestBody @Valid LoginRequest loginRequest) throws IOException {
+	public LoginResponse register(@RequestBody @Valid LoginRequest loginRequest) throws IOException {
 		String password = loginRequest.getPassword();
 		KeyPair keyPair = CryptEngine.generate().with(1024).string().rsa().getAsymmetricCipherKeyPair();
 		CryptEngine.KEY_CHAIN = keyPair;
@@ -38,11 +43,12 @@ public class RegisterController {
 		keyChainService.saveKeyChain(keyPair, keyChainService.getDefaultWalletFile(), password);
 
 		// TODO: replace with real eth ID
-		return UUID.randomUUID().toString();
+
+		return new LoginResponse(ETHEREUM_ADDR_MOCK);
 	}
 
 	@PostMapping("/login")
-	public String login(@RequestBody @Valid LoginRequest loginRequest) throws IOException {
+	public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest) throws IOException {
 		String password = loginRequest.getPassword();
 
 		KeyPair keyPair = keyChainService.readKeyChange(keyChainService.getDefaultWalletFile(), password);
@@ -52,7 +58,7 @@ public class RegisterController {
 		// discoveryClient.register();
 
 		// TODO: replace with real eth ID
-		return UUID.randomUUID().toString();
+		return new LoginResponse(ETHEREUM_ADDR_MOCK);
 	}
 
 	@PostMapping("/logout")
