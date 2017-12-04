@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.crypt.symmetric;
 
 import de.iosl.blockchain.identity.crypt.CypherProcessor;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -20,6 +21,7 @@ public abstract class SymmetricCryptEngine<T> extends CypherProcessor {
 	@Setter
 	private Key symmetricCipherKey;
 
+	@Getter
 	private final int bitSecurity;
 
 	public SymmetricCryptEngine() {

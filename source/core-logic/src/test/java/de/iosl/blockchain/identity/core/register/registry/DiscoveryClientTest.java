@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.register;
+package de.iosl.blockchain.identity.core.register.registry;
 
 import de.iosl.blockchain.identity.core.BasicMockSuite;
 import de.iosl.blockchain.identity.core.config.BlockchainIdentityConfig;

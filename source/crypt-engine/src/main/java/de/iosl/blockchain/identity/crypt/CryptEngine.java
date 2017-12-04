@@ -4,6 +4,7 @@ import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.asymmetic.JsonAsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.asymmetic.StringAsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.symmetric.JsonSymmetricCryptEngine;
+import de.iosl.blockchain.identity.crypt.symmetric.PasswordBasedCryptEngine;
 import de.iosl.blockchain.identity.crypt.symmetric.StringSymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.symmetric.SymmetricCryptEngine;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,8 @@ import java.security.Key;
 import java.security.KeyPair;
 
 public class CryptEngine {
+
+	public volatile static KeyPair KEY_CHAIN;
 
 	private Key key;
 	private KeyPair keyPair;
@@ -54,6 +57,21 @@ public class CryptEngine {
 		return new SubTypeProducer<>(this.key, this.keyPair, this.bitSecurity, Object.class);
 	}
 
+	public PasswordBasedCryptEngine pbe(String password) {
+		PasswordBasedCryptEngine passwordBasedCryptEngine =
+				new PasswordBasedCryptEngine(
+						this.bitSecurity == -1? PasswordBasedCryptEngine.DEFAULT_BIT_SECURITY : this.bitSecurity,
+						password);
+		if (this.bitSecurity == -1) {
+			this.bitSecurity = PasswordBasedCryptEngine.DEFAULT_BIT_SECURITY;
+		}
+		if (this.key == null) {
+			this.key = passwordBasedCryptEngine.generateKey();
+		}
+		passwordBasedCryptEngine.setSymmetricCipherKey(this.key);
+		return passwordBasedCryptEngine;
+	}
+
 	@Data
 	@AllArgsConstructor
 	public class SubTypeProducer<T> {
@@ -63,22 +81,22 @@ public class CryptEngine {
 
 		private Class<T> clazz;
 
-		public SymmetricCryptEngine<T> aes() {
-			SymmetricCryptEngine<T> engine;
+		public StringSymmetricCryptEngine aes() {
+			StringSymmetricCryptEngine engine;
 
-			if(clazz.equals(String.class)) {
-				engine = (SymmetricCryptEngine<T>) new StringSymmetricCryptEngine(
+			if (clazz.equals(String.class)) {
+				engine = new StringSymmetricCryptEngine(
 						bitSecurity == -1 ?
 								SymmetricCryptEngine.DEFAULT_BIT_SECURITY
 								: bitSecurity);
 			} else {
-				engine = (SymmetricCryptEngine<T>) new JsonSymmetricCryptEngine(
+				engine = new JsonSymmetricCryptEngine(
 						bitSecurity == -1 ?
 								SymmetricCryptEngine.DEFAULT_BIT_SECURITY
 								: bitSecurity);
 			}
 
-			if(key != null) {
+			if (key != null) {
 				engine.setSymmetricCipherKey(key);
 			}
 			return engine;

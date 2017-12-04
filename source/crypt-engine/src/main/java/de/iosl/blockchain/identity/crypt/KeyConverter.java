@@ -10,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 public class KeyConverter {
@@ -50,20 +51,25 @@ public class KeyConverter {
 			}
 		}
 
-		public PrivateKey toPrivatekey() {
-			try {
-				return KeyFactory.getInstance(AsymmetricCryptEngine.ALGORITHM).generatePrivate(new X509EncodedKeySpec(key));
-			} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
 		public SecretKey toSymmetricKey() {
 			return new SecretKeySpec(key, 0, key.length, SymmetricCryptEngine.ALGORITHM);
 		}
 
 		public String toBase64() {
 			return new String(Base64.encode(key));
+		}
+
+		public PrivateKey toPrivateKey() {
+			try {
+				KeyFactory kf = KeyFactory.getInstance("RSA"); // or "EC" or whatever
+				return kf.generatePrivate(new PKCS8EncodedKeySpec(key));
+			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		public byte[] toByes() {
+			return key;
 		}
 	}
 }
