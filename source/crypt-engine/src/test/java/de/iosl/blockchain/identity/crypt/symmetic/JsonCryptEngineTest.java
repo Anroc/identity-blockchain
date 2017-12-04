@@ -12,14 +12,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JsonCryptEngineTest {
 
-	private JsonSymmetricCryptEngine jsonCryptEngine;
+	protected JsonSymmetricCryptEngine jsonCryptEngine;
 
 	private static final TestEntity DATA = new TestEntity("Hello World", 1337);
 	private static final TestEntity DATA_UTF_8 = new TestEntity("Hüllü wörld!", 1337);
 
 	@Before
 	public void setup() {
-		jsonCryptEngine = (JsonSymmetricCryptEngine) CryptEngine.generate()
+		this.jsonCryptEngine = initCryptEngine();
+	}
+
+	public JsonSymmetricCryptEngine initCryptEngine() {
+		return (JsonSymmetricCryptEngine) CryptEngine.generate()
 				.with(128)
 				.json()
 				.aes();
@@ -41,12 +45,12 @@ public class JsonCryptEngineTest {
 
 	private void encryptDecrypt(JsonSymmetricCryptEngine engine, TestEntity data) throws Exception {
 
-		String encryptedBase64 = engine.encrypt(data, engine.getSymmetricCipherKey());
+		String encryptedBase64 = engine.encryptEntity(data, engine.getSymmetricCipherKey());
 		byte[] encryptedText = Base64.decode(encryptedBase64);
 
 		assertThat(encryptedText).isNotEqualTo(new ObjectMapper().writer().writeValueAsString(data).getBytes("UTF-8"));
 
-		TestEntity decrypt = engine.decrypt(encryptedBase64, engine.getSymmetricCipherKey(), TestEntity.class);
+		TestEntity decrypt = engine.decryptEntity(encryptedBase64, engine.getSymmetricCipherKey(), TestEntity.class);
 
 		assertThat(decrypt).isEqualTo(data);
 	}

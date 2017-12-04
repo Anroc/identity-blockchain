@@ -1,8 +1,10 @@
-package de.iosl.blockchain.identity.core.register;
+package de.iosl.blockchain.identity.core.register.registry;
 
 import de.iosl.blockchain.identity.core.BasicMockSuite;
 import de.iosl.blockchain.identity.core.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.config.ServiceConfig;
+import de.iosl.blockchain.identity.core.register.registry.DiscoveryClient;
+import de.iosl.blockchain.identity.core.register.registry.DiscoveryClientAdapter;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
 import de.iosl.blockchain.identity.discovery.registry.data.Payload;
