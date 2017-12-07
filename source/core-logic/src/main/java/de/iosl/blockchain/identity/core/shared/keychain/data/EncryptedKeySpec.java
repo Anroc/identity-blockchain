@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.shared.register.keychain.data;
+package de.iosl.blockchain.identity.core.shared.keychain.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
