@@ -16,54 +16,59 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/account")
 public class RegisterController {
 
-	@Autowired
-	private KeyChainService keyChainService;
+    private static final String ETHEREUM_ADDR_MOCK = EthereumSigner
+            .addressFromPublicKey(BigInteger.valueOf(98_123_612_091_28L));
+    @Autowired
+    private KeyChainService keyChainService;
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
-	@Autowired
-	private DiscoveryClient discoveryClient;
+    @PostMapping("/register")
+    public LoginResponse register(@RequestBody @Valid LoginRequest loginRequest)
+            throws IOException {
+        String password = loginRequest.getPassword();
+        KeyPair keyPair = CryptEngine.generate().with(1024).string().rsa()
+                .getAsymmetricCipherKeyPair();
+        CryptEngine.KEY_CHAIN = keyPair;
 
-	private static final String ETHEREUM_ADDR_MOCK = EthereumSigner.addressFromPublicKey(BigInteger.valueOf(98_123_612_091_28L));
+        // String ethID = UUID.randomUUID().toString();
+        // discoveryClient.register();
 
-	@PostMapping("/register")
-	public LoginResponse register(@RequestBody @Valid LoginRequest loginRequest) throws IOException {
-		String password = loginRequest.getPassword();
-		KeyPair keyPair = CryptEngine.generate().with(1024).string().rsa().getAsymmetricCipherKeyPair();
-		CryptEngine.KEY_CHAIN = keyPair;
+        keyChainService.createDir(keyChainService.getDefaultWalletDir());
+        keyChainService
+                .saveKeyChain(keyPair, keyChainService.getDefaultWalletFile(),
+                        password);
 
-		// String ethID = UUID.randomUUID().toString();
-		// discoveryClient.register();
+        // TODO: replace with real eth ID
 
-		keyChainService.createDir(keyChainService.getDefaultWalletDir());
-		keyChainService.saveKeyChain(keyPair, keyChainService.getDefaultWalletFile(), password);
+        return new LoginResponse(ETHEREUM_ADDR_MOCK);
+    }
 
-		// TODO: replace with real eth ID
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest)
+            throws IOException {
+        String password = loginRequest.getPassword();
 
-		return new LoginResponse(ETHEREUM_ADDR_MOCK);
-	}
+        KeyPair keyPair = keyChainService
+                .readKeyChange(keyChainService.getDefaultWalletFile(),
+                        password);
+        CryptEngine.KEY_CHAIN = keyPair;
 
-	@PostMapping("/login")
-	public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest) throws IOException {
-		String password = loginRequest.getPassword();
+        // String ethID = UUID.randomUUID().toString();
+        // discoveryClient.register();
 
-		KeyPair keyPair = keyChainService.readKeyChange(keyChainService.getDefaultWalletFile(), password);
-		CryptEngine.KEY_CHAIN = keyPair;
+        // TODO: replace with real eth ID
+        return new LoginResponse(ETHEREUM_ADDR_MOCK);
+    }
 
-		// String ethID = UUID.randomUUID().toString();
-		// discoveryClient.register();
-
-		// TODO: replace with real eth ID
-		return new LoginResponse(ETHEREUM_ADDR_MOCK);
-	}
-
-	@PostMapping("/logout")
-	public void logout() {
-		// TODO: unregister from discovery Service
-		CryptEngine.KEY_CHAIN = null;
-	}
+    @PostMapping("/logout")
+    public void logout() {
+        // TODO: unregister from discovery Service
+        CryptEngine.KEY_CHAIN = null;
+    }
 }

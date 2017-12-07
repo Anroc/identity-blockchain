@@ -61,9 +61,9 @@ node {
 
         Random random = new Random()
         def testRPCPort = Math.abs(random.nextInt() % 10000) + 10000
-        def couchbasePort = testRPCPort + 1
+        // def couchbasePort = testRPCPort + 1
         def testRPCName = "testRPC-" + testRPCPort
-        def couchbasename = "couchbase-" + couchbasePort
+        // def couchbasename = "couchbase-" + couchbasePort
 
         parallel documentation: {
             stage('pdflatex & biber') {
@@ -79,27 +79,25 @@ node {
         java: {
             try {
                 stage('start test container') {
-                    echo "TestRPC port: " + testRPCPort + ", Couchbase port: " + couchbasePort + "-" + (couchbasePort + 4)
+                    echo "TestRPC port: " + testRPCPort
 
                     sshagent (credentials: ['d76de830-c6b6-4aee-b397-5d8465864f17']) {
-                        sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ' + './jenkins-container.sh' + ' -n ' + couchbasename + ' -p ' + couchbasePort + ' -r ' + (couchbasePort + 1) + '-' + (couchbasePort + 4) + ' -d couchbase'  + ' -s start'
+                        //sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ' + './jenkins-container.sh' + ' -n ' + couchbasename + ' -p ' + couchbasePort + ' -r ' + (couchbasePort + 1) + '-' + (couchbasePort + 4) + ' -d couchbase'  + ' -s start'
                         sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ' + './jenkins-container.sh' + ' -n ' + testRPCName + ' -p ' + testRPCPort + ' -d testRPC'  + ' -s start'
                     }
                 }
 
                 stage('gradle test') {
-                
-                    env.BLOCKCHAIN_IDENTITY_ETHEREUM_ADDRESS = "srv01.snet.tu-berlin.de"
-                    env.BLOCKCHAIN_IDENTITY_COUCHBASE_ADDRESS = "srv01.snet.tu-berlin.de"
+                    
+                    env.SPRING_PROFILES_ACTIVE = "test"
                     env.BLOCKCHAIN_IDENTITY_ETHEREUM_PORT = testRPCPort
-                    env.BLOCKCHAIN_IDENTITY_COUCHBASE_PORT = (couchbasePort + 1)
                 
                     echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
                     sh('printenv')
                     dir (SOURCE_DIR) {
                         sh('./gradlew assemble')
                         try {
-                            sh('./gradlew test -i')
+                            sh('./gradlew test')
                         } finally {
                             step([$class: 'JUnitResultArchiver', testResults: '**/test-results/test/*.xml'])
                         }
@@ -108,10 +106,10 @@ node {
             } finally {
                 stage('stop test container') {
                     echo "Stopping test container..."
-                    echo "TestRPC port: " + testRPCPort + ", Couchbase port: " + couchbasePort + "-" + (couchbasePort + 4)
+                    echo "TestRPC port: " + testRPCPort
 
                     sshagent (credentials: ['d76de830-c6b6-4aee-b397-5d8465864f17']) {
-                        sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ' + './jenkins-container.sh' + ' -n ' + couchbasename + ' -s stop'
+                        //sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ' + './jenkins-container.sh' + ' -n ' + couchbasename + ' -s stop'
                         sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ' + './jenkins-container.sh' + ' -n ' + testRPCName + ' -s stop'
                     }
                 }

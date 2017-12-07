@@ -1,22 +1,36 @@
 package de.iosl.blockchain.identity.discovery.registry.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.couchbase.client.java.repository.annotation.Id;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.couchbase.core.mapping.Document;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegistryEntry {
+@EqualsAndHashCode(callSuper = true)
+@Document
+public class RegistryEntry extends RegistryEntryDTO {
 
-	@Valid
-	@NotNull
-	private Payload payload;
+    @Id
+    private String id;
 
-	@Valid
-	@NotNull
-	private ECSignature signature;
+    @CreatedDate
+    private Date creationDate;
+
+    @LastModifiedDate
+    private Date lastModified;
+
+    @Version
+    private Long version;
+
+    public RegistryEntry(@NonNull Payload payload,
+            @NonNull ECSignature signature, @NonNull String id) {
+        super(payload, signature);
+        this.id = id;
+    }
 }

@@ -11,15 +11,15 @@ import javax.validation.Valid;
 @Data
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix="blockchain.identity")
+@ConfigurationProperties(prefix = "blockchain.identity")
 public class BlockchainIdentityConfig {
 
-	@NotBlank
-	private String protocol;
+    @NotBlank
+    private String protocol;
 
-	@Valid
-	private ServiceConfig core;
+    @Valid
+    private ServiceConfig core;
 
-	@Valid
-	private ServiceConfig discoveryService;
+    @Valid
+    private ServiceConfig discoveryService;
 }

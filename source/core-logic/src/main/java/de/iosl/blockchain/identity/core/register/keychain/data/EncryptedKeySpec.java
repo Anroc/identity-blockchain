@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EncryptedKeySpec {
-	private String key;
-	private String iv;
+    private String key;
+    private String iv;
 }

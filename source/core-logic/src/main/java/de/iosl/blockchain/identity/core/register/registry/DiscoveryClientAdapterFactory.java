@@ -11,19 +11,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class DiscoveryClientAdapterFactory {
 
-	@Autowired
-	private BlockchainIdentityConfig blockchainIdentityConfig;
+    @Autowired
+    private BlockchainIdentityConfig blockchainIdentityConfig;
 
-	@Bean
-	public DiscoveryClientAdapter connect() {
-		String url = String.format("%s://%s:%d",
-				blockchainIdentityConfig.getProtocol(),
-				blockchainIdentityConfig.getDiscoveryService().getAddress(),
-				blockchainIdentityConfig.getDiscoveryService().getPort());
+    @Bean
+    public DiscoveryClientAdapter connect() {
+        String url = String.format("%s://%s:%d",
+                blockchainIdentityConfig.getProtocol(),
+                blockchainIdentityConfig.getDiscoveryService().getAddress(),
+                blockchainIdentityConfig.getDiscoveryService().getPort());
 
-		return Feign.builder()
-				.encoder(new GsonEncoder())
-				.decoder(new GsonDecoder())
-				.target(DiscoveryClientAdapter.class, url);
-	}
+        return Feign.builder()
+                .encoder(new GsonEncoder())
+                .decoder(new GsonDecoder())
+                .target(DiscoveryClientAdapter.class, url);
+    }
 }

@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EncryptedKeyChain {
 
-	private EncryptedKeySpec privateKey;
-	private EncryptedKeySpec publicKey;
+    private EncryptedKeySpec privateKey;
+    private EncryptedKeySpec publicKey;
 
-	private String algorithm;
-	private int bitSecurity;
+    private String algorithm;
+    private int bitSecurity;
 }
