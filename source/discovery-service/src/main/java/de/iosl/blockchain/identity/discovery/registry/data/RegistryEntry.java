@@ -20,7 +20,7 @@ public class RegistryEntry extends RegistryEntryDTO {
     private String id;
 
     @CreatedDate
-	private Date creationDate;
+    private Date creationDate;
 
     @LastModifiedDate
     private Date lastModified;
@@ -28,8 +28,9 @@ public class RegistryEntry extends RegistryEntryDTO {
     @Version
     private Long version;
 
-	public RegistryEntry(@NonNull Payload payload, @NonNull ECSignature signature, @NonNull String id) {
-		super(payload, signature);
-		this.id = id;
-	}
+    public RegistryEntry(@NonNull Payload payload,
+            @NonNull ECSignature signature, @NonNull String id) {
+        super(payload, signature);
+        this.id = id;
+    }
 }

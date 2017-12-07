@@ -9,8 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-@EnableCouchbaseRepositories(basePackages = {"de.iosl.blockchain.identity"})
-public class DiscoveryServiceCouchbaseConfig extends AbstractCouchbaseConfiguration{
+@EnableCouchbaseRepositories(basePackages = { "de.iosl.blockchain.identity" })
+public class DiscoveryServiceCouchbaseConfig
+        extends AbstractCouchbaseConfiguration {
     @Value("${spring.couchbase.bucket.name}")
     private String bucketName;
 

@@ -11,12 +11,12 @@ import org.springframework.data.couchbase.core.mapping.Document;
 @NoArgsConstructor
 @Document
 public class Payload {
-	@Field
-	private String ethID;
-	@Field
-	private String publicKey;
-	@Field
-	private String domainName;
-	@Field
-	private int port;
+    @Field
+    private String ethID;
+    @Field
+    private String publicKey;
+    @Field
+    private String domainName;
+    @Field
+    private int port;
 }

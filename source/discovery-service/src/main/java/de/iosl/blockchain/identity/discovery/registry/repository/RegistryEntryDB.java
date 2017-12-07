@@ -9,15 +9,15 @@ import java.util.List;
 @Component
 public class RegistryEntryDB extends CouchbaseWrapper<RegistryEntry, String> {
 
-	private final RegistryEntryRepository registryEntryRepository;
+    private final RegistryEntryRepository registryEntryRepository;
 
-	@Autowired
-	public RegistryEntryDB(RegistryEntryRepository registryEntryRepository) {
-		super(registryEntryRepository);
-		this.registryEntryRepository = registryEntryRepository;
-	}
+    @Autowired
+    public RegistryEntryDB(RegistryEntryRepository registryEntryRepository) {
+        super(registryEntryRepository);
+        this.registryEntryRepository = registryEntryRepository;
+    }
 
-	public List<RegistryEntry> findAll() {
-		return registryEntryRepository.findAll();
-	}
+    public List<RegistryEntry> findAll() {
+        return registryEntryRepository.findAll();
+    }
 }

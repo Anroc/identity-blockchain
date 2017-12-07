@@ -12,19 +12,19 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class RegistryEntryDTO {
 
-	@Valid
-	@NotNull
-	private Payload payload;
+    @Valid
+    @NotNull
+    private Payload payload;
 
-	@Valid
-	@NotNull
-	private ECSignature signature;
+    @Valid
+    @NotNull
+    private ECSignature signature;
 
-	public RegistryEntry toRegistryEntry() {
-		return new RegistryEntry(
-				getPayload(),
-				getSignature(),
-				getPayload().getEthID()
-		);
-	}
+    public RegistryEntry toRegistryEntry() {
+        return new RegistryEntry(
+                getPayload(),
+                getSignature(),
+                getPayload().getEthID()
+        );
+    }
 }

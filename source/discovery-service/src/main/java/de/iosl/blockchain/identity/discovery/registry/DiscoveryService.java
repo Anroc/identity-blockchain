@@ -14,18 +14,18 @@ import java.util.Optional;
 @Service
 public class DiscoveryService {
 
-	@Autowired
-	private RegistryEntryDB registryEntryDB;
+    @Autowired
+    private RegistryEntryDB registryEntryDB;
 
-	public Optional<RegistryEntry> getEntry(@NonNull String ethId) {
-		return registryEntryDB.findEntity(ethId);
-	}
+    public Optional<RegistryEntry> getEntry(@NonNull String ethId) {
+        return registryEntryDB.findEntity(ethId);
+    }
 
-	public RegistryEntry putEntry(@NonNull RegistryEntry registryEntry) {
-		return registryEntryDB.upsert(registryEntry);
-	}
+    public RegistryEntry putEntry(@NonNull RegistryEntry registryEntry) {
+        return registryEntryDB.upsert(registryEntry);
+    }
 
-	public Collection<RegistryEntry> getEntries() {
-		return registryEntryDB.findAll();
-	}
+    public Collection<RegistryEntry> getEntries() {
+        return registryEntryDB.findAll();
+    }
 }

@@ -15,44 +15,47 @@ import java.security.SignatureException;
 @NoArgsConstructor
 public class EthereumSigner {
 
-	private ObjectMapper objectMapper = new ObjectMapper();
-	private StringAsymmetricCryptEngine stringAsymmetricCryptEngine = new StringAsymmetricCryptEngine();
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private StringAsymmetricCryptEngine stringAsymmetricCryptEngine = new StringAsymmetricCryptEngine();
 
-	private byte[] hash(Object object) {
-		try {
-			return stringAsymmetricCryptEngine.getSHA256Hash(
-					objectMapper.writeValueAsString(object)
-			).getBytes();
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public static String addressFromPublicKey(BigInteger publicKey) {
+        return Numeric.prependHexPrefix(Keys.getAddress(publicKey));
+    }
 
-	public Sign.SignatureData sign(Object payload, ECKeyPair ecKeyPair) {
-		return Sign.signMessage(hash(payload), ecKeyPair);
-	}
+    private byte[] hash(Object object) {
+        try {
+            return stringAsymmetricCryptEngine.getSHA256Hash(
+                    objectMapper.writeValueAsString(object)
+            ).getBytes();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public boolean verifySignature(Object payload, Sign.SignatureData signatureData, BigInteger publicKey) {
-		return publicKey.equals(publicKeyFromSignature(payload, signatureData));
-	}
+    public Sign.SignatureData sign(Object payload, ECKeyPair ecKeyPair) {
+        return Sign.signMessage(hash(payload), ecKeyPair);
+    }
 
-	public boolean verifySignature(Object payload, Sign.SignatureData signatureData, String address) {
-		return address.equals(
-				addressFromPublicKey(
-						publicKeyFromSignature(payload, signatureData)
-				)
-		);
-	}
+    public boolean verifySignature(Object payload,
+            Sign.SignatureData signatureData, BigInteger publicKey) {
+        return publicKey.equals(publicKeyFromSignature(payload, signatureData));
+    }
 
-	private BigInteger publicKeyFromSignature(Object payload, Sign.SignatureData signatureData) {
-		try {
-			return Sign.signedMessageToKey(hash(payload), signatureData);
-		} catch (SignatureException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public boolean verifySignature(Object payload,
+            Sign.SignatureData signatureData, String address) {
+        return address.equals(
+                addressFromPublicKey(
+                        publicKeyFromSignature(payload, signatureData)
+                )
+        );
+    }
 
-	public static String addressFromPublicKey(BigInteger publicKey) {
-		return Numeric.prependHexPrefix(Keys.getAddress(publicKey));
-	}
+    private BigInteger publicKeyFromSignature(Object payload,
+            Sign.SignatureData signatureData) {
+        try {
+            return Sign.signedMessageToKey(hash(payload), signatureData);
+        } catch (SignatureException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

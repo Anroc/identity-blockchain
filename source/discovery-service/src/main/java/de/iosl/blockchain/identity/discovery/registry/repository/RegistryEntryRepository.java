@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RegistryEntryRepository extends CrudRepository <RegistryEntry,String>{
+public interface RegistryEntryRepository
+        extends CrudRepository<RegistryEntry, String> {
 
     @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter}")
     List<RegistryEntry> findAll();

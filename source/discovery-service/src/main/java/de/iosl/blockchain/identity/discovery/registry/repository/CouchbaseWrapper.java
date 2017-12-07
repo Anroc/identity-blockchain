@@ -23,38 +23,38 @@ import static com.couchbase.client.java.query.dsl.Expression.s;
 @RequiredArgsConstructor
 public class CouchbaseWrapper<T, ID extends Serializable> {
 
-	private final CrudRepository<T, ID> repository;
+    private final CrudRepository<T, ID> repository;
 
-	@Autowired
-	private Bucket bucket;
+    @Autowired
+    private Bucket bucket;
 
-	public Optional<T> findEntity(@NonNull ID id) {
-		return Optional.ofNullable(repository.findOne(id));
-	}
+    public Optional<T> findEntity(@NonNull ID id) {
+        return Optional.ofNullable(repository.findOne(id));
+    }
 
-	public boolean exist(@NonNull ID id) {
-		return repository.exists(id);
-	}
+    public boolean exist(@NonNull ID id) {
+        return repository.exists(id);
+    }
 
-	public T upsert(T entity) {
-		return repository.save(entity);
-	}
+    public T upsert(T entity) {
+        return repository.save(entity);
+    }
 
-	public void deleteAll(Class<T> clazz) {
-		Statement statement =
-				Delete.deleteFrom(i(bucket.name()))
-				.where(i("_class").eq(s(clazz.getCanonicalName())));
+    public void deleteAll(Class<T> clazz) {
+        Statement statement =
+                Delete.deleteFrom(i(bucket.name()))
+                        .where(i("_class").eq(s(clazz.getCanonicalName())));
 
-		query(statement);
-	}
+        query(statement);
+    }
 
-	private N1qlQueryResult query(Statement statement) {
-		N1qlQueryResult result = bucket.query(statement);
-		if(! result.finalSuccess()) {
-			throw new ServiceException("Could not delete bucket. Reasons: %s",
-					HttpStatus.INTERNAL_SERVER_ERROR,
-					Arrays.toString(result.errors().toArray()));
-		}
-		return result;
-	}
+    private N1qlQueryResult query(Statement statement) {
+        N1qlQueryResult result = bucket.query(statement);
+        if (!result.finalSuccess()) {
+            throw new ServiceException("Could not delete bucket. Reasons: %s",
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    Arrays.toString(result.errors().toArray()));
+        }
+        return result;
+    }
 }
