@@ -93,10 +93,11 @@ node {
 
             stage('gradle test') {
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                echo "BLOCKCHAIN_IDENTITY_ETHEREUM_PORT: ${env.BLOCKCHAIN_IDENTITY_ETHEREUM_PORT}; BLOCKCHAIN_IDENTITY_COUCHBASE_PORT: ${env.BLOCKCHAIN_IDENTITY_COUCHBASE_PORT}"
                 dir (SOURCE_DIR) {
                     sh('./gradlew assemble')
                     try {
-                        sh('./gradlew test')
+                        sh('./gradlew test -i')
                     } finally {
                         step([$class: 'JUnitResultArchiver', testResults: '**/test-results/test/*.xml'])
                     }
