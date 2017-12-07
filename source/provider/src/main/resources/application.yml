@@ -12,9 +12,6 @@ blockchain.identity:
 spring:
     profiles: default
 blockchain.identity:
-  core:
-    port: 8080
-    address: localhost
   discoveryService:
     port: 8101
     address: localhost
@@ -22,9 +19,6 @@ blockchain.identity:
 spring:
     profiles: production
 blockchain.identity:
-  core:
-    port: 8100
-    address: srv01.snet.tu-berlin.de
   discoveryService:
     port: 8101
     address: srv01.snet.tu-berlin.de
