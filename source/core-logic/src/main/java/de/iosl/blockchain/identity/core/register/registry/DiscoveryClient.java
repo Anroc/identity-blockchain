@@ -5,6 +5,7 @@ import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
 import de.iosl.blockchain.identity.discovery.registry.data.Payload;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
+import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.Getter;
 import lombok.NonNull;
@@ -52,7 +53,7 @@ public class DiscoveryClient {
 		return discoveryClientAdapter.getEntries(queryParam)
 				.stream()
 				.filter(this::isSignatureValid)
-				.map(RegistryEntry::getPayload)
+				.map(RegistryEntryDTO::getPayload)
 				.collect(Collectors.toList());
 	}
 
@@ -67,7 +68,7 @@ public class DiscoveryClient {
 	public Payload getEntry(@NonNull String ethID) {
 		return discoveryClientAdapter.getEntry(ethID)
 				.filter(this::isSignatureValid)
-				.map(RegistryEntry::getPayload)
+				.map(RegistryEntryDTO::getPayload)
 				.orElseThrow(
 						() -> new ServiceException("Could not find provider with ethID: [%s].", HttpStatus.NOT_FOUND, ethID)
 				);
@@ -93,11 +94,11 @@ public class DiscoveryClient {
 		);
 
 		discoveryClientAdapter.register(
-				new RegistryEntry(payload, ecSignature)
+				new RegistryEntryDTO(payload, ecSignature)
 		);
 	}
 
-	protected boolean isSignatureValid(@NonNull RegistryEntry registryEntry) {
+	protected boolean isSignatureValid(@NonNull RegistryEntryDTO registryEntry) {
 		return getSigner().verifySignature(
 				registryEntry.getPayload(),
 				registryEntry.getSignature().toSignatureData(),

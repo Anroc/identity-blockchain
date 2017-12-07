@@ -5,6 +5,8 @@ import de.iosl.blockchain.identity.discovery.registry.DiscoveryService;
 import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
 import de.iosl.blockchain.identity.discovery.registry.data.Payload;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
+import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
+import de.iosl.blockchain.identity.discovery.registry.repository.RegistryEntryDB;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,6 +43,8 @@ public class DiscoveryControllerRestTest {
 	private TestRestTemplate restTemplate;
 	@Autowired
 	private DiscoveryService discoveryService;
+	@Autowired
+	private RegistryEntryDB registryEntryDB;
 
 	private static final String FILE = "sample_wallet.json";
 	private static final String DOMAIN = "example.com";
@@ -51,7 +55,7 @@ public class DiscoveryControllerRestTest {
 
 	private static EthereumSigner ALGORITHM;
 
-	private RegistryEntry registryEntry;
+	private RegistryEntryDTO registryEntryDTO;
 
 	@BeforeClass
 	public static void init() throws Exception {
@@ -66,43 +70,47 @@ public class DiscoveryControllerRestTest {
 		ALGORITHM = new EthereumSigner();
 	}
 
+	@After
 	@Before
-	public void setup() throws Exception {
+	public void capDatabase(){
+		registryEntryDB.deleteAll(RegistryEntry.class);
+	}
+
+	@Before
+	public void setup() {
 		Payload payload = new Payload(ETH_ID, PUBLIC_KEY, DOMAIN, PORT);
 
 		Sign.SignatureData signature = ALGORITHM.sign(payload, credentials.getEcKeyPair());
 		ECSignature ecSignature = ECSignature.fromSignatureData(signature);
 
-		registryEntry = new RegistryEntry(payload.getEthId(), payload, ecSignature);
-
-		discoveryService.dropEntries();
+		registryEntryDTO = new RegistryEntryDTO(payload, ecSignature);
 	}
 
 	@Test
 	public void createEntryTest() {
-		ResponseEntity<?> responseEntity = restTemplate.exchange("/provider", HttpMethod.POST, new HttpEntity<>(registryEntry), Object.class);
+		ResponseEntity<?> responseEntity = restTemplate.exchange("/provider", HttpMethod.POST, new HttpEntity<>(registryEntryDTO), Object.class);
 
 		assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.CREATED);
-		assertThat(discoveryService.getEntry(ETH_ID).get()).isEqualTo(registryEntry);
+		assertThat(registryEntryDB.findEntity(ETH_ID).get()).isEqualToIgnoringNullFields(registryEntryDTO.toRegistryEntry());
 	}
 
 	@Test
 	public void createEntryFailsWithForbidden() {
-		registryEntry.getPayload().setEthId("OTHER_VALUE");
+		registryEntryDTO.getPayload().setEthID("OTHER_VALUE");
 
-		ResponseEntity<?> responseEntity = restTemplate.exchange("/provider", HttpMethod.POST, new HttpEntity<>(registryEntry), Object.class);
+		ResponseEntity<?> responseEntity = restTemplate.exchange("/provider", HttpMethod.POST, new HttpEntity<>(registryEntryDTO), Object.class);
 
 		assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.FORBIDDEN);
 	}
 
 	@Test
 	public void getEntryTest() {
-		discoveryService.putEntry(registryEntry);
+		discoveryService.putEntry(registryEntryDTO.toRegistryEntry());
 
 		ResponseEntity<?> responseEntity = restTemplate.getForEntity("/provider/" + ETH_ID, RegistryEntry.class);
 
 		assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-		assertThat(discoveryService.getEntry(ETH_ID).get()).isEqualTo(registryEntry);
+		assertThat(registryEntryDB.findEntity(ETH_ID).get()).isEqualToIgnoringNullFields(registryEntryDTO.toRegistryEntry());
 	}
 
 	@Test
@@ -114,66 +122,68 @@ public class DiscoveryControllerRestTest {
 
 	@Test
 	public void getEntriesTest() {
-		discoveryService.putEntry(registryEntry);
+		registryEntryDB.upsert(registryEntryDTO.toRegistryEntry());
 
-		RegistryEntry otherEntry = new RegistryEntry(
-				"asd",
+		RegistryEntryDTO otherEntryDTO = new RegistryEntryDTO(
 				new Payload(
 						"asd",
 						"asd",
 						"bagutette.management",
 						3
 				),
-				null
+				new ECSignature(
+						"r",
+						"s",
+						(byte) 8
+				)
 		);
 
-		discoveryService.putEntry(otherEntry);
+		registryEntryDB.upsert(otherEntryDTO.toRegistryEntry());
 
-		ResponseEntity<List<RegistryEntry>> responseEntity = restTemplate.exchange(
+		ResponseEntity<List<RegistryEntryDTO>> responseEntity = restTemplate.exchange(
 				"/provider",
 				HttpMethod.GET,
 				HttpEntity.EMPTY,
-				new ParameterizedTypeReference<List<RegistryEntry>>() {}
+				new ParameterizedTypeReference<List<RegistryEntryDTO>>() {}
 		);
 
 		assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
 		assertThat(responseEntity.getBody()).hasSize(2);
+		assertThat(responseEntity.getBody()).containsExactlyInAnyOrder(registryEntryDTO, otherEntryDTO);
 	}
 
 	@Test
 	public void getEntriesWithQueryParameterTest() {
-		discoveryService.putEntry(registryEntry);
+		discoveryService.putEntry(registryEntryDTO.toRegistryEntry());
 
 		RegistryEntry otherEntry = new RegistryEntry(
-				"asd",
 				new Payload(
 						"asd",
 						"asd",
 						"bagutette.management",
 						3
 				),
-				null
+				new ECSignature(
+						"r",
+						"s",
+						(byte) 8
+				),
+				"asd"
 		);
 
 		discoveryService.putEntry(otherEntry);
 
 		Map<String, String> maps = new HashMap<>();
 		maps.put("domainName", DOMAIN);
-		ResponseEntity<List<RegistryEntry>> responseEntity = restTemplate.exchange(
+		ResponseEntity<List<RegistryEntryDTO>> responseEntity = restTemplate.exchange(
 				"/provider?domainName=" + DOMAIN,
 				HttpMethod.GET,
 				HttpEntity.EMPTY,
-				new ParameterizedTypeReference<List<RegistryEntry>>() {}
+				new ParameterizedTypeReference<List<RegistryEntryDTO>>() {}
 		);
 
 		assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
 		assertThat(responseEntity.getBody()).hasSize(1);
-		assertThat(responseEntity.getBody().get(0)).isEqualTo(registryEntry);
+		assertThat(responseEntity.getBody().get(0)).isEqualTo(registryEntryDTO);
 	}
-
-	@After
-    @Before
-    public void capDatabase(){
-	    discoveryService.dropEntries();
-    }
 }

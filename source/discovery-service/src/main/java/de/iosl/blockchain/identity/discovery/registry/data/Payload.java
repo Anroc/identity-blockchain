@@ -13,7 +13,7 @@ import org.springframework.data.couchbase.core.mapping.Document;
 @Document
 public class Payload {
 	@Field
-	private String ethId;
+	private String ethID;
 	@Field
 	private String publicKey;
 	@Field
