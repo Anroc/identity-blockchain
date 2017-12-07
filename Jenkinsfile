@@ -79,14 +79,14 @@ node {
         java: {
             environment {
                 BLOCKCHAIN_IDENTITY_ETHEREUM_PORT = testRPCPort
-                BLOCKCHAIN_IDENTITY_COUCHBASE_PORT = couchbasePort + 1
+                BLOCKCHAIN_IDENTITY_COUCHBASE_PORT = (couchbasePort + 1)
             }
+
             stage('start test container') {
-                echo "Starting test container..."
-                echo "TestRPC port: " + testRPCPort + ", Couchbase port: " + couchbasePort + "-" + couchbasePort + 4
+                echo "TestRPC port: " + testRPCPort + ", Couchbase port: " + couchbasePort + "-" + (couchbasePort + 4)
 
                 sshagent (credentials: ['d76de830-c6b6-4aee-b397-5d8465864f17']) {
-                    sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ' + './jenkins-container.sh' + ' -n ' + couchbasename + ' -p ' + couchbasePort + ' -r ' + couchbasePort + 1 + '-' + couchbasePort + 4 + ' -d couchbase'  + ' -s start'
+                    sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ' + './jenkins-container.sh' + ' -n ' + couchbasename + ' -p ' + couchbasePort + ' -r ' + (couchbasePort + 1) + '-' + (couchbasePort + 4) + ' -d couchbase'  + ' -s start'
                     sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ' + './jenkins-container.sh' + ' -n ' + testRPCName + ' -p ' + testRPCPort + ' -d testRPC'  + ' -s start'
                 }
             }
@@ -105,7 +105,7 @@ node {
 
             stage('stop test container') {
                 echo "Stopping test container..."
-                echo "TestRPC port: " + testRPCPort + ", Couchbase port: " + couchbasePort + "-" + couchbasePort + 4
+                echo "TestRPC port: " + testRPCPort + ", Couchbase port: " + couchbasePort + "-" + (couchbasePort + 4)
 
                 sshagent (credentials: ['d76de830-c6b6-4aee-b397-5d8465864f17']) {
                     sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de ' + './jenkins-container.sh' + ' -n ' + couchbasename + ' -s stop'
