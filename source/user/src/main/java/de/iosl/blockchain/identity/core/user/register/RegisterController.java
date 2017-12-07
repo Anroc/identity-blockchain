@@ -1,9 +1,9 @@
 package de.iosl.blockchain.identity.core.user.register;
 
-import de.iosl.blockchain.identity.core.user.register.data.LoginRequest;
-import de.iosl.blockchain.identity.core.user.register.data.LoginResponse;
 import de.iosl.blockchain.identity.core.shared.register.keychain.KeyChainService;
 import de.iosl.blockchain.identity.core.shared.register.registry.DiscoveryClient;
+import de.iosl.blockchain.identity.core.user.register.data.LoginRequest;
+import de.iosl.blockchain.identity.core.user.register.data.LoginResponse;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import org.springframework.beans.factory.annotation.Autowired;
