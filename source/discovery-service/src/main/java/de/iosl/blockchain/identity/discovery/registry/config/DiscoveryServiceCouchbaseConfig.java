@@ -1,8 +1,12 @@
 package de.iosl.blockchain.identity.discovery.registry.config;
 
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.cluster.ClusterInfo;
+import com.couchbase.client.java.env.CouchbaseEnvironment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.couchbase.config.AbstractCouchbaseConfiguration;
+import org.springframework.data.couchbase.core.CouchbaseTemplate;
 import org.springframework.data.couchbase.repository.config.EnableCouchbaseRepositories;
 
 import java.util.Arrays;
@@ -34,4 +38,5 @@ public class DiscoveryServiceCouchbaseConfig extends AbstractCouchbaseConfigurat
     protected String getBucketPassword() {
         return this.password;
     }
+
 }
