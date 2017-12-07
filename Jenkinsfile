@@ -97,7 +97,7 @@ node {
                     dir (SOURCE_DIR) {
                         sh('./gradlew assemble')
                         try {
-                            sh('./gradlew test -i')
+                            sh('./gradlew test')
                         } finally {
                             step([$class: 'JUnitResultArchiver', testResults: '**/test-results/test/*.xml'])
                         }
