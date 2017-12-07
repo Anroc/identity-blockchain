@@ -59,6 +59,12 @@ node {
         slackPrepare()
         checkout scm
 
+        Random random = new Random()
+        def testRPCPort = Math.abs(random.nextInt() % 10000) + 10000 
+        def couchbasePort = Math.abs(Math.abs(random.nextInt() % 10000) + testRPCPort)
+        def testRPCName = "testRPC-" + testRPCPort
+        def couchbasename = "couchbase-" + couchbasePort
+
         parallel documentation: {
             stage('pdflatex & biber') {
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
@@ -71,6 +77,27 @@ node {
             }
         },
         java: {
+            stage('start test container') {
+                echo "Starting test container..."
+                echo "TestRPC port: " + testRPCPort + ", Couchbase port: " + couchbasePort + "-" + couchbasePort + 4
+
+                sshagent (credentials: ['d76de830-c6b6-4aee-b397-5d8465864f17']) {
+                    sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de '
+                       + './jenkins-container.sh'
+                       + ' -n ' + couchbasename
+                       + ' -p ' + couchbasePort
+                       + ' -r ' + couchbasePort + 1 + '-' + couchbasePort + 4
+                       + ' -d couchbase' 
+                       + ' -s start'
+                    sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de '
+                       + './jenkins-container.sh'
+                       + ' -n ' + testRPCName
+                       + ' -p ' + testRPCPort
+                       + ' -d testRPC' 
+                       + ' -s start'
+                }
+            }
+
             stage('gradle test') {
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
                 dir (SOURCE_DIR) {
@@ -80,6 +107,22 @@ node {
                     } finally {
                         step([$class: 'JUnitResultArchiver', testResults: '**/test-results/test/*.xml'])
                     }
+                }
+            }
+
+            stage('stop test container') {
+                echo "Stopping test container..."
+                echo "TestRPC port: " + testRPCPort + ", Couchbase port: " + couchbasePort + "-" + couchbasePort + 4
+
+                sshagent (credentials: ['d76de830-c6b6-4aee-b397-5d8465864f17']) {
+                    sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de '
+                       + './jenkins-container.sh'
+                       + ' -n ' + couchbasename
+                       + ' -s stop'
+                    sh 'ssh -o StrictHostKeyChecking=no -l jenkins srv01.snet.tu-berlin.de '
+                       + './jenkins-container.sh'
+                       + ' -n ' + testRPCName
+                       + ' -s stop'
                 }
             }
         }
