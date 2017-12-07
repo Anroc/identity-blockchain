@@ -87,10 +87,10 @@ node {
             }
 
             stage('gradle test') {
-                environment {
-                    BLOCKCHAIN_IDENTITY_ETHEREUM_PORT = testRPCPort
-                    BLOCKCHAIN_IDENTITY_COUCHBASE_PORT = (couchbasePort + 1)
-                }
+                
+                env.BLOCKCHAIN_IDENTITY_ETHEREUM_PORT = testRPCPort
+                env.BLOCKCHAIN_IDENTITY_COUCHBASE_PORT = (couchbasePort + 1)
+                
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
                 sh('printenv')
                 dir (SOURCE_DIR) {
