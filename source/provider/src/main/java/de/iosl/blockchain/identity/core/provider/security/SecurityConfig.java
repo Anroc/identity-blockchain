@@ -11,21 +11,22 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private CredentialConfig credentialConfig;
+    @Autowired
+    private CredentialConfig credentialConfig;
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication()
-				.withUser(credentialConfig.getUsername())
-				.password(credentialConfig.getPassword())
-				.roles("ADMIN");
-	}
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth)
+            throws Exception {
+        auth.inMemoryAuthentication()
+                .withUser(credentialConfig.getUsername())
+                .password(credentialConfig.getPassword())
+                .roles("ADMIN");
+    }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().anyRequest().fullyAuthenticated();
-		http.httpBasic();
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests().anyRequest().fullyAuthenticated();
+        http.httpBasic();
+    }
 
 }

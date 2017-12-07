@@ -16,8 +16,8 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix = "blockchain.identity.provider.credentials")
 public class CredentialConfig {
 
-	@NotBlank
-	private String username;
-	@NotNull
-	private String password;
+    @NotBlank
+    private String username;
+    @NotNull
+    private String password;
 }
