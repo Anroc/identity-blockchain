@@ -60,8 +60,8 @@ node {
         checkout scm
 
         Random random = new Random()
-        def testRPCPort = Math.abs(random.nextInt() % 10000) + 10000 
-        def couchbasePort = Math.abs(Math.abs(random.nextInt() % 10000) + testRPCPort)
+        def testRPCPort = Math.abs(random.nextInt() % 10000) + 10000
+        def couchbasePort = testRPCPort + 1
         def testRPCName = "testRPC-" + testRPCPort
         def couchbasename = "couchbase-" + couchbasePort
 
@@ -77,6 +77,10 @@ node {
             }
         },
         java: {
+            environment {
+                BLOCKCHAIN_IDENTITY_ETHEREUM_PORT = testRPCPort
+                BLOCKCHAIN_IDENTITY_COUCHBASE_PORT = couchbasePort + 1
+            }
             stage('start test container') {
                 echo "Starting test container..."
                 echo "TestRPC port: " + testRPCPort + ", Couchbase port: " + couchbasePort + "-" + couchbasePort + 4
