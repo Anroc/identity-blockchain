@@ -89,6 +89,8 @@ node {
 
                 stage('gradle test') {
                 
+                    env.BLOCKCHAIN_IDENTITY_ETHEREUM_ADDRESS = "srv01.snet.tu-berlin.de"
+                    env.BLOCKCHAIN_IDENTITY_COUCHBASE_ADDRESS = "srv01.snet.tu-berlin.de"
                     env.BLOCKCHAIN_IDENTITY_ETHEREUM_PORT = testRPCPort
                     env.BLOCKCHAIN_IDENTITY_COUCHBASE_PORT = (couchbasePort + 1)
                 
