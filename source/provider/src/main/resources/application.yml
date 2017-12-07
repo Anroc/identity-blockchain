@@ -4,6 +4,9 @@ spring:
 
 blockchain.identity:
   protocol: http
+  provider.credentials:
+    username: admin
+    password: password
 
 ---
 spring:

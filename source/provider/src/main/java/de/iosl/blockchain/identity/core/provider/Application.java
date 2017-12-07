@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.user;
+package de.iosl.blockchain.identity.core.provider;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
