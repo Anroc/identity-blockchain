@@ -1,8 +1,8 @@
-package de.iosl.blockchain.identity.core.shared.register.keychain;
+package de.iosl.blockchain.identity.core.shared.keychain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.iosl.blockchain.identity.core.shared.register.keychain.data.EncryptedKeyChain;
-import de.iosl.blockchain.identity.core.shared.register.keychain.data.EncryptedKeySpec;
+import de.iosl.blockchain.identity.core.shared.keychain.data.EncryptedKeyChain;
+import de.iosl.blockchain.identity.core.shared.keychain.data.EncryptedKeySpec;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.symmetric.PasswordBasedCryptEngine;

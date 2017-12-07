@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.shared.register.keychain;
+package de.iosl.blockchain.identity.core.shared.keychain;
 
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import org.junit.After;

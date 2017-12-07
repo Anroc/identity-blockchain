@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.shared.register.registry;
+package de.iosl.blockchain.identity.core.shared.registry;
 
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import feign.Feign;

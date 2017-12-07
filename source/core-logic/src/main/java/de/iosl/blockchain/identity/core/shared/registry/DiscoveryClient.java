@@ -1,10 +1,10 @@
-package de.iosl.blockchain.identity.core.shared.register.registry;
+package de.iosl.blockchain.identity.core.shared.registry;
 
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
-import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
-import de.iosl.blockchain.identity.discovery.registry.data.Payload;
-import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
+import de.iosl.blockchain.identity.core.shared.registry.data.ECSignature;
+import de.iosl.blockchain.identity.core.shared.registry.data.Payload;
+import de.iosl.blockchain.identity.core.shared.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.Getter;
 import lombok.NonNull;
