@@ -12,9 +12,9 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class LoginRequest {
 
-	@NotBlank
-	private String password;
-	@NotNull
-	private ServiceType serviceType;
+    @NotBlank
+    private String password;
+    @NotNull
+    private ServiceType serviceType;
 
 }

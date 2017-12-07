@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -12,7 +13,7 @@ import java.util.List;
 public class LoginController {
 
 	@GetMapping
-	public List<String> testmehtod() {
-		return Lists.newArrayList("Vim ist bessel als java lol.");
+	public List<String> getAllClaims() {
+		return new ArrayList<>();
 	}
 }

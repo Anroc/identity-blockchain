@@ -10,15 +10,17 @@ import java.security.NoSuchAlgorithmException;
 
 public abstract class CypherProcessor {
 
-	abstract public String getAlgorithm();
+    abstract public String getAlgorithm();
 
-	protected byte[] process(byte[] data, Key key, int mode) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-		try {
-			Cipher cipher = Cipher.getInstance(getAlgorithm());
-			cipher.init(mode, key);
-			return cipher.doFinal(data);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    protected byte[] process(byte[] data, Key key, int mode)
+            throws InvalidKeyException, BadPaddingException,
+            IllegalBlockSizeException {
+        try {
+            Cipher cipher = Cipher.getInstance(getAlgorithm());
+            cipher.init(mode, key);
+            return cipher.doFinal(data);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

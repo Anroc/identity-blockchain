@@ -9,36 +9,38 @@ import org.springframework.http.HttpStatus;
  */
 public class ServiceException extends RuntimeException {
 
-	/**
-	 * status code that will be returned to the client.
-	 */
-	private final HttpStatus httpStatus;
+    /**
+     * status code that will be returned to the client.
+     */
+    private final HttpStatus httpStatus;
 
-	public ServiceException(HttpStatus httpStatus) {
-		this.httpStatus = httpStatus;
-	}
+    public ServiceException(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
+    }
 
-	public ServiceException(String formatString, HttpStatus httpStatus, Object... args) {
-		super(String.format(formatString, args));
-		this.httpStatus = httpStatus;
-	}
+    public ServiceException(String formatString, HttpStatus httpStatus,
+            Object... args) {
+        super(String.format(formatString, args));
+        this.httpStatus = httpStatus;
+    }
 
-	public ServiceException(String formatString, Throwable cause, HttpStatus httpStatus, Object... args) {
-		super(String.format(formatString, args), cause);
-		this.httpStatus = httpStatus;
-	}
+    public ServiceException(String formatString, Throwable cause,
+            HttpStatus httpStatus, Object... args) {
+        super(String.format(formatString, args), cause);
+        this.httpStatus = httpStatus;
+    }
 
-	public ServiceException(Throwable cause, HttpStatus httpStatus) {
-		super(cause);
-		this.httpStatus = httpStatus;
-	}
+    public ServiceException(Throwable cause, HttpStatus httpStatus) {
+        super(cause);
+        this.httpStatus = httpStatus;
+    }
 
-	public ServiceException(String formatString, Throwable e, Object... args) {
-		super(String.format(formatString, args), e);
-		this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-	}
+    public ServiceException(String formatString, Throwable e, Object... args) {
+        super(String.format(formatString, args), e);
+        this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
 
-	public HttpStatus getHttpStatus() {
-		return httpStatus;
-	}
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
 }

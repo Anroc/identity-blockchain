@@ -8,9 +8,9 @@ import javax.validation.constraints.Min;
 @Data
 public class ServiceConfig {
 
-	@Min(1024)
-	private int port;
+    @Min(1024)
+    private int port;
 
-	@NotBlank
-	private String address;
+    @NotBlank
+    private String address;
 }
