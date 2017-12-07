@@ -1,6 +1,7 @@
 rootProject.name = 'blockchain-identity'
 
 include 'user'
+include 'provider'
 include 'core-logic'
 include 'crypt-engine'
 include 'discovery-service'
