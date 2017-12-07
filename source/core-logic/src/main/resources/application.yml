@@ -15,6 +15,9 @@ blockchain.identity:
   discoveryService:
     port: 8101
     address: localhost
+  ethereum:
+    port: 8545
+    address: localhost
 ---
 spring:
     profiles: production
@@ -24,4 +27,7 @@ blockchain.identity:
     address: srv01.snet.tu-berlin.de
   discoveryService:
     port: 8101
+    address: srv01.snet.tu-berlin.de
+  ethereum:
+    port: 8545
     address: srv01.snet.tu-berlin.de

@@ -17,8 +17,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import de.iosl.blockchain.identity.eba.util.Web3jUtils;
-import de.iosl.blockchain.identity.eba.util.Web3jConstants;
+import de.iosl.blockchain.identity.eba.main.util.Web3jUtils;
+import de.iosl.blockchain.identity.eba.main.util.Web3jConstants;
 
 
 public class AbstractEthereumTest {
@@ -31,7 +31,7 @@ public class AbstractEthereumTest {
 
 	@Before
 	public void setUp() throws Exception {
-		 web3j = Web3jUtils.buildHttpClient("192.168.99.100", Web3jConstants.CLIENT_PORT);
+//		 web3j = Web3jUtils.buildHttpClient("192.168.99.100", Web3jConstants.);
 	}
 
 	void ensureFunds(String address, BigInteger amountWei) throws Exception {

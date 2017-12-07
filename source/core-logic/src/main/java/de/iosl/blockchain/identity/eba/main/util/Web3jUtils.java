@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.eba.util;
+package de.iosl.blockchain.identity.eba.main.util;
 
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
@@ -19,8 +19,10 @@ import java.util.concurrent.ExecutionException;
 public class Web3jUtils {
 
 	public static Web3j buildHttpClient(String ip, String port) {
-		String url = String.format("http://%s:%s", ip, port);
-		return Web3j.build(new HttpService(url));
+//		String url = String.format("http://%s:%s", ip, port);
+//		return Web3j.build(new HttpService(url));
+		return Web3j.build(new HttpService());  // defaults to http://localhost:8545/
+
 	}
 
 	public static String getClientVersion(Web3j web3j) throws InterruptedException, ExecutionException {
