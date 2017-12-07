@@ -92,7 +92,7 @@ node {
                     BLOCKCHAIN_IDENTITY_COUCHBASE_PORT = (couchbasePort + 1)
                 }
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-                echo "BLOCKCHAIN_IDENTITY_ETHEREUM_PORT: ${env.BLOCKCHAIN_IDENTITY_ETHEREUM_PORT}; BLOCKCHAIN_IDENTITY_COUCHBASE_PORT: ${env.BLOCKCHAIN_IDENTITY_COUCHBASE_PORT}"
+                sh('printenv')
                 dir (SOURCE_DIR) {
                     sh('./gradlew assemble')
                     try {
