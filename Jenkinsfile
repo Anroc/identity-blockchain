@@ -77,11 +77,6 @@ node {
             }
         },
         java: {
-            environment {
-                BLOCKCHAIN_IDENTITY_ETHEREUM_PORT = testRPCPort
-                BLOCKCHAIN_IDENTITY_COUCHBASE_PORT = (couchbasePort + 1)
-            }
-
             stage('start test container') {
                 echo "TestRPC port: " + testRPCPort + ", Couchbase port: " + couchbasePort + "-" + (couchbasePort + 4)
 
@@ -92,6 +87,10 @@ node {
             }
 
             stage('gradle test') {
+                environment {
+                    BLOCKCHAIN_IDENTITY_ETHEREUM_PORT = testRPCPort
+                    BLOCKCHAIN_IDENTITY_COUCHBASE_PORT = (couchbasePort + 1)
+                }
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
                 echo "BLOCKCHAIN_IDENTITY_ETHEREUM_PORT: ${env.BLOCKCHAIN_IDENTITY_ETHEREUM_PORT}; BLOCKCHAIN_IDENTITY_COUCHBASE_PORT: ${env.BLOCKCHAIN_IDENTITY_COUCHBASE_PORT}"
                 dir (SOURCE_DIR) {
