@@ -4,7 +4,6 @@ import de.iosl.blockchain.identity.core.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
 import de.iosl.blockchain.identity.discovery.registry.data.Payload;
-import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.Getter;

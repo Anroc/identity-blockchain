@@ -1,7 +1,6 @@
 package de.iosl.blockchain.identity.discovery.registry.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
-import com.couchbase.client.java.repository.annotation.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

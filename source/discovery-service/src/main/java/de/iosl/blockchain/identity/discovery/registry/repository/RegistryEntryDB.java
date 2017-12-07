@@ -1,12 +1,10 @@
 package de.iosl.blockchain.identity.discovery.registry.repository;
 
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class RegistryEntryDB extends CouchbaseWrapper<RegistryEntry, String> {

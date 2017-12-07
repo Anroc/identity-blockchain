@@ -16,7 +16,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/account")

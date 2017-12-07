@@ -1,8 +1,6 @@
 package de.iosl.blockchain.identity.discovery.registry.repository;
 
 import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.error.DocumentAlreadyExistsException;
-import com.couchbase.client.java.error.DocumentDoesNotExistException;
 import com.couchbase.client.java.query.Delete;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.Statement;
@@ -16,7 +14,6 @@ import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static com.couchbase.client.java.query.dsl.Expression.i;

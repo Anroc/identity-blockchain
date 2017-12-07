@@ -3,7 +3,6 @@ package de.iosl.blockchain.identity.discovery.registry.validator;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
 import de.iosl.blockchain.identity.discovery.registry.data.Payload;
-import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;

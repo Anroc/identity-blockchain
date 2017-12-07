@@ -1,6 +1,5 @@
 package de.iosl.blockchain.identity.core.register.registry;
 
-import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
 import feign.Param;
 import feign.QueryMap;
@@ -15,7 +14,7 @@ public interface DiscoveryClientAdapter {
 	String PROVIDER_PATH = "/provider";
 
 	@RequestLine("GET " + PROVIDER_PATH)
-	List<RegistryEntry> getEntries(@QueryMap Map<String, String> queryParam);
+	List<RegistryEntryDTO> getEntries(@QueryMap Map<String, String> queryParam);
 
 	@RequestLine("POST " + PROVIDER_PATH)
 	void register(RegistryEntryDTO registryEntry);

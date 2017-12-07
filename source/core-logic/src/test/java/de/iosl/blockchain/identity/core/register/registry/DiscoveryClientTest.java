@@ -3,12 +3,10 @@ package de.iosl.blockchain.identity.core.register.registry;
 import de.iosl.blockchain.identity.core.BasicMockSuite;
 import de.iosl.blockchain.identity.core.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.config.ServiceConfig;
-import de.iosl.blockchain.identity.core.register.registry.DiscoveryClient;
-import de.iosl.blockchain.identity.core.register.registry.DiscoveryClientAdapter;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
 import de.iosl.blockchain.identity.discovery.registry.data.Payload;
-import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
+import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +36,7 @@ public class DiscoveryClientTest extends BasicMockSuite {
 	@InjectMocks
 	private DiscoveryClient discoveryClient;
 
-	private RegistryEntry registryEntry;
+	private RegistryEntryDTO registryEntry;
 	private Payload payload;
 	private ECSignature ecSignature;
 	private static final String ETH_ID = "ETH_ID";
@@ -58,7 +56,7 @@ public class DiscoveryClientTest extends BasicMockSuite {
 				signer.sign(payload, ECKeyPair.create(ecPrivateKey))
 		);
 
-		registryEntry = new RegistryEntry(payload, ecSignature);
+		registryEntry = new RegistryEntryDTO(payload, ecSignature);
 
 		doReturn(signer).when(discoveryClient).getSigner();
 	}
@@ -86,7 +84,7 @@ public class DiscoveryClientTest extends BasicMockSuite {
 	public void registerTest() {
 		ServiceConfig serviceConfig = mock(ServiceConfig.class);
 
-		doNothing().when(discoveryClientAdapter).register(any(RegistryEntry.class));
+		doNothing().when(discoveryClientAdapter).register(any(RegistryEntryDTO.class));
 		doReturn(serviceConfig).when(config).getCore();
 		doReturn("localhost").when(serviceConfig).getAddress();
 		doReturn(8080).when(serviceConfig).getPort();
@@ -98,6 +96,6 @@ public class DiscoveryClientTest extends BasicMockSuite {
 
 		discoveryClient.register(ethID, rsaPublicKey, ecPrivateKey);
 
-		verify(discoveryClientAdapter).register(any(RegistryEntry.class));
+		verify(discoveryClientAdapter).register(any(RegistryEntryDTO.class));
 	}
 }
