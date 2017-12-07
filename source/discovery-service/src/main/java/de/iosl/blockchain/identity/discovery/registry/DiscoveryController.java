@@ -46,6 +46,6 @@ public class DiscoveryController {
 
 		String baseUrl = String.format("%s://%s:%d/tasks/",request.getScheme(),  request.getServerName(), request.getServerPort());
 		discoveryService.putEntry(registryEntry);
-		return ResponseEntity.created(URI.create(baseUrl + registryEntry.getPayload().getEthID())).build();
+		return ResponseEntity.created(URI.create(baseUrl + registryEntry.getPayload().getEthId())).build();
 	}
 }

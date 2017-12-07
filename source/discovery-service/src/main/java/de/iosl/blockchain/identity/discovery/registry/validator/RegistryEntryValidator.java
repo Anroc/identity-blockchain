@@ -14,7 +14,7 @@ public class RegistryEntryValidator {
 	private EthereumSigner algorithm = new EthereumSigner();
 
 	public boolean isValid(@NonNull RegistryEntry registryEntry) {
-		return isSignatureValid(registryEntry.getPayload(), registryEntry.getSignature(), registryEntry.getPayload().getEthID())
+		return isSignatureValid(registryEntry.getPayload(), registryEntry.getSignature(), registryEntry.getPayload().getEthId())
 				&& isRequestApprovedByEntity(registryEntry.getPayload());
 	}
 

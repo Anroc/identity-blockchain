@@ -5,6 +5,7 @@ import de.iosl.blockchain.identity.discovery.registry.DiscoveryService;
 import de.iosl.blockchain.identity.discovery.registry.data.ECSignature;
 import de.iosl.blockchain.identity.discovery.registry.data.Payload;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -72,7 +73,7 @@ public class DiscoveryControllerRestTest {
 		Sign.SignatureData signature = ALGORITHM.sign(payload, credentials.getEcKeyPair());
 		ECSignature ecSignature = ECSignature.fromSignatureData(signature);
 
-		registryEntry = new RegistryEntry(payload, ecSignature);
+		registryEntry = new RegistryEntry(payload.getEthId(), payload, ecSignature);
 
 		discoveryService.dropEntries();
 	}
@@ -87,7 +88,7 @@ public class DiscoveryControllerRestTest {
 
 	@Test
 	public void createEntryFailsWithForbidden() {
-		registryEntry.getPayload().setEthID("OTHER_VALUE");
+		registryEntry.getPayload().setEthId("OTHER_VALUE");
 
 		ResponseEntity<?> responseEntity = restTemplate.exchange("/provider", HttpMethod.POST, new HttpEntity<>(registryEntry), Object.class);
 
@@ -116,6 +117,7 @@ public class DiscoveryControllerRestTest {
 		discoveryService.putEntry(registryEntry);
 
 		RegistryEntry otherEntry = new RegistryEntry(
+				"asd",
 				new Payload(
 						"asd",
 						"asd",
@@ -143,6 +145,7 @@ public class DiscoveryControllerRestTest {
 		discoveryService.putEntry(registryEntry);
 
 		RegistryEntry otherEntry = new RegistryEntry(
+				"asd",
 				new Payload(
 						"asd",
 						"asd",
@@ -167,4 +170,10 @@ public class DiscoveryControllerRestTest {
 		assertThat(responseEntity.getBody()).hasSize(1);
 		assertThat(responseEntity.getBody().get(0)).isEqualTo(registryEntry);
 	}
+
+	@After
+    @Before
+    public void capDatabase(){
+	    discoveryService.dropEntries();
+    }
 }
