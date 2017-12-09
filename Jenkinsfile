@@ -121,7 +121,8 @@ node {
             sh 'npm --version'
 
             dir (SOURCE_DIR + "/client-frontend") {
-                sh 'ls ${env.NODEJS_HOME}/bin'
+                sh "printenv"
+                sh "ls ${env.NODEJS_HOME}/bin"
                 sh 'npm test'
             }
         }
