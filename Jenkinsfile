@@ -123,6 +123,7 @@ node {
             dir (SOURCE_DIR + "/client-frontend") {
                 sh "printenv"
                 sh "ls -a ${env.NODEJS_HOME}/bin"
+                sh "find ${env.NODEJS_HOME} -name 'bin'"
                 sh 'npm test'
             }
         }
