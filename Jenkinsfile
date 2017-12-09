@@ -117,12 +117,12 @@ node {
         }, node: {
             env.NODEJS_HOME = "${tool 'node-7.8.0'}"
             
-            env.PATH="${env.NODEJS_HOME}/lib/node_modules:${env.NODEJS_HOME}/bin:${env.PATH}"
+            env.PATH="${env.NODEJS_HOME}/bin:${env.PATH}"
             sh 'npm --version'
 
             dir (SOURCE_DIR + "/client-frontend") {
                 sh "printenv"
-                sh "ls -a ${env.NODEJS_HOME}/lib/node_modules"
+                sh "ls -a ${env.NODEJS_HOME}/bin"
                 sh 'npm test'
             }
         }
