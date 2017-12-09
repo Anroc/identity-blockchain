@@ -16,6 +16,7 @@ import FeaturePage from 'containers/FeaturePage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import LoginPage from 'containers/LoginPage/Loadable';
 import RegisterPage from 'containers/RegisterPage/Loadable';
+import Dashboard from 'containers/Dashboard/Loadable';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 
@@ -43,7 +44,7 @@ export default function App() {
         <Route path="/features" component={FeaturePage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/register" component={RegisterPage} />
-        <Route path="/dashboard" component={HomePage} />
+        <Route path="/dashboard" component={Dashboard} />
         <Route path="" component={NotFoundPage} />
       </Switch>
       <Footer />
