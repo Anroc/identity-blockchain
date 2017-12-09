@@ -122,10 +122,7 @@ node {
             env.NODE_PATH = "${env.NODEJS_HOME}/lib/node_modules"
 
             dir (SOURCE_DIR + "/client-frontend") {
-                sh "printenv"
-                sh "ls -a ${env.NODEJS_HOME}"
-                sh "ls ${env.NODE_PATH}"
-                sh "npm config set prefix ${env.NODEJS_HOME}/lib"
+                sh 'npm install'
                 sh 'npm test'
             }
         }
