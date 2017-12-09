@@ -14,18 +14,20 @@ import java.io.IOException;
 @ControllerAdvice
 public class ServiceExceptionHandler {
 
-	/**
-	 * Handles the given {@link ServiceException}.
-	 * Logs the error and defines the status code.
-	 *
-	 * @param serviceException the exception that was raised.
-	 * @param response the {@link HttpServletResponse} injected by spring
-	 * @throws IOException if thrown by the {@link HttpServletResponse#sendError(int)} function.
-	 */
-	@ExceptionHandler(ServiceException.class)
-	public void handleServiceException(ServiceException serviceException, HttpServletResponse response) throws IOException {
-		log.error(serviceException.getMessage(), serviceException);
-		response.sendError(serviceException.getHttpStatus().value(), serviceException.getMessage());
-	}
+    /**
+     * Handles the given {@link ServiceException}.
+     * Logs the error and defines the status code.
+     *
+     * @param serviceException the exception that was raised.
+     * @param response         the {@link HttpServletResponse} injected by spring
+     * @throws IOException if thrown by the {@link HttpServletResponse#sendError(int)} function.
+     */
+    @ExceptionHandler(ServiceException.class)
+    public void handleServiceException(ServiceException serviceException,
+            HttpServletResponse response) throws IOException {
+        log.error(serviceException.getMessage(), serviceException);
+        response.sendError(serviceException.getHttpStatus().value(),
+                serviceException.getMessage());
+    }
 
 }

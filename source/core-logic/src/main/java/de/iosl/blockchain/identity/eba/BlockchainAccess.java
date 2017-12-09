@@ -8,6 +8,9 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.nio.file.Path;
+
 @Data
 @Component
 public class BlockchainAccess implements EBAInterface {
@@ -16,12 +19,14 @@ public class BlockchainAccess implements EBAInterface {
     private AccountAccess accountAccess;
 
     @Override
-    public Account createWallet(@NonNull String password) {
-        return accountAccess.createAccount(password);
+    public Account createWallet(@NonNull String password, Path path) {
+        return accountAccess.createAccount(password, path);
     }
 
     @Override
-    public Account accessWallet(@NonNull String password, @NonNull String walletName) {
-        return accountAccess.accessWallet(password, walletName);
+    public Account accessWallet(String pw, File file) {
+        return accountAccess.accessWallet(pw, file);
     }
+
+
 }

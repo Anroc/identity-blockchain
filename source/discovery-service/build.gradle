@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.8.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE")
     }
 }
 
@@ -17,7 +17,7 @@ apply plugin: 'org.springframework.boot'
 
 jar {
     baseName = 'discovery-service'
-    version =  '0.1.0-SNAPSHOT'
+    version = '0.1.0-SNAPSHOT'
 }
 
 repositories {
@@ -34,4 +34,5 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compileOnly("org.projectlombok:lombok:1.16.18")
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    compile("org.springframework.data:spring-data-couchbase:2.2.9.RELEASE")
 }

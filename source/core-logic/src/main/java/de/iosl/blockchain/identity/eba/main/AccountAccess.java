@@ -1,7 +1,6 @@
 package de.iosl.blockchain.identity.eba.main;
 
 
-import de.iosl.blockchain.identity.eba.main.Account;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.web3j.crypto.*;
@@ -9,52 +8,50 @@ import org.web3j.crypto.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
-import static de.iosl.blockchain.identity.core.register.keychain.KeyChainService.WALLET_DIR;
 @Slf4j
 @Component
 public class AccountAccess {
 
-    public static String pathToFile = WALLET_DIR+"wallet"+File.separator;
-
-    public Account createAccount(String password){
+    public Account createAccount(String password, Path path){
 
         try {
-            File directory = new File(pathToFile);
-            if (!directory.exists()){
+            if (!path.toFile().exists()){
                 log.debug("directory does not exists, create dir");
-                Files.createDirectories(Paths.get(pathToFile));
+                Files.createDirectories(path);
             }
-
-            String walletName = WalletUtils.generateFullNewWalletFile(password,new File(pathToFile));
-            return accessWallet(password, walletName);
-        } catch (NoSuchAlgorithmException | NoSuchProviderException |InvalidAlgorithmParameterException| CipherException blockchainexception) {
-            throw new RuntimeException(blockchainexception.getMessage(),blockchainexception.getCause());
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage(),ioe.getCause());
+            String walletName = WalletUtils.generateFullNewWalletFile(
+                    password,
+                    path.toFile()
+            );
+            return accessWallet(
+                    password,
+                    new File(path.toFile().getAbsolutePath()+File.separator+walletName)
+            );
+        } catch (NoSuchAlgorithmException | NoSuchProviderException |InvalidAlgorithmParameterException| CipherException |IOException exception) {
+            throw new RuntimeException(exception.getMessage(),exception.getCause());
         }
     }
 
-    public Account accessWallet(String password, String walletName){
+    public Account accessWallet(String password, File file){
         try {
             Credentials credentials = WalletUtils.loadCredentials(
                     password,
-                    pathToFile+walletName);
+                    file);
             Account account = new Account(
                     credentials.getAddress(),
                     credentials.getEcKeyPair().getPublicKey(),
                     credentials.getEcKeyPair().getPrivateKey(),
-                    walletName
+                    file
             );
             return account;
-        } catch (CipherException blockchainexception) {
-            throw new RuntimeException(blockchainexception.getMessage(),blockchainexception.getCause());
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage(),ioe.getCause());
+        } catch (IOException| CipherException exception) {
+            throw new RuntimeException(exception.getMessage(),exception.getCause());
         }
     }
 }

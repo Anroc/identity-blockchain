@@ -25,8 +25,8 @@
     * [ ] Display success/failure of claim verification
   * [ ] Show all received claims after registration
 * Closure Registration
-    * [ ] create a view where the user sees all his closures
-    * [ ] create a view where the user sees all the closure requests 
+    * [ ] Create a view where the user sees all his closures
+    * [ ] Create a view where the user sees all the closure requests 
         and where he can deny or accept those requests
 * Change Claim
     * [ ] Provide change attribute view
@@ -40,13 +40,12 @@
     * [ ] Add functionality for answering permission
         * [ ] Give options: approval/denial/potential_third_option
     * [ ] Add functionality for creating permission request
-        * [ ] Should contain content what is requested
-    * [ ] Render specific section for requesting permission
-    * [ ] Render specific section for permission approval
-    * [ ] Define REST-API and define JSON layout specifically 
+        * [ ]  Should contain content what is requested
+    * [ ]  Render specific section for requesting permission
+    * [ ]  Render specific section for permission approval
+    * [ ]  Define REST-API and define JSON layout specifically 
         designed for permission requests
-
-* [ ] add new provider, domain name eingeben und wie registrar contract
+* [ ]  Add new provider, domain name eingeben und wie registrar contract
 
 ## 3rd Party
 

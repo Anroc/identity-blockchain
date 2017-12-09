@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.File;
 import java.math.BigInteger;
 
 @Data
@@ -15,6 +16,8 @@ public class Account {
     private String address;
     private BigInteger publicKey;
     private BigInteger privateKey;
-    private String walletName;
+    private File file;
+
+
 
 }

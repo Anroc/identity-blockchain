@@ -1,0 +1,24 @@
+spring:
+  application.name: Blockchain-Identity-Logic
+  profiles.active: default
+
+blockchain.identity:
+  protocol: http
+  provider.credentials:
+    username: admin
+    password: password
+
+---
+spring:
+    profiles: default
+blockchain.identity:
+  discoveryService:
+    port: 8101
+    address: localhost
+---
+spring:
+    profiles: production
+blockchain.identity:
+  discoveryService:
+    port: 8101
+    address: srv01.snet.tu-berlin.de
