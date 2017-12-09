@@ -26,17 +26,12 @@ import java.nio.file.Paths;
 @Slf4j
 @Component
 public class ApplicationBootUpListener {
-    private KeyChain keyChain;
 
+    @Autowired private KeyChain keyChain;
     @Autowired private CredentialConfig credentialConfig;
     @Autowired private DiscoveryClient discoveryClient;
     @Autowired private EBAInterface ebaInterface;
     @Autowired private BlockchainIdentityConfig blockchainIdentityConfig;
-
-    @Bean
-    public KeyChain initKeyChain() {
-        return this.keyChain;
-    }
 
     @PostConstruct
     public void register() {
@@ -46,10 +41,9 @@ public class ApplicationBootUpListener {
 
             account = ebaInterface.accessWallet(credentialConfig.getPassword(), file);
         }
-        KeyChain keyChain = new KeyChain();
+
         keyChain.setAccount(account);
         keyChain.setRsaKeyPair(CryptEngine.generate().string().rsa().generateKeyPair());
-        this.keyChain = keyChain;
 
         String publicKey = KeyConverter.from(keyChain.getRsaKeyPair().getPublic()).toBase64();
 

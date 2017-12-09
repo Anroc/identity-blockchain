@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.user.register;
 
+import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.keychain.KeyChainService;
 import de.iosl.blockchain.identity.core.shared.registry.DiscoveryClient;
 import de.iosl.blockchain.identity.core.user.register.data.LoginRequest;
@@ -7,6 +8,7 @@ import de.iosl.blockchain.identity.core.user.register.data.LoginResponse;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,8 @@ public class RegisterController {
     private KeyChainService keyChainService;
     @Autowired
     private DiscoveryClient discoveryClient;
+    @Autowired
+    private KeyChain keyChain;
 
     @PostMapping("/register")
     public LoginResponse register(@RequestBody @Valid LoginRequest loginRequest)
@@ -34,7 +38,7 @@ public class RegisterController {
         String password = loginRequest.getPassword();
         KeyPair keyPair = CryptEngine.generate().with(1024).string().rsa()
                 .getAsymmetricCipherKeyPair();
-        CryptEngine.KEY_CHAIN = keyPair;
+        keyChain.setRsaKeyPair(keyPair);
 
         // String ethID = UUID.randomUUID().toString();
         // discoveryClient.register();
@@ -57,7 +61,7 @@ public class RegisterController {
         KeyPair keyPair = keyChainService
                 .readKeyChange(keyChainService.getDefaultWalletFile(),
                         password);
-        CryptEngine.KEY_CHAIN = keyPair;
+        keyChain.setRsaKeyPair(keyPair);
 
         // String ethID = UUID.randomUUID().toString();
         // discoveryClient.register();
@@ -69,6 +73,6 @@ public class RegisterController {
     @PostMapping("/logout")
     public void logout() {
         // TODO: unregister from discovery Service
-        CryptEngine.KEY_CHAIN = null;
+        keyChain.setRsaKeyPair(null);
     }
 }

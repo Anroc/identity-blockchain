@@ -10,9 +10,9 @@ import java.io.File;
 import java.security.KeyPair;
 
 @Data
+@Component
 @NoArgsConstructor
 @AllArgsConstructor
-@Component
 public class KeyChain {
 
     public static final String WALLET_DIR =
