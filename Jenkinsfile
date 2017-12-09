@@ -125,7 +125,7 @@ node {
                 sh "printenv"
                 sh "ls -a ${env.NODEJS_HOME}"
                 sh "ls ${env.NODE_PATH}"
-                sh "ln -s node_modules ${env.NODE_PATH}"
+                sh "npm config set prefix ${env.NODEJS_HOME}/lib"
                 sh 'npm test'
             }
         }
