@@ -17,8 +17,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import de.iosl.blockchain.identity.eba.main.util.Web3jUtils;
-import de.iosl.blockchain.identity.eba.main.util.Web3jConstants;
+import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jUtils;
+import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jConstants;
 
 
 public class AbstractEthereumTest {

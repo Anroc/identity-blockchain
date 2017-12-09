@@ -135,7 +135,7 @@ public class DiscoveryControllerRestTest {
 
     @Test
     public void getEntriesTest() {
-        registryEntryDB.upsert(registryEntryDTO.toRegistryEntry());
+        registryEntryDB.insert(registryEntryDTO.toRegistryEntry());
 
         RegistryEntryDTO otherEntryDTO = new RegistryEntryDTO(
                 new Payload(
@@ -151,7 +151,7 @@ public class DiscoveryControllerRestTest {
                 )
         );
 
-        registryEntryDB.upsert(otherEntryDTO.toRegistryEntry());
+        registryEntryDB.insert(otherEntryDTO.toRegistryEntry());
 
         ResponseEntity<List<RegistryEntryDTO>> responseEntity = restTemplate
                 .exchange(

@@ -1,8 +1,7 @@
-package de.iosl.blockchain.identity.eba.main;
+package de.iosl.blockchain.identity.core.shared.eba.main;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;

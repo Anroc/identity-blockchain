@@ -1,6 +1,6 @@
-package de.iosl.blockchain.identity.eba;
+package de.iosl.blockchain.identity.core.shared.eba;
 
-import de.iosl.blockchain.identity.eba.main.Account;
+import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 
 import java.io.File;
 import java.nio.file.Path;
