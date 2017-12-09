@@ -29,7 +29,7 @@ const AppWrapper = styled.div`
   flex-direction: column;
 `;
 
-export default function App() {
+export default function App() { // eslint-disable-line react/prefer-stateless-function
   return (
     <AppWrapper>
       <Helmet

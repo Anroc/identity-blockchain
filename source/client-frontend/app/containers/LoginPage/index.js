@@ -10,7 +10,7 @@ import { FormattedMessage } from 'react-intl';
 import H1 from 'components/H1';
 import messages from './messages';
 
-export class LoginPage extends React.Component {
+export class LoginPage extends React.Component { // eslint-disable-line react/prefer-stateless-function
   render() {
     return (
       <article>
@@ -19,9 +19,7 @@ export class LoginPage extends React.Component {
         </H1>
       </article>
     );
-
   }
 }
-
 
 export default LoginPage;

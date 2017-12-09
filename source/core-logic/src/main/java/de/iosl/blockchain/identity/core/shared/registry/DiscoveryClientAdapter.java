@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.registry;
 
 import de.iosl.blockchain.identity.core.shared.registry.data.RegistryEntryDTO;
+import feign.Headers;
 import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
@@ -17,6 +18,7 @@ public interface DiscoveryClientAdapter {
     List<RegistryEntryDTO> getEntries(@QueryMap Map<String, String> queryParam);
 
     @RequestLine("POST " + PROVIDER_PATH)
+    @Headers("Content-Type: application/json")
     void register(RegistryEntryDTO registryEntry);
 
     @RequestLine("GET " + PROVIDER_PATH + "/{ethId}")
