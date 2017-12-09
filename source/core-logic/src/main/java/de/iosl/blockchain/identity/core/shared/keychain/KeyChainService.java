@@ -23,7 +23,7 @@ import java.security.*;
 @Service
 public class KeyChainService {
 
-    private static final String WALLET_DIR =
+    public static final String WALLET_DIR =
             System.getProperty("user.home") + File.separator
                     + ".ethereum" + File.separator + "blockchain-identity"
                     + File.separator;
