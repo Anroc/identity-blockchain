@@ -115,7 +115,7 @@ node {
                 }
             }
         }, node: {
-            env.NODEJS_HOME = "${tool 'Node 6.x'}"
+            env.NODEJS_HOME = "${tool 'node-7.8.0'}"
             
             env.PATH="${env.NODEJS_HOME}/bin:${env.PATH}"
             sh 'npm --version'
