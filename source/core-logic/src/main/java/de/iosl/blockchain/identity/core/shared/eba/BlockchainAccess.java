@@ -1,8 +1,7 @@
-package de.iosl.blockchain.identity.eba;
+package de.iosl.blockchain.identity.core.shared.eba;
 
-import de.iosl.blockchain.identity.eba.main.Account;
-import de.iosl.blockchain.identity.eba.main.AccountAccess;
-import lombok.AllArgsConstructor;
+import de.iosl.blockchain.identity.core.shared.eba.main.Account;
+import de.iosl.blockchain.identity.core.shared.eba.main.AccountAccess;
 import lombok.Data;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;

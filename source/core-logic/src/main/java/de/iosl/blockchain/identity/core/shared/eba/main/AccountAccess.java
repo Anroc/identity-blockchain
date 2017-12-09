@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.eba.main;
+package de.iosl.blockchain.identity.core.shared.eba.main;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;

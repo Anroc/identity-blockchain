@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.couchbase.core.CouchbaseTemplate;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 
@@ -27,6 +28,8 @@ public class CouchbaseWrapper<T, ID extends Serializable> {
 
     @Autowired
     private Bucket bucket;
+    @Autowired
+    private CouchbaseTemplate couchbaseTemplate;
 
     public Optional<T> findEntity(@NonNull ID id) {
         return Optional.ofNullable(repository.findOne(id));
@@ -36,8 +39,14 @@ public class CouchbaseWrapper<T, ID extends Serializable> {
         return repository.exists(id);
     }
 
-    public T upsert(T entity) {
-        return repository.save(entity);
+    public T insert(T entity) {
+        couchbaseTemplate.insert(entity);
+        return entity;
+    }
+
+    public T update(T entity) {
+        couchbaseTemplate.update(entity);
+        return entity;
     }
 
     public void deleteAll(Class<T> clazz) {

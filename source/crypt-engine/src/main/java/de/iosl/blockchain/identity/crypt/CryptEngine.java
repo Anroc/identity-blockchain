@@ -16,7 +16,6 @@ import java.security.KeyPair;
 public class CryptEngine {
 
     public static final String CHAR_ENCODING = "UTF-8";
-    public volatile static KeyPair KEY_CHAIN;
     private Key key;
     private KeyPair keyPair;
     private int bitSecurity;

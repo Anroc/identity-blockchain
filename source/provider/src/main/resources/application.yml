@@ -4,6 +4,7 @@ spring:
 
 blockchain.identity:
   protocol: http
+  type: GOVERMENT
   provider.credentials:
     username: admin
     password: penispumpe

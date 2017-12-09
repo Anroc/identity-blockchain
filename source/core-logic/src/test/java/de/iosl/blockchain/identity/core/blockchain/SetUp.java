@@ -1,8 +1,8 @@
 package de.iosl.blockchain.identity.core.blockchain;
 
-import de.iosl.blockchain.identity.eba.BlockchainAccess;
-import de.iosl.blockchain.identity.eba.main.Account;
-import de.iosl.blockchain.identity.eba.main.AccountAccess;
+import de.iosl.blockchain.identity.core.shared.eba.BlockchainAccess;
+import de.iosl.blockchain.identity.core.shared.eba.main.Account;
+import de.iosl.blockchain.identity.core.shared.eba.main.AccountAccess;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Test;

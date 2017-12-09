@@ -22,4 +22,6 @@ public class BlockchainIdentityConfig {
 
     @Valid
     private ServiceConfig discoveryService;
+
+    private ClientType type;
 }

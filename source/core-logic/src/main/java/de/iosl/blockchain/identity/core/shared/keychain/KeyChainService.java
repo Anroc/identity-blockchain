@@ -19,15 +19,12 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.*;
 
+import static de.iosl.blockchain.identity.core.shared.KeyChain.KEY_CHAIN;
+import static de.iosl.blockchain.identity.core.shared.KeyChain.WALLET_DIR;
+
 @Slf4j
 @Service
 public class KeyChainService {
-
-    public static final String WALLET_DIR =
-            System.getProperty("user.home") + File.separator
-                    + ".ethereum" + File.separator + "blockchain-identity"
-                    + File.separator;
-    private static final String KEY_CHAIN = "keychain.json";
 
     private ObjectMapper objectMapper = new ObjectMapper();
 

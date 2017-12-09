@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.eba.main.util;
+package de.iosl.blockchain.identity.core.shared.eba.main.util;
 
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
