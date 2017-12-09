@@ -125,6 +125,8 @@ node {
                 sh "printenv"
                 sh "ls -a ${env.NODEJS_HOME}/bin"
                 sh "ls ${env.NODE_PATH}"
+                sh 'npm root'
+                sh 'npm root -g'
                 sh 'npm test'
             }
         }
