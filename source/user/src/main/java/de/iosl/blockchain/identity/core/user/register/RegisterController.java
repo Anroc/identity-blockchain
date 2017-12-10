@@ -2,13 +2,12 @@ package de.iosl.blockchain.identity.core.user.register;
 
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.keychain.KeyChainService;
-import de.iosl.blockchain.identity.core.shared.registry.DiscoveryClient;
+import de.iosl.blockchain.identity.core.shared.ds.registry.DiscoveryClient;
 import de.iosl.blockchain.identity.core.user.register.data.LoginRequest;
 import de.iosl.blockchain.identity.core.user.register.data.LoginResponse;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

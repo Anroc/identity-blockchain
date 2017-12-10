@@ -2,7 +2,7 @@ package de.iosl.blockchain.identity.discovery.hearthbeat.db;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.json.JsonArray;
-import de.iosl.blockchain.identity.discovery.hearthbeat.data.Message;
+import de.iosl.blockchain.identity.discovery.hearthbeat.data.Beat;
 import de.iosl.blockchain.identity.discovery.registry.db.CouchbaseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 @Component
-public class MessageDB extends CouchbaseWrapper<Message, String> {
+public class BeatDB extends CouchbaseWrapper<Beat, String> {
 
     private final Bucket bucket;
-    private final MessageRepository repository;
+    private final BeatRepository repository;
 
     @Autowired
-    public MessageDB(MessageRepository repository, Bucket bucket) {
+    public BeatDB(BeatRepository repository, Bucket bucket) {
         super(repository);
         this.bucket = bucket;
         this.repository = repository;
@@ -40,11 +40,11 @@ public class MessageDB extends CouchbaseWrapper<Message, String> {
         return ethID + "_counter";
     }
 
-    public List<Message> findMessagesByEthIDAndCounterRange(String ethId, long from, long to) {
+    public List<Beat> findBeatsByEthIDAndCounterRange(String ethId, long from, long to) {
         JsonArray jsonArray = JsonArray.from(
                 LongStream.range(from, to)
                           .boxed()
-                          .map(val -> Message.buildID(ethId, val))
+                          .map(val -> Beat.buildID(ethId, val))
                           .collect(Collectors.toList())
         );
 

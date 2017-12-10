@@ -2,17 +2,20 @@ package de.iosl.blockchain.identity.discovery;
 
 import de.iosl.blockchain.identity.discovery.data.ECSignature;
 import de.iosl.blockchain.identity.discovery.data.RequestDTO;
-import de.iosl.blockchain.identity.discovery.hearthbeat.data.Message;
-import de.iosl.blockchain.identity.discovery.hearthbeat.data.MessageRequest;
+import de.iosl.blockchain.identity.discovery.hearthbeat.data.Beat;
+import de.iosl.blockchain.identity.discovery.hearthbeat.data.HeartBeatRequest;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.web3j.crypto.Sign;
 
 import java.util.Date;
@@ -20,16 +23,18 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HearthBeatControllerRestTest extends RestTestSuite {
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class HeartBeatControllerRestTest extends RestTestSuite {
 
     private static final String ENDPOINT = "/claim/ETHEREM_ID";
     private static final String OTHER_ETH_ID = "other_eth_id";
 
-    private RequestDTO<MessageRequest> requestDTO;
+    private RequestDTO<HeartBeatRequest> requestDTO;
 
     @Before
     public void setup() {
-        MessageRequest payload = new MessageRequest(ETH_ID, ENDPOINT);
+        HeartBeatRequest payload = new HeartBeatRequest(ETH_ID, ENDPOINT);
 
         Sign.SignatureData signature = ALGORITHM
                 .sign(payload, credentials.getEcKeyPair());
@@ -41,8 +46,8 @@ public class HearthBeatControllerRestTest extends RestTestSuite {
     @Before
     @After
     public void cleanUp() {
-        if(messageDB.exist(messageDB.createCounterID(OTHER_ETH_ID))) {
-            messageDB.deleteCounter(OTHER_ETH_ID);
+        if(beatDB.exist(beatDB.createCounterID(OTHER_ETH_ID))) {
+            beatDB.deleteCounter(OTHER_ETH_ID);
         }
     }
 
@@ -61,24 +66,24 @@ public class HearthBeatControllerRestTest extends RestTestSuite {
 
         registryEntryDB.insert(registryEntry);
 
-        ResponseEntity<Message> responseEntity = restTemplate
+        ResponseEntity<Beat> responseEntity = restTemplate
                 .exchange("/heartbeat/" + OTHER_ETH_ID, HttpMethod.POST,
-                        new HttpEntity<>(requestDTO), Message.class);
+                        new HttpEntity<>(requestDTO), Beat.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        assertThat(messageDB.findEntity(Message.buildID(OTHER_ETH_ID, 0L)).get()).isEqualTo(responseEntity.getBody());
+        assertThat(beatDB.findEntity(Beat.buildID(OTHER_ETH_ID, 0L)).get()).isEqualTo(responseEntity.getBody());
 
-        ResponseEntity<List<Message>> listResponse = restTemplate
+        ResponseEntity<List<Beat>> listResponse = restTemplate
                 .exchange(
                         "/heartbeat/" + OTHER_ETH_ID,
                         HttpMethod.GET,
                         HttpEntity.EMPTY,
-                        new ParameterizedTypeReference<List<Message>>() {}
+                        new ParameterizedTypeReference<List<Beat>>() {}
                 );
 
         assertThat(listResponse.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
         assertThat(listResponse.getBody()).hasSize(1);
-        assertThat(messageDB.findEntity(Message.buildID(OTHER_ETH_ID, 0L)).get()).isEqualTo(listResponse.getBody().get(0));
+        assertThat(beatDB.findEntity(Beat.buildID(OTHER_ETH_ID, 0L)).get()).isEqualTo(listResponse.getBody().get(0));
 
     }
 
@@ -96,12 +101,12 @@ public class HearthBeatControllerRestTest extends RestTestSuite {
 
         registryEntryDB.insert(registryEntry);
 
-        ResponseEntity<List<Message>> listResponse = restTemplate
+        ResponseEntity<List<Beat>> listResponse = restTemplate
                 .exchange(
                         "/heartbeat/" + OTHER_ETH_ID,
                         HttpMethod.GET,
                         HttpEntity.EMPTY,
-                        new ParameterizedTypeReference<List<Message>>() {}
+                        new ParameterizedTypeReference<List<Beat>>() {}
                 );
 
         assertThat(listResponse.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);

@@ -1,10 +1,11 @@
-package de.iosl.blockchain.identity.core.shared.registry;
+package de.iosl.blockchain.identity.core.shared.ds.registry;
 
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
+import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.core.shared.ds.dto.Payload;
+import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
+import de.iosl.blockchain.identity.core.shared.ds.dto.RequestDTO;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
-import de.iosl.blockchain.identity.core.shared.registry.data.ECSignature;
-import de.iosl.blockchain.identity.core.shared.registry.data.Payload;
-import de.iosl.blockchain.identity.core.shared.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.Getter;
 import lombok.NonNull;
@@ -50,7 +51,7 @@ public class DiscoveryClient {
         return discoveryClientAdapter.getEntries(queryParam)
                 .stream()
                 .filter(this::isSignatureValid)
-                .map(RegistryEntryDTO::getPayload)
+                .map(RequestDTO::getPayload)
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +66,7 @@ public class DiscoveryClient {
     public Payload getEntry(@NonNull String ethID) {
         return discoveryClientAdapter.getEntry(ethID)
                 .filter(this::isSignatureValid)
-                .map(RegistryEntryDTO::getPayload)
+                .map(RequestDTO::getPayload)
                 .orElseThrow(
                         () -> new ServiceException(
                                 "Could not find provider with ethID: [%s].",
@@ -83,7 +84,7 @@ public class DiscoveryClient {
      */
     public void register(@NonNull String ethID, @NonNull String rsaPublicKey,
             @NonNull BigInteger ecPrivateKey) {
-        Payload payload = new Payload();
+        RegistryEntryDTO payload = new RegistryEntryDTO();
         payload.setEthID(ethID);
         payload.setDomainName(config.getCore().getAddress());
         payload.setPort(config.getCore().getPort());
@@ -94,12 +95,12 @@ public class DiscoveryClient {
         );
 
         discoveryClientAdapter.register(
-                new RegistryEntryDTO(payload, ecSignature)
+                new RequestDTO<>(payload, ecSignature)
         );
     }
 
     protected boolean isSignatureValid(
-            @NonNull RegistryEntryDTO registryEntry) {
+            @NonNull RequestDTO<RegistryEntryDTO> registryEntry) {
         return getSigner().verifySignature(
                 registryEntry.getPayload(),
                 registryEntry.getSignature().toSignatureData(),

@@ -36,7 +36,7 @@ public class DiscoveryController {
         );
     }
 
-    @GetMapping()
+    @GetMapping
     public List<RequestDTO<RegistryEntryDTO>> getEntries(
             @RequestParam(value = "domainName", defaultValue = "") final String domainName) {
         return discoveryService.getEntries().stream().filter(registerEntry ->
@@ -46,7 +46,7 @@ public class DiscoveryController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<URL> createEntry(
             @Valid @RequestBody RequestDTO<RegistryEntryDTO> registryEntry,
             HttpServletRequest request) {

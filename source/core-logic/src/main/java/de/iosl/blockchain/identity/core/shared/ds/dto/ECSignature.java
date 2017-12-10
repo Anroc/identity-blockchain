@@ -1,9 +1,10 @@
-package de.iosl.blockchain.identity.core.shared.registry.data;
+package de.iosl.blockchain.identity.core.shared.ds.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bouncycastle.util.encoders.Base64;
+import org.hibernate.validator.constraints.NotBlank;
 import org.web3j.crypto.Sign;
 
 @Data
@@ -11,7 +12,9 @@ import org.web3j.crypto.Sign;
 @NoArgsConstructor
 public class ECSignature {
 
+    @NotBlank
     private String r;
+    @NotBlank
     private String s;
     private byte v;
 

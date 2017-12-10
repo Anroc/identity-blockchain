@@ -11,12 +11,12 @@ import org.hibernate.validator.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class MessageRequest extends Payload{
+public class HeartBeatRequest extends Payload{
 
     @NotBlank
     private String endpoint;
 
-    public MessageRequest(String ethID, String endpoint) {
+    public HeartBeatRequest(String ethID, String endpoint) {
         super(ethID);
         this.endpoint = endpoint;
     }

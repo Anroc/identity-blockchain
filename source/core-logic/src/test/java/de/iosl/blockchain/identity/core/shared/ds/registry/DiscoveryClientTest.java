@@ -1,11 +1,12 @@
-package de.iosl.blockchain.identity.core.shared.registry;
+package de.iosl.blockchain.identity.core.shared.ds.registry;
 
 import de.iosl.blockchain.identity.core.shared.BasicMockSuite;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.config.ServiceConfig;
-import de.iosl.blockchain.identity.core.shared.registry.data.ECSignature;
-import de.iosl.blockchain.identity.core.shared.registry.data.Payload;
-import de.iosl.blockchain.identity.core.shared.registry.data.RegistryEntryDTO;
+import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.core.shared.ds.dto.Payload;
+import de.iosl.blockchain.identity.core.shared.ds.dto.RequestDTO;
+import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
@@ -36,13 +37,13 @@ public class DiscoveryClientTest extends BasicMockSuite {
     @Spy
     @InjectMocks
     private DiscoveryClient discoveryClient;
-    private RegistryEntryDTO registryEntry;
-    private Payload payload;
+    private RequestDTO<RegistryEntryDTO> registryEntry;
+    private RegistryEntryDTO payload;
     private ECSignature ecSignature;
 
     @Before
     public void setup() {
-        payload = new Payload();
+        payload = new RegistryEntryDTO();
         payload.setEthID(ETH_ID);
         payload.setDomainName("localhost");
         payload.setPort(8080);
@@ -55,7 +56,7 @@ public class DiscoveryClientTest extends BasicMockSuite {
                 signer.sign(payload, ECKeyPair.create(ecPrivateKey))
         );
 
-        registryEntry = new RegistryEntryDTO(payload, ecSignature);
+        registryEntry = new RequestDTO<>(payload, ecSignature);
 
         doReturn(signer).when(discoveryClient).getSigner();
     }
@@ -86,7 +87,7 @@ public class DiscoveryClientTest extends BasicMockSuite {
         ServiceConfig serviceConfig = mock(ServiceConfig.class);
 
         doNothing().when(discoveryClientAdapter)
-                .register(any(RegistryEntryDTO.class));
+                .register(any(RequestDTO.class));
         doReturn(serviceConfig).when(config).getCore();
         doReturn("localhost").when(serviceConfig).getAddress();
         doReturn(8080).when(serviceConfig).getPort();
@@ -99,6 +100,6 @@ public class DiscoveryClientTest extends BasicMockSuite {
 
         discoveryClient.register(ethID, rsaPublicKey, ecPrivateKey);
 
-        verify(discoveryClientAdapter).register(any(RegistryEntryDTO.class));
+        verify(discoveryClientAdapter).register(any(RequestDTO.class));
     }
 }

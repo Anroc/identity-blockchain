@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.discovery.hearthbeat.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
+import de.iosl.blockchain.identity.discovery.data.ECSignature;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,29 +16,28 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Message {
+public class Beat {
 
     @Id
     private String id;
     @Field
     long messageNumber;
-    @Field
-    private String senderEthID;
-    @Field
-    private String endpoint;
-
-    @Field
     @CreatedDate
     private Date createdAt;
+    @Field
+    private ECSignature signature;
+    @Field
+    private BeatContent payload;
 
-    public Message(long messageNumber, String recepiantEthID, String senderEthID, String endpoint) {
-        this.id = buildID(recepiantEthID, messageNumber);
+    public Beat(long messageNumber, String recipientEthID, String senderEthID, String endpoint, ECSignature signature) {
+        this.id = buildID(recipientEthID, messageNumber);
         this.messageNumber = messageNumber;
-        this.senderEthID = senderEthID;
-        this.endpoint = endpoint;
+
+        this.payload = new BeatContent(senderEthID, endpoint);
+        this.signature = signature;
     }
 
-    public static String buildID(@NonNull String ethID, @NonNull long messageNumber) {
+    public static String buildID(@NonNull String ethID, long messageNumber) {
         return ethID + "_" + messageNumber;
     }
 }
