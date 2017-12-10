@@ -46,6 +46,7 @@ public class HeartBeatServiceTest extends BasicMockSuite {
 
         doReturn(ethereumSigner).when(heartBeatService).getSigner();
         doReturn(account).when(keyChain).getAccount();
+        doReturn(true).when(keyChain).isRegistered();
         doReturn(mock(Sign.SignatureData.class)).when(ecSignature).toSignatureData();
         doReturn(Lists.newArrayList(beat)).when(heartBeatAdapter).beat(anyString(), eq(0L), eq(Long.MAX_VALUE));
         doReturn(true).when(ethereumSigner).verifySignature(any(), any(), anyString());
