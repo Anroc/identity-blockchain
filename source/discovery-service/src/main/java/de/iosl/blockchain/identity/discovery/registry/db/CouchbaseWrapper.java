@@ -1,10 +1,11 @@
-package de.iosl.blockchain.identity.discovery.registry.repository;
+package de.iosl.blockchain.identity.discovery.registry.db;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.query.Delete;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.Statement;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import static com.couchbase.client.java.query.dsl.Expression.s;
 @RequiredArgsConstructor
 public class CouchbaseWrapper<T, ID extends Serializable> {
 
+    @Getter
     private final CrudRepository<T, ID> repository;
 
     @Autowired

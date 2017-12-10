@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.discovery.registry.data;
+package de.iosl.blockchain.identity.discovery.hearthbeat.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import lombok.AllArgsConstructor;
@@ -6,17 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.couchbase.core.mapping.Document;
 
+@Document
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document
-public class Payload {
+public class BeatContent {
+
     @Field
     private String ethID;
     @Field
-    private String publicKey;
-    @Field
-    private String domainName;
-    @Field
-    private int port;
+    private String endpoint;
+
 }

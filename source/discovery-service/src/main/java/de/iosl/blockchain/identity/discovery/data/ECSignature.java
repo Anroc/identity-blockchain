@@ -1,18 +1,29 @@
-package de.iosl.blockchain.identity.core.shared.registry.data;
+package de.iosl.blockchain.identity.discovery.data;
 
+import com.couchbase.client.java.repository.annotation.Field;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bouncycastle.util.encoders.Base64;
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.couchbase.core.mapping.Document;
 import org.web3j.crypto.Sign;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Document
 public class ECSignature {
 
+    @Field
+    @NotBlank
     private String r;
+
+    @Field
+    @NotBlank
     private String s;
+
+    @Field
     private byte v;
 
     public static ECSignature fromSignatureData(

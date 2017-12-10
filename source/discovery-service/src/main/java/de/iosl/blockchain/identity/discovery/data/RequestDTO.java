@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.shared.registry.data;
+package de.iosl.blockchain.identity.discovery.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,11 +10,11 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistryEntryDTO {
+public class RequestDTO<T extends Payload> {
 
     @Valid
     @NotNull
-    private Payload payload;
+    private T payload;
 
     @Valid
     @NotNull

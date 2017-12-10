@@ -1,5 +1,5 @@
 spring:
-  application.name: Blockchain-Identity-Logic
+  application.name: Blockchain-Identity-Provider
   profiles.active: default
 
 blockchain.identity:

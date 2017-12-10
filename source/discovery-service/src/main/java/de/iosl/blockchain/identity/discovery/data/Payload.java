@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.user.register.data;
+package de.iosl.blockchain.identity.discovery.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,11 +6,11 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
+@NoArgsConstructor
+public abstract class Payload {
 
     @NotBlank
-    private String password;
+    private String ethID;
 
 }

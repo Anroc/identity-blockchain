@@ -14,4 +14,6 @@ public class EncryptedKeyChain {
 
     private String algorithm;
     private int bitSecurity;
+
+    private String account;
 }
