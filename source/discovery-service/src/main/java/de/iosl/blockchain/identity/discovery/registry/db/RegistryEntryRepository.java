@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.discovery.registry.repository;
+package de.iosl.blockchain.identity.discovery.registry.db;
 
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
 import org.springframework.data.couchbase.core.query.Query;
