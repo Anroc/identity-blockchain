@@ -24,4 +24,6 @@ public class KeyChain {
 
     private Account account;
     private KeyPair rsaKeyPair;
+
+    private boolean registered;
 }

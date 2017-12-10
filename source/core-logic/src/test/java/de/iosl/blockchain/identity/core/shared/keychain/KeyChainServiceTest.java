@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.keychain;
 
+import de.iosl.blockchain.identity.core.shared.keychain.data.KeyInfo;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import org.junit.After;
 import org.junit.Before;
@@ -41,7 +42,9 @@ public class KeyChainServiceTest {
         KeyPair keyPair = CryptEngine.generate().string().rsa()
                 .getAsymmetricCipherKeyPair();
 
-        keyChainService.saveKeyChain(keyPair, PATH, PASSWD);
+        String accountPath = "/home/musterman/.ethereum";
+
+        keyChainService.saveKeyChain(keyPair, PATH, PASSWD, accountPath);
 
         assertThat(file)
                 .exists()
@@ -50,9 +53,10 @@ public class KeyChainServiceTest {
                 .canWrite()
                 .hasExtension("json");
 
-        KeyPair res = keyChainService.readKeyChange(PATH, PASSWD);
+        KeyInfo res = keyChainService.readKeyChange(PATH, PASSWD);
 
-        assertThat(res).isEqualToComparingFieldByField(keyPair);
+        assertThat(res.getKeyPair()).isEqualToComparingFieldByField(keyPair);
+        assertThat(res.getAccountPath()).isEqualTo(accountPath);
         assertThat(file).exists();
     }
 }

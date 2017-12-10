@@ -42,6 +42,8 @@ public class ApplicationBootUpListener {
         String publicKey = KeyConverter.from(keyChain.getRsaKeyPair().getPublic()).toBase64();
 
         discoveryClient.register(account.getAddress(), publicKey, account.getPrivateKey());
+
+        keyChain.setRegistered(true);
         log.info("Registered ethID {} to DiscoveryService", account.getAddress());
     }
 }

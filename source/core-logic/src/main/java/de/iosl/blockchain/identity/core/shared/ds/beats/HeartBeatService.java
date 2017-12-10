@@ -39,6 +39,11 @@ public class HeartBeatService {
 
     @Scheduled(fixedRate = RATE, initialDelay = INITIAL_DELAY)
     public void beat() {
+        if(! keyChain.isRegistered()) {
+            log.debug("Not yet registered.");
+            return;
+        }
+
         try {
             log.debug("Sending beat as [{}] from {} to {}", keyChain.getAccount().getAddress(), beatCounter, Long.MAX_VALUE);
             List<Beat> beats = heartBeatAdapter.beat(keyChain.getAccount().getAddress(), beatCounter, Long.MAX_VALUE);
