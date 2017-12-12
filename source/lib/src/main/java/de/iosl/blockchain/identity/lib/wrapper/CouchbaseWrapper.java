@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.discovery.registry.db;
+package de.iosl.blockchain.identity.lib.wrapper;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.query.Delete;
