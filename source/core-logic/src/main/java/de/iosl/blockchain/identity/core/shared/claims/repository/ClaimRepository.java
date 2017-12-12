@@ -9,6 +9,8 @@ import java.util.List;
 
 @Repository
 public interface ClaimRepository extends CrudRepository<Claim, String>{
+
     @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter}")
     List<Claim> findAll();
+
 }

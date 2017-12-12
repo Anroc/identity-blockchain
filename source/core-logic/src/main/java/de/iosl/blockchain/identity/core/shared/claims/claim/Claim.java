@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims.claim;
 
+import com.couchbase.client.java.repository.annotation.Field;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ public class Claim {
 
     @Id
     @NonNull
+    @Field
     private String id;
 
     @CreatedDate

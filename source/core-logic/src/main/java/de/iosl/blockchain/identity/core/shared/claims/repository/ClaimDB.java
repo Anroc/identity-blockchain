@@ -23,4 +23,12 @@ public class ClaimDB extends CouchbaseWrapper<Claim, String>{
     public List<Claim> findAll() {
         return claimRepository.findAll();
     }
+
+    public void saveClaim(Claim claim){
+        claimRepository.save(claim);
+    }
+
+    public Claim findOne(String id){
+        return claimRepository.findOne(id);
+    }
 }
