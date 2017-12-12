@@ -3,7 +3,7 @@ package de.iosl.blockchain.identity.discovery.hearthbeat.db;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.json.JsonArray;
 import de.iosl.blockchain.identity.discovery.hearthbeat.data.Beat;
-import de.iosl.blockchain.identity.discovery.registry.db.CouchbaseWrapper;
+import de.iosl.blockchain.identity.lib.wrapper.CouchbaseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
