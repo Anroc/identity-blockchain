@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.couchbase.core.mapping.Document;
-
-import java.util.Dictionary;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -13,6 +12,6 @@ import java.util.Dictionary;
 @Document
 public class Payload {
 
-    private Dictionary content;
+    private Map<String, String> content;
 
 }
