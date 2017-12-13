@@ -4,7 +4,6 @@ spring:
 
 blockchain.identity:
   protocol: http
-  type: GOVERMENT
   provider.credentials:
     username: admin
     password: penispumpe
@@ -12,7 +11,32 @@ blockchain.identity:
 ---
 spring:
     profiles: default
+    couchbase:
+      bootstrap-hosts: localhost
+      bucket:
+        name: default
+        password: password
 blockchain.identity:
+  type: PROVIDER
+  core:
+    port: 8080
+    address: localhost
+  discoveryService:
+    port: 8101
+    address: srv01.snet.tu-berlin.de
+  ethereum:
+    port: 8545
+    address: localhost
+---
+spring:
+    profiles: test
+    couchbase:
+      bootstrap-hosts: srv01.snet.tu-berlin.de
+      bucket:
+        name: claim_test
+        password: 1234qwer
+blockchain.identity:
+  type: PROVIDER
   core:
     port: 8080
     address: localhost
@@ -26,6 +50,7 @@ blockchain.identity:
 spring:
     profiles: production
 blockchain.identity:
+  type: GOVERMENT
   core:
     port: 8100
     address: srv01.snet.tu-berlin.de

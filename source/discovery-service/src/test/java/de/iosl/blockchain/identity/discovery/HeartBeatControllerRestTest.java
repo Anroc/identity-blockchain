@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class HeartBeatControllerRestTest extends RestTestSuite {
 
-    private static final String ENDPOINT = "/claim/ETHEREM_ID";
+    private static final String ENDPOINT = "/claims/ETHEREM_ID";
     private static final String OTHER_ETH_ID = "other_eth_id";
 
     private RequestDTO<HeartBeatRequest> requestDTO;
