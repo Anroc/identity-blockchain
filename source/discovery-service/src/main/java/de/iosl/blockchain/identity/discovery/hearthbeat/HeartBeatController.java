@@ -63,7 +63,7 @@ public class HeartBeatController {
                 .map(registryEntry -> {
                     LifeState lifeState = LifeState.from(registryEntry.getLastSeen());
                     RequestDTO<RegistryEntryDTO> dto = registryEntry.toDTO();
-                    return new HeartBeatInfoDTO(dto.getPayload(), dto.getSignature(), lifeState);
+                    return new HeartBeatInfoDTO(dto.getPayload(), dto.getSignature(), lifeState, registryEntry.getLastSeen());
                 }).collect(Collectors.toList());
     }
 }
