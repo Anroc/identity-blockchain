@@ -23,7 +23,6 @@ import java.util.Date;
 public class Claim {
 
     @Id
-    @NotBlank
     @Field
     private String id;
 
