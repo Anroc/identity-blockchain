@@ -17,16 +17,14 @@ import java.util.Map;
 @Document
 public class Payload {
 
-    private enum PayloadType{
-        STRING, NUMBER, OBJECT, DATE, BOOLEAN
+    public enum PayloadType{
+        STRING, NUMBER, OBJECT, DATE, BOOLEAN;
     }
 
-    @Valid
     @NotBlank
     @Field
     private Object payload;
 
-    @Valid
     @NotBlank
     @Field
     private PayloadType payloadType;
