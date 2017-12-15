@@ -33,12 +33,11 @@ public class Claim {
     @CreatedDate
     private Date creationDate;
 
-    @NotBlank
+    @NonNull
     @Valid
     private Provider provider;
 
-    @NotBlank
-    @Valid
+    @NonNull
     private Payload claimValue;
 
 }
