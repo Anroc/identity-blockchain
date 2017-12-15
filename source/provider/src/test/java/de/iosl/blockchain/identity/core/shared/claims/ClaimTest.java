@@ -7,6 +7,7 @@ import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
 import de.iosl.blockchain.identity.core.shared.claims.repository.ClaimDB;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import org.assertj.core.util.Maps;
+import org.hibernate.validator.internal.xml.PayloadType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,8 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ClaimTest {
     private final Date createdDate = java.sql.Date.valueOf(LocalDate.now());
     private final Date lastModifiedDate = java.sql.Date.valueOf(LocalDate.now());
-    private Payload payload = new Payload(Maps.newHashMap("1","1"));
-    private Provider provider = new Provider("1","asd","asd");
+    //private Payload payload = new Payload(Maps.newHashMap("1","1"));
+    //private Provider provider = new Provider("1","asd","asd");
     private Claim claim;
 
     @Autowired
@@ -37,18 +38,23 @@ public class ClaimTest {
     private BlockchainIdentityConfig config;
 
     @Before
-    public void init(){
-        claim = new Claim();
+    public void init() {
+        claim = new Claim("1", lastModifiedDate, createdDate, new Provider("1", "1", "1"), new Payload("1", Payload.PayloadType.STRING));
     }
 
     @Test
-    public void saveClaimTest(){
+    public void saveClaimTest() {
         claimDB.saveClaim(claim);
         assertThat(claimDB.findEntity(claim.getId())).isPresent();
     }
 
+    @Test
+    public void removeClaimTest(){
+        claimDB.deleteClaim("1");
+    }
+
     @After
-    public void clearDB(){
+    public void clearDB() {
         claimDB.deleteAll(Claim.class);
     }
 }
