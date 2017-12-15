@@ -26,17 +26,18 @@ public class Claim {
     @Field
     private String id;
 
-    @CreatedDate
-    private Date createdDate;
-
     @LastModifiedDate
-    private Date lastModifiedDate;
+    private Date modificationDate;
 
-    @Valid
-    @NonNull
-    private Payload payload;
+    @CreatedDate
+    private Date creationDate;
 
-    @Valid
     @NonNull
+    @Valid
     private Provider provider;
+
+    @NonNull
+    @Valid
+    private Payload claimValue;
+
 }
