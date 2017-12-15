@@ -5,8 +5,10 @@ import de.iosl.blockchain.identity.core.shared.claims.claim.Claim;
 import de.iosl.blockchain.identity.lib.wrapper.CouchbaseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.web3j.abi.datatypes.Bool;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ClaimDB extends CouchbaseWrapper<Claim, String>{
@@ -30,5 +32,9 @@ public class ClaimDB extends CouchbaseWrapper<Claim, String>{
 
     public Claim findOne(String id){
         return claimRepository.findOne(id);
+    }
+
+    public void deleteClaim(String id){
+        claimRepository.delete(id);
     }
 }

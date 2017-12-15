@@ -15,6 +15,8 @@ import org.springframework.data.couchbase.core.mapping.Document;
 public class Provider {
 
     @Id
+    @Field
+    @NotBlank
     private String ethID;
 
     @Field

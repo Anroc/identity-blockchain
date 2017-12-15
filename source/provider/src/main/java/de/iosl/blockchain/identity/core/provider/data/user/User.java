@@ -6,10 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Data
@@ -20,18 +22,18 @@ public class User {
 
     @Id
     @Field
-    @NonNull
+    @NotBlank
     private String id;
 
     @Field
-    @NonNull
+    @NotBlank
     private String publicKey;
 
     @Field
-    @NonNull
+    @NotBlank
     private String ethId;
 
     @Field
-    @NonNull
-    private HashMap<String, Claim> claimList;
+    @NotBlank
+    private ArrayList<Claim> claimList;
 }

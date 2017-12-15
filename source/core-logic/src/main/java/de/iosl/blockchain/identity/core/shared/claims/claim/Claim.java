@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -22,7 +23,7 @@ import java.util.Date;
 public class Claim {
 
     @Id
-    @NonNull
+    @NotBlank
     @Field
     private String id;
 
@@ -32,11 +33,11 @@ public class Claim {
     @CreatedDate
     private Date creationDate;
 
-    @NonNull
+    @NotBlank
     @Valid
     private Provider provider;
 
-    @NonNull
+    @NotBlank
     @Valid
     private Payload claimValue;
 

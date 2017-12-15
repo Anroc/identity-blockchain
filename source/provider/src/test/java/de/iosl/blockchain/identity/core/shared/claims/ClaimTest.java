@@ -24,31 +24,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
 
 public class ClaimTest {
-//    private final Date createdDate = java.sql.Date.valueOf(LocalDate.now());
-//    private final Date lastModifiedDate = java.sql.Date.valueOf(LocalDate.now());
-//    private Payload payload = new Payload(Maps.newHashMap("1","1"));
-//    private Provider provider = new Provider("1","asd","asd");
-//    private Claim claim;
-//
-//    @Autowired
-//    public ClaimDB claimDB;
-//
-//    @Autowired
-//    private BlockchainIdentityConfig config;
-//
-//    @Before
-//    public void init(){
-//        claim = new Claim();
-//    }
-//
-//    @Test
-//    public void saveClaimTest(){
-//        claimDB.saveClaim(claim);
-//        assertThat(claimDB.findEntity(claim.getId())).isPresent();
-//    }
-//
-//    @After
-//    public void clearDB(){
-//        claimDB.deleteAll(Claim.class);
-//    }
+    private final Date createdDate = java.sql.Date.valueOf(LocalDate.now());
+    private final Date lastModifiedDate = java.sql.Date.valueOf(LocalDate.now());
+    private Payload payload = new Payload(Maps.newHashMap("1","1"));
+    private Provider provider = new Provider("1","asd","asd");
+    private Claim claim;
+
+    @Autowired
+    public ClaimDB claimDB;
+
+    @Autowired
+    private BlockchainIdentityConfig config;
+
+    @Before
+    public void init(){
+        claim = new Claim();
+    }
+
+    @Test
+    public void saveClaimTest(){
+        claimDB.saveClaim(claim);
+        assertThat(claimDB.findEntity(claim.getId())).isPresent();
+    }
+
+    @After
+    public void clearDB(){
+        claimDB.deleteAll(Claim.class);
+    }
 }
