@@ -23,38 +23,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
-
 public class ClaimTest {
     private final Date createdDate = java.sql.Date.valueOf(LocalDate.now());
     private final Date lastModifiedDate = java.sql.Date.valueOf(LocalDate.now());
-    //private Payload payload = new Payload(Maps.newHashMap("1","1"));
-    //private Provider provider = new Provider("1","asd","asd");
     private Claim claim;
 
     @Autowired
-    public ClaimDB claimDB;
+    private ClaimDB claimDB;
 
     @Autowired
     private BlockchainIdentityConfig config;
 
     @Before
-    public void init() {
+    private void init() {
         claim = new Claim("1", lastModifiedDate, createdDate, new Provider("1", "1", "1"), new Payload("1", Payload.PayloadType.STRING));
     }
 
     @Test
-    public void saveClaimTest() {
+    private void saveClaimTest() {
         claimDB.saveClaim(claim);
         assertThat(claimDB.findEntity(claim.getId())).isPresent();
     }
 
     @Test
-    public void removeClaimTest(){
+    private void removeClaimTest() {
         claimDB.deleteClaim("1");
     }
 
     @After
-    public void clearDB() {
+    private void clearDB() {
         claimDB.deleteAll(Claim.class);
     }
 }
