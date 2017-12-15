@@ -22,6 +22,7 @@ public class UserDB extends CouchbaseWrapper<User, String> {
         this.bucket = bucket;
     }
 
+
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -57,13 +58,17 @@ public class UserDB extends CouchbaseWrapper<User, String> {
 
     public void addClaimToUser(String id, Claim claim) {
         if (checkUserExists(id)) {
-            userRepository.findOne(id).getClaimList().add(claim);
+            User user = userRepository.findOne(id);
+            user.getClaimList().add(claim);
+            updateOrCreateUser(user);
         }
     }
 
     public void removeClaimFromUser(String id, Claim claim) {
         if (checkUserExists(id)) {
-            userRepository.findOne(id).getClaimList().remove(claim);
+            User user = userRepository.findOne(id);
+            user.getClaimList().remove(claim);
+            updateOrCreateUser(user);
         }
     }
 

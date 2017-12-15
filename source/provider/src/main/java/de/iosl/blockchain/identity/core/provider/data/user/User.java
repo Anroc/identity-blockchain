@@ -34,6 +34,6 @@ public class User {
     private String ethId;
 
     @Field
-    @NotBlank
+    @NonNull
     private ArrayList<Claim> claimList;
 }
