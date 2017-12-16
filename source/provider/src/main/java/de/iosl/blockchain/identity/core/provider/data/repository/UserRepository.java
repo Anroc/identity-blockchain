@@ -13,4 +13,7 @@ public interface UserRepository extends CrudRepository<User, String>{
     @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter}")
     List<User> findAll();
 
+    @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter} AND publicKey = $1")
+    List<User> findByPublicKeyLike(String publicKey);
+
 }

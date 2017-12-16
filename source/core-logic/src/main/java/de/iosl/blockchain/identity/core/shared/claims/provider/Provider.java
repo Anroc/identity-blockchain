@@ -15,15 +15,10 @@ import org.springframework.data.couchbase.core.mapping.Document;
 public class Provider {
 
     @Field
-    @NotBlank
     private String ethID;
 
     @Field
     @NotBlank
     private String name;
-
-    @Field
-    @NotBlank
-    private String publicKey;
 
 }

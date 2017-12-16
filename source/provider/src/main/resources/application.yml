@@ -10,12 +10,12 @@ blockchain.identity:
 
 ---
 spring:
-    profiles: default
-    couchbase:
-      bootstrap-hosts: localhost
-      bucket:
-        name: default
-        password: password
+  profiles: default
+  couchbase:
+    bootstrap-hosts: localhost
+    bucket:
+      name: default
+      password: password
 blockchain.identity:
   type: PROVIDER
   core:
@@ -29,12 +29,12 @@ blockchain.identity:
     address: localhost
 ---
 spring:
-    profiles: test
-    couchbase:
-      bootstrap-hosts: srv01.snet.tu-berlin.de
-      bucket:
-        name: claim_test
-        password: 1234qwer
+  profiles: test
+  couchbase:
+    bootstrap-hosts: srv01.snet.tu-berlin.de
+    bucket:
+      name: claim_test
+      password: 1234qwer
 blockchain.identity:
   type: PROVIDER
   core:

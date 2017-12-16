@@ -7,17 +7,18 @@ import de.iosl.blockchain.identity.core.shared.claims.claim.Claim;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,8 +28,10 @@ public class UserTest {
     private User user;
     private Claim claim;
     private Claim claimTwo;
-    private Date createdDate = java.sql.Date.valueOf(LocalDate.now());
-    private Date lastModifiedDate = java.sql.Date.valueOf(LocalDate.now());
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private Date createdDate = new Date();
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private Date lastModifiedDate = new Date();
 
     @Autowired
     public UserDB userDB;
@@ -38,12 +41,12 @@ public class UserTest {
     @Before
     public void init(){
         claim = new Claim("1", lastModifiedDate, createdDate,
-                new Provider("1", "1", "1"),
-                new Payload("1", Payload.PayloadType.STRING));
+                new Provider("1", "1"),
+                new Payload("1", Payload.Type.STRING));
         claimTwo = new Claim("2", lastModifiedDate, createdDate,
-                new Provider("2", "2", "2"),
-                new Payload(true, Payload.PayloadType.BOOLEAN));
-        ArrayList<Claim> claimList = new ArrayList<>();
+                new Provider("2", "2"),
+                new Payload(true, Payload.Type.BOOLEAN));
+        HashSet<Claim> claimList = new HashSet<>();
         claimList.add(claim);
         user = new User("1", "1", "1", claimList);
     }
@@ -52,7 +55,6 @@ public class UserTest {
     public void saveUser(){
         userDB.updateOrCreateUser(user);
         assertThat(userDB.findEntity(user.getId())).isPresent();
-        clearDatabase();
     }
 
     @Test
@@ -61,16 +63,20 @@ public class UserTest {
         userDB.addClaimToUser(user.getId(), claimTwo);
         // real nice that findEntity returns id field as null even though it can write it
         claimTwo.setId(null);
-        assertThat(userDB.findEntity(user.getId()).get().getClaimList().contains(claimTwo)).isTrue();
-        clearDatabase();
+        Optional<User> userOptional = userDB.findEntity(user.getId());
+        assertThat(userOptional).isPresent();
+        user = userOptional.get();
+        assertThat(user.getClaimList().contains(claimTwo));
     }
 
     @Test
     public void removeClaimFromUser(){
         userDB.updateOrCreateUser(user);
         userDB.removeClaimFromUser(user.getId(), claim);
-        assertThat(userDB.findEntity(user.getId()).get().getClaimList().contains(claim)).isFalse();
-        clearDatabase();
+        Optional<User> userOptional = userDB.findEntity(user.getId());
+        assertThat(userOptional).isPresent();
+        user = userOptional.get();
+        assertThat(!user.getClaimList().contains(claimTwo));
     }
 
 
@@ -78,33 +84,28 @@ public class UserTest {
     public void findAllUsers(){
         userDB.updateOrCreateUser(user);
         assertThat(userDB.findAll().size()).isGreaterThan(0);
-        clearDatabase();
     }
 
     @Test
     public void findUserByPublicKey(){
         userDB.updateOrCreateUser(user);
         assertThat(userDB.findUserByPublicKey("1")).isNotNull();
-        clearDatabase();
     }
 
     @Test
     public void findUserByFindOne(){
         userDB.updateOrCreateUser(user);
         assertThat(userDB.findOne(user.getId())).isPresent();
-        clearDatabase();
     }
 
     @Test
     public void deleteUser(){
         userDB.deleteUser(user.getId());
         assertThat(userDB.findEntity(user.getId())).isNotPresent();
-        clearDatabase();
     }
 
-    @Test
+    @After
     public void clearDatabase(){
         userDB.deleteAll(User.class);
-        assertThat(userDB.findAll().size()).isEqualTo(0);
     }
 }

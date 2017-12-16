@@ -10,9 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 
 @Data
 @AllArgsConstructor
@@ -26,14 +24,12 @@ public class User {
     private String id;
 
     @Field
-    @NotBlank
     private String publicKey;
 
     @Field
-    @NotBlank
     private String ethId;
 
     @Field
     @NonNull
-    private ArrayList<Claim> claimList;
+    private HashSet<Claim> claimList;
 }

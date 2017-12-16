@@ -12,10 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
 public class ClaimTest {
-    private final Date createdDate = java.sql.Date.valueOf(LocalDate.now());
-    private final Date lastModifiedDate = java.sql.Date.valueOf(LocalDate.now());
+    private final Date createdDate = new Date();
+    private final Date lastModifiedDate = new Date();
     private Claim claim;
 
     @Autowired
@@ -36,19 +34,19 @@ public class ClaimTest {
     @Before
     public void init() {
         claim = new Claim("1", lastModifiedDate, createdDate,
-                new Provider("1", "1", "1"),
-                new Payload("1", Payload.PayloadType.STRING));
+                new Provider("1", "1"),
+                new Payload("1", Payload.Type.STRING));
     }
 
     @Test
     public void saveClaimTest() {
-        claimDB.saveClaim(claim);
+        claimDB.save(claim);
         assertThat(claimDB.findEntity(claim.getId())).isPresent();
     }
 
     @Test
     public void removeClaimTest() {
-        claimDB.deleteClaim("1");
+        claimDB.delete(claim.getId());
     }
 
     @After

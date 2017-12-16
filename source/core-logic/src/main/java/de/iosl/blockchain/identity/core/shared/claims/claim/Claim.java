@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.couchbase.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import java.util.Date;
@@ -36,6 +37,7 @@ public class Claim {
     private Provider provider;
 
     @NonNull
+    @Valid
     private Payload claimValue;
 
 }

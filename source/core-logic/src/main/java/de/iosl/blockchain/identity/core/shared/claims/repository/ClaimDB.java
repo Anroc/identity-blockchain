@@ -13,28 +13,22 @@ import java.util.Optional;
 @Component
 public class ClaimDB extends CouchbaseWrapper<Claim, String>{
     private final ClaimRepository claimRepository;
-    private final Bucket bucket;
 
     @Autowired
     public ClaimDB(ClaimRepository claimRepository, Bucket bucket) {
         super(claimRepository);
         this.claimRepository = claimRepository;
-        this.bucket = bucket;
     }
 
     public List<Claim> findAll() {
         return claimRepository.findAll();
     }
 
-    public void saveClaim(Claim claim){
+    public void save(Claim claim){
         claimRepository.save(claim);
     }
 
-    public Claim findOne(String id){
-        return claimRepository.findOne(id);
-    }
-
-    public void deleteClaim(String id){
+    public void delete(String id){
         claimRepository.delete(id);
     }
 }

@@ -1,12 +1,16 @@
 package de.iosl.blockchain.identity.core.provider.data.repository;
 
+import com.couchbase.client.core.message.kv.subdoc.multi.Lookup;
 import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.subdoc.DocumentFragment;
 import de.iosl.blockchain.identity.core.provider.data.user.User;
 import de.iosl.blockchain.identity.core.shared.claims.claim.Claim;
 import de.iosl.blockchain.identity.lib.wrapper.CouchbaseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.couchbase.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,15 +45,8 @@ public class UserDB extends CouchbaseWrapper<User, String> {
         return Optional.of(userRepository.findOne(id));
     }
 
-    public User findUserByPublicKey(String publicKey) {
-        if (userRepository.findAll().size() > 0) {
-            for (User user : userRepository.findAll()) {
-                if (user.getPublicKey().equals(publicKey)) {
-                    return user;
-                }
-            }
-        }
-        return null;
+    public Optional<User> findUserByPublicKey(String publicKey) {
+        return Optional.of(userRepository.findByPublicKeyLike(publicKey).get(0));
     }
 
     public Optional<User> findOne(String id) {
@@ -57,22 +54,18 @@ public class UserDB extends CouchbaseWrapper<User, String> {
     }
 
     public void addClaimToUser(String id, Claim claim) {
-        if (checkUserExists(id)) {
-            User user = userRepository.findOne(id);
-            user.getClaimList().add(claim);
-            updateOrCreateUser(user);
-        }
+        bucket.mutateIn(id).arrayAppend("claimList", claim, false).execute();
     }
 
     public void removeClaimFromUser(String id, Claim claim) {
-        if (checkUserExists(id)) {
+/*        if (checkUserExists(id)) {
             User user = userRepository.findOne(id);
             user.getClaimList().remove(claim);
             updateOrCreateUser(user);
-        }
+        }*/
     }
 
-    private Boolean checkUserExists(String id) {
+    private boolean checkUserExists(String id) {
         return userRepository.exists(id);
     }
 
