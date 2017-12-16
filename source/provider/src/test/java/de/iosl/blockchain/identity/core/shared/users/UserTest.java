@@ -53,6 +53,7 @@ public class UserTest {
     public void saveUser(){
         userDB.updateOrCreateUser(user);
         assertThat(userDB.findEntity(user.getId())).isPresent();
+        clearDatabase();
     }
 
     @Test
@@ -61,6 +62,7 @@ public class UserTest {
         userDB.addClaimToUser(user.getId(), claimTwo);
         claimTwo.setId(null);
         assertThat(userDB.findEntity(user.getId()).get().getClaimList().contains(claimTwo)).isTrue();
+        clearDatabase();
     }
 
     @Test
@@ -68,6 +70,7 @@ public class UserTest {
         userDB.updateOrCreateUser(user);
         userDB.removeClaimFromUser(user.getId(), claim);
         assertThat(userDB.findEntity(user.getId()).get().getClaimList().contains(claim)).isFalse();
+        clearDatabase();
     }
 
 
@@ -76,18 +79,21 @@ public class UserTest {
     public void findAllUsers(){
         userDB.updateOrCreateUser(user);
         assertThat(userDB.findAll().size()).isGreaterThan(0);
+        clearDatabase();
     }
 
     @Test
     public void findUserByPublicKey(){
         userDB.updateOrCreateUser(user);
         assertThat(userDB.findUserByPublicKey("1")).isNotNull();
+        clearDatabase();
     }
 
     @Test
     public void findUserByFindOne(){
         userDB.updateOrCreateUser(user);
         assertThat(userDB.findOne(user.getId())).isNotNull();
+        clearDatabase();
     }
 
     @Test
@@ -97,6 +103,7 @@ public class UserTest {
         clearDatabase();
     }
 
+    @Test
     public void clearDatabase(){
         userDB.deleteAll(User.class);
     }
