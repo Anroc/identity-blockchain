@@ -57,6 +57,7 @@ public class UserTest {
 
     @Test
     public void addClaimToUser(){
+        userDB.updateOrCreateUser(user);
         userDB.addClaimToUser(user.getId(), claimTwo);
         claimTwo.setId(null);
         assertThat(userDB.findEntity(user.getId()).get().getClaimList().contains(claimTwo)).isTrue();
@@ -64,6 +65,7 @@ public class UserTest {
 
     @Test
     public void removeClaimFromUser(){
+        userDB.updateOrCreateUser(user);
         userDB.removeClaimFromUser(user.getId(), claim);
         assertThat(userDB.findEntity(user.getId()).get().getClaimList().contains(claim)).isFalse();
     }
@@ -78,11 +80,13 @@ public class UserTest {
 
     @Test
     public void findUserByPublicKey(){
+        userDB.updateOrCreateUser(user);
         assertThat(userDB.findUserByPublicKey("1")).isNotNull();
     }
 
     @Test
     public void findUserByFindOne(){
+        userDB.updateOrCreateUser(user);
         assertThat(userDB.findOne(user.getId())).isNotNull();
     }
 
