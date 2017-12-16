@@ -92,7 +92,7 @@ public class UserTest {
     @Test
     public void findUserByFindOne(){
         userDB.updateOrCreateUser(user);
-        assertThat(userDB.findOne(user.getId())).isNotNull();
+        assertThat(userDB.findOne(user.getId())).isPresent();
         clearDatabase();
     }
 

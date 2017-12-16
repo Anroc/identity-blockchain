@@ -52,8 +52,8 @@ public class UserDB extends CouchbaseWrapper<User, String> {
         return null;
     }
 
-    public User findOne(String id) {
-        return userRepository.findOne(id);
+    public Optional<User> findOne(String id) {
+        return Optional.of(userRepository.findOne(id));
     }
 
     public void addClaimToUser(String id, Claim claim) {
