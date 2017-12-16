@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
-@ActiveProfiles(profiles = "test")
 public class ClaimTest {
     private final Date createdDate = java.sql.Date.valueOf(LocalDate.now());
     private final Date lastModifiedDate = java.sql.Date.valueOf(LocalDate.now());
