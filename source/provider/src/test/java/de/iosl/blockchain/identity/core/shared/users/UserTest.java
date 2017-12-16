@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.shared.claims;
+package de.iosl.blockchain.identity.core.shared.users;
 
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.data.repository.UserDB;
@@ -7,14 +7,12 @@ import de.iosl.blockchain.identity.core.shared.claims.claim.Claim;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
-import org.apache.tomcat.jni.Local;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
@@ -25,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
+@ActiveProfiles(profiles = "test")
 public class UserTest {
     private User user;
     private Claim claim;
@@ -69,12 +68,13 @@ public class UserTest {
         assertThat(userDB.findEntity(user.getId()).get().getClaimList().contains(claim)).isFalse();
     }
 
-    /*
-    TODO: ASK MARVIN WHY THIS RETURNS AN EMPTY LIST
+
+    //TODO: ASK MARVIN WHY THIS RETURNS AN EMPTY LIST
     @Test
     public void findAllUsers(){
+        userDB.updateOrCreateUser(user);
         assertThat(userDB.findAll().size()).isGreaterThan(0);
-    }*/
+    }
 
     @Test
     public void findUserByPublicKey(){
