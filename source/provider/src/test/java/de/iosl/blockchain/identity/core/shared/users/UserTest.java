@@ -60,6 +60,7 @@ public class UserTest {
     public void addClaimToUser(){
         userDB.updateOrCreateUser(user);
         userDB.addClaimToUser(user.getId(), claimTwo);
+        // real nice that findEntity returns id field as null even though it can write it
         claimTwo.setId(null);
         assertThat(userDB.findEntity(user.getId()).get().getClaimList().contains(claimTwo)).isTrue();
         clearDatabase();
@@ -74,7 +75,6 @@ public class UserTest {
     }
 
 
-    //TODO: ASK MARVIN WHY THIS RETURNS AN EMPTY LIST
     @Test
     public void findAllUsers(){
         userDB.updateOrCreateUser(user);
@@ -106,5 +106,6 @@ public class UserTest {
     @Test
     public void clearDatabase(){
         userDB.deleteAll(User.class);
+        assertThat(userDB.findAll().size()).isEqualTo(0);
     }
 }
