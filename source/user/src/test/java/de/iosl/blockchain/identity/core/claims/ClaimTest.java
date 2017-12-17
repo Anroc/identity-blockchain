@@ -1,10 +1,11 @@
-package de.iosl.blockchain.identity.core.shared.claims;
+package de.iosl.blockchain.identity.core.claims;
 
-import de.iosl.blockchain.identity.core.provider.Application;
-import de.iosl.blockchain.identity.core.shared.claims.claim.Claim;
+import de.iosl.blockchain.identity.core.user.Application;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
+import de.iosl.blockchain.identity.core.shared.claims.payload.PayloadType;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
-import de.iosl.blockchain.identity.core.shared.claims.repository.ClaimDB;
+import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
+import de.iosl.blockchain.identity.core.user.claims.repository.UserClaimDB;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import org.junit.After;
 import org.junit.Before;
@@ -23,34 +24,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ClaimTest {
     private final Date createdDate = new Date();
     private final Date lastModifiedDate = new Date();
-    private Claim claim;
+    private UserClaim userClaim;
 
     @Autowired
-    private ClaimDB claimDB;
+    private UserClaimDB userClaimDB;
 
     @Autowired
     private BlockchainIdentityConfig config;
 
     @Before
     public void init() {
-        claim = new Claim("1", lastModifiedDate, createdDate,
+        userClaim = new UserClaim("1", createdDate, lastModifiedDate,
                 new Provider("1", "1"),
-                new Payload("1", Payload.Type.STRING));
+                new Payload("1", PayloadType.STRING));
     }
 
     @Test
     public void saveClaimTest() {
-        claimDB.save(claim);
-        assertThat(claimDB.findEntity(claim.getId())).isPresent();
+        userClaimDB.save(userClaim);
+        assertThat(userClaimDB.findEntity(userClaim.getId())).isPresent();
     }
 
     @Test
     public void removeClaimTest() {
-        claimDB.delete(claim.getId());
+        userClaimDB.save(userClaim);
+        userClaimDB.delete(userClaim.getId());
+        assertThat(userClaimDB.findEntity(userClaim.getId())).isNotPresent();
     }
 
     @After
     public void clearDB() {
-        claimDB.deleteAll(Claim.class);
+        userClaimDB.deleteAll(UserClaim.class);
     }
 }

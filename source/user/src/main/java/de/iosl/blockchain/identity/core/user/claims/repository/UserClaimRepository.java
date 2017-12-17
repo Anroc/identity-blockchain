@@ -1,6 +1,6 @@
-package de.iosl.blockchain.identity.core.shared.claims.repository;
+package de.iosl.blockchain.identity.core.user.claims.repository;
 
-import de.iosl.blockchain.identity.core.shared.claims.claim.Claim;
+import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import org.springframework.data.couchbase.core.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ClaimRepository extends CrudRepository<Claim, String>{
+public interface UserClaimRepository extends CrudRepository<UserClaim, String> {
 
     @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter}")
-    List<Claim> findAll();
+    List<UserClaim> findAll();
 
 }

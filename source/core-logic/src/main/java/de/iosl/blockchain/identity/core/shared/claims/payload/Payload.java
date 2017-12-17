@@ -14,16 +14,12 @@ import javax.validation.constraints.NotNull;
 @Document
 public class Payload {
 
-    public enum Type{
-        STRING, NUMBER, OBJECT, DATE, BOOLEAN;
-    }
-
     @NotNull
     @Field
     private Object payload;
 
     @NotNull
     @Field
-    private Type payloadType;
+    private PayloadType payloadType;
 
 }

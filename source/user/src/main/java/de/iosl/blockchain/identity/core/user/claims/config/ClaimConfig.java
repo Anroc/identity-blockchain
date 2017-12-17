@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.shared.claims.config;
+package de.iosl.blockchain.identity.core.user.claims.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

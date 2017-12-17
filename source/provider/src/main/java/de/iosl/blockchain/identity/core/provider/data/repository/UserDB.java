@@ -1,16 +1,12 @@
 package de.iosl.blockchain.identity.core.provider.data.repository;
 
-import com.couchbase.client.core.message.kv.subdoc.multi.Lookup;
 import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.subdoc.DocumentFragment;
+import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.data.user.User;
-import de.iosl.blockchain.identity.core.shared.claims.claim.Claim;
 import de.iosl.blockchain.identity.lib.wrapper.CouchbaseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.couchbase.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,16 +49,16 @@ public class UserDB extends CouchbaseWrapper<User, String> {
         return Optional.of(userRepository.findOne(id));
     }
 
-    public void addClaimToUser(String id, Claim claim) {
-        bucket.mutateIn(id).arrayAppend("claimList", claim, false).execute();
+    public void addClaimToUser(String id, ProviderClaim providerClaim) {
+        bucket.mutateIn(id).arrayAppend("providerClaimHashSet", providerClaim, false).execute();
     }
 
-    public void removeClaimFromUser(String id, Claim claim) {
-/*        if (checkUserExists(id)) {
-            User user = userRepository.findOne(id);
-            user.getClaimList().remove(claim);
-            updateOrCreateUser(user);
-        }*/
+    public void removeClaimFromUser(String id, ProviderClaim providerClaim) {
+        Optional<User> userOptional = Optional.of(userRepository.findOne(id));
+        userOptional.ifPresent(user -> {
+            user.getProviderClaimHashSet().remove(providerClaim);
+            userRepository.save(user);
+        });
     }
 
     private boolean checkUserExists(String id) {
