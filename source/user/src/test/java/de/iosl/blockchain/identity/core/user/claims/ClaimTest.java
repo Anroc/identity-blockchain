@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.claims;
+package de.iosl.blockchain.identity.core.user.claims;
 
 import de.iosl.blockchain.identity.core.user.Application;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
