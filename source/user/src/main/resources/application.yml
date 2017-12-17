@@ -1,10 +1,34 @@
 spring:
-  application.name: Blockchain-Identity-Logic
+  application.name: Blockchain-Identity-User
   profiles.active: default
 
 blockchain.identity:
   protocol: http
+  type: USER
+
+---
+spring:
+    profiles: default
+blockchain.identity:
+  core:
+    port: 8080
+    address: localhost
   discoveryService:
     port: 8101
     address: srv01.snet.tu-berlin.de
-
+  ethereum:
+    port: 7111
+    address: srv01.snet.tu-berlin.de
+---
+spring:
+    profiles: production
+blockchain.identity:
+  core:
+    port: 1112
+    address: srv01.snet.tu-berlin.de
+  discoveryService:
+    port: 8101
+    address: srv01.snet.tu-berlin.de
+  ethereum:
+    port: 8545
+    address: srv01.snet.tu-berlin.de

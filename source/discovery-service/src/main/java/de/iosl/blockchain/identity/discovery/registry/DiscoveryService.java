@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.discovery.registry;
 
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
-import de.iosl.blockchain.identity.discovery.registry.repository.RegistryEntryDB;
+import de.iosl.blockchain.identity.discovery.registry.db.RegistryEntryDB;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,11 @@ public class DiscoveryService {
     }
 
     public RegistryEntry putEntry(@NonNull RegistryEntry registryEntry) {
-        return registryEntryDB.upsert(registryEntry);
+        if(registryEntryDB.exist(registryEntry.getId())) {
+            return registryEntryDB.update(registryEntry);
+        } else {
+            return registryEntryDB.insert(registryEntry);
+        }
     }
 
     public Collection<RegistryEntry> getEntries() {

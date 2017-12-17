@@ -17,3 +17,11 @@ spring:
     bucket:
       name: discovery_test
       password: 1234qwer
+---
+spring:
+  profiles: production
+  couchbase:
+    bootstrap-hosts: srv01.snet.tu-berlin.de
+    bucket:
+      name: discovery
+      password: 1234qwer

@@ -144,6 +144,8 @@
       "no-console": 1,
       "no-use-before-define": 0,
       "prefer-template": 2,
+      "no-param-reassign": 0,
+      "react/prefer-stateless-function": 0,
       "react/forbid-prop-types": 0,
       "react/jsx-first-prop-new-line": [
         2,
@@ -194,10 +196,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "statements": 98,
-        "branches": 91,
-        "functions": 98,
-        "lines": 98
+        "statements": 8,
+        "branches": 11,
+        "functions": 18,
+        "lines": 18
       }
     },
     "moduleDirectories": [

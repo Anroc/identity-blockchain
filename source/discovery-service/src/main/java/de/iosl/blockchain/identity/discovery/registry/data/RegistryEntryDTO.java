@@ -1,30 +1,32 @@
 package de.iosl.blockchain.identity.discovery.registry.data;
 
+import de.iosl.blockchain.identity.discovery.data.Payload;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class RegistryEntryDTO {
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class RegistryEntryDTO extends Payload {
 
-    @Valid
-    @NotNull
-    private Payload payload;
+    @NotBlank
+    private String publicKey;
+    @NotBlank
+    private String domainName;
+    @Min(0)
+    private int port;
 
-    @Valid
-    @NotNull
-    private ECSignature signature;
-
-    public RegistryEntry toRegistryEntry() {
-        return new RegistryEntry(
-                getPayload(),
-                getSignature(),
-                getPayload().getEthID()
-        );
+    public RegistryEntryDTO(String ethID, String publicKey,
+            String domainName, int port) {
+        super(ethID);
+        this.publicKey = publicKey;
+        this.domainName = domainName;
+        this.port = port;
     }
 }

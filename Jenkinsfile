@@ -114,6 +114,17 @@ node {
                     }
                 }
             }
+        }, node: {
+            env.NODEJS_HOME = "${tool 'node-7.8.0'}"
+            
+            env.PATH="${env.NODEJS_HOME}/bin:${env.PATH}"
+            sh 'npm --version'
+            env.NODE_PATH = "${env.NODEJS_HOME}/lib/node_modules"
+
+            dir (SOURCE_DIR + "/client-frontend") {
+                sh 'npm install'
+                sh 'npm test'
+            }
         }
 
         stage('deploy') {

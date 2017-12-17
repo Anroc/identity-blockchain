@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.core.shared.keychain;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.core.shared.keychain.data.EncryptedKeyChain;
 import de.iosl.blockchain.identity.core.shared.keychain.data.EncryptedKeySpec;
+import de.iosl.blockchain.identity.core.shared.keychain.data.KeyInfo;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.symmetric.PasswordBasedCryptEngine;
@@ -19,15 +20,12 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.*;
 
+import static de.iosl.blockchain.identity.core.shared.KeyChain.KEY_CHAIN;
+import static de.iosl.blockchain.identity.core.shared.KeyChain.WALLET_DIR;
+
 @Slf4j
 @Service
 public class KeyChainService {
-
-    public static final String WALLET_DIR =
-            System.getProperty("user.home") + File.separator
-                    + ".ethereum" + File.separator + "blockchain-identity"
-                    + File.separator;
-    private static final String KEY_CHAIN = "keychain.json";
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -43,8 +41,10 @@ public class KeyChainService {
         Paths.get(path).toFile().mkdirs();
     }
 
-    public void saveKeyChain(@NonNull KeyPair keyPair, @NonNull String path,
-            @NonNull String password) throws IOException {
+    public void saveKeyChain(@NonNull KeyPair keyPair,
+            @NonNull String path,
+            @NonNull String password,
+            @NonNull String accountPath) throws IOException {
         PasswordBasedCryptEngine passwordBasedCryptEngine = CryptEngine
                 .generate().pbe(password);
 
@@ -57,7 +57,8 @@ public class KeyChainService {
                 privateKeySepc,
                 publicKeySepc,
                 passwordBasedCryptEngine.getAlgorithm(),
-                passwordBasedCryptEngine.getBitSecurity()
+                passwordBasedCryptEngine.getBitSecurity(),
+                accountPath
         );
 
         File file = getKeyChain(path);
@@ -68,7 +69,7 @@ public class KeyChainService {
         objectMapper.writeValue(file, encryptedKeyChain);
     }
 
-    public KeyPair readKeyChange(@NonNull String path, @NonNull String password)
+    public KeyInfo readKeyChange(@NonNull String path, @NonNull String password)
             throws IOException {
         File file = getKeyChain(path);
         if (file.exists()) {
@@ -82,7 +83,10 @@ public class KeyChainService {
                     passwordBasedCryptEngine);
             PublicKey publicKey = getPublicKey(encryptedKeyChain.getPublicKey(),
                     passwordBasedCryptEngine);
-            return new KeyPair(publicKey, privateKey);
+            return new KeyInfo(
+                        new KeyPair(publicKey, privateKey),
+                        encryptedKeyChain.getAccount()
+                    );
         } else {
             throw new IOException("Could not find file.");
         }

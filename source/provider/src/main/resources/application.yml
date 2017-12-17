@@ -1,24 +1,37 @@
 spring:
-  application.name: Blockchain-Identity-Logic
+  application.name: Blockchain-Identity-Provider
   profiles.active: default
 
 blockchain.identity:
   protocol: http
+  type: GOVERMENT
   provider.credentials:
     username: admin
-    password: password
+    password: penispumpe
 
 ---
 spring:
     profiles: default
 blockchain.identity:
+  core:
+    port: 8080
+    address: localhost
   discoveryService:
     port: 8101
+    address: srv01.snet.tu-berlin.de
+  ethereum:
+    port: 8545
     address: localhost
 ---
 spring:
     profiles: production
 blockchain.identity:
+  core:
+    port: 8100
+    address: srv01.snet.tu-berlin.de
   discoveryService:
     port: 8101
+    address: srv01.snet.tu-berlin.de
+  ethereum:
+    port: 8545
     address: srv01.snet.tu-berlin.de

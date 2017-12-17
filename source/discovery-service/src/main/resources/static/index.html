@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Discovery Service - Dashboard</title>
+    <link rel="icon" type="image/png" href="media/icon.png"/>
+
+    <link rel="stylesheet" href="css/spinner.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- jQuery (necessary de.tuberlin.dai.steganography.Bootstraptrap's JavaScript plugins) -->
+    <script src="js/lib/jquery/jquery-3.2.1.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+
+    <!-- handlebar js -->
+    <script src="js/lib/handelbars/handlebars-v4.0.10.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+
+    <!-- boostrap toggle
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    -->
+
+    <!-- Filesaver -->
+    <link rel="stylesheet" href="css/spinner.css">
+
+</head>
+<body>
+<div style="padding-top: 20px"></div>
+<div class="container">
+    <div class="text-right">
+        <button class="btn btn-primary" onClick="window.location.reload();">
+            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+            Refresh
+        </button>
+    </div>
+</div>
+<div style="padding-top: 10px"></div>
+<div class="container">
+    <table class="table table-striped" id="target">
+        <tr>
+            <th>
+                <b>Ethereum ID</b>
+            </th>
+            <th>
+                <b>Domain</b>
+            </th>
+            <th>
+                <b>Port</b>
+            </th>
+            <th>
+                <b>Last Seen</b>
+            </th>
+            <th>
+                <b>State</b>
+            </th>
+        </tr>
+    </table>
+</div>
+
+<script id="table-content" type="text/x-handlebars-template">
+    <tr>
+        <td>
+            {{payload.ethID}}
+        </td>
+        <td>
+            {{payload.domainName}}
+        </td>
+        <td>
+            {{payload.port}}
+        </td>
+        <td>
+            {{printableDate.fullTime}} {{printableDate.fullDate}}
+        </td>
+        <td>
+            <span class="label label-{{lifeStateLabel}}">{{lifeState}}</span>
+        </td>
+    </tr>
+</script>
+
+<!-- -------------------- LOADING DIV --------------------------->
+
+<div class="loading" id="loading-animation" style="display: none">Loading&#8230;</div>
+
+<script src="js/basic_qj.js"></script>
+</body>
+</html>

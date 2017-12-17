@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.config;
 
+import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jConstants;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -22,4 +23,9 @@ public class BlockchainIdentityConfig {
 
     @Valid
     private ServiceConfig discoveryService;
+
+    @Valid
+    private Web3jConstants ethereum;
+
+    private ClientType type;
 }
