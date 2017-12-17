@@ -128,9 +128,7 @@ public class Web3jUtils {
 	 * In the happy case the tx receipt object is returned.
 	 * Otherwise, a runtime exception is thrown. 
 	 */
-	public static TransactionReceipt waitForReceipt(Web3j web3j, String transactionHash)
-			throws Exception 
-	{
+	public static TransactionReceipt waitForReceipt(Web3j web3j, String transactionHash) throws ExecutionException, InterruptedException {
 
 		int attempts = Web3jConstants.CONFIRMATION_ATTEMPTS;
 		int sleep_millis = Web3jConstants.SLEEP_DURATION;
@@ -152,9 +150,7 @@ public class Web3jUtils {
 	/**
 	 * Returns the TransactionRecipt for the specified tx hash as an optional.
 	 */
-	public static Optional<TransactionReceipt> getReceipt(Web3j web3j, String transactionHash)
-			throws Exception 
-	{
+	public static Optional<TransactionReceipt> getReceipt(Web3j web3j, String transactionHash) throws ExecutionException, InterruptedException {
 		EthGetTransactionReceipt receipt = web3j
 				.ethGetTransactionReceipt(transactionHash)
 				.sendAsync()

@@ -12,6 +12,7 @@ public class DeployContract {
 
     public void deployRegistrarContract(String password, Account account, Web3j web3j) {
         try {
+            log.info("Coinbase:"+web3j.ethCoinbase().sendAsync().get());
             Registrar_sol_FirstContract contract = Registrar_sol_FirstContract.deploy(
                     web3j,
                     account.getCredentials(),
@@ -22,8 +23,6 @@ public class DeployContract {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
 }

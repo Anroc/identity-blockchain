@@ -18,10 +18,11 @@ public class Account {
     private BigInteger publicKey;
     private BigInteger privateKey;
     private File file;
+    private Credentials credentials;
 
-    public Credentials getCredentials(){
-        return Credentials.create(getEcKeyPair());
-    }
+//    public Credentials getCredentials(){
+//        return Credentials.create(getEcKeyPair());
+//    }
 
     public ECKeyPair getEcKeyPair(){
         return new ECKeyPair(this.privateKey, this.publicKey);

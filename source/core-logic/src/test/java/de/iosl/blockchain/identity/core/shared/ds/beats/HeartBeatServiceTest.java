@@ -42,7 +42,7 @@ public class HeartBeatServiceTest extends BasicMockSuite {
                 "ethID",
                 "/myEndpoint/ethID"
         ));
-        Account account = new Account("0x123", BigInteger.TEN, BigInteger.TEN, mock(File.class));
+        Account account = new Account("0x123", BigInteger.TEN, BigInteger.TEN, mock(File.class),null);
 
         doReturn(ethereumSigner).when(heartBeatService).getSigner();
         doReturn(account).when(keyChain).getAccount();

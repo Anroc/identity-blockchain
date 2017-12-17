@@ -44,7 +44,7 @@ public class BlockchainAccess implements EBAInterface {
 
     @Override
     public Account createWallet(@NonNull String password, Path path) {
-        return accountAccess.createAccount(password, path);
+        return accountAccess.createAccount(password, path, web3j);
     }
 
     @Override
