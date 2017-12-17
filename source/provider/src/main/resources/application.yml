@@ -48,7 +48,12 @@ blockchain.identity:
     address: localhost
 ---
 spring:
-    profiles: production
+  profiles: production
+  couchbase:
+    bootstrap-hosts: srv01.snet.tu-berlin.de
+    bucket:
+      name: provider
+      password: 1234qwer
 blockchain.identity:
   type: GOVERMENT
   core:

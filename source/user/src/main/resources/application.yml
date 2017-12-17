@@ -33,7 +33,6 @@ spring:
       name: claim_test
       password: 1234qwer
 blockchain.identity:
-  type: USER
   core:
     port: 8080
     address: localhost
@@ -45,7 +44,12 @@ blockchain.identity:
     address: localhost
 ---
 spring:
-    profiles: production
+  profiles: production
+  couchbase:
+    bootstrap-hosts: srv01.snet.tu-berlin.de
+    bucket:
+      name: user
+      password: 1234qwer
 blockchain.identity:
   core:
     port: 1112
