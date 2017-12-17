@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.eba.main.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
@@ -13,13 +14,17 @@ import java.math.BigInteger;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+@Slf4j
 public class Web3jUtils {
 
-	public static Web3j buildHttpClient(String ip, String port) {
-//		String url = String.format("http://%s:%s", ip, port);
-//		return Web3j.build(new HttpService(url));
-		return Web3j.build(new HttpService());  // defaults to http://localhost:8545/
+	public static Web3j buildHttpClientByParams(String ip, String port) {
+		String url = String.format("http://%s:%s", ip, port);
+		log.debug(url);
+		return Web3j.build(new HttpService(url));
+	}
 
+	public static Web3j buildHttpClient() {
+		return Web3j.build(new HttpService());  // defaults to http://localhost:8545/
 	}
 
 	public static String getClientVersion(Web3j web3j) throws InterruptedException, ExecutionException {

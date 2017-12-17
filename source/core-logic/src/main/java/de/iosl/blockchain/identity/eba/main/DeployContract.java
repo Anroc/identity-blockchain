@@ -25,7 +25,6 @@ public class DeployContract {
                     Web3jConstants.GAS_PRICE,
                     Web3jConstants.GAS_LIMIT_REGISTRAR_TX
             ).send();
-            contract.
         } catch (Exception e) {
             e.printStackTrace();
         }

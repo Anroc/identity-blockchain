@@ -46,7 +46,7 @@ public class AccountAccess {
             Account account = new Account(
                     credentials.getAddress(),
                     credentials.getEcKeyPair().getPublicKey(),
-                    credentials.getEcKeyPair().getPrivateKey(),
+                    credentials.getEcKeyPair().getPublicKey(),
                     file
             );
             return account;

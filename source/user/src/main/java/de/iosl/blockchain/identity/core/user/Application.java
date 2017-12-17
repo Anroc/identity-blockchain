@@ -7,7 +7,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
 @SpringBootApplication
-@ComponentScan(basePackages = "de.iosl.blockchain.identity.core")
+@ComponentScan(basePackages = {"de.iosl.blockchain.identity.core.user", "de.iosl.blockchain.identity.core.shared", "de.iosl.blockchain.identity.eba"})
 public class Application {
 
     public static void main(String[] args) {
