@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.provider.security;
+package de.iosl.blockchain.identity.core.provider.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

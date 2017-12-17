@@ -10,7 +10,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 
-import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -31,6 +32,21 @@ public class User {
 
     @Field
     @NonNull
-    private HashSet<ProviderClaim> providerClaimHashSet;
+    private Set<ProviderClaim> claims;
 
+    public User putClaim(@NonNull ProviderClaim claim) {
+        claims.add(claim);
+        return this;
+    }
+
+    public User removeClaim(String claimId) {
+        findClaim(claimId).ifPresent(claims::remove);
+        return this;
+    }
+
+    public Optional<ProviderClaim> findClaim(final String claimId) {
+        return claims.stream()
+                .filter(claim -> claim.getId().equals(claimId))
+                .findAny();
+    }
 }

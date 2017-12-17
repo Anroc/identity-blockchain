@@ -1,6 +1,6 @@
 package de.iosl.blockchain.identity.core.provider.boot;
 
-import de.iosl.blockchain.identity.core.provider.security.CredentialConfig;
+import de.iosl.blockchain.identity.core.provider.config.CredentialConfig;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.config.ClientType;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
