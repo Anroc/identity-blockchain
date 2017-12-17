@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.core.provider.user.data;
 
-import de.iosl.blockchain.identity.core.shared.claims.claim.Claim;
+import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
+import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,7 @@ public class ClaimDTO {
     @NotNull
     private PayloadDTO claimValue;
 
-    public ClaimDTO(@NonNull Claim claim) {
+    public ClaimDTO(@NonNull SharedClaim claim) {
         this.id = claim.getId();
         this.modificationDate = claim.getModificationDate();
         this.creationDate = claim.getCreationDate();
@@ -35,7 +36,7 @@ public class ClaimDTO {
         this.claimValue = new PayloadDTO(claim.getClaimValue());
     }
 
-    public Claim toClaim() {
-        return new Claim(getId(), getModificationDate(), getCreationDate(), getProvider().toProvider(), claimValue.toPayload());
+    public ProviderClaim toClaim() {
+        return new ProviderClaim(getId(), getModificationDate(), getCreationDate(), getProvider().toProvider(), claimValue.toPayload());
     }
 }

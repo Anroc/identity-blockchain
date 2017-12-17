@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.provider.data.user;
 
 import com.couchbase.client.java.repository.annotation.Field;
-import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
+import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,5 +31,5 @@ public class User {
 
     @Field
     @NonNull
-    private Set<ProviderClaim> providerClaimHashSet;
+    private Set<SharedClaim> claims;
 }

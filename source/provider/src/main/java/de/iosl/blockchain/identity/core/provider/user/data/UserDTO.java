@@ -28,7 +28,7 @@ public class UserDTO {
         this.id = user.getId();
         this.ethId = user.getEthId();
         this.publicKey = user.getPublicKey();
-        claims = user.getClaimList().stream()
+        claims = user.getClaims().stream()
                 .map(ClaimDTO::new).collect(Collectors.toSet());
     }
 

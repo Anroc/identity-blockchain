@@ -25,8 +25,8 @@ public class UserController {
                 .map(UserDTO::new).collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
-    public UserDTO getUser(@RequestParam("id") final String id) {
+    @GetMapping("/{userId}")
+    public UserDTO getUser(@PathVariable("userId") final String id) {
         return userService.findUser(id)
                 .map(UserDTO::new)
                 .orElseThrow(

@@ -31,4 +31,6 @@ public abstract class SharedClaim {
     @Valid
     private Payload claimValue;
 
+    public abstract String getId();
+
 }

@@ -50,13 +50,13 @@ public class UserDB extends CouchbaseWrapper<User, String> {
     }
 
     public void addClaimToUser(String id, ProviderClaim providerClaim) {
-        bucket.mutateIn(id).arrayAppend("providerClaimHashSet", providerClaim, false).execute();
+        bucket.mutateIn(id).arrayAppend("claims", providerClaim, false).execute();
     }
 
     public void removeClaimFromUser(String id, ProviderClaim providerClaim) {
         Optional<User> userOptional = Optional.of(userRepository.findOne(id));
         userOptional.ifPresent(user -> {
-            user.getProviderClaimHashSet().remove(providerClaim);
+            user.getClaims().remove(providerClaim);
             userRepository.save(user);
         });
     }

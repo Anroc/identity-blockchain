@@ -4,6 +4,7 @@ import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.data.repository.UserDB;
 import de.iosl.blockchain.identity.core.provider.data.user.User;
+import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.payload.PayloadType;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
@@ -20,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,7 +49,7 @@ public class UserTest {
         providerClaimTwo = new ProviderClaim("2", lastModifiedDate, createdDate,
                 new Provider("2", "2"),
                 new Payload(true, PayloadType.BOOLEAN));
-        HashSet<ProviderClaim> providerClaimHashSet = new HashSet<>();
+        Set<SharedClaim> providerClaimHashSet = new HashSet<>();
         providerClaimHashSet.add(providerClaim);
         user = new User("1", "1", "1", providerClaimHashSet);
     }
@@ -65,7 +67,7 @@ public class UserTest {
         Optional<User> userOptional = userDB.findEntity(user.getId());
         assertThat(userOptional).isPresent();
         user = userOptional.get();
-        assertThat(user.getProviderClaimHashSet().contains(providerClaimTwo)).isTrue();
+        assertThat(user.getClaims().contains(providerClaimTwo)).isTrue();
     }
 
     @Test
@@ -75,7 +77,7 @@ public class UserTest {
         Optional<User> userOptional = userDB.findEntity(user.getId());
         assertThat(userOptional).isPresent();
         user = userOptional.get();
-        assertThat(user.getProviderClaimHashSet().contains(providerClaim)).isFalse();
+        assertThat(user.getClaims().contains(providerClaim)).isFalse();
     }
 
 
