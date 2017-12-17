@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic();
         http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
 
+        http.csrf().disable();
     }
 
 }

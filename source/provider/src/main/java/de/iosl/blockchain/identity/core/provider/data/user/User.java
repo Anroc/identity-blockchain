@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 
-import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -31,6 +31,5 @@ public class User {
 
     @Field
     @NonNull
-    private HashSet<ProviderClaim> providerClaimHashSet;
-
+    private Set<ProviderClaim> providerClaimHashSet;
 }
