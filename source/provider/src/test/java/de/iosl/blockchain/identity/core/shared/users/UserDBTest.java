@@ -4,7 +4,6 @@ import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.data.user.User;
-import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.payload.PayloadType;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
@@ -41,7 +40,7 @@ public class UserDBTest extends RestTestSuite {
         providerClaimTwo = new ProviderClaim("2", lastModifiedDate, createdDate,
                 new Provider("2", "2"),
                 new Payload(true, PayloadType.BOOLEAN));
-        Set<SharedClaim> providerClaimHashSet = new HashSet<>();
+        Set<ProviderClaim> providerClaimHashSet = new HashSet<>();
         providerClaimHashSet.add(providerClaim);
         user = new User("1", "1", "1", providerClaimHashSet);
     }

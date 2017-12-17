@@ -1,8 +1,8 @@
 package de.iosl.blockchain.identity.core.provider.user;
 
+import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.data.repository.UserDB;
 import de.iosl.blockchain.identity.core.provider.data.user.User;
-import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class UserService {
         return userDB.exist(userId);
     }
 
-    public SharedClaim createClaim(@NonNull User user, @NonNull SharedClaim claim) {
+    public ProviderClaim createClaim(@NonNull User user, @NonNull ProviderClaim claim) {
         user.putClaim(claim);
         userDB.update(user);
         return claim;

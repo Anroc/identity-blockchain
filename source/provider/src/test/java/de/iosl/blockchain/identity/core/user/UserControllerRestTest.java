@@ -132,7 +132,7 @@ public class UserControllerRestTest extends RestTestSuite {
                         ClaimDTO.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Optional<SharedClaim> claimFromDB = userDB.findEntity(user.getId()).get().findClaim(claimDTO.getId());
+        Optional<ProviderClaim> claimFromDB = userDB.findEntity(user.getId()).get().findClaim(claimDTO.getId());
         assertThat(claimFromDB).isPresent();
         assertThat(claimFromDB.get()).isEqualTo(claim);
     }
@@ -149,7 +149,7 @@ public class UserControllerRestTest extends RestTestSuite {
                         Void.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.NO_CONTENT);
-        Optional<SharedClaim> claimFromDB = userDB.findEntity(user.getId()).get().findClaim(claimId);
+        Optional<ProviderClaim> claimFromDB = userDB.findEntity(user.getId()).get().findClaim(claimId);
         assertThat(claimFromDB).isNotPresent();
     }
 

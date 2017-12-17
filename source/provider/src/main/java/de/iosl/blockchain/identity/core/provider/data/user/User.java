@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.provider.data.user;
 
 import com.couchbase.client.java.repository.annotation.Field;
-import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
+import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,9 +32,9 @@ public class User {
 
     @Field
     @NonNull
-    private Set<SharedClaim> claims;
+    private Set<ProviderClaim> claims;
 
-    public User putClaim(@NonNull SharedClaim claim) {
+    public User putClaim(@NonNull ProviderClaim claim) {
         claims.add(claim);
         return this;
     }
@@ -44,7 +44,7 @@ public class User {
         return this;
     }
 
-    public Optional<SharedClaim> findClaim(final String claimId) {
+    public Optional<ProviderClaim> findClaim(final String claimId) {
         return claims.stream()
                 .filter(claim -> claim.getId().equals(claimId))
                 .findAny();
