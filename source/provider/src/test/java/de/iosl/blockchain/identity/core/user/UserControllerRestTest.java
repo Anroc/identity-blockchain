@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.core.user;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.factories.ClaimFactory;
 import de.iosl.blockchain.identity.core.factories.UserFactory;
+import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.data.user.User;
 import de.iosl.blockchain.identity.core.provider.user.data.ClaimDTO;
@@ -10,8 +11,11 @@ import de.iosl.blockchain.identity.core.provider.user.data.UserDTO;
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -21,6 +25,8 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
 public class UserControllerRestTest extends RestTestSuite {
 
     UserFactory userFactory = UserFactory.instance();
