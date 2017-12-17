@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.web3j.crypto.Sign;
 
@@ -27,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class HeartBeatControllerRestTest extends RestTestSuite {
 
-    private static final String ENDPOINT = "/claim/ETHEREM_ID";
+    private static final String ENDPOINT = "/claims/ETHEREM_ID";
     private static final String OTHER_ETH_ID = "other_eth_id";
 
     private RequestDTO<HeartBeatRequest> requestDTO;

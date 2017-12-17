@@ -4,6 +4,7 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.error.DocumentDoesNotExistException;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
+import de.iosl.blockchain.identity.lib.wrapper.CouchbaseWrapper;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

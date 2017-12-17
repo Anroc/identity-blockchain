@@ -34,16 +34,16 @@ public class ApplicationBootUpListener {
             File file = Paths.get(KeyChain.WALLET_DIR + KeyChain.GOV_WALLET).toFile();
 
             account = ebaInterface.accessWallet(credentialConfig.getPassword(), file);
+
+            keyChain.setAccount(account);
+            keyChain.setRsaKeyPair(CryptEngine.generate().string().rsa().generateKeyPair());
+
+            String publicKey = KeyConverter.from(keyChain.getRsaKeyPair().getPublic()).toBase64();
+
+            discoveryClient.register(account.getAddress(), publicKey, account.getPrivateKey());
+
+            keyChain.setRegistered(true);
+            log.info("Registered ethID {} to DiscoveryService", account.getAddress());
         }
-
-        keyChain.setAccount(account);
-        keyChain.setRsaKeyPair(CryptEngine.generate().string().rsa().generateKeyPair());
-
-        String publicKey = KeyConverter.from(keyChain.getRsaKeyPair().getPublic()).toBase64();
-
-        discoveryClient.register(account.getAddress(), publicKey, account.getPrivateKey());
-
-        keyChain.setRegistered(true);
-        log.info("Registered ethID {} to DiscoveryService", account.getAddress());
     }
 }
