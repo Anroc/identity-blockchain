@@ -11,7 +11,7 @@ import lombok.Setter;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
-public class ProviderClaim extends SharedClaim{
+public class ProviderClaim extends SharedClaim {
 
     @Field
     @Getter(onMethod = @__(@Override))

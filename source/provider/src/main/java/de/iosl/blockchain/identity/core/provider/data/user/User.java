@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Data
@@ -32,4 +33,20 @@ public class User {
     @Field
     @NonNull
     private Set<SharedClaim> claims;
+
+    public User putClaim(@NonNull SharedClaim claim) {
+        claims.add(claim);
+        return this;
+    }
+
+    public User removeClaim(String claimId) {
+        findClaim(claimId).ifPresent(claims::remove);
+        return this;
+    }
+
+    public Optional<SharedClaim> findClaim(final String claimId) {
+        return claims.stream()
+                .filter(claim -> claim.getId().equals(claimId))
+                .findAny();
+    }
 }

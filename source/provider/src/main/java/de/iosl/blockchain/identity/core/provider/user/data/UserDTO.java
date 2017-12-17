@@ -32,11 +32,11 @@ public class UserDTO {
                 .map(ClaimDTO::new).collect(Collectors.toSet());
     }
 
-    public User toUser(@NonNull String id, @NonNull UserDTO userDTO) {
+    public User toUser(@NonNull String id) {
         return new User(
                 id,
                 getPublicKey(),
                 getEthId(),
-                userDTO.getClaims().stream().map(ClaimDTO::toClaim).collect(Collectors.toSet()));
+                getClaims().stream().map(ClaimDTO::toClaim).collect(Collectors.toSet()));
     }
 }

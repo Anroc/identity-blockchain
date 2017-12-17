@@ -3,7 +3,7 @@ package de.iosl.blockchain.identity.core;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.data.repository.UserDB;
 import de.iosl.blockchain.identity.core.provider.data.user.User;
-import de.iosl.blockchain.identity.core.provider.security.CredentialConfig;
+import de.iosl.blockchain.identity.core.provider.config.CredentialConfig;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.After;
 import org.junit.Before;
