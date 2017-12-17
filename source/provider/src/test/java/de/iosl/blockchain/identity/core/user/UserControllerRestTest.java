@@ -43,17 +43,31 @@ public class UserControllerRestTest extends RestTestSuite {
         this.headers = map;
 
         user = userFactory.create();
+        userDB.insert(user);
     }
 
     @Test
     public void create() {
-        createUser();
+        UserDTO userDTO = new UserDTO(user);
+        userDTO.setEthId(null);
+        userDTO.setPublicKey(null);
+        userDTO.setId(null);
+
+
+        ResponseEntity<UserDTO> responseEntity = restTemplate
+                .exchange("/user", HttpMethod.POST,
+                        new HttpEntity<>(userDTO, headers), UserDTO.class);
+
+        assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.CREATED);
+
+        UserDTO responseDTO = responseEntity.getBody();
+
+        assertThat(responseDTO.getId()).isNotNull().isNotEmpty();
+        assertThat(userDB.findEntity(responseDTO.getId())).isPresent();
     }
 
     @Test
     public void get() {
-        User user = createUser();
-
         ResponseEntity<UserDTO> responseEntity = restTemplate
                 .exchange("/user/" + user.getId(), HttpMethod.GET,
                         new HttpEntity<>(headers), UserDTO.class);
@@ -64,9 +78,13 @@ public class UserControllerRestTest extends RestTestSuite {
 
     @Test
     public void getAll() {
-        User user1 = createUser(userFactory.create());
-        User user2 = createUser(userFactory.create());
-        User user3 = createUser(userFactory.create());
+        User user1 = userFactory.create();
+        User user2 = userFactory.create();
+        User user3 = userFactory.create();
+
+        userDB.insert(user1);
+        userDB.insert(user2);
+        userDB.insert(user3);
 
         ResponseEntity<List<UserDTO>> responseEntity = restTemplate
                 .exchange("/user/", HttpMethod.GET,
@@ -78,13 +96,11 @@ public class UserControllerRestTest extends RestTestSuite {
                 .stream()
                 .map(UserDTO::getId)
                 .collect(Collectors.toList());
-        assertThat(userIds).containsExactlyInAnyOrder(user1.getId(), user2.getId(), user3.getId());
+        assertThat(userIds).contains(user1.getId(), user2.getId(), user3.getId());
     }
 
     @Test
     public void deleteUser() {
-        User user = createUser();
-
         ResponseEntity<Void> responseEntity = restTemplate
                 .exchange("/user/" + user.getId(), HttpMethod.DELETE,
                         new HttpEntity<>(headers),
@@ -96,8 +112,6 @@ public class UserControllerRestTest extends RestTestSuite {
 
     @Test
     public void updateUser() {
-        User user = createUser();
-
         final String ethId = "0x123123";
         final String publicKey = "9ljasdu812938123==";
 
@@ -120,8 +134,6 @@ public class UserControllerRestTest extends RestTestSuite {
 
     @Test
     public void updateClaim() {
-        User user = createUser();
-
         final ProviderClaim claim = claimFactory.create("new_Claim_id");
 
         ClaimDTO claimDTO = new ClaimDTO(claim);
@@ -139,8 +151,6 @@ public class UserControllerRestTest extends RestTestSuite {
 
     @Test
     public void removeClaim() {
-        User user = createUser();
-
         final String claimId = user.getClaims().stream().findFirst().map(SharedClaim::getId).get();
 
         ResponseEntity<Void> responseEntity = restTemplate
@@ -151,30 +161,6 @@ public class UserControllerRestTest extends RestTestSuite {
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.NO_CONTENT);
         Optional<ProviderClaim> claimFromDB = userDB.findEntity(user.getId()).get().findClaim(claimId);
         assertThat(claimFromDB).isNotPresent();
-    }
-
-    private User createUser() {
-        return createUser(user);
-    }
-
-    private User createUser(User user) {
-        UserDTO userDTO = new UserDTO(user);
-        userDTO.setEthId(null);
-        userDTO.setPublicKey(null);
-        userDTO.setId(null);
-
-
-        ResponseEntity<UserDTO> responseEntity = restTemplate
-                .exchange("/user", HttpMethod.POST,
-                        new HttpEntity<>(userDTO, headers), UserDTO.class);
-
-        assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.CREATED);
-
-        UserDTO responseDTO = responseEntity.getBody();
-
-        assertThat(responseDTO.getId()).isNotNull().isNotEmpty();
-        assertThat(userDB.findEntity(responseDTO.getId())).isPresent();
-        return userDB.findEntity(responseDTO.getId()).get();
     }
 
 }
