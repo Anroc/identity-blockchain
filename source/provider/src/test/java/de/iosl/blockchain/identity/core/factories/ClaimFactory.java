@@ -4,6 +4,7 @@ import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -23,7 +24,7 @@ public class ClaimFactory {
     }
 
     private ProviderClaim create(String claimId, Provider provider, Payload payload) {
-        return new ProviderClaim(claimId, null, null, provider, payload);
+        return new ProviderClaim(claimId, new Date(), provider, payload);
     }
 
     public static ClaimFactory instance() {
