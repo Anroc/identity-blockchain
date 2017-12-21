@@ -20,8 +20,8 @@ public class UserClaim extends SharedClaim{
     @Setter
     private String id;
 
-    public UserClaim(String id, Date modificationDate, Date creationDate, Provider provider, Payload claimValue) {
-        super(modificationDate, creationDate, provider, claimValue);
+    public UserClaim(String id, Date modificationDate, Provider provider, Payload claimValue) {
+        super(modificationDate, provider, claimValue);
         this.id = id;
     }
 }

@@ -28,16 +28,14 @@ public class UserDBTest extends RestTestSuite {
     private ProviderClaim providerClaim;
     private ProviderClaim providerClaimTwo;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private Date createdDate = new Date();
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date lastModifiedDate = new Date();
 
     @Before
     public void init() {
-        providerClaim = new ProviderClaim("1", lastModifiedDate, createdDate,
+        providerClaim = new ProviderClaim("1", lastModifiedDate,
                 new Provider("1", "1"),
                 new Payload("1", PayloadType.STRING));
-        providerClaimTwo = new ProviderClaim("2", lastModifiedDate, createdDate,
+        providerClaimTwo = new ProviderClaim("2", lastModifiedDate,
                 new Provider("2", "2"),
                 new Payload(true, PayloadType.BOOLEAN));
         Set<ProviderClaim> providerClaimHashSet = new HashSet<>();

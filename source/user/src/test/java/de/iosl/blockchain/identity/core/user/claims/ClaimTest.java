@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
 public class ClaimTest {
-    private final Date createdDate = new Date();
     private final Date lastModifiedDate = new Date();
     private UserClaim userClaim;
 
@@ -34,7 +33,7 @@ public class ClaimTest {
 
     @Before
     public void init() {
-        userClaim = new UserClaim("1", createdDate, lastModifiedDate,
+        userClaim = new UserClaim("1", lastModifiedDate,
                 new Provider("1", "1"),
                 new Payload("1", PayloadType.STRING));
     }
