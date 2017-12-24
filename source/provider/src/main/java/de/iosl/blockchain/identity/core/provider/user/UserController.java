@@ -126,5 +126,4 @@ public class UserController {
                         () -> new ServiceException("Could not find user with userId [%s]", HttpStatus.NOT_FOUND, userId)
                 );
     }
-
 }

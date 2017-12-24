@@ -1,5 +1,9 @@
-package de.iosl.blockchain.identity.core.user.register;
+package de.iosl.blockchain.identity.core.user.account;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.ds.registry.DiscoveryClient;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
@@ -8,15 +12,21 @@ import de.iosl.blockchain.identity.core.shared.keychain.KeyChainService;
 import de.iosl.blockchain.identity.core.shared.keychain.data.KeyInfo;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
+import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.KeyPair;
 
 @Service
-public class RegisterService {
+public class AccountService {
 
     @Autowired
     private DiscoveryClient discoveryClient;
@@ -82,5 +92,36 @@ public class RegisterService {
                 keyChain.getAccount().getAddress(),
                 KeyConverter.from(keyChain.getRsaKeyPair().getPublic()).toBase64(),
                 keyChain.getAccount().getPrivateKey());
+    }
+
+    public byte[] getQRCode(int width, int height) {
+        if( keyChain.getAccount() == null) {
+            throw new ServiceException(HttpStatus.FORBIDDEN);
+        }
+
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB); // create an empty image
+        try {
+            StringBuilder stringBuilder = new StringBuilder()
+                    .append(keyChain.getAccount().getAddress())
+                    .append(":")
+                    .append(KeyConverter.from(keyChain.getRsaKeyPair().getPublic()).toBase64())
+                    .append(":")
+                    .append("0x1231231981238123"); // TODO: add Smart Contract address here
+
+            BitMatrix matrix = qrCodeWriter.encode(stringBuilder.toString(), BarcodeFormat.QR_CODE, width, height);
+
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    image.setRGB(i, j, matrix.get(i, j) ? Color.BLACK.getRGB() : Color.WHITE.getRGB()); // set pixel one by one
+                }
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            return baos.toByteArray();
+        } catch (WriterException | IOException e) {
+            throw new ServiceException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
