@@ -4,6 +4,8 @@ spring:
 
 blockchain.identity:
   protocol: http
+  buildVersion: 0.0.1-SNAPSHOT
+  apiVersion: v1
   provider.credentials:
     username: admin
     password: penispumpe

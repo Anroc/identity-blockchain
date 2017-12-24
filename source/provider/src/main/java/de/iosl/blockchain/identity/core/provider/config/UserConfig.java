@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.provider.data.config;
+package de.iosl.blockchain.identity.core.provider.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

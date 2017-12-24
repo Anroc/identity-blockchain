@@ -1,12 +1,16 @@
 package de.iosl.blockchain.identity.core.provider.user;
 
-import de.iosl.blockchain.identity.core.provider.data.user.User;
-import de.iosl.blockchain.identity.core.provider.user.data.ClaimDTO;
-import de.iosl.blockchain.identity.core.provider.user.data.UserDTO;
+import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
+import de.iosl.blockchain.identity.core.provider.user.data.User;
+import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
+import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequest;
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +27,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ECSignatureValidator ecSignatureValidator;
 
     @GetMapping
     @ApiOperation("Gets all users")
@@ -73,7 +79,7 @@ public class UserController {
             @Valid @RequestBody @NotNull  ClaimDTO claimDTO) {
         User user = getUserOrFail(userId);
 
-        SharedClaim claim = userService.createClaim(user, claimDTO.toClaim());
+        SharedClaim claim = userService.createClaim(user, new ProviderClaim(claimDTO));
         return new ClaimDTO(claim);
     }
 
@@ -84,6 +90,29 @@ public class UserController {
         User user = getUserOrFail(userId);
 
         userService.removeClaim(user, claimId);
+    }
+
+    @PostMapping("/{userId}/register")
+    @ApiOperation("Registers a users public key and ethereum ID.")
+    @ResponseStatus(HttpStatus.OK)
+    public void registerCredentialInformation(
+            @PathVariable("userId") @NotBlank final String userId,
+            @RequestBody @Valid @NonNull RegisterRequest registerRequest) {
+
+        if (! ecSignatureValidator.isValid(registerRequest, registerRequest.getPayload().getEthereumID())) {
+            throw new ServiceException(HttpStatus.FORBIDDEN);
+        }
+
+        // TODO: Validate Government Signature
+
+        User user = userService.findUser(userId).orElseThrow(
+                () -> new ServiceException(HttpStatus.NOT_FOUND)
+        );
+
+        user.setEthId(registerRequest.getPayload().getEthereumID());
+        user.setPublicKey(registerRequest.getPayload().getPublicKey());
+
+        userService.updateUser(user);
     }
 
     private User getUserOrFail(@NonNull final String userId) {

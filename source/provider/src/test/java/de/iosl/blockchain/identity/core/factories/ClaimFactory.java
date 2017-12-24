@@ -1,6 +1,6 @@
 package de.iosl.blockchain.identity.core.factories;
 
-import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
+import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
 

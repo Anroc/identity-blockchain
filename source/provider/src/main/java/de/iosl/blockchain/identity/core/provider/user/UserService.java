@@ -1,8 +1,8 @@
 package de.iosl.blockchain.identity.core.provider.user;
 
-import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
-import de.iosl.blockchain.identity.core.provider.data.repository.UserDB;
-import de.iosl.blockchain.identity.core.provider.data.user.User;
+import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
+import de.iosl.blockchain.identity.core.provider.user.data.User;
+import de.iosl.blockchain.identity.core.provider.user.db.UserDB;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,10 @@ public class UserService {
 
     public Optional<User> findUser(@NonNull String id) {
         return userDB.findEntity(id);
+    }
+
+    public Optional<User> findUserByEthID(@NonNull String ethId) {
+        return userDB.findUserByEthId(ethId);
     }
 
     public User insertUser(@NonNull User user) {

@@ -1,6 +1,8 @@
-package de.iosl.blockchain.identity.core.provider.user.data;
+package de.iosl.blockchain.identity.core.provider.user.data.dto;
 
-import de.iosl.blockchain.identity.core.provider.data.user.User;
+import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
+import de.iosl.blockchain.identity.core.provider.user.data.User;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,6 +39,6 @@ public class UserDTO {
                 id,
                 getPublicKey(),
                 getEthId(),
-                getClaims().stream().map(ClaimDTO::toClaim).collect(Collectors.toSet()));
+                getClaims().stream().map(ProviderClaim::new).collect(Collectors.toSet()));
     }
 }

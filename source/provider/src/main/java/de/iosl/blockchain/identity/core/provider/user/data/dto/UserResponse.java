@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.provider.user.data;
+package de.iosl.blockchain.identity.core.provider.user.data.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.provider.user.data;
+package de.iosl.blockchain.identity.core.shared.api.data.dto;
 
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.payload.PayloadType;

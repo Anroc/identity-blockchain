@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.factories;
 
 import com.google.common.collect.Sets;
-import de.iosl.blockchain.identity.core.provider.data.user.User;
+import de.iosl.blockchain.identity.core.provider.user.data.User;
 
 import java.util.UUID;
 

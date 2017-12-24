@@ -1,8 +1,8 @@
-package de.iosl.blockchain.identity.core.provider.data.repository;
+package de.iosl.blockchain.identity.core.provider.user.db;
 
 import com.couchbase.client.java.Bucket;
-import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
-import de.iosl.blockchain.identity.core.provider.data.user.User;
+import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
+import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.lib.wrapper.CouchbaseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,8 +41,8 @@ public class UserDB extends CouchbaseWrapper<User, String> {
         return Optional.of(userRepository.findOne(id));
     }
 
-    public Optional<User> findUserByPublicKey(String publicKey) {
-        return Optional.of(userRepository.findByPublicKeyLike(publicKey).get(0));
+    public Optional<User> findUserByEthId(String ethId) {
+        return userRepository.findByEthID(ethId);
     }
 
     public Optional<User> findOne(String id) {

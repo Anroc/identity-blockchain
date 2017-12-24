@@ -1,7 +1,6 @@
-package de.iosl.blockchain.identity.core.provider.data.user;
+package de.iosl.blockchain.identity.core.provider.user.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
-import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

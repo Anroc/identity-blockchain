@@ -6,13 +6,15 @@ import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.util.Date;
 
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class UserClaim extends SharedClaim{
+public class UserClaim extends SharedClaim {
 
     @Id
     @Field
