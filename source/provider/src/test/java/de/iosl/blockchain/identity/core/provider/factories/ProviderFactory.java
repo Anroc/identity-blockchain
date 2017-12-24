@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.factories;
+package de.iosl.blockchain.identity.core.provider.factories;
 
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
 

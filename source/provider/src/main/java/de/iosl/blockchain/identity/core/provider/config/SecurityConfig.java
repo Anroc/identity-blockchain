@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.provider.config;
 
+import de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -27,12 +28,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().fullyAuthenticated();
-        http.httpBasic();
-        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
-        http.authorizeRequests().mvcMatchers("/user/**/register").permitAll();
-
-        http.csrf().disable();
+        http.authorizeRequests()
+                    .antMatchers("/user/**/register").permitAll()
+                    .antMatchers(ProviderAPIConstances.API_PATH + "/**").permitAll()
+                    .anyRequest().fullyAuthenticated()
+                .and()
+                    .httpBasic().realmName("blockchain-identity")
+                .and()
+                    .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .and()
+                    .csrf().disable();
     }
 
     @Override

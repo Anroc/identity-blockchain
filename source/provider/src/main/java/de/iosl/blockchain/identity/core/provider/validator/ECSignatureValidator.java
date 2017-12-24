@@ -18,14 +18,6 @@ public class ECSignatureValidator {
                 ethID);
     }
 
-    public boolean isGovermentSignatureValid(@NonNull String userId, @NonNull String ethId, @NonNull ECSignature signature, @NonNull String govEthId) {
-        return isSignatureValid(
-                userId + ":" + ethId,
-                signature,
-                govEthId
-        );
-    }
-
     public boolean isGetRequestValid(@NonNull ApiRequest<String> ethIDRequest) {
         return isSignatureValid(ethIDRequest.getPayload(), ethIDRequest.getSignature(), ethIDRequest.getPayload());
     }

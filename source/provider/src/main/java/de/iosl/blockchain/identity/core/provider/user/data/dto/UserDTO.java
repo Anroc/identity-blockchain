@@ -21,6 +21,7 @@ public class UserDTO {
     private String id;
     private String ethId;
     private String publicKey;
+    private String registerContractAddress;
 
     @Valid
     @NotNull
@@ -30,6 +31,7 @@ public class UserDTO {
         this.id = user.getId();
         this.ethId = user.getEthId();
         this.publicKey = user.getPublicKey();
+        this.registerContractAddress = user.getRegisterContractAddress();
         claims = user.getClaims().stream()
                 .map(ClaimDTO::new).collect(Collectors.toSet());
     }
@@ -39,6 +41,7 @@ public class UserDTO {
                 id,
                 getPublicKey(),
                 getEthId(),
+                getRegisterContractAddress(),
                 getClaims().stream().map(ProviderClaim::new).collect(Collectors.toSet()));
     }
 }

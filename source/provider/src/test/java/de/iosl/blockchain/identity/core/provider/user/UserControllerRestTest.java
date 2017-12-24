@@ -1,14 +1,15 @@
-package de.iosl.blockchain.identity.core.user;
+package de.iosl.blockchain.identity.core.provider.user;
 
 import de.iosl.blockchain.identity.core.RestTestSuite;
-import de.iosl.blockchain.identity.core.factories.ClaimFactory;
-import de.iosl.blockchain.identity.core.factories.UserFactory;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
+import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
+import de.iosl.blockchain.identity.crypt.KeyConverter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +19,10 @@ import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.web3j.crypto.CipherException;
+import org.web3j.crypto.Credentials;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,9 +32,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
 public class UserControllerRestTest extends RestTestSuite {
-
-    UserFactory userFactory = UserFactory.instance();
-    ClaimFactory claimFactory = ClaimFactory.instance();
 
     private User user;
     private MultiValueMap<String, String> headers;
@@ -161,6 +162,48 @@ public class UserControllerRestTest extends RestTestSuite {
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.NO_CONTENT);
         Optional<ProviderClaim> claimFromDB = userDB.findEntity(user.getId()).get().findClaim(claimId);
         assertThat(claimFromDB).isNotPresent();
+    }
+
+    @Test
+    public void registerCredentialsTest() throws IOException, CipherException {
+        Credentials userCredentials = loadWallet(USER_FILE, WALLET_PW);
+        Credentials stateCredentials = loadWallet(STATE_FILE, WALLET_PW);
+
+        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO(
+                userCredentials.getAddress(),
+                KeyConverter.from("This ain't no public key".getBytes()).toBase64(),
+                "0x123"
+        );
+
+        ApiRequest<RegisterRequestDTO> registerRequest = new ApiRequest<>(
+                registerRequestDTO,
+                getSignature(registerRequestDTO, stateCredentials)
+        );
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange(
+                "/user/" + user.getId() + "/register",
+                HttpMethod.POST,
+                new HttpEntity<>(registerRequest),
+                Void.class
+        );
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        user = userDB.findOne(user.getId()).get();
+
+        assertThat(user.getEthId()).isEqualTo(registerRequest.getPayload().getEthereumID());
+        assertThat(user.getPublicKey()).isEqualTo(registerRequest.getPayload().getPublicKey());
+        assertThat(user.getRegisterContractAddress()).isEqualTo(registerRequest.getPayload().getRegisterContractAddress());
+        assertThat(userDB.findUserByEthId(user.getEthId())).isPresent();
+    }
+
+    @Test
+    public void authorizationTest() {
+        ResponseEntity<?> responseEntity = restTemplate
+                .exchange("/user/" + user.getId(), HttpMethod.GET,
+                        HttpEntity.EMPTY, Object.class);
+
+        assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.UNAUTHORIZED);
     }
 
 }

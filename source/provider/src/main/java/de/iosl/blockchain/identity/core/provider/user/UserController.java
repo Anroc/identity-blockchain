@@ -1,11 +1,13 @@
 package de.iosl.blockchain.identity.core.provider.user;
 
-import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
+import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
-import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequest;
+import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +31,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private ECSignatureValidator ecSignatureValidator;
+    @Autowired
+    private ProviderConfig providerConfig;
 
     @GetMapping
     @ApiOperation("Gets all users")
@@ -93,17 +97,17 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/register")
-    @ApiOperation("Registers a users public key and ethereum ID.")
+    @ApiOperation(
+            value = "Registers a users public key and ethereum ID.",
+            notes = "Only the state (Government) can post this information.")
     @ResponseStatus(HttpStatus.OK)
     public void registerCredentialInformation(
             @PathVariable("userId") @NotBlank final String userId,
-            @RequestBody @Valid @NonNull RegisterRequest registerRequest) {
+            @RequestBody @Valid @NonNull ApiRequest<RegisterRequestDTO> registerRequest) {
 
-        if (! ecSignatureValidator.isValid(registerRequest, registerRequest.getPayload().getEthereumID())) {
+        if (! ecSignatureValidator.isValid(registerRequest, providerConfig.getStateWallet())) {
             throw new ServiceException(HttpStatus.FORBIDDEN);
         }
-
-        // TODO: Validate Government Signature
 
         User user = userService.findUser(userId).orElseThrow(
                 () -> new ServiceException(HttpStatus.NOT_FOUND)
@@ -111,6 +115,7 @@ public class UserController {
 
         user.setEthId(registerRequest.getPayload().getEthereumID());
         user.setPublicKey(registerRequest.getPayload().getPublicKey());
+        user.setRegisterContractAddress(registerRequest.getPayload().getRegisterContractAddress());
 
         userService.updateUser(user);
     }

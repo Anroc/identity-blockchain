@@ -1,14 +1,14 @@
 package de.iosl.blockchain.identity.core.provider.api;
 
-import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
 import de.iosl.blockchain.identity.core.provider.user.UserService;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
+import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.api.ProviderAPI;
 import de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.InfoDTO;
-import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class ApiController implements ProviderAPI {
     @Autowired
     private UserService userService;
     @Autowired
-    private BlockchainIdentityConfig config;
+    private ProviderConfig config;
 
     @Override
     @PostMapping(ProviderAPIConstances.ABSOLUTE_CLAIM_ATH)

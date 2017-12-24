@@ -42,7 +42,7 @@ public class UserDBTest extends RestTestSuite {
                 new Payload(true, PayloadType.BOOLEAN));
         Set<ProviderClaim> providerClaimHashSet = new HashSet<>();
         providerClaimHashSet.add(providerClaim);
-        user = new User("1", "1", "1", providerClaimHashSet);
+        user = new User("1", "1", "1", null, providerClaimHashSet);
     }
 
     @Test

@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequestPayloadDTO {
+public class RegisterRequestDTO {
 
     @NotBlank
     private String ethereumID;

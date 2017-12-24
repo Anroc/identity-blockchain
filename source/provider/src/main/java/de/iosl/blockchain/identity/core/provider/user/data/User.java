@@ -30,6 +30,9 @@ public class User {
     private String ethId;
 
     @Field
+    private String registerContractAddress;
+
+    @Field
     @NonNull
     private Set<ProviderClaim> claims;
 
