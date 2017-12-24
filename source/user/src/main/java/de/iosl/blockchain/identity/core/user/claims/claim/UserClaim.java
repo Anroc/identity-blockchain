@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.core.user.claims.claim;
 
 import com.couchbase.client.java.repository.annotation.Field;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
@@ -25,5 +26,9 @@ public class UserClaim extends SharedClaim {
     public UserClaim(String id, Date modificationDate, Date creationDate, Provider provider, Payload claimValue) {
         super(modificationDate, creationDate, provider, claimValue);
         this.id = id;
+    }
+
+    public UserClaim(ClaimDTO claimDTO) {
+        super(claimDTO);
     }
 }

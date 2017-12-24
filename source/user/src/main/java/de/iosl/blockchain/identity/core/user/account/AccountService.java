@@ -13,6 +13,7 @@ import de.iosl.blockchain.identity.core.shared.keychain.data.KeyInfo;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -100,7 +101,7 @@ public class AccountService {
         }
 
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB); // create an empty image
+
         try {
             StringBuilder stringBuilder = new StringBuilder()
                     .append(keyChain.getAccount().getAddress())
@@ -109,13 +110,12 @@ public class AccountService {
                     .append(":")
                     .append("0x1231231981238123"); // TODO: add Smart Contract address here
 
-            BitMatrix matrix = qrCodeWriter.encode(stringBuilder.toString(), BarcodeFormat.QR_CODE, width, height);
-
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
-                    image.setRGB(i, j, matrix.get(i, j) ? Color.BLACK.getRGB() : Color.WHITE.getRGB()); // set pixel one by one
-                }
+            if (stringBuilder.toString().getBytes().length > width * height) {
+                throw new ServiceException("Content does not fit into QR code size.", HttpStatus.UNPROCESSABLE_ENTITY);
             }
+
+            BitMatrix matrix = qrCodeWriter.encode(stringBuilder.toString(), BarcodeFormat.QR_CODE, width, height);
+            BufferedImage image = bitMatrixToImage(matrix);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(image, "png", baos);
@@ -123,5 +123,18 @@ public class AccountService {
         } catch (WriterException | IOException e) {
             throw new ServiceException(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private BufferedImage bitMatrixToImage(@NonNull BitMatrix bitMatrix) {
+        int width = bitMatrix.getWidth();
+        int height = bitMatrix.getHeight();
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB); // create an empty image
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                image.setRGB(i, j, bitMatrix.get(i, j) ? Color.BLACK.getRGB() : Color.WHITE.getRGB());
+            }
+        }
+        return image;
     }
 }

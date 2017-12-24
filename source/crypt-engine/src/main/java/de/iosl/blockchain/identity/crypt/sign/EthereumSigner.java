@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.crypt.asymmetic.StringAsymmetricCryptEngine;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
 import org.web3j.crypto.Sign;

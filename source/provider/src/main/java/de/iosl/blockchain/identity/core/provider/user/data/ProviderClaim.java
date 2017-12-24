@@ -27,11 +27,6 @@ public class ProviderClaim extends SharedClaim {
     }
 
     public ProviderClaim(ClaimDTO claimDTO) {
-        this(claimDTO.getId(),
-                claimDTO.getModificationDate(),
-                claimDTO.getCreationDate(),
-                claimDTO.getProvider().toProvider(),
-                claimDTO.getClaimValue().toPayload());
+        super(claimDTO);
     }
-
 }

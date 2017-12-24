@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.shared.ds;
+package de.iosl.blockchain.identity.core.shared.feign;
 
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatAdapter;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class FeignAdapterFactory {
+public class FeignAdapterBeanFactory {
 
     @Autowired
     private BlockchainIdentityConfig blockchainIdentityConfig;
@@ -30,7 +30,7 @@ public class FeignAdapterFactory {
         return createAdapter(HeartBeatAdapter.class);
     }
 
-    private <T> T createAdapter(Class<T> clazz) {
+    public  <T> T createAdapter(Class<T> clazz) {
         String url = String.format("%s://%s:%d",
                 blockchainIdentityConfig.getProtocol(),
                 blockchainIdentityConfig.getDiscoveryService().getAddress(),

@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims.claim;
 
+import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
 import lombok.AllArgsConstructor;
@@ -34,5 +35,15 @@ public abstract class SharedClaim {
     private Payload claimValue;
 
     public abstract String getId();
+
+    public abstract void setId(String id);
+
+    public SharedClaim(ClaimDTO claimDTO) {
+        this(claimDTO.getModificationDate(),
+                claimDTO.getCreationDate(),
+                claimDTO.getProvider().toProvider(),
+                claimDTO.getClaimValue().toPayload());
+        setId(claimDTO.getId());
+    }
 
 }
