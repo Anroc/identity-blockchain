@@ -4,14 +4,19 @@ import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
 import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
+import de.iosl.blockchain.identity.core.user.claims.repository.UserClaimDB;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.ECKeyPair;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,14 +25,37 @@ public class APIClientService {
     @Autowired
     private KeyChain keyChain;
     @Autowired
-    private APIClient apiClient;
+    private UserClaimDB userClaimDB;
+    @Autowired
+    private APIClientBeanFactory apiClientBeanFactory;
 
-    private EthereumSigner ethereumSigner = new EthereumSigner();
+    private final EthereumSigner ethereumSigner;
+    private final Map<String, APIClient> apiClients;
 
-    public List<UserClaim> getClaims() {
+    public APIClientService() {
+        this.ethereumSigner = new EthereumSigner();
+        this.apiClients = new HashMap<>();
+    }
+
+    public String registerNewApiClient(@NonNull String address, int port) {
+        String url = apiClientBeanFactory.buildUrl(address, port);
+        return registerNewApiClient(url);
+    }
+
+    public String registerNewApiClient(@NonNull String url) {
+        APIClient apiClient = apiClientBeanFactory.createAPIClient(url);
+        apiClients.put(url, apiClient);
+        return url;
+    }
+
+    private List<UserClaim> requestGetClaims(String url) {
         if(! keyChain.isActive()) {
             throw new ServiceException(HttpStatus.UNAUTHORIZED);
         }
+
+        APIClient apiClient = Optional.ofNullable(apiClients.get(url)).orElseGet(
+                () -> apiClients.get(registerNewApiClient(url))
+        );
 
         ECKeyPair ecKeyPair = new ECKeyPair(keyChain.getAccount().getPrivateKey(), keyChain.getAccount().getPublicKey());
 
@@ -37,5 +65,11 @@ public class APIClientService {
         );
 
         return apiClient.getClaims(claimRequest).stream().map(UserClaim::new).collect(Collectors.toList());
+    }
+
+    public List<UserClaim> getAndSaveClaims(@NonNull String url) {
+        List<UserClaim> claims = requestGetClaims(url);
+        claims.forEach(userClaimDB::insert);
+        return claims;
     }
 }

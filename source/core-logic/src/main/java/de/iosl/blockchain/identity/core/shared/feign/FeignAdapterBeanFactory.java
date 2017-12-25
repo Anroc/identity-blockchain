@@ -7,6 +7,7 @@ import de.iosl.blockchain.identity.lib.exception.InterServiceCallError;
 import feign.Feign;
 import feign.gson.GsonDecoder;
 import feign.gson.GsonEncoder;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,11 +32,18 @@ public class FeignAdapterBeanFactory {
     }
 
     public  <T> T createAdapter(Class<T> clazz) {
-        String url = String.format("%s://%s:%d",
+        String url = buildURL(
                 blockchainIdentityConfig.getProtocol(),
                 blockchainIdentityConfig.getDiscoveryService().getAddress(),
                 blockchainIdentityConfig.getDiscoveryService().getPort());
+        return buildBean(clazz, url);
+    }
 
+    public String buildURL(@NonNull String protocol, @NonNull String address, int port) {
+        return String.format("%s://%s:%d", protocol, address, port);
+    }
+
+    public <T> T buildBean(@NonNull Class<T> clazz, @NonNull String url) {
         return Feign.builder()
                 .errorDecoder((methodKey, response) ->
                         new InterServiceCallError(
