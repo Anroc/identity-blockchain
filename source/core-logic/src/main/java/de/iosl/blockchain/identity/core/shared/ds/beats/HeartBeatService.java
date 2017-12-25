@@ -36,6 +36,7 @@ public class HeartBeatService {
     @Getter
     private long beatCounter = 0L;
 
+    @Getter
     private Queue<EventListener> eventListeners;
 
     public HeartBeatService() {
@@ -77,7 +78,7 @@ public class HeartBeatService {
 
                 beatCounter = beats.get(beats.size() -1).getMessageNumber() + 1;
                 beats.forEach(
-                        beat -> eventListeners.forEach(
+                        beat -> getEventListeners().forEach(
                                 eventListener -> eventListener.trigger(new Event(beat), beat.getPayload().getEventType())
                         )
                 );

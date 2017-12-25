@@ -21,8 +21,9 @@ public class HeartBeatRequest extends Payload {
     @NotNull
     private EventType eventType;
 
-    public HeartBeatRequest(String ethID, String endpoint) {
+    public HeartBeatRequest(String ethID, String endpoint, EventType eventType) {
         super(ethID);
         this.endpoint = endpoint;
+        this.eventType = eventType;
     }
 }
