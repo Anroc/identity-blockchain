@@ -1,17 +1,16 @@
 package de.iosl.blockchain.identity.core.shared.claims.claim;
 
+import com.couchbase.client.java.repository.annotation.Field;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.couchbase.core.mapping.Document;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -20,17 +19,15 @@ import java.util.Date;
 @NoArgsConstructor
 public abstract class SharedClaim {
 
-    @LastModifiedDate
+    @NotNull
+    @Field
     private Date modificationDate;
 
-    @CreatedDate
-    private Date creationDate;
-
-    @NonNull
+    @NotNull
     @Valid
     private Provider provider;
 
-    @NonNull
+    @NotNull
     @Valid
     private Payload claimValue;
 
@@ -40,7 +37,6 @@ public abstract class SharedClaim {
 
     public SharedClaim(ClaimDTO claimDTO) {
         this(claimDTO.getModificationDate(),
-                claimDTO.getCreationDate(),
                 claimDTO.getProvider().toProvider(),
                 claimDTO.getClaimValue().toPayload());
         setId(claimDTO.getId());

@@ -7,6 +7,7 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,10 +31,12 @@ public class UserService {
     }
 
     public User insertUser(@NonNull User user) {
+        user = updateModificationDateForClaims(user);
         return userDB.insert(user);
     }
 
     public User updateUser(User user) {
+        user = updateModificationDateForClaims(user);
         return userDB.update(user);
     }
 
@@ -46,6 +49,7 @@ public class UserService {
     }
 
     public ProviderClaim createClaim(@NonNull User user, @NonNull ProviderClaim claim) {
+        claim.setModificationDate(new Date());
         user.putClaim(claim);
         userDB.update(user);
         return claim;
@@ -71,5 +75,10 @@ public class UserService {
                 .filter(claim -> claim.getClaimValue().getPayload().equals(claimValue))
                 .findAny()
                 .isPresent();
+    }
+
+    private User updateModificationDateForClaims(@NonNull User user) {
+        user.getClaims().forEach(claim -> claim.setModificationDate(new Date()));
+        return user;
     }
 }

@@ -147,7 +147,7 @@ public class UserControllerRestTest extends RestTestSuite {
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
         Optional<ProviderClaim> claimFromDB = userDB.findEntity(user.getId()).get().findClaim(claimDTO.getId());
         assertThat(claimFromDB).isPresent();
-        assertThat(claimFromDB.get()).isEqualTo(claim);
+        assertThat(claimFromDB.get()).isEqualToIgnoringGivenFields(claim, "modificationDate");
     }
 
     @Test

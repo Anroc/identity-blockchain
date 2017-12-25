@@ -21,8 +21,8 @@ public class ProviderClaim extends SharedClaim {
     @Setter
     private String id;
 
-    public ProviderClaim(String id, Date modificationDate, Date creationDate, Provider provider, Payload claimValue) {
-        super(modificationDate, creationDate, provider, claimValue);
+    public ProviderClaim(String id, Date modificationDate, Provider provider, Payload claimValue) {
+        super(modificationDate, provider, claimValue);
         this.id = id;
     }
 
