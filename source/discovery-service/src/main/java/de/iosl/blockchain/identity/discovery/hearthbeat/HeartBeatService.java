@@ -45,6 +45,7 @@ public class HeartBeatService {
                 ethID,
                 messageRequest.getPayload().getEthID(),
                 messageRequest.getPayload().getEndpoint(),
+                messageRequest.getPayload().getEventType(),
                 messageRequest.getSignature()
         );
         beatDB.insert(message);

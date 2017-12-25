@@ -2,6 +2,8 @@ package de.iosl.blockchain.identity.core.user.api;
 
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
+import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
+import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
 import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import de.iosl.blockchain.identity.core.user.claims.repository.UserClaimDB;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.ECKeyPair;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +31,8 @@ public class APIClientService {
     private UserClaimDB userClaimDB;
     @Autowired
     private APIClientBeanFactory apiClientBeanFactory;
+    @Autowired
+    private HeartBeatService heartBeatService;
 
     private final EthereumSigner ethereumSigner;
     private final Map<String, APIClient> apiClients;
@@ -37,9 +42,17 @@ public class APIClientService {
         this.apiClients = new HashMap<>();
     }
 
-    public String registerNewApiClient(@NonNull String address, int port) {
-        String url = apiClientBeanFactory.buildUrl(address, port);
-        return registerNewApiClient(url);
+    @PostConstruct
+    public void createSubscriber() {
+        heartBeatService.subscribe(
+                (event, eventType) -> {
+                    String key = this.registerNewApiClient(event.getEndpoint());
+
+                    if(eventType == EventType.NEW_CLAIMS) {
+                        getAndSaveClaims(key);
+                    }
+                }
+        );
     }
 
     public String registerNewApiClient(@NonNull String url) {

@@ -5,6 +5,7 @@ import de.iosl.blockchain.identity.core.shared.ds.beats.data.Beat;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import feign.FeignException;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,8 +36,15 @@ public class HeartBeatService {
     @Getter
     private long beatCounter = 0L;
 
+    private Queue<EventListener> eventListeners;
+
     public HeartBeatService() {
         this.signer = new EthereumSigner();
+        this.eventListeners = new ConcurrentLinkedQueue<>();
+    }
+
+    public void subscribe(@NonNull EventListener eventListener) {
+        eventListeners.add(eventListener);
     }
 
     @Scheduled(fixedRate = RATE, initialDelay = INITIAL_DELAY)
@@ -66,8 +76,11 @@ public class HeartBeatService {
                         .collect(Collectors.toList());
 
                 beatCounter = beats.get(beats.size() -1).getMessageNumber() + 1;
-
-                // TODO: trigger actions here
+                beats.forEach(
+                        beat -> eventListeners.forEach(
+                                eventListener -> eventListener.trigger(new Event(beat), beat.getPayload().getEventType())
+                        )
+                );
             }
         } catch (FeignException e) {
             log.error("Could not send beat!", e);
