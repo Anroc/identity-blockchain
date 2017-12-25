@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -55,5 +56,20 @@ public class UserService {
         userDB.update(user);
     }
 
+    public List<User> search(String givenName, String familyName) {
+        // TODO: refactore
+        return userDB.findAll()
+                .stream()
+                .filter(user -> filterForClaimAttribute(user, givenName))
+                .filter(user -> filterForClaimAttribute(user, familyName))
+                .collect(Collectors.toList());
+    }
 
+    private boolean filterForClaimAttribute(User user, String claimValue) {
+        return user.getClaims()
+                .stream()
+                .filter(claim -> claim.getClaimValue().getPayload().equals(claimValue))
+                .findAny()
+                .isPresent();
+    }
 }

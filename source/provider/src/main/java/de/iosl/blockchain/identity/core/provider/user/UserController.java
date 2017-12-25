@@ -126,4 +126,12 @@ public class UserController {
                         () -> new ServiceException("Could not find user with userId [%s]", HttpStatus.NOT_FOUND, userId)
                 );
     }
+
+    @GetMapping("/search")
+    @ApiOperation("Search for a user id given query parameter's")
+    public List<String> search(
+            @RequestParam(value = "givenName", defaultValue = "") String givenName,
+            @RequestParam(value = "familyName", defaultValue = "") String familyName) {
+        return userService.search(givenName, familyName).stream().map(User::getId).collect(Collectors.toList());
+    }
 }

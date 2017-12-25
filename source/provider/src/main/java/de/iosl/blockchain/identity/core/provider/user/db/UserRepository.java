@@ -16,5 +16,4 @@ public interface UserRepository extends CrudRepository<User, String>{
 
     @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter} AND ethId = $1 LIMIT 1")
     Optional<User> findByEthID(String ethId);
-
 }
