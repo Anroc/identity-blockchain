@@ -14,14 +14,9 @@ import javax.validation.Valid;
 @ConfigurationProperties(prefix = "blockchain.identity")
 public class BlockchainIdentityConfig {
 
-    @NotBlank
-    private String protocol;
-
-    @Valid
-    private ServiceConfig core;
-
-    @Valid
-    private ServiceConfig discoveryService;
+    @NotBlank private String protocol;
+    @Valid private ServiceConfig core;
+    @Valid private ServiceConfig discoveryService;
 
     private ClientType type;
 }

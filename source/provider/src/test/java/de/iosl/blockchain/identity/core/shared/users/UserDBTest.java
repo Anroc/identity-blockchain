@@ -2,8 +2,8 @@ package de.iosl.blockchain.identity.core.shared.users;
 
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
-import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
-import de.iosl.blockchain.identity.core.provider.data.user.User;
+import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
+import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.payload.PayloadType;
 import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
@@ -40,7 +40,7 @@ public class UserDBTest extends RestTestSuite {
                 new Payload(true, PayloadType.BOOLEAN));
         Set<ProviderClaim> providerClaimHashSet = new HashSet<>();
         providerClaimHashSet.add(providerClaim);
-        user = new User("1", "1", "1", providerClaimHashSet);
+        user = new User("1", "1", "1", null, providerClaimHashSet);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class UserDBTest extends RestTestSuite {
     @Test
     public void findUserByPublicKey() {
         userDB.updateOrCreateUser(user);
-        assertThat(userDB.findUserByPublicKey("1")).isNotNull();
+        assertThat(userDB.findUserByEthId("1")).isNotNull();
     }
 
     @Test

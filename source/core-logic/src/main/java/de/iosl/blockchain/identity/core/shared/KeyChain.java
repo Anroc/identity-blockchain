@@ -26,4 +26,8 @@ public class KeyChain {
     private KeyPair rsaKeyPair;
 
     private boolean registered;
+
+    public boolean isActive() {
+        return account != null;
+    }
 }
