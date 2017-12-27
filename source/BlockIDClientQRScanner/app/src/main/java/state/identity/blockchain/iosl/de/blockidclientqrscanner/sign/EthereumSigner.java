@@ -1,9 +1,9 @@
 package state.identity.blockchain.iosl.de.blockidclientqrscanner.sign;
 
-import android.util.Base64;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.spongycastle.util.encoders.Base64;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
 import org.web3j.crypto.Sign;
@@ -28,7 +28,7 @@ public class EthereumSigner {
         try {
             return new String(
                     Base64.encode(MessageDigest.getInstance("SHA-256")
-                            .digest(plain.getBytes("UTF-8")), Base64.DEFAULT),
+                            .digest(plain.getBytes("UTF-8"))),
                     Charset.forName("UTF-8")
             );
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {

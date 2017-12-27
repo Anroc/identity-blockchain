@@ -21,6 +21,9 @@ import state.identity.blockchain.iosl.de.blockidclientqrscanner.async.GetUserId;
 import state.identity.blockchain.iosl.de.blockidclientqrscanner.async.PostUserCredentials;
 import state.identity.blockchain.iosl.de.blockidclientqrscanner.data.ApiRequest;
 
+/**
+ * adb shell screenrecord --output-format=h264 -
+ */
 public class MainActivity extends AppCompatActivity {
 
     private final Activity activity = this;
