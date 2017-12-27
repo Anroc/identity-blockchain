@@ -1,8 +1,8 @@
 package de.iosl.blockchain.identity.core.provider.user;
 
-import de.iosl.blockchain.identity.core.provider.data.claim.ProviderClaim;
-import de.iosl.blockchain.identity.core.provider.data.repository.UserDB;
-import de.iosl.blockchain.identity.core.provider.data.user.User;
+import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
+import de.iosl.blockchain.identity.core.provider.user.data.User;
+import de.iosl.blockchain.identity.core.provider.user.db.UserDB;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -23,6 +24,10 @@ public class UserService {
 
     public Optional<User> findUser(@NonNull String id) {
         return userDB.findEntity(id);
+    }
+
+    public Optional<User> findUserByEthID(@NonNull String ethId) {
+        return userDB.findUserByEthId(ethId);
     }
 
     public User insertUser(@NonNull User user) {
@@ -55,9 +60,25 @@ public class UserService {
         userDB.update(user);
     }
 
+    public List<User> search(String givenName, String familyName) {
+        // TODO: refactore
+        return userDB.findAll()
+                .stream()
+                .filter(user -> filterForClaimAttribute(user, givenName))
+                .filter(user -> filterForClaimAttribute(user, familyName))
+                .collect(Collectors.toList());
+    }
+
+    private boolean filterForClaimAttribute(User user, String claimValue) {
+        return user.getClaims()
+                .stream()
+                .filter(claim -> claim.getClaimValue().getPayload().equals(claimValue))
+                .findAny()
+                .isPresent();
+    }
+
     private User updateModificationDateForClaims(@NonNull User user) {
         user.getClaims().forEach(claim -> claim.setModificationDate(new Date()));
         return user;
     }
-
 }

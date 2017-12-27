@@ -16,7 +16,4 @@ public class Account {
     private BigInteger publicKey;
     private BigInteger privateKey;
     private File file;
-
-
-
 }
