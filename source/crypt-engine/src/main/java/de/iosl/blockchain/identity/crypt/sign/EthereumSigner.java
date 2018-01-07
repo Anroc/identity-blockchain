@@ -56,6 +56,12 @@ public class EthereumSigner {
 
     private BigInteger publicKeyFromSignature(Object payload,
             Sign.SignatureData signatureData) {
+        log.info("signature data: {}, {}, {}", signatureData.getR(), signatureData.getS(), signatureData.getV());
+        try {
+            log.info("This is the object {}", new ObjectMapper().writeValueAsString(payload));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         try {
             return Sign.signedMessageToKey(hash(payload), signatureData);
         } catch (SignatureException e) {

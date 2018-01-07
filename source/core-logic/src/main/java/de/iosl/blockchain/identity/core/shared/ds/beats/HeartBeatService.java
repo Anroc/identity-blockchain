@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Sign;
 
 import java.util.List;
 import java.util.Queue;
@@ -90,6 +91,14 @@ public class HeartBeatService {
             log.info("Registered public key {} of address {}", keyChain.getAccount().getPublicKey(), addressFromPublicKey(keyChain.getAccount().getPublicKey()));
         } catch (JsonProcessingException e) {
             throw new ServiceException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        Sign.SignatureData signatureData = heartBeatRequestRequestDTO.getSignature().toSignatureData();
+        log.info("signature data: {}, {}, {}", signatureData.getR(), signatureData.getS(), signatureData.getV());
+        try {
+            log.info("This is the object {}", new ObjectMapper().writeValueAsString(heartBeatRequestRequestDTO.getPayload()));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
         return heartBeatAdapter.createBeat(ethID, heartBeatRequestRequestDTO);
     }
