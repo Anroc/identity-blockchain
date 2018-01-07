@@ -58,7 +58,7 @@ public class EthereumSigner {
             Sign.SignatureData signatureData) {
         log.info("signature data: {}, {}, {}", signatureData.getR(), signatureData.getS(), signatureData.getV());
         try {
-            log.info("This is the object {}", new ObjectMapper().writeValueAsString(payload));
+            log.info("This is the object {}", objectMapper.writeValueAsString(payload));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
