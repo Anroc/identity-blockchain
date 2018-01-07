@@ -68,12 +68,20 @@ public class HeartBeatService {
                 config.getHostUrl(),
                 eventType
         );
+
+        ECKeyPair ecKeyPair = ECKeyPair.create(keyChain.getAccount().getPrivateKey());
         RequestDTO<HeartBeatRequest> heartBeatRequestRequestDTO = new RequestDTO<>(
                 heartBeatRequest,
-                ECSignature.fromSignatureData(
-                        signer.sign(heartBeatRequest, ECKeyPair.create(keyChain.getAccount().getPrivateKey()))
-                )
+                ECSignature.fromSignatureData(signer.sign(heartBeatRequest, ecKeyPair))
         );
+        if(! signer.verifySignature(
+                heartBeatRequestRequestDTO.getPayload(),
+                heartBeatRequestRequestDTO.getSignature().toSignatureData(),
+                heartBeatRequestRequestDTO.getPayload().getEthID()
+        )) {
+            throw new ServiceException("Generated Signature is not falid lol.", HttpStatus.INSUFFICIENT_STORAGE);
+        }
+
         return heartBeatAdapter.createBeat(ethID, heartBeatRequestRequestDTO);
     }
 
