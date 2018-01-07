@@ -1,5 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.ds.beats;
 
+import com.couchbase.client.deps.com.fasterxml.jackson.core.JsonProcessingException;
+import com.couchbase.client.deps.com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.ds.beats.data.Beat;
@@ -24,6 +26,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
+
+import static de.iosl.blockchain.identity.crypt.sign.EthereumSigner.addressFromPublicKey;
 
 @Slf4j
 @Service
@@ -77,11 +81,16 @@ public class HeartBeatService {
         if(! signer.verifySignature(
                 heartBeatRequestRequestDTO.getPayload(),
                 heartBeatRequestRequestDTO.getSignature().toSignatureData(),
-                heartBeatRequestRequestDTO.getPayload().getEthID()
-        )) {
+                heartBeatRequestRequestDTO.getPayload().getEthID())) {
             throw new ServiceException("Generated Signature is not falid lol.", HttpStatus.INSUFFICIENT_STORAGE);
         }
 
+        try {
+            log.info("This is the object {}", new ObjectMapper().writeValueAsString(heartBeatRequestRequestDTO));
+            log.info("Registered public key {} of address {}", keyChain.getAccount().getPublicKey(), addressFromPublicKey(keyChain.getAccount().getPublicKey()));
+        } catch (JsonProcessingException e) {
+            throw new ServiceException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return heartBeatAdapter.createBeat(ethID, heartBeatRequestRequestDTO);
     }
 
