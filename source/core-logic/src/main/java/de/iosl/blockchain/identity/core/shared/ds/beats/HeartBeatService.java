@@ -74,7 +74,6 @@ public class HeartBeatService {
                         signer.sign(heartBeatRequest, ECKeyPair.create(keyChain.getAccount().getPrivateKey()))
                 )
         );
-
         return heartBeatAdapter.createBeat(ethID, heartBeatRequestRequestDTO);
     }
 

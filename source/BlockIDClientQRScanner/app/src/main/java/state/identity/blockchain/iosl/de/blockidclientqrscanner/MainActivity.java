@@ -22,7 +22,7 @@ import state.identity.blockchain.iosl.de.blockidclientqrscanner.async.PostUserCr
 import state.identity.blockchain.iosl.de.blockidclientqrscanner.data.ApiRequest;
 
 /**
- * adb shell screenrecord --output-format=h264 -
+ * adb shell screenrecord --output-format=h264 - | vlc --demux h264 --clock-jitter=0 -
  */
 public class MainActivity extends AppCompatActivity {
 
