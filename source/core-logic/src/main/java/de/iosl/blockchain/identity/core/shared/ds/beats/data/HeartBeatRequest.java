@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@JsonPropertyOrder(alphabetic=true)
 public class HeartBeatRequest extends Payload {
 
     @NotBlank

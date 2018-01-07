@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.discovery.hearthbeat.data;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.iosl.blockchain.identity.discovery.data.Payload;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@JsonPropertyOrder(alphabetic=true)
 public class HeartBeatRequest extends Payload {
 
     @NotBlank
