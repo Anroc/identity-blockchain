@@ -1,7 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.ds.beats.data;
 
 import de.iosl.blockchain.identity.core.shared.ds.dto.Payload;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -11,19 +10,18 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class HeartBeatRequest extends Payload {
 
     @NotBlank
-    private String endpoint;
+    private String url;
 
     @NotNull
     private EventType eventType;
 
-    public HeartBeatRequest(String ethID, String endpoint, EventType eventType) {
+    public HeartBeatRequest(String ethID, String url, EventType eventType) {
         super(ethID);
-        this.endpoint = endpoint;
+        this.url = url;
         this.eventType = eventType;
     }
 }

@@ -44,7 +44,7 @@ public class HeartBeatService {
                 counter,
                 ethID,
                 messageRequest.getPayload().getEthID(),
-                messageRequest.getPayload().getEndpoint(),
+                messageRequest.getPayload().getUrl(),
                 messageRequest.getPayload().getEventType(),
                 messageRequest.getSignature()
         );

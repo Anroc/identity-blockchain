@@ -16,14 +16,14 @@ import javax.validation.constraints.NotNull;
 public class HeartBeatRequest extends Payload {
 
     @NotBlank
-    private String endpoint;
+    private String url;
 
     @NotNull
     private EventType eventType;
 
-    public HeartBeatRequest(String ethID, String endpoint, EventType eventType) {
+    public HeartBeatRequest(String ethID, String url, EventType eventType) {
         super(ethID);
-        this.endpoint = endpoint;
+        this.url = url;
         this.eventType = eventType;
     }
 }

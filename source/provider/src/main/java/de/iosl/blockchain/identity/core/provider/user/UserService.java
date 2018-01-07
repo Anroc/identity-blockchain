@@ -3,6 +3,8 @@ package de.iosl.blockchain.identity.core.provider.user;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.db.UserDB;
+import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
+import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ public class UserService {
 
     @Autowired
     private UserDB userDB;
+    @Autowired
+    private HeartBeatService heartBeatService;
 
     public List<User> getUsers() {
         return userDB.findAll();
@@ -80,5 +84,10 @@ public class UserService {
     private User updateModificationDateForClaims(@NonNull User user) {
         user.getClaims().forEach(claim -> claim.setModificationDate(new Date()));
         return user;
+    }
+
+    public void registerUser(@NonNull User user) {
+        updateUser(user);
+        heartBeatService.createBeat(user.getEthId(), EventType.NEW_CLAIMS);
     }
 }

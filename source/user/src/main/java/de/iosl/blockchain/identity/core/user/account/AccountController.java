@@ -35,7 +35,7 @@ public class AccountController {
     }
 
     @ApiOperation(value = "Creates a QR code from the user credentials",
-            notes = "This endpoint is WIP and not stable. Only for demonstration purpose.")
+            notes = "This url is WIP and not stable. Only for demonstration purpose.")
     @GetMapping(value = "/qr-code", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public byte[] getQRCode(
             @RequestParam(value = "width", defaultValue = "256") int width,

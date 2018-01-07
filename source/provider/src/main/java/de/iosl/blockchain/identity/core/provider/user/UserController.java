@@ -117,7 +117,7 @@ public class UserController {
         user.setPublicKey(registerRequest.getPayload().getPublicKey());
         user.setRegisterContractAddress(registerRequest.getPayload().getRegisterContractAddress());
 
-        userService.updateUser(user);
+        userService.registerUser(user);
     }
 
     private User getUserOrFail(@NonNull final String userId) {

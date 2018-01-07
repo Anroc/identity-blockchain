@@ -46,7 +46,7 @@ public class APIClientService {
     public void createSubscriber() {
         heartBeatService.subscribe(
                 (event, eventType) -> {
-                    String key = this.registerNewApiClient(event.getEndpoint());
+                    String key = this.registerNewApiClient(event.getUrl());
 
                     if(eventType == EventType.NEW_CLAIMS) {
                         getAndSaveClaims(key);

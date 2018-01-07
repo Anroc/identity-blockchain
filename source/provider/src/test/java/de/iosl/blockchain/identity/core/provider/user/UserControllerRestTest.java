@@ -9,6 +9,8 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
+import de.iosl.blockchain.identity.core.shared.ds.beats.data.Beat;
+import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +30,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
@@ -169,6 +173,9 @@ public class UserControllerRestTest extends RestTestSuite {
         Credentials userCredentials = loadWallet(USER_FILE, WALLET_PW);
         Credentials stateCredentials = loadWallet(STATE_FILE, WALLET_PW);
 
+        Beat beat = new Beat();
+        doReturn(beat).when(heartBeatService).createBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
+
         RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO(
                 userCredentials.getAddress(),
                 KeyConverter.from("This ain't no public key".getBytes()).toBase64(),
@@ -195,6 +202,7 @@ public class UserControllerRestTest extends RestTestSuite {
         assertThat(user.getPublicKey()).isEqualTo(registerRequest.getPayload().getPublicKey());
         assertThat(user.getRegisterContractAddress()).isEqualTo(registerRequest.getPayload().getRegisterContractAddress());
         assertThat(userDB.findUserByEthId(user.getEthId())).isPresent();
+        verify(heartBeatService, times(1)).createBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
     }
 
     @Test

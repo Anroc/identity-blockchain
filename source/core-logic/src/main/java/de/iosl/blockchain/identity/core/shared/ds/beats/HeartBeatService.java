@@ -1,16 +1,24 @@
 package de.iosl.blockchain.identity.core.shared.ds.beats;
 
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.ds.beats.data.Beat;
+import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
+import de.iosl.blockchain.identity.core.shared.ds.beats.data.HeartBeatRequest;
+import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.core.shared.ds.dto.RequestDTO;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
+import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import feign.FeignException;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.web3j.crypto.ECKeyPair;
 
 import java.util.List;
 import java.util.Queue;
@@ -31,6 +39,8 @@ public class HeartBeatService {
     private HeartBeatAdapter heartBeatAdapter;
     @Autowired
     private KeyChain keyChain;
+    @Autowired
+    private BlockchainIdentityConfig config;
 
     @Setter
     @Getter
@@ -46,6 +56,26 @@ public class HeartBeatService {
 
     public void subscribe(@NonNull EventListener eventListener) {
         eventListeners.add(eventListener);
+    }
+
+    public Beat createBeat(@NonNull String ethID, @NonNull EventType eventType) {
+        if(! keyChain.isActive()) {
+            throw new ServiceException("Keychain is not unlocked.", HttpStatus.UNAUTHORIZED);
+        }
+
+        HeartBeatRequest heartBeatRequest = new HeartBeatRequest(
+                keyChain.getAccount().getAddress(),
+                config.getHostUrl(),
+                eventType
+        );
+        RequestDTO<HeartBeatRequest> heartBeatRequestRequestDTO = new RequestDTO<>(
+                heartBeatRequest,
+                ECSignature.fromSignatureData(
+                        signer.sign(heartBeatRequest, ECKeyPair.create(keyChain.getAccount().getPrivateKey()))
+                )
+        );
+
+        return heartBeatAdapter.createBeat(ethID, heartBeatRequestRequestDTO);
     }
 
     @Scheduled(fixedRate = RATE, initialDelay = INITIAL_DELAY)

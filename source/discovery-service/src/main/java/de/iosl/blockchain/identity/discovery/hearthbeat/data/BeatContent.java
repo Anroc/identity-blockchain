@@ -15,7 +15,7 @@ public class BeatContent {
     @Field
     private String ethID;
     @Field
-    private String endpoint;
+    private String url;
     @Field
     private EventType eventType;
 

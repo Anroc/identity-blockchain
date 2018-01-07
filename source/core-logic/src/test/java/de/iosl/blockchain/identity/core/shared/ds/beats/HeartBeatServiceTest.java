@@ -97,5 +97,4 @@ public class HeartBeatServiceTest extends BasicMockSuite {
 
         assertThat(heartBeatService.getEventListeners()).containsExactly(eventListener);
     }
-
 }
