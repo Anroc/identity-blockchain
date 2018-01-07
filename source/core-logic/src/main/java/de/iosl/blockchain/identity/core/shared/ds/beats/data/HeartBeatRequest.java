@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.ds.beats.data;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.iosl.blockchain.identity.core.shared.ds.dto.Payload;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
