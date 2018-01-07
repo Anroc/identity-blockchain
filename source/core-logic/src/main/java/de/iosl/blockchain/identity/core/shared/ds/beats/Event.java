@@ -14,12 +14,12 @@ import java.util.Date;
 public class Event {
 
     private String ethID;
-    private String endpoint;
+    private String url;
     private Date createdAt;
 
     public Event(@NonNull Beat beat) {
         this.ethID = beat.getPayload().getEthID();
-        this.endpoint = beat.getPayload().getEndpoint();
+        this.url = beat.getPayload().getUrl();
         this.createdAt = beat.getCreatedAt();
     }
 }

@@ -13,4 +13,7 @@ public interface UserClaimRepository extends CrudRepository<UserClaim, String> {
     @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter}")
     List<UserClaim> findAll();
 
+    @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter} AND targetUserEthID = $1")
+    List<UserClaim> findAllByEthID(String ethID);
+
 }

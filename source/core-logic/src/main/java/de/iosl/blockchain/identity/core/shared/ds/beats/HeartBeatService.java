@@ -1,18 +1,28 @@
 package de.iosl.blockchain.identity.core.shared.ds.beats;
 
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.document.JsonLongDocument;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.ds.beats.data.Beat;
+import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
+import de.iosl.blockchain.identity.core.shared.ds.beats.data.HeartBeatRequest;
+import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.core.shared.ds.dto.RequestDTO;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
+import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import feign.FeignException;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.web3j.crypto.ECKeyPair;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
@@ -23,6 +33,7 @@ public class HeartBeatService {
 
     private static final long RATE = 15_000L; // Milliseconds
     private static final long INITIAL_DELAY = 30_000L; // Milliseconds
+    private static final String COUNTER_POST_FIX = "_beatCounter";
 
     @Getter
     private final EthereumSigner signer;
@@ -31,10 +42,10 @@ public class HeartBeatService {
     private HeartBeatAdapter heartBeatAdapter;
     @Autowired
     private KeyChain keyChain;
-
-    @Setter
-    @Getter
-    private long beatCounter = 0L;
+    @Autowired
+    private BlockchainIdentityConfig config;
+    @Autowired
+    private Bucket bucket;
 
     @Getter
     private Queue<EventListener> eventListeners;
@@ -48,12 +59,35 @@ public class HeartBeatService {
         eventListeners.add(eventListener);
     }
 
+    public Beat createBeat(@NonNull String ethID, @NonNull EventType eventType) {
+        if(! keyChain.isActive()) {
+            throw new ServiceException("Keychain is not unlocked.", HttpStatus.UNAUTHORIZED);
+        }
+
+        HeartBeatRequest heartBeatRequest = new HeartBeatRequest(
+                keyChain.getAccount().getAddress(),
+                config.getHostUrl(),
+                eventType
+        );
+
+        ECKeyPair ecKeyPair = ECKeyPair.create(keyChain.getAccount().getPrivateKey());
+        RequestDTO<HeartBeatRequest> heartBeatRequestRequestDTO = new RequestDTO<>(
+                heartBeatRequest,
+                ECSignature.fromSignatureData(signer.sign(heartBeatRequest, ecKeyPair))
+        );
+
+        log.info("Creating beat for {} with event {}", ethID, eventType);
+        return heartBeatAdapter.createBeat(ethID, heartBeatRequestRequestDTO);
+    }
+
     @Scheduled(fixedRate = RATE, initialDelay = INITIAL_DELAY)
     public void beat() {
         if(! keyChain.isRegistered()) {
             log.debug("Not yet registered.");
             return;
         }
+
+        long beatCounter = findBeatCounter().orElse(0L);
 
         try {
             log.debug("Sending beat as [{}] from {} to {}", keyChain.getAccount().getAddress(), beatCounter, Long.MAX_VALUE);
@@ -77,6 +111,7 @@ public class HeartBeatService {
                         .collect(Collectors.toList());
 
                 beatCounter = beats.get(beats.size() -1).getMessageNumber() + 1;
+                persistBeatCounter(beatCounter);
                 beats.forEach(
                         beat -> getEventListeners().forEach(
                                 eventListener -> eventListener.trigger(new Event(beat), beat.getPayload().getEventType())
@@ -84,7 +119,19 @@ public class HeartBeatService {
                 );
             }
         } catch (FeignException e) {
-            log.error("Could not send beat!", e);
+            log.error("Could not process beat!", e);
         }
+    }
+
+    protected Optional<Long> findBeatCounter() {
+        return Optional.ofNullable(bucket.get(JsonLongDocument.create(buildCounterId()))).map(JsonLongDocument::content);
+    }
+
+    protected void persistBeatCounter(long beatCounter) {
+        bucket.upsert(JsonLongDocument.create(buildCounterId(), beatCounter));
+    }
+
+    private String buildCounterId() {
+        return keyChain.getAccount().getAddress() + COUNTER_POST_FIX;
     }
 }

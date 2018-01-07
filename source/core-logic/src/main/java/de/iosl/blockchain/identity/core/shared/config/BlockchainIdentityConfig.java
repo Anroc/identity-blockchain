@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -19,4 +20,11 @@ public class BlockchainIdentityConfig {
     @Valid private ServiceConfig discoveryService;
 
     private ClientType type;
+
+    @JsonIgnore
+    public String getHostUrl() {
+        return String.format(
+                "%s://%s:%d", getProtocol(), getCore().getAddress(), getCore().getPort()
+        );
+    }
 }

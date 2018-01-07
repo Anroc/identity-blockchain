@@ -5,12 +5,15 @@ import de.iosl.blockchain.identity.core.provider.factories.ClaimFactory;
 import de.iosl.blockchain.identity.core.provider.factories.UserFactory;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.db.UserDB;
+import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatAdapter;
+import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.io.ClassPathResource;
 import org.web3j.crypto.CipherException;
@@ -31,6 +34,8 @@ public class RestTestSuite {
 
     protected EthereumSigner signer = new EthereumSigner();
 
+    @SpyBean
+    public HeartBeatService heartBeatService;
     @Autowired
     public TestRestTemplate restTemplate;
     @Autowired

@@ -46,7 +46,7 @@ public class APIClientService {
     public void createSubscriber() {
         heartBeatService.subscribe(
                 (event, eventType) -> {
-                    String key = this.registerNewApiClient(event.getEndpoint());
+                    String key = this.registerNewApiClient(event.getUrl());
 
                     if(eventType == EventType.NEW_CLAIMS) {
                         getAndSaveClaims(key);
@@ -77,7 +77,11 @@ public class APIClientService {
                 ECSignature.fromSignatureData(ethereumSigner.sign(keyChain.getAccount().getAddress(), ecKeyPair))
         );
 
-        return apiClient.getClaims(claimRequest).stream().map(UserClaim::new).collect(Collectors.toList());
+
+        return apiClient.getClaims(claimRequest)
+                .stream()
+                .map(claimDTO -> new UserClaim(claimDTO, keyChain.getAccount().getAddress()))
+                .collect(Collectors.toList());
     }
 
     public List<UserClaim> getAndSaveClaims(@NonNull String url) {

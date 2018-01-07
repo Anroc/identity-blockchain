@@ -29,11 +29,11 @@ public class Beat {
     @Field
     private BeatContent payload;
 
-    public Beat(long messageNumber, String recipientEthID, String senderEthID, String endpoint, EventType eventType, ECSignature signature) {
+    public Beat(long messageNumber, String recipientEthID, String senderEthID, String url, EventType eventType, ECSignature signature) {
         this.id = buildID(recipientEthID, messageNumber);
         this.messageNumber = messageNumber;
 
-        this.payload = new BeatContent(senderEthID, endpoint, eventType);
+        this.payload = new BeatContent(senderEthID, url, eventType);
         this.signature = signature;
     }
 

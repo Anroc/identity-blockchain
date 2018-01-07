@@ -5,8 +5,8 @@ import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatAdapter;
 import de.iosl.blockchain.identity.core.shared.ds.registry.DiscoveryClientAdapter;
 import de.iosl.blockchain.identity.lib.exception.InterServiceCallError;
 import feign.Feign;
-import feign.gson.GsonDecoder;
-import feign.gson.GsonEncoder;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +51,8 @@ public class FeignAdapterBeanFactory {
                                 "InterService call error [" + methodKey +
                                         ", " + response.status() + "]: " + response.reason(),
                                 response.body()))
-                .encoder(new GsonEncoder())
-                .decoder(new GsonDecoder())
+                .encoder(new JacksonEncoder())
+                .decoder(new JacksonDecoder())
                 .target(clazz, url);
     }
 }
