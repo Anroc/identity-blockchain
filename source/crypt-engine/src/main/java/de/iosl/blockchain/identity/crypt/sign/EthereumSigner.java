@@ -49,19 +49,14 @@ public class EthereumSigner {
                 publicKeyFromSignature(payload, signatureData)
         );
 
-        log.info("Given Address: {}", address);
-        log.info("Computed address: {}", computedAddress);
+        log.info("Verify Signature.. Given Address: {}, Computed address: {}", address, computedAddress);
         return address.equals(computedAddress);
     }
 
     private BigInteger publicKeyFromSignature(Object payload,
             Sign.SignatureData signatureData) {
-        log.info("signature data: {}, {}, {}", signatureData.getR(), signatureData.getS(), signatureData.getV());
-        try {
-            log.info("This is the object {}", objectMapper.writeValueAsString(payload));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        log.debug("signature data: {}, {}, {}", signatureData.getR(), signatureData.getS(), signatureData.getV());
+
         try {
             return Sign.signedMessageToKey(hash(payload), signatureData);
         } catch (SignatureException e) {

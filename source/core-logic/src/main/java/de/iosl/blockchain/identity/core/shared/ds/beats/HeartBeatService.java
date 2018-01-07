@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.ds.beats;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.document.JsonLongDocument;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.ds.beats.data.Beat;
@@ -14,21 +14,18 @@ import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import feign.FeignException;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Sign;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
-
-import static de.iosl.blockchain.identity.crypt.sign.EthereumSigner.addressFromPublicKey;
 
 @Slf4j
 @Service
@@ -36,6 +33,7 @@ public class HeartBeatService {
 
     private static final long RATE = 15_000L; // Milliseconds
     private static final long INITIAL_DELAY = 30_000L; // Milliseconds
+    private static final String COUNTER_POST_FIX = "_beatCounter";
 
     @Getter
     private final EthereumSigner signer;
@@ -46,10 +44,8 @@ public class HeartBeatService {
     private KeyChain keyChain;
     @Autowired
     private BlockchainIdentityConfig config;
-
-    @Setter
-    @Getter
-    private long beatCounter = 0L;
+    @Autowired
+    private Bucket bucket;
 
     @Getter
     private Queue<EventListener> eventListeners;
@@ -79,27 +75,8 @@ public class HeartBeatService {
                 heartBeatRequest,
                 ECSignature.fromSignatureData(signer.sign(heartBeatRequest, ecKeyPair))
         );
-        if(! signer.verifySignature(
-                heartBeatRequestRequestDTO.getPayload(),
-                heartBeatRequestRequestDTO.getSignature().toSignatureData(),
-                heartBeatRequestRequestDTO.getPayload().getEthID())) {
-            throw new ServiceException("Generated Signature is not falid lol.", HttpStatus.INSUFFICIENT_STORAGE);
-        }
 
-        try {
-            log.info("This is the object {}", new ObjectMapper().writeValueAsString(heartBeatRequestRequestDTO));
-            log.info("Registered public key {} of address {}", keyChain.getAccount().getPublicKey(), addressFromPublicKey(keyChain.getAccount().getPublicKey()));
-        } catch (JsonProcessingException e) {
-            throw new ServiceException(e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        Sign.SignatureData signatureData = heartBeatRequestRequestDTO.getSignature().toSignatureData();
-        log.info("signature data: {}, {}, {}", signatureData.getR(), signatureData.getS(), signatureData.getV());
-        try {
-            log.info("This is the object {}", new ObjectMapper().writeValueAsString(heartBeatRequestRequestDTO.getPayload()));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        log.info("Creating beat for {} with event {}", ethID, eventType);
         return heartBeatAdapter.createBeat(ethID, heartBeatRequestRequestDTO);
     }
 
@@ -109,6 +86,8 @@ public class HeartBeatService {
             log.debug("Not yet registered.");
             return;
         }
+
+        long beatCounter = findBeatCounter().orElse(0L);
 
         try {
             log.debug("Sending beat as [{}] from {} to {}", keyChain.getAccount().getAddress(), beatCounter, Long.MAX_VALUE);
@@ -132,6 +111,7 @@ public class HeartBeatService {
                         .collect(Collectors.toList());
 
                 beatCounter = beats.get(beats.size() -1).getMessageNumber() + 1;
+                persistBeatCounter(beatCounter);
                 beats.forEach(
                         beat -> getEventListeners().forEach(
                                 eventListener -> eventListener.trigger(new Event(beat), beat.getPayload().getEventType())
@@ -139,7 +119,19 @@ public class HeartBeatService {
                 );
             }
         } catch (FeignException e) {
-            log.error("Could not send beat!", e);
+            log.error("Could not process beat!", e);
         }
+    }
+
+    private Optional<Long> findBeatCounter() {
+        return Optional.ofNullable(bucket.get(JsonLongDocument.create(buildCounterId()))).map(JsonLongDocument::content);
+    }
+
+    private void persistBeatCounter(long beatCounter) {
+        bucket.upsert(JsonLongDocument.create(buildCounterId(), beatCounter));
+    }
+
+    private String buildCounterId() {
+        return keyChain.getAccount().getAddress() + COUNTER_POST_FIX;
     }
 }

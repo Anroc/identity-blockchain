@@ -1,7 +1,5 @@
 package de.iosl.blockchain.identity.discovery.hearthbeat;
 
-import com.couchbase.client.deps.com.fasterxml.jackson.core.JsonProcessingException;
-import com.couchbase.client.deps.com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.discovery.data.RequestDTO;
 import de.iosl.blockchain.identity.discovery.hearthbeat.data.Beat;
 import de.iosl.blockchain.identity.discovery.hearthbeat.data.HeartBeatInfoDTO;
@@ -54,11 +52,6 @@ public class HeartBeatController {
         log.info("New beat received.");
         if (! validator.isValid(messageRequest)) {
             log.info("Signature was invalid.");
-            try {
-                log.info("This is the object {}", new ObjectMapper().writeValueAsString(messageRequest));
-            } catch (JsonProcessingException e) {
-                throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
             throw new ServiceException(HttpStatus.FORBIDDEN);
         }
         log.info("Created beat for [{}] from [{}]", ethID, messageRequest.getPayload().getEthID());

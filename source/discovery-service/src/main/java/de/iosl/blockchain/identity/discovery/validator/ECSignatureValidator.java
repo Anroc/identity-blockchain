@@ -15,7 +15,6 @@ public class ECSignatureValidator {
     private EthereumSigner algorithm = new EthereumSigner();
 
     public boolean isValid(@NonNull RequestDTO<?> request) {
-        log.info("Verify Signature: {} for ethID {}", request.getPayload(), request.getPayload().getEthID());
         return isSignatureValid(request.getPayload(),
                 request.getSignature(),
                 request.getPayload().getEthID());
