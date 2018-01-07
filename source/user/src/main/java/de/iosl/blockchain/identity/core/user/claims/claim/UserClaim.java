@@ -23,12 +23,19 @@ public class UserClaim extends SharedClaim {
     @Setter
     private String id;
 
-    public UserClaim(String id, Date modificationDate, Provider provider, Payload claimValue) {
+    @Field
+    @Getter
+    @Setter
+    private String targetUserEthID;
+
+    public UserClaim(String id, Date modificationDate, Provider provider, Payload claimValue, String targetUserEthID) {
         super(modificationDate, provider, claimValue);
         this.id = id;
+        this.targetUserEthID = targetUserEthID;
     }
 
-    public UserClaim(ClaimDTO claimDTO) {
+    public UserClaim(ClaimDTO claimDTO, String targetUserEthID) {
         super(claimDTO);
+        this.targetUserEthID = targetUserEthID;
     }
 }

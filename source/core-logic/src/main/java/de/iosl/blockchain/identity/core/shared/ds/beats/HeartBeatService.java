@@ -123,11 +123,11 @@ public class HeartBeatService {
         }
     }
 
-    private Optional<Long> findBeatCounter() {
+    protected Optional<Long> findBeatCounter() {
         return Optional.ofNullable(bucket.get(JsonLongDocument.create(buildCounterId()))).map(JsonLongDocument::content);
     }
 
-    private void persistBeatCounter(long beatCounter) {
+    protected void persistBeatCounter(long beatCounter) {
         bucket.upsert(JsonLongDocument.create(buildCounterId(), beatCounter));
     }
 

@@ -35,7 +35,8 @@ public class ClaimTest {
     public void init() {
         userClaim = new UserClaim("1", lastModifiedDate,
                 new Provider("1", "1"),
-                new Payload("1", PayloadType.STRING));
+                new Payload("1", PayloadType.STRING),
+                "0x123");
     }
 
     @Test
@@ -49,6 +50,12 @@ public class ClaimTest {
         userClaimDB.save(userClaim);
         userClaimDB.delete(userClaim.getId());
         assertThat(userClaimDB.findEntity(userClaim.getId())).isNotPresent();
+    }
+
+    @Test
+    public void retrieveClaimByEthId() {
+        userClaimDB.save(userClaim);
+        assertThat(userClaimDB.findAllByEthID(userClaim.getTargetUserEthID())).hasSize(1);
     }
 
     @After

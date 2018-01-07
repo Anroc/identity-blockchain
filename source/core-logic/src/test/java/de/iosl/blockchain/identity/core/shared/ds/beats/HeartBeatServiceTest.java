@@ -18,6 +18,7 @@ import org.web3j.crypto.Sign;
 import java.io.File;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -53,10 +54,13 @@ public class HeartBeatServiceTest extends BasicMockSuite {
         doReturn(mock(Sign.SignatureData.class)).when(ecSignature).toSignatureData();
         doReturn(Lists.newArrayList(beat)).when(heartBeatAdapter).beat(anyString(), eq(0L), eq(Long.MAX_VALUE));
         doReturn(true).when(ethereumSigner).verifySignature(any(), any(), anyString());
+        doReturn(Optional.empty()).when(heartBeatService).findBeatCounter();
+        doNothing().when(heartBeatService).persistBeatCounter(1L);
 
         heartBeatService.beat();
 
-        assertThat(heartBeatService.getBeatCounter()).isEqualTo(1L);
+        verify(heartBeatService).findBeatCounter();
+        verify(heartBeatService).persistBeatCounter(1L);
 
     }
 
@@ -82,10 +86,12 @@ public class HeartBeatServiceTest extends BasicMockSuite {
         doReturn(true).when(ethereumSigner).verifySignature(any(), any(), anyString());
         doReturn(listenerQueue).when(heartBeatService).getEventListeners();
         doNothing().when(eventListener).trigger(any(Event.class), eq(EventType.NEW_CLAIMS));
+        doReturn(Optional.empty()).when(heartBeatService).findBeatCounter();
+        doNothing().when(heartBeatService).persistBeatCounter(1L);
 
         heartBeatService.beat();
 
-        assertThat(heartBeatService.getBeatCounter()).isEqualTo(1L);
+        verify(heartBeatService).persistBeatCounter(1L);
         verify(eventListener, times(1)).trigger(any(Event.class), eq(EventType.NEW_CLAIMS));
     }
 
