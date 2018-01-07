@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.user.account;
 
+import de.iosl.blockchain.identity.core.user.AbstractAuthenticator;
 import de.iosl.blockchain.identity.core.user.account.data.LoginRequest;
 import de.iosl.blockchain.identity.core.user.account.data.LoginResponse;
 import io.swagger.annotations.ApiOperation;
@@ -12,7 +13,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/account")
-public class AccountController {
+public class AccountController extends AbstractAuthenticator {
 
     @Autowired
     private AccountService accountService;
@@ -40,6 +41,8 @@ public class AccountController {
     public byte[] getQRCode(
             @RequestParam(value = "width", defaultValue = "256") int width,
             @RequestParam(value = "height", defaultValue = "256") int height) {
+        checkAuthentication();
+
         return accountService.getQRCode(width, height);
     }
 }

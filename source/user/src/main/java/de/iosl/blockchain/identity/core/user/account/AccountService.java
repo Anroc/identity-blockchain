@@ -96,10 +96,6 @@ public class AccountService {
     }
 
     public byte[] getQRCode(int width, int height) {
-        if( keyChain.getAccount() == null) {
-            throw new ServiceException(HttpStatus.FORBIDDEN);
-        }
-
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
 
         try {
