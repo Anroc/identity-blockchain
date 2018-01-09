@@ -7,6 +7,7 @@ import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.db.UserDB;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.After;
@@ -35,6 +36,8 @@ public class RestTestSuite {
 
     @SpyBean
     public HeartBeatService heartBeatService;
+    @SpyBean
+    public EBAInterface ebaInterface;
     @Autowired
     public TestRestTemplate restTemplate;
     @Autowired

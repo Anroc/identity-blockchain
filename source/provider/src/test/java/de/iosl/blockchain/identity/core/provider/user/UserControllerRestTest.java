@@ -11,6 +11,7 @@ import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterReq
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import de.iosl.blockchain.identity.core.shared.ds.beats.data.Beat;
 import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
+import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +24,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.io.IOException;
 import java.util.List;
@@ -175,6 +177,8 @@ public class UserControllerRestTest extends RestTestSuite {
 
         Beat beat = new Beat();
         doReturn(beat).when(heartBeatService).createBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
+        doReturn(Optional.of(mock(TransactionReceipt.class)))
+                .when(ebaInterface).setApproval(any(Account.class), eq("0x123"), eq(true));
 
         RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO(
                 userCredentials.getAddress(),
