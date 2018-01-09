@@ -31,11 +31,11 @@ contract FirstContract{
         }
     }
 
-    function getVariable() constant returns(bool){
+    function getApproval() constant returns(bool){
         return approval;
     }
 
-    function setVariable(bool _approval) ifGov returns(bool){
+    function setApproval(bool _approval) ifGov returns(bool){
         approval = _approval;
         return approval;
     }
