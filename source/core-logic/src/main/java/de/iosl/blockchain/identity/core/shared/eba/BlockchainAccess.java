@@ -57,7 +57,7 @@ public class BlockchainAccess implements EBAInterface {
     }
 
     @Override
-    public Optional<TransactionReceipt> setApproval(Account governmentAccount, Optional<String> contractAddress, Boolean decision) {
+    public Optional<TransactionReceipt> setApproval(Account governmentAccount, String contractAddress, boolean decision) {
         TransactionReceipt transactionReceipt = this.registrarContractUtils.approveRegistrarContractAsGovernment(governmentAccount,contractAddress,decision, web3j);
         return Optional.ofNullable(transactionReceipt);
     }

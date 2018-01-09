@@ -11,5 +11,5 @@ public interface EBAInterface {
     Account createWallet(String password, Path path);
     Account accessWallet(String pw, File file);
     Optional<String> deployRegistrarContract(Account account);
-    Optional<TransactionReceipt> setApproval(Account governmentAccount, Optional<String> contractAddress, Boolean decision);
+    Optional<TransactionReceipt> setApproval(Account governmentAccount, String contractAddress, boolean decision);
 }
