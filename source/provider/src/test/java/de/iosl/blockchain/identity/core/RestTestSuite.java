@@ -5,7 +5,6 @@ import de.iosl.blockchain.identity.core.provider.factories.ClaimFactory;
 import de.iosl.blockchain.identity.core.provider.factories.UserFactory;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.db.UserDB;
-import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatAdapter;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;

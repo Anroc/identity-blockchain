@@ -3,10 +3,14 @@ package de.iosl.blockchain.identity.core.provider.user;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.db.UserDB;
+import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
+import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
+import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -21,6 +25,10 @@ public class UserService {
     private UserDB userDB;
     @Autowired
     private HeartBeatService heartBeatService;
+    @Autowired
+    private EBAInterface ebaInterface;
+    @Autowired
+    private KeyChain keyChain;
 
     public List<User> getUsers() {
         return userDB.findAll();
@@ -88,6 +96,11 @@ public class UserService {
 
     public void registerUser(@NonNull User user) {
         updateUser(user);
+        ebaInterface.setApproval(keyChain.getAccount(), user.getRegisterContractAddress(), true)
+                .orElseThrow(
+                        () -> new ServiceException("Error approving smart contract with address [%s].",
+                                HttpStatus.INTERNAL_SERVER_ERROR, user.getRegisterContractAddress())
+                );
         heartBeatService.createBeat(user.getEthId(), EventType.NEW_CLAIMS);
     }
 }

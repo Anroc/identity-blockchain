@@ -12,4 +12,5 @@ public class KeyInfo {
     private KeyPair keyPair;
     private String accountPath;
 
+    private String registerSmartContractAddress;
 }

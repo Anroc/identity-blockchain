@@ -2,7 +2,6 @@ package de.iosl.blockchain.identity.core.shared.eba.main;
 
 import de.iosl.blockchain.identity.core.shared.eba.contracts.Registrar_sol_FirstContract;
 import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jConstants;
-import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.web3j.protocol.Web3j;
@@ -12,7 +11,6 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.Contract;
 
 import java.math.BigInteger;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j

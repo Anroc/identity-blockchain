@@ -45,11 +45,19 @@ public class AccountService {
         Account account = ebaInterface.createWallet(password, Paths.get(KeyChain.WALLET_DIR));
         keyChain.setAccount(account);
 
-        KeyPair keyPair = createKeyPair(password, account.getFile().getAbsolutePath());
+        KeyPair keyPair = createKeyPair();
         keyChain.setRsaKeyPair(keyPair);
+
+        String contractAddress = ebaInterface.deployRegistrarContract(account).orElseThrow(
+                () -> new ServiceException("Unable to create smart contract!", HttpStatus.INTERNAL_SERVER_ERROR)
+        );
+
+        keyChain.setRegisterSmartContractAddress(contractAddress);
 
         registerToDS();
         keyChain.setRegistered(true);
+
+        keyChainService.saveKeyChain(keyChain, password, keyChainService.getDefaultWalletFile());
 
         return keyChain.getAccount().getAddress();
     }
@@ -57,6 +65,7 @@ public class AccountService {
     public String login(String password) throws IOException {
         KeyInfo keyInfo = readKeyPair(password);
         keyChain.setRsaKeyPair(keyInfo.getKeyPair());
+        keyChain.setRegisterSmartContractAddress(keyInfo.getRegisterSmartContractAddress());
 
         Account account = ebaInterface.accessWallet(password, Paths.get(keyInfo.getAccountPath()).toFile());
         keyChain.setAccount(account);
@@ -77,14 +86,13 @@ public class AccountService {
         return keyChainService.readKeyChange(keyChainService.getDefaultWalletFile(), password);
     }
 
-    private KeyPair createKeyPair(String password, String absolutePath) throws IOException {
+    private KeyPair createKeyPair() {
         KeyPair keyPair = CryptEngine.generate()
                 .with(1024)
                 .string()
                 .rsa()
                 .getAsymmetricCipherKeyPair();
 
-        keyChainService.saveKeyChain(keyPair, keyChainService.getDefaultWalletFile(), password, absolutePath);
         return keyPair;
     }
 
@@ -104,7 +112,7 @@ public class AccountService {
                     .append(":")
                     .append(KeyConverter.from(keyChain.getRsaKeyPair().getPublic()).toBase64())
                     .append(":")
-                    .append("0x1231231981238123"); // TODO: add Smart Contract address here
+                    .append(keyChain.getRegisterSmartContractAddress());
 
             if (stringBuilder.toString().getBytes().length > width * height) {
                 throw new ServiceException("Content does not fit into QR code size.", HttpStatus.UNPROCESSABLE_ENTITY);
