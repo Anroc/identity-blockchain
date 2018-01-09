@@ -8,10 +8,8 @@ import org.springframework.stereotype.Component;
 import org.web3j.crypto.*;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.exceptions.TransactionException;
-import org.web3j.utils.Convert;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +19,6 @@ import java.nio.file.Path;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j

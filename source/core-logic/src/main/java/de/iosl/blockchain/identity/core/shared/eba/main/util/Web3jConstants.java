@@ -3,12 +3,8 @@ package de.iosl.blockchain.identity.core.shared.eba.main.util;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.web3j.protocol.Web3j;
 import org.web3j.utils.Convert;
 
-import javax.validation.constraints.Min;
 import java.math.BigInteger;
 
 @Data

@@ -97,7 +97,7 @@ public class Web3jUtils {
 	
 	/**
 	 * Transfers the specified amount of Wei from the coinbase to the specified account.
-	 * The method waits for the transfer to complete using method {@link waitForReceipt}.  
+	 * The method waits for the transfer to complete using method .
 	 */
 	public static TransactionReceipt transferFromCoinbaseAndWait(Web3j web3j, String to, BigInteger amountWei)
 			throws Exception {
