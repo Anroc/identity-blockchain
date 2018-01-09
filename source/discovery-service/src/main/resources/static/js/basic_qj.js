@@ -109,6 +109,10 @@ function getHeartBeats(onSuccess) {
 
 $( document ).ready(function() {
     getHeartBeats(function(res) {
+        res.sort(function(a, b){
+                return ((a.lastSeen > b.lastSeen) ? -1 : ((a.lastSeen < b.lastSeen) ? 1 : 0));
+            }
+        )
         res.forEach(function(elem) {
             console.log(elem)
             var template = Handlebars.compile($('#table-content').html());
@@ -117,7 +121,6 @@ $( document ).ready(function() {
             } else {
                 elem.lifeStateLabel = "danger";
             }
-
             elem.printableDate = dataFromTimestamp(elem.lastSeen);
             $('#target tr:last').after(template(elem)).slideDown();
         })

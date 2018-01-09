@@ -49,7 +49,9 @@ public class HeartBeatController {
     @PostMapping("/{ethID}")
     public Beat createBeat(@NotBlank @PathVariable("ethID") String ethID,
             @Valid @RequestBody RequestDTO<HeartBeatRequest> messageRequest) {
+        log.info("New beat received.");
         if (! validator.isValid(messageRequest)) {
+            log.info("Signature was invalid.");
             throw new ServiceException(HttpStatus.FORBIDDEN);
         }
         log.info("Created beat for [{}] from [{}]", ethID, messageRequest.getPayload().getEthID());

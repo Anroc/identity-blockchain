@@ -20,9 +20,6 @@ public class Account {
     private File file;
     private Credentials credentials;
 
-//    public Credentials getCredentials(){
-//        return Credentials.create(getEcKeyPair());
-//    }
 
     public ECKeyPair getEcKeyPair(){
         return new ECKeyPair(this.privateKey, this.publicKey);

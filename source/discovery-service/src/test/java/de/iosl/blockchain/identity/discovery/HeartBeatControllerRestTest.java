@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.discovery;
 import de.iosl.blockchain.identity.discovery.data.ECSignature;
 import de.iosl.blockchain.identity.discovery.data.RequestDTO;
 import de.iosl.blockchain.identity.discovery.hearthbeat.data.Beat;
+import de.iosl.blockchain.identity.discovery.hearthbeat.data.EventType;
 import de.iosl.blockchain.identity.discovery.hearthbeat.data.HeartBeatRequest;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
 import org.junit.After;
@@ -27,14 +28,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class HeartBeatControllerRestTest extends RestTestSuite {
 
-    private static final String ENDPOINT = "/claim/ETHEREM_ID";
+    private static final String ENDPOINT = "/claims/ETHEREM_ID";
     private static final String OTHER_ETH_ID = "other_eth_id";
+    private static final EventType eventType = EventType.NEW_CLAIMS;
 
     private RequestDTO<HeartBeatRequest> requestDTO;
 
     @Before
     public void setup() {
-        HeartBeatRequest payload = new HeartBeatRequest(ETH_ID, ENDPOINT);
+        HeartBeatRequest payload = new HeartBeatRequest(ETH_ID, ENDPOINT, eventType);
 
         Sign.SignatureData signature = ALGORITHM
                 .sign(payload, credentials.getEcKeyPair());

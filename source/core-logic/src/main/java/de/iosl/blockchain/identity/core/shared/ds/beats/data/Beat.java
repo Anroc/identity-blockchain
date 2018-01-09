@@ -11,6 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Beat implements Comparable<Beat>{
+
     private String id;
     long messageNumber;
     private Date createdAt;
