@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.eba;
+package de.iosl.blockchain.identity.core.shared.eba;
 
 import de.iosl.blockchain.identity.core.shared.eba.BlockchainAccess;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;

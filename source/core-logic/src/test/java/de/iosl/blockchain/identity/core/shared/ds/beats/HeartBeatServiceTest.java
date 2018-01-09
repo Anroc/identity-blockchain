@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Sign;
 
 import java.io.File;
@@ -74,7 +75,7 @@ public class HeartBeatServiceTest extends BasicMockSuite {
                 "/myEndpoint/ethID",
                 EventType.NEW_CLAIMS
         ));
-        Account account = new Account("0x123", BigInteger.TEN, BigInteger.TEN, mock(File.class));
+        Account account = new Account("0x123", BigInteger.TEN, BigInteger.TEN, mock(File.class), mock(Credentials.class));
         Queue<EventListener> listenerQueue = new ConcurrentLinkedQueue<>();
         listenerQueue.add(eventListener);
 
