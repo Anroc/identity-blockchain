@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.web3j.protocol.Web3j;
+import org.web3j.utils.Convert;
 
 import javax.validation.constraints.Min;
 import java.math.BigInteger;
@@ -32,4 +33,7 @@ public class Web3jConstants {
 	public static final String EXT_SOLIDITY = "sol";
 	public static final String EXT_BINARY = "bin";
 	public static final String EXT_ABI = "abi";
+
+	public static final String DEFAULT_START_AMOUNT = "2.0";
+	public static final BigInteger DEFAULT_START_ETHER = Convert.toWei(Web3jConstants.DEFAULT_START_AMOUNT, Convert.Unit.ETHER).toBigInteger();
 }

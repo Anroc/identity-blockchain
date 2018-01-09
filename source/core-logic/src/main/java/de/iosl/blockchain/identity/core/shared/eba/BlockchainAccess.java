@@ -1,9 +1,10 @@
 package de.iosl.blockchain.identity.core.shared.eba;
 
+import com.sun.istack.internal.Nullable;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.eba.main.AccountAccess;
-import de.iosl.blockchain.identity.core.shared.eba.main.DeployContract;
+import de.iosl.blockchain.identity.core.shared.eba.main.RegistrarContractUtils;
 import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jConstants;
 import lombok.Data;
 import lombok.NonNull;
@@ -14,12 +15,15 @@ import org.springframework.stereotype.Component;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.Contract;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Path;
+import java.util.Optional;
 
 @Slf4j
 @Data
@@ -30,7 +34,7 @@ public class BlockchainAccess implements EBAInterface {
     private AccountAccess accountAccess;
 
     @Autowired
-    private DeployContract deployContract;
+    private RegistrarContractUtils registrarContractUtils;
 
     @Autowired
     private Web3j web3j;
@@ -52,10 +56,15 @@ public class BlockchainAccess implements EBAInterface {
         return accountAccess.accessWallet(pw, file);
     }
 
-    public void deployRegistrarContract(@NonNull String password, Account account){
-        deployContract.deployRegistrarContract(password, account, web3j);
+    @Override
+    public Optional<String> deployRegistrarContract(Account account){
+        Contract contract = registrarContractUtils.deployRegistrarContract(account, web3j);
+        return Optional.ofNullable(contract.getContractAddress());
     }
 
-
-
+    @Override
+    public Optional<TransactionReceipt> setApproval(Account governmentAccount, Optional<String> contractAddress, Boolean decision) {
+        TransactionReceipt transactionReceipt = this.registrarContractUtils.approveRegistrarContractAsGovernment(governmentAccount,contractAddress,decision, web3j);
+        return Optional.ofNullable(transactionReceipt);
+    }
 }

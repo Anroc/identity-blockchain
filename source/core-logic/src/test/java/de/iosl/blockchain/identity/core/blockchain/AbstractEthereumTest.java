@@ -66,6 +66,7 @@ public class AbstractEthereumTest {
 		System.out.println("transferEther. nonce: " + nonce + " amount: " + amountWei + " to: " + to);
 
 		String txHash = ethSendTransaction.getTransactionHash();
+
 		waitForReceipt(txHash);
 		
 		return txHash;

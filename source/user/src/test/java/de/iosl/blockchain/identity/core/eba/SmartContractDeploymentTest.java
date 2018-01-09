@@ -1,8 +1,11 @@
 package de.iosl.blockchain.identity.core.eba;
 
+import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.eba.BlockchainAccess;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.eba.main.AccountAccess;
+import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jConstants;
+import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jUtils;
 import de.iosl.blockchain.identity.core.user.Application;
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,13 +17,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.web3j.protocol.core.methods.response.EthAccounts;
 import org.web3j.protocol.core.methods.response.EthCoinbase;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static de.iosl.blockchain.identity.core.shared.KeyChain.WALLET_DIR;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.atIndex;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -30,28 +38,49 @@ public class SmartContractDeploymentTest {
     @Autowired
     BlockchainAccess blockchainAccess;
 
-    Account newAccount;
+    List<Account> newAccounts = new ArrayList<Account>();
+    String pathToFile = WALLET_DIR + "wallet" + File.separator;
+
     @After
     public void deleteCreatedWallet(){
-        newAccount.getFile().deleteOnExit();
+        this.newAccounts.stream().forEach(account -> account.getFile().deleteOnExit());
     }
 
     @Test
     public void createAccountAndDeployRegistrarContract() throws Exception {
-        EthAccounts accountsResponse  = blockchainAccess.getWeb3j().ethAccounts().sendAsync().get();
-        List<String> accounts = accountsResponse.getAccounts();
-        log.info("Account size:"+accounts.size()+"");
 
         String password = "password";
-        String pathToFile = WALLET_DIR+"wallet"+ File.separator;
         Path path = Paths.get(pathToFile);
 
-        this.newAccount= blockchainAccess.createWallet(password, path);
+        Account newAccount = blockchainAccess.createWallet(password, path);
+        assertThat(newAccount.getFile()).exists();
+        this.newAccounts.add(newAccount);
 
-        blockchainAccess.deployRegistrarContract(password, newAccount);
+        Optional<String> registrarContractAddress = blockchainAccess.deployRegistrarContract(newAccount);
+        assertThat(registrarContractAddress).isPresent();
 
-        accountsResponse  = blockchainAccess.getWeb3j().ethAccounts().sendAsync().get();
-        accounts = accountsResponse.getAccounts();
-        log.info("Account size:"+accounts.size()+"");    }
+    }
+    @Test
+    public void setApprovalAsGovernmentTest() throws  Exception{
+        String password = "password";
+        Path path = Paths.get(pathToFile);
+
+        Account newAccount = blockchainAccess.createWallet(password, path);
+        assertThat(newAccount.getFile()).exists();
+        this.newAccounts.add(newAccount);
+
+        Optional<String> registrarContractAddress = blockchainAccess.deployRegistrarContract(newAccount);
+        assertThat(registrarContractAddress).isPresent();
+        Boolean decision = true;
+        String govPassword = "penispumpe";
+        Account governmentAccount =blockchainAccess.accessWallet(
+                govPassword,
+                new File(pathToFile+"gov-wallet.json")
+        );
+//        TransactionReceipt transactionReceiptTransferEther= Web3jUtils.transferWeiFromCoinbaseToCreatedAccount(governmentAccount, Web3jConstants.DEFAULT_START_ETHER,blockchainAccess.getWeb3j());
+        Optional<TransactionReceipt> transactionReceipt= blockchainAccess.setApproval(governmentAccount, registrarContractAddress, decision);
+        assertThat(transactionReceipt).isPresent();
+    }
+
 
 }

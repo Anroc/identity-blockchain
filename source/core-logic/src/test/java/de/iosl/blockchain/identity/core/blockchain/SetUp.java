@@ -35,6 +35,7 @@ public class SetUp extends AbstractEthereumTest{
         this.newAccount = account;
         assertThat(account.getFile()).exists();
 
+
     }
 
 
