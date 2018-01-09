@@ -25,7 +25,7 @@ import java.io.IOException;
 
 public class RestTestSuite {
 
-    protected static final String USER_FILE = "state-wallet.json";
+    protected static final String USER_FILE = "user-wallet.json";
     protected static final String STATE_FILE = "state-wallet.json";
     protected static final String WALLET_PW = "asd";
 
@@ -55,10 +55,12 @@ public class RestTestSuite {
     }
 
     public static Credentials loadWallet(String name, String pw) throws IOException, CipherException {
-        ClassPathResource resource = new ClassPathResource(name);
-        File file = resource.getFile();
+        return WalletUtils.loadCredentials(pw, loadFile(name));
+    }
 
-        return WalletUtils.loadCredentials(pw, file);
+    public static File loadFile(String name) throws IOException {
+        ClassPathResource resource = new ClassPathResource(name);
+        return resource.getFile();
     }
 
     public ECSignature getSignature(Object paylaod, Credentials credentials) {

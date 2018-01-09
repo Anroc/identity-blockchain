@@ -29,8 +29,8 @@ blockchain.identity:
     port: 8101
     address: srv01.snet.tu-berlin.de
   ethereum:
-    port: 8545
-    address: localhost
+    port: 7111
+    address: srv01.snet.tu-berlin.de
 ---
 spring:
   profiles: test

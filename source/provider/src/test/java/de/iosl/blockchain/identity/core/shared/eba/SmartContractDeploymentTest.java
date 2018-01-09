@@ -1,9 +1,11 @@
 package de.iosl.blockchain.identity.core.shared.eba;
 
-import de.iosl.blockchain.identity.core.shared.eba.BlockchainAccess;
+import de.iosl.blockchain.identity.core.RestTestSuite;
+import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
-import de.iosl.blockchain.identity.core.user.Application;
 
+import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jConstants;
+import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Test;
@@ -11,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.web3j.crypto.Credentials;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.io.File;
@@ -65,12 +68,20 @@ public class SmartContractDeploymentTest {
         Optional<String> registrarContractAddress = blockchainAccess.deployRegistrarContract(newAccount);
         assertThat(registrarContractAddress).isPresent();
         Boolean decision = true;
+
+        String govWalletName = "gov-wallet";
         String govPassword = "penispumpe";
-        Account governmentAccount =blockchainAccess.accessWallet(
-                govPassword,
-                new File(pathToFile+"gov-wallet.json")
+
+        Credentials govCred = RestTestSuite.loadWallet(govWalletName, govPassword);
+        Account governmentAccount =new Account (
+                govCred.getAddress(),
+                govCred.getEcKeyPair().getPublicKey(),
+                govCred.getEcKeyPair().getPublicKey(),
+                RestTestSuite.loadFile(govWalletName),
+                govCred
         );
-//        TransactionReceipt transactionReceiptTransferEther= Web3jUtils.transferWeiFromCoinbaseToCreatedAccount(governmentAccount, Web3jConstants.DEFAULT_START_ETHER,blockchainAccess.getWeb3j());
+
+        TransactionReceipt transactionReceiptTransferEther= Web3jUtils.transferWeiFromCoinbaseToCreatedAccount(governmentAccount, Web3jConstants.DEFAULT_START_ETHER,blockchainAccess.getWeb3j());
         Optional<TransactionReceipt> transactionReceipt= blockchainAccess.setApproval(governmentAccount, registrarContractAddress, decision);
         assertThat(transactionReceipt).isPresent();
     }
