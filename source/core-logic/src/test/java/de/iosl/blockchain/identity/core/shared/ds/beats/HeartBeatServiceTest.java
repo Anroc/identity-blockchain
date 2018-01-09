@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Sign;
 
 import java.io.File;
@@ -23,7 +24,9 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class HeartBeatServiceTest extends BasicMockSuite {
@@ -46,7 +49,7 @@ public class HeartBeatServiceTest extends BasicMockSuite {
                 "/myEndpoint/ethID",
                 EventType.NEW_CLAIMS
         ));
-        Account account = new Account("0x123", BigInteger.TEN, BigInteger.TEN, mock(File.class),null);
+        Account account = new Account("0x123", BigInteger.TEN, BigInteger.TEN, mock(File.class), mock(Credentials.class));
 
         doReturn(ethereumSigner).when(heartBeatService).getSigner();
         doReturn(account).when(keyChain).getAccount();
@@ -74,7 +77,7 @@ public class HeartBeatServiceTest extends BasicMockSuite {
                 "/myEndpoint/ethID",
                 EventType.NEW_CLAIMS
         ));
-        Account account = new Account("0x123", BigInteger.TEN, BigInteger.TEN, mock(File.class));
+        Account account = new Account("0x123", BigInteger.TEN, BigInteger.TEN, mock(File.class), mock(Credentials.class));
         Queue<EventListener> listenerQueue = new ConcurrentLinkedQueue<>();
         listenerQueue.add(eventListener);
 
