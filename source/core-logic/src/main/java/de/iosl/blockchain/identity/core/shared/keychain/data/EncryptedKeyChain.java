@@ -16,4 +16,6 @@ public class EncryptedKeyChain {
     private int bitSecurity;
 
     private String account;
+
+    private String registerSmartContractAddress;
 }

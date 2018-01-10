@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            new IntentIntegrator(activity).initiateScan(); // `this` is the current Activity
+            new IntentIntegrator(activity).setBeepEnabled(false).initiateScan(); // `this` is the current Activity
         });
 
         Button search = findViewById(R.id.search);
@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
         if(result != null) {
             if(result.getContents() == null) {
                 Log.d("MainActivity", "Cancelled scan");

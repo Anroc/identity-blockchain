@@ -25,6 +25,8 @@ public class KeyChain {
     private Account account;
     private KeyPair rsaKeyPair;
 
+    private String registerSmartContractAddress;
+
     private boolean registered;
 
     public boolean isActive() {

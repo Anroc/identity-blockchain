@@ -122,8 +122,8 @@ node {
             env.NODE_PATH = "${env.NODEJS_HOME}/lib/node_modules"
 
             dir (SOURCE_DIR + "/client-frontend") {
-                sh 'npm install'
-                sh 'npm test'
+                // sh 'npm install'
+                // sh 'npm test'
             }
         }
 

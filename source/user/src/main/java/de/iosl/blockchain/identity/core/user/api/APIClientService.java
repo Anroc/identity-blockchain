@@ -86,7 +86,7 @@ public class APIClientService {
 
     public List<UserClaim> getAndSaveClaims(@NonNull String url) {
         List<UserClaim> claims = requestGetClaims(url);
-        claims.forEach(userClaimDB::insert);
+        claims.forEach(userClaimDB::upsert);
         return claims;
     }
 }
