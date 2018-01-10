@@ -31,7 +31,7 @@ public class RegistrarContractUtils {
                 throw new NullPointerException("Contract is null. Contract could not be created");
 
             log.info("Smart Contract Address: {}, Approval: {}", contract.getContractAddress(), contract.getApproval().send());
-            log.info("wallet balance after deployment", getBalanceWei(web3j, account.getAddress()));
+            log.info("wallet balance after deployment: {}", getBalanceWei(web3j, account.getAddress()));
             return contract;
 
         } catch (Exception e) {
@@ -66,10 +66,6 @@ public class RegistrarContractUtils {
             TransactionReceipt transactionReceipt = contract.setApproval(decision).send();
             boolean approval = contract.getApproval().send();
             log.info("Smart Contract Address: {}, Approval: {}", contract.getContractAddress(), approval);
-
-            if (!approval)
-                throw new NullPointerException("Contract is null. Contract could not be found");
-
             log.info("transaction receipt: {}" ,transactionReceipt.getStatus());
             return transactionReceipt;
         } catch (Exception e) {
@@ -92,9 +88,6 @@ public class RegistrarContractUtils {
 
             boolean approval = contract.getApproval().send();
             log.info("Smart Contract Address: {}, Approval: {}", contract.getContractAddress(), approval);
-
-            if (!approval)
-                throw new NullPointerException("Contract is null. Contract could not be found");
 
             return approval;
         } catch (Exception e) {
