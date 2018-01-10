@@ -12,6 +12,7 @@ public class FeignAdapterFactory {
 
     public static <T> T createAdapter(Class<T> clazz) {
         return buildBean(clazz, "http://srv01.snet.tu-berlin.de:8100");
+        //return buildBean(clazz, "http://141.23.163.121:8080");
     }
 
     public static <T> T buildBean(Class<T> clazz, String url) {
