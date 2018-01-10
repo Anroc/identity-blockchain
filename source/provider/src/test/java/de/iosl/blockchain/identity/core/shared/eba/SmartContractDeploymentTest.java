@@ -69,7 +69,7 @@ public class SmartContractDeploymentTest {
         assertThat(registrarContractAddress).isPresent();
         Boolean decision = true;
 
-        String govWalletName = "gov-wallet";
+        String govWalletName = "gov-wallet.json";
         String govPassword = "penispumpe";
 
         Credentials govCred = RestTestSuite.loadWallet(govWalletName, govPassword);
