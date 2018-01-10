@@ -82,7 +82,7 @@ public class SmartContractDeploymentTest {
         );
 
         TransactionReceipt transactionReceiptTransferEther= Web3jUtils.transferWeiFromCoinbaseToCreatedAccount(governmentAccount, Web3jConstants.amountToEther(Web3jConstants.GOV_MONEY_FROM_COAINBASE),blockchainAccess.getWeb3j());
-        blockchainAccess.setApproval(governmentAccount, registrarContractAddress, decision);
+        blockchainAccess.setRegisterApproval(governmentAccount, registrarContractAddress, decision);
         //add assert that approval is true now
     }
 

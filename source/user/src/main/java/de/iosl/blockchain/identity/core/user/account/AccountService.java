@@ -48,9 +48,7 @@ public class AccountService {
         KeyPair keyPair = createKeyPair();
         keyChain.setRsaKeyPair(keyPair);
 
-        String contractAddress = ebaInterface.deployRegistrarContract(account).orElseThrow(
-                () -> new ServiceException("Unable to create smart contract!", HttpStatus.INTERNAL_SERVER_ERROR)
-        );
+        String contractAddress = ebaInterface.deployRegistrarContract(account);
 
         keyChain.setRegisterSmartContractAddress(contractAddress);
 

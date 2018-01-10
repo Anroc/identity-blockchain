@@ -7,11 +7,9 @@ import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
-import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -99,7 +97,7 @@ public class UserService {
     public void registerUser(@NonNull User user) {
         log.info("Registering user: {} ({})", user.getId(), user.getEthId());
         updateUser(user);
-        ebaInterface.setApproval(keyChain.getAccount(), user.getRegisterContractAddress(), true);
+        ebaInterface.setRegisterApproval(keyChain.getAccount(), user.getRegisterContractAddress(), true);
         heartBeatService.createBeat(user.getEthId(), EventType.NEW_CLAIMS);
         log.info("Registered user: {} ({})", user.getId(), user.getEthId());
     }

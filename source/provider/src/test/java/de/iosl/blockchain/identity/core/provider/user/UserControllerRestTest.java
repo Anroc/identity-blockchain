@@ -24,7 +24,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.io.IOException;
 import java.util.List;
@@ -177,8 +176,7 @@ public class UserControllerRestTest extends RestTestSuite {
 
         Beat beat = new Beat();
         doReturn(beat).when(heartBeatService).createBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
-        doReturn(Optional.of(mock(TransactionReceipt.class)))
-                .when(ebaInterface).setApproval(any(Account.class), eq("0x123"), eq(true));
+        doNothing().when(ebaInterface).setRegisterApproval(any(Account.class), eq("0x123"), eq(true));
 
         RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO(
                 userCredentials.getAddress(),
