@@ -31,5 +31,10 @@ public class Web3jConstants {
 	public static final String EXT_ABI = "abi";
 
 	public static final String DEFAULT_START_AMOUNT = "2.0";
-	public static final BigInteger DEFAULT_START_ETHER = Convert.toWei(Web3jConstants.DEFAULT_START_AMOUNT, Convert.Unit.ETHER).toBigInteger();
+	public static final String GOV_MONEY_FROM_COAINBASE = "20.0";
+
+
+	public static BigInteger amountToEther(String amount) {
+		return Convert.toWei(amount, Convert.Unit.ETHER).toBigInteger();
+	}
 }

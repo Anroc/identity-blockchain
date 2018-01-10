@@ -51,12 +51,14 @@ public class RegistrarContractUtils {
     public TransactionReceipt approveRegistrarContractAsGovernment(Account governmentAccount, String contractAddress, Boolean decision, Web3j web3j){
         try {
             log.info("Set decision in contract: {}", decision);
+
             Registrar_sol_FirstContract contract = Registrar_sol_FirstContract.load(
                     contractAddress,
                     web3j,
                     governmentAccount.getCredentials(),
                     Web3jConstants.GAS_PRICE,
                     Web3jConstants.GAS_LIMIT_REGISTRAR_TX);
+
 
             if(contract==null)
                 throw new NullPointerException("Contract is null. Contract could not be found");
@@ -93,7 +95,7 @@ public class RegistrarContractUtils {
 
             if (!approval)
                 throw new NullPointerException("Contract is null. Contract could not be found");
-            
+
             return approval;
         } catch (Exception e) {
             throw new EBAException(e);

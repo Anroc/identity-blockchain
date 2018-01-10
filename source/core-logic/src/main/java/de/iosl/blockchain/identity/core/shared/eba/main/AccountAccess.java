@@ -43,7 +43,7 @@ public class AccountAccess {
                     new File(path.toFile().getAbsolutePath()+File.separator+walletName)
             );
             log.info("wallet amount after creation: {}", getBalanceWei(web3j, account.getAddress()));
-            TransactionReceipt transactionReceipt= Web3jUtils.transferWeiFromCoinbaseToCreatedAccount(account,Web3jConstants.DEFAULT_START_ETHER,web3j);
+            TransactionReceipt transactionReceipt= Web3jUtils.transferWeiFromCoinbaseToCreatedAccount(account,Web3jConstants.amountToEther(Web3jConstants.GOV_MONEY_FROM_COAINBASE),web3j);
             log.info("new wallet amount: {}", getBalanceWei(web3j, account.getAddress()));
             return account;
 

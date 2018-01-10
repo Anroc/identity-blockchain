@@ -198,6 +198,8 @@ public class Web3jUtils {
 
 		EthCoinbase coinbase = web3j.ethCoinbase().sendAsync().get();
 
+		log.debug("coinbase address: " + coinbase.getAddress());
+
 		BigInteger nonce = getNonce(web3j,coinbase.getAddress());
 		Transaction transaction = Transaction.createEtherTransaction(
 				coinbase.getAddress(), nonce, Web3jConstants.GAS_PRICE, Web3jConstants.GAS_LIMIT_ETHER_TX, account.getAddress(), amountWei);

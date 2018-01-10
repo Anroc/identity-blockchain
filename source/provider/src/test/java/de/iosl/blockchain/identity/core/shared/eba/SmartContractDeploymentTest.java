@@ -8,6 +8,7 @@ import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jConstants;
 import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static de.iosl.blockchain.identity.core.shared.KeyChain.WALLET_DIR;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,9 +81,29 @@ public class SmartContractDeploymentTest {
                 govCred
         );
 
-        TransactionReceipt transactionReceiptTransferEther= Web3jUtils.transferWeiFromCoinbaseToCreatedAccount(governmentAccount, Web3jConstants.DEFAULT_START_ETHER,blockchainAccess.getWeb3j());
+        TransactionReceipt transactionReceiptTransferEther= Web3jUtils.transferWeiFromCoinbaseToCreatedAccount(governmentAccount, Web3jConstants.amountToEther(Web3jConstants.GOV_MONEY_FROM_COAINBASE),blockchainAccess.getWeb3j());
         blockchainAccess.setApproval(governmentAccount, registrarContractAddress, decision);
         //add assert that approval is true now
+    }
+    
+    @Ignore
+    @Test
+    public void sendMoneyPlxGreetGov() throws Exception{
+
+        String govWalletName = "gov-wallet.json";
+        String govPassword = "penispumpe";
+
+        Credentials govCred = RestTestSuite.loadWallet(govWalletName, govPassword);
+        Account governmentAccount =new Account (
+                govCred.getAddress(),
+                govCred.getEcKeyPair().getPublicKey(),
+                govCred.getEcKeyPair().getPublicKey(),
+                RestTestSuite.loadFile(govWalletName),
+                govCred
+        );
+
+        TransactionReceipt transactionReceiptTransferEther= Web3jUtils.transferWeiFromCoinbaseToCreatedAccount(governmentAccount, Web3jConstants.amountToEther(Web3jConstants.GOV_MONEY_FROM_COAINBASE),blockchainAccess.getWeb3j());
+        assertThat(transactionReceiptTransferEther.getStatus().equals("1"));
     }
 
 
