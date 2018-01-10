@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.eba.main;
 
 import de.iosl.blockchain.identity.core.shared.eba.contracts.Registrar_sol_FirstContract;
+import de.iosl.blockchain.identity.core.shared.eba.main.exception.EBAException;
 import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -26,13 +27,15 @@ public class RegistrarContractUtils {
                     Web3jConstants.GAS_PRICE,
                     Web3jConstants.GAS_LIMIT_REGISTRAR_TX
             ).send();
-            if(contract==null)
-                return null; //create exception
+            if (contract == null)
+                throw new NullPointerException("Contract is null. Contract could not be created");
+
             log.info("Smart Contract Address: {}, Approval: {}", contract.getContractAddress(), contract.getApproval().send());
             log.info("wallet balance after deployment", getBalanceWei(web3j, account.getAddress()));
             return contract;
+
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new EBAException(e);
         }
     }
 
@@ -56,14 +59,19 @@ public class RegistrarContractUtils {
                     Web3jConstants.GAS_LIMIT_REGISTRAR_TX);
 
             if(contract==null)
-                return null; //create exception
+                throw new NullPointerException("Contract is null. Contract could not be found");
 
             TransactionReceipt transactionReceipt = contract.setApproval(decision).send();
-            log.info("Smart Contract Address: {}, Approval: {}", contract.getContractAddress(), contract.getApproval().send());
+            boolean approval = contract.getApproval().send();
+            log.info("Smart Contract Address: {}, Approval: {}", contract.getContractAddress(), approval);
+
+            if (!approval)
+                throw new NullPointerException("Contract is null. Contract could not be found");
+
             log.info("transaction receipt: {}" ,transactionReceipt);
             return transactionReceipt;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new EBAException(e);
         }
     }
 

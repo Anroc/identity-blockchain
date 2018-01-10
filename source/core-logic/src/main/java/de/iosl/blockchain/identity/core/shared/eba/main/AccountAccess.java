@@ -48,7 +48,7 @@ public class AccountAccess {
             return account;
 
         } catch ( TransactionException|ExecutionException| InterruptedException | NoSuchAlgorithmException | NoSuchProviderException |InvalidAlgorithmParameterException| CipherException |IOException exception) {
-            throw new RuntimeException(exception.getMessage(),exception.getCause());
+            throw new RuntimeException(exception);
         }
     }
 
@@ -66,7 +66,7 @@ public class AccountAccess {
             );
             return account;
         } catch (IOException| CipherException exception) {
-            throw new RuntimeException(exception.getMessage(),exception.getCause());
+            throw new RuntimeException(exception);
         }
     }
 

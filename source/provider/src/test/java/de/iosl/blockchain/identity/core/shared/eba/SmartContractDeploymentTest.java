@@ -52,8 +52,8 @@ public class SmartContractDeploymentTest {
         assertThat(newAccount.getFile()).exists();
         this.newAccounts.add(newAccount);
 
-        Optional<String> registrarContractAddress = blockchainAccess.deployRegistrarContract(newAccount);
-        assertThat(registrarContractAddress).isPresent();
+        String registrarContractAddress = blockchainAccess.deployRegistrarContract(newAccount);
+        assertThat(registrarContractAddress).isNotNull();
 
     }
     @Test
@@ -65,8 +65,8 @@ public class SmartContractDeploymentTest {
         assertThat(newAccount.getFile()).exists();
         this.newAccounts.add(newAccount);
 
-        Optional<String> registrarContractAddress = blockchainAccess.deployRegistrarContract(newAccount);
-        assertThat(registrarContractAddress).isPresent();
+        String registrarContractAddress = blockchainAccess.deployRegistrarContract(newAccount);
+        assertThat(registrarContractAddress).isNotNull();
         Boolean decision = true;
 
         String govWalletName = "gov-wallet.json";
@@ -82,8 +82,8 @@ public class SmartContractDeploymentTest {
         );
 
         TransactionReceipt transactionReceiptTransferEther= Web3jUtils.transferWeiFromCoinbaseToCreatedAccount(governmentAccount, Web3jConstants.DEFAULT_START_ETHER,blockchainAccess.getWeb3j());
-        Optional<TransactionReceipt> transactionReceipt= blockchainAccess.setApproval(governmentAccount, registrarContractAddress.get(), decision);
-        assertThat(transactionReceipt).isPresent();
+        blockchainAccess.setApproval(governmentAccount, registrarContractAddress, decision);
+        //add assert that approval is true now
     }
 
 

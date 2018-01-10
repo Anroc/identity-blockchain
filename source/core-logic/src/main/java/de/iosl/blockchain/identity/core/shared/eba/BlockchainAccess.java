@@ -11,13 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.Contract;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Optional;
 
 @Slf4j
 @Data
@@ -51,14 +49,13 @@ public class BlockchainAccess implements EBAInterface {
     }
 
     @Override
-    public Optional<String> deployRegistrarContract(Account account){
+    public String deployRegistrarContract(Account account){
         Contract contract = registrarContractUtils.deployRegistrarContract(account, web3j);
-        return Optional.ofNullable(contract.getContractAddress());
+        return contract.getContractAddress();
     }
 
     @Override
-    public Optional<TransactionReceipt> setApproval(Account governmentAccount, String contractAddress, boolean decision) {
-        TransactionReceipt transactionReceipt = this.registrarContractUtils.approveRegistrarContractAsGovernment(governmentAccount,contractAddress,decision, web3j);
-        return Optional.ofNullable(transactionReceipt);
+    public void setApproval(Account governmentAccount, String contractAddress, boolean decision) {
+        this.registrarContractUtils.approveRegistrarContractAsGovernment(governmentAccount,contractAddress,decision, web3j);
     }
 }
