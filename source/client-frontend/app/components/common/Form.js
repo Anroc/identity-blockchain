@@ -8,15 +8,33 @@ class Form extends Component {
   constructor(props) {
     super(props);
 
-    this._onSubmit = this._onSubmit.bind(this);
-    this._changeUsername = this._changeUsername.bind(this);
-    this._changePassword = this._changePassword.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.changeUsername = this.changeUsername.bind(this);
+    this.changePassword = this.changePassword.bind(this);
   }
+
+  onSubmit(event) {
+    event.preventDefault();
+    this.props.onSubmit(this.props.data.username, this.props.data.password);
+  }
+
+  changeUsername(event) {
+    this.emitChange({ ...this.props.data, username: event.target.value });
+  }
+
+  changePassword(event) {
+    this.emitChange({ ...this.props.data, password: event.target.value });
+  }
+
+  emitChange(newFormState) {
+    this.props.dispatch(changeForm(newFormState));
+  }
+
   render() {
     const { error } = this.props;
 
     return (
-      <form className="form" onSubmit={this._onSubmit}>
+      <form className="form" onSubmit={this.onSubmit}>
         {error ? <ErrorMessage error={error} /> : null}
         <div className="form__field-wrapper">
           <input
@@ -25,7 +43,7 @@ class Form extends Component {
             id="username"
             value={this.props.data.username}
             placeholder="frank.underwood"
-            onChange={this._changeUsername}
+            onChange={this.changeUsername}
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
@@ -41,7 +59,7 @@ class Form extends Component {
             type="password"
             value={this.props.data.password}
             placeholder="••••••••••"
-            onChange={this._changePassword}
+            onChange={this.changePassword}
           />
           <label className="form__field-label" htmlFor="password">
             Password
@@ -58,23 +76,6 @@ class Form extends Component {
         </div>
       </form>
     );
-  }
-
-  _changeUsername(event) {
-    this._emitChange({ ...this.props.data, username: event.target.value });
-  }
-
-  _changePassword(event) {
-    this._emitChange({ ...this.props.data, password: event.target.value });
-  }
-
-  _emitChange(newFormState) {
-    this.props.dispatch(changeForm(newFormState));
-  }
-
-  _onSubmit(event) {
-    event.preventDefault();
-    this.props.onSubmit(this.props.data.username, this.props.data.password);
   }
 }
 

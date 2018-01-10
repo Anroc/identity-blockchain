@@ -20,7 +20,7 @@ class Dashboard extends Component {
   // todo claims erst spaeter
   // todo warning no recovery possible, keep your password safe
   // todo provider user anlegen etc von 8100
-  // todo research standalone version for react
+  // solved research standalone version for react
 
   sendGetClaimsRequest() {
     const options = {
