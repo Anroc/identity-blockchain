@@ -1,18 +1,18 @@
-import React, { Component } from 'react'
-import request from '../auth/request'
+import React, { Component } from 'react';
+import request from '../auth/request';
 
 class Dashboard extends Component {
-  constructor () {
-    super()
+  constructor() {
+    super();
     this.state = {
-      swaggerData: ''
-    }
+      swaggerData: '',
+    };
   }
 
-  componentDidMount () {
-    console.log('sending request')
-    this.sendRequest()
-    console.log('request sent')
+  componentDidMount() {
+    console.log('sending request');
+    this.sendRequest();
+    console.log('request sent');
   }
 
   // todo change password
@@ -22,120 +22,120 @@ class Dashboard extends Component {
   // todo provider user anlegen etc von 8100
   // todo research standalone version for react
 
-  sendGetClaimsRequest () {
+  sendGetClaimsRequest() {
     const options = {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        'TO_BE_DECIDED': 'random'
+        TO_BE_DECIDED: 'random',
       }),
       mode: 'cors',
-      credentials: 'include'
-    }
+      credentials: 'include',
+    };
 
     const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/claims', options)
       .then((json) => {
-        console.log('claims content' + JSON.stringify(json))
+        console.log(`claims content ${JSON.stringify(json)}`);
         this.setState({
-          swaggerData: JSON.stringify(json)
-        })
-        console.log('claims content in state: ' + this.state.swaggerData)
-      })
-    console.log('actual claims ' + actualRequest)
+          swaggerData: JSON.stringify(json),
+        });
+        console.log(`claims content in state: ' ${this.state.swaggerData}`);
+      });
+    console.log(`actual claims ${actualRequest}`);
   }
 
-  sendLogoutRequest () {
+  sendLogoutRequest() {
     const options = {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({}),
       mode: 'cors',
-      credentials: 'include'
-    }
+      credentials: 'include',
+    };
 
     const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/logout', options)
       .then((json) => {
-        console.log('logout content' + JSON.stringify(json))
+        console.log(`logout content ${JSON.stringify(json)}`);
         this.setState({
-          swaggerData: JSON.stringify(json)
-        })
-        console.log('logout content in state: ' + this.state.swaggerData)
-      })
-    console.log('actual logout ' + actualRequest)
+          swaggerData: JSON.stringify(json),
+        });
+        console.log(`logout content in state: ${this.state.swaggerData}`);
+      });
+    console.log(`actual logout ${actualRequest}`);
   }
 
   sendLoginRequest() {
     const options = {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        'password': 'timsDickerDick'
+        password: 'timsDickerDick',
       }),
       mode: 'cors',
-      credentials: 'include'
-    }
+      credentials: 'include',
+    };
 
     const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/login', options)
       .then((json) => {
-        console.log('login content' + JSON.stringify(json))
+        console.log(`login content ${JSON.stringify(json)}`);
         this.setState({
-          swaggerData: JSON.stringify(json)
-        })
-        console.log('login content in state: ' + this.state.swaggerData)
-      })
-    console.log('actual login ' + actualRequest)
+          swaggerData: JSON.stringify(json),
+        });
+        console.log(`login content in state: ${this.state.swaggerData}`);
+      });
+    console.log(`actual login ${actualRequest}`);
   }
 
-  sendRequest () {
+  sendRequest() {
     const optionsForServer = {
       method: 'GET',
       headers: {
-        'Authorization': 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       mode: 'cors',
-      credentials: 'include'
-    }
-    console.log(optionsForServer)
+      credentials: 'include',
+    };
+    console.log(optionsForServer);
 
     const options = {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        'password': 'timsDickerDick'
+        password: 'timsDickerDick',
       }),
       mode: 'cors',
-      credentials: 'include'
-    }
+      credentials: 'include',
+    };
 
     const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/register', options)
       .then((json) => {
-        console.log('content' + JSON.stringify(json))
+        console.log(`content' + ${JSON.stringify(json)}`);
         this.setState({
-          swaggerData: JSON.stringify(json)
-        })
-        console.log('content in state: ' + this.state.swaggerData)
-      })
-    console.log('actual' + actualRequest)
+          swaggerData: JSON.stringify(json),
+        });
+        console.log(`content in state: ${this.state.swaggerData}`);
+      });
+    console.log(`actual ${actualRequest}`);
   }
 
-  render () {
+  render() {
     return (
       <article>
-        <section className='text-section'>
+        <section className="text-section">
           <h1>Dashboard</h1>
           <p>
             Welcome, you are logged in!
@@ -152,8 +152,8 @@ class Dashboard extends Component {
           </p>
         </section>
       </article>
-    )
+    );
   }
 }
 
-export default Dashboard
+export default Dashboard;

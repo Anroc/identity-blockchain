@@ -1,8 +1,8 @@
-import React, {Component} from 'react'
-import {connect} from 'react-redux'
-import Nav from './common/Nav'
-import request from '../auth/request'
-import 'whatwg-fetch'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import 'whatwg-fetch';
+import Nav from './common/Nav';
+import request from '../auth/request';
 
 /*
 const testRequest = request('http://jsonplaceholder.typicode.com/posts')
@@ -31,17 +31,19 @@ console.log('actual' + actualRequest)
 */
 
 class App extends Component {
-  render () {
+  render() {
     return (
-      <div className='wrapper'>
-        <Nav loggedIn={this.props.data.loggedIn}
+      <div className="wrapper">
+        <Nav
+          loggedIn={this.props.data.loggedIn}
           currentlySending={this.props.data.currentlySending}
           history={this.props.history}
           dispatch={this.props.dispatch}
-          location={this.props.location} />
+          location={this.props.location}
+        />
         {this.props.children}
       </div>
-    )
+    );
   }
 }
 
@@ -50,13 +52,13 @@ App.propTypes = {
   history: React.PropTypes.object,
   location: React.PropTypes.object,
   children: React.PropTypes.object,
-  dispatch: React.PropTypes.func
+  dispatch: React.PropTypes.func,
 };
 
-function select (state) {
+function select(state) {
   return {
-    data: state
-  }
+    data: state,
+  };
 }
 
-export default connect(select)(App)
+export default connect(select)(App);
