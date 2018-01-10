@@ -40,7 +40,7 @@ blockchain.identity:
     port: 8101
     address: srv01.snet.tu-berlin.de
   ethereum:
-    port: 7111
+    port: 7111 # set by jenkins
     address: srv01.snet.tu-berlin.de
 ---
 spring:
@@ -58,5 +58,5 @@ blockchain.identity:
     port: 8101
     address: srv01.snet.tu-berlin.de
   ethereum:
-    port: 7111
+    port: 8545
     address: srv01.snet.tu-berlin.de

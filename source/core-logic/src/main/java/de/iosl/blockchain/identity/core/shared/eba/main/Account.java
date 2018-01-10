@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -19,9 +18,4 @@ public class Account {
     private BigInteger privateKey;
     private File file;
     private Credentials credentials;
-
-
-    public ECKeyPair getEcKeyPair(){
-        return new ECKeyPair(this.privateKey, this.publicKey);
-    }
 }
