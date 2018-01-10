@@ -68,7 +68,7 @@ public class RegistrarContractUtils {
             if (!approval)
                 throw new NullPointerException("Contract is null. Contract could not be found");
 
-            log.info("transaction receipt: {}" ,transactionReceipt);
+            log.info("transaction receipt: {}" ,transactionReceipt.getStatus());
             return transactionReceipt;
         } catch (Exception e) {
             throw new EBAException(e);
@@ -76,4 +76,27 @@ public class RegistrarContractUtils {
     }
 
 
+    public boolean getApprovalByContractAdress(Account account, String contractAddress, Web3j web3j) {
+        try {
+            Registrar_sol_FirstContract contract = Registrar_sol_FirstContract.load(
+                    contractAddress,
+                    web3j,
+                    account.getCredentials(),
+                    Web3jConstants.GAS_PRICE,
+                    Web3jConstants.GAS_LIMIT_REGISTRAR_TX);
+
+            if(contract==null)
+                throw new NullPointerException("Contract is null. Contract could not be found");
+
+            boolean approval = contract.getApproval().send();
+            log.info("Smart Contract Address: {}, Approval: {}", contract.getContractAddress(), approval);
+
+            if (!approval)
+                throw new NullPointerException("Contract is null. Contract could not be found");
+            
+            return approval;
+        } catch (Exception e) {
+            throw new EBAException(e);
+        }
+    }
 }
