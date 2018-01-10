@@ -85,7 +85,7 @@ public class SmartContractDeploymentTest {
         blockchainAccess.setApproval(governmentAccount, registrarContractAddress, decision);
         //add assert that approval is true now
     }
-    
+
     @Ignore
     @Test
     public void sendMoneyPlxGreetGov() throws Exception{
