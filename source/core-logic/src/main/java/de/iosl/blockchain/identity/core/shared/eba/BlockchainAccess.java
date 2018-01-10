@@ -59,6 +59,7 @@ public class BlockchainAccess implements EBAInterface {
         this.registrarContractUtils.approveRegistrarContractAsGovernment(governmentAccount,contractAddress,decision, web3j);
     }
 
+    @Override
     public boolean getApproval(Account account, String contractAddress){
         return this.registrarContractUtils.getApprovalByContractAdress(account, contractAddress, web3j);
     }

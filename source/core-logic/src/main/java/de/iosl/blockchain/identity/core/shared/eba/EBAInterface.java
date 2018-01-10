@@ -10,4 +10,5 @@ public interface EBAInterface {
     Account accessWallet(String pw, File file);
     String deployRegistrarContract(Account account);
     void setApproval(Account governmentAccount, String contractAddress, boolean decision);
+    boolean getApproval(Account account, String smartContractAddress);
 }
