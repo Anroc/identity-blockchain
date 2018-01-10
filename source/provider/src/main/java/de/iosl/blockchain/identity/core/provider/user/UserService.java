@@ -97,15 +97,14 @@ public class UserService {
     }
 
     public void registerUser(@NonNull User user) {
-        log.info("updating user: {} ({})", user.getId(), user.getEthId());
+        log.info("Registering user: {} ({})", user.getId(), user.getEthId());
         updateUser(user);
-        log.info("setting approval for {}", user.getRegisterContractAddress());
         ebaInterface.setApproval(keyChain.getAccount(), user.getRegisterContractAddress(), true)
                 .orElseThrow(
                         () -> new ServiceException("Error approving smart contract with address [%s].",
                                 HttpStatus.INTERNAL_SERVER_ERROR, user.getRegisterContractAddress())
                 );
-        log.info("creating heartbeat...");
         heartBeatService.createBeat(user.getEthId(), EventType.NEW_CLAIMS);
+        log.info("Registered user: {} ({})", user.getId(), user.getEthId());
     }
 }
