@@ -1,20 +1,22 @@
 package de.iosl.blockchain.identity.core.shared.api.register.data.dto;
 
-import lombok.AllArgsConstructor;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequestDTO {
+public class RegisterRequestDTO extends BasicEthereumDTO {
 
-    @NotBlank
-    private String ethereumID;
     @NotBlank
     private String publicKey;
     @NotBlank
     private String registerContractAddress;
 
+    public RegisterRequestDTO(String ethID, String publicKey, String registerContractAddress) {
+        super(ethID);
+        this.publicKey = publicKey;
+        this.registerContractAddress = registerContractAddress;
+    }
 }

@@ -2,22 +2,22 @@ package state.identity.blockchain.iosl.de.blockidclientqrscanner.data;
 
 public class Payload {
 
-    private String ethereumID;
+    private String ethID;
     private String publicKey;
     private String registerContractAddress;
 
-    public Payload(String ethereumID, String publicKey, String registerContractAddress) {
-        this.ethereumID = ethereumID;
+    public Payload(String ethID, String publicKey, String registerContractAddress) {
+        this.ethID = ethID;
         this.publicKey = publicKey;
         this.registerContractAddress = registerContractAddress;
     }
 
-    public String getEthereumID() {
-        return ethereumID;
+    public String getEthID() {
+        return ethID;
     }
 
-    public void setEthereumID(String ethereumID) {
-        this.ethereumID = ethereumID;
+    public void setEthID(String ethID) {
+        this.ethID = ethID;
     }
 
     public String getPublicKey() {

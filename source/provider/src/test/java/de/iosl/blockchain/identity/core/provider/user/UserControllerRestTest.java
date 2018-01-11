@@ -5,7 +5,7 @@ import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
@@ -184,7 +184,7 @@ public class UserControllerRestTest extends RestTestSuite {
                 "0x123"
         );
 
-        ApiRequest<RegisterRequestDTO> registerRequest = new ApiRequest<>(
+        SignedRequest<RegisterRequestDTO> registerRequest = new SignedRequest<>(
                 registerRequestDTO,
                 getSignature(registerRequestDTO, stateCredentials)
         );
@@ -200,7 +200,7 @@ public class UserControllerRestTest extends RestTestSuite {
 
         user = userDB.findOne(user.getId()).get();
 
-        assertThat(user.getEthId()).isEqualTo(registerRequest.getPayload().getEthereumID());
+        assertThat(user.getEthId()).isEqualTo(registerRequest.getPayload().getEthID());
         assertThat(user.getPublicKey()).isEqualTo(registerRequest.getPayload().getPublicKey());
         assertThat(user.getRegisterContractAddress()).isEqualTo(registerRequest.getPayload().getRegisterContractAddress());
         assertThat(userDB.findUserByEthId(user.getEthId())).isPresent();

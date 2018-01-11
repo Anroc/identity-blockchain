@@ -1,7 +1,8 @@
 package de.iosl.blockchain.identity.core.user.api;
 
 import de.iosl.blockchain.identity.core.shared.KeyChain;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
 import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
@@ -72,8 +73,8 @@ public class APIClientService {
 
         ECKeyPair ecKeyPair = new ECKeyPair(keyChain.getAccount().getPrivateKey(), keyChain.getAccount().getPublicKey());
 
-        ApiRequest<String> claimRequest = new ApiRequest<>(
-                keyChain.getAccount().getAddress(),
+        SignedRequest<BasicEthereumDTO> claimRequest = new SignedRequest<>(
+                new BasicEthereumDTO(keyChain.getAccount().getAddress()),
                 ECSignature.fromSignatureData(ethereumSigner.sign(keyChain.getAccount().getAddress(), ecKeyPair))
         );
 
