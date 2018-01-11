@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.core.shared.eba.main;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.web3j.crypto.Credentials;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -16,4 +17,5 @@ public class Account {
     private BigInteger publicKey;
     private BigInteger privateKey;
     private File file;
+    private Credentials credentials;
 }

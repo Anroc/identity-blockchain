@@ -3,9 +3,12 @@ package de.iosl.blockchain.identity.core.provider.user;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.db.UserDB;
+import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
+import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +18,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserService {
 
     @Autowired
     private UserDB userDB;
     @Autowired
     private HeartBeatService heartBeatService;
+    @Autowired
+    private EBAInterface ebaInterface;
+    @Autowired
+    private KeyChain keyChain;
 
     public List<User> getUsers() {
         return userDB.findAll();
@@ -87,7 +95,10 @@ public class UserService {
     }
 
     public void registerUser(@NonNull User user) {
+        log.info("Registering user: {} ({})", user.getId(), user.getEthId());
         updateUser(user);
+        ebaInterface.setRegisterApproval(keyChain.getAccount(), user.getRegisterContractAddress(), true);
         heartBeatService.createBeat(user.getEthId(), EventType.NEW_CLAIMS);
+        log.info("Registered user: {} ({})", user.getId(), user.getEthId());
     }
 }

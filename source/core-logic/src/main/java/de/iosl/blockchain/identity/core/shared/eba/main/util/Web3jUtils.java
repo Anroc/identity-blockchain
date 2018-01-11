@@ -1,9 +1,12 @@
 package de.iosl.blockchain.identity.core.shared.eba.main.util;
 
+import de.iosl.blockchain.identity.core.shared.eba.main.Account;
+import lombok.extern.slf4j.Slf4j;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.*;
+import org.web3j.protocol.exceptions.TransactionException;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 
@@ -13,13 +16,17 @@ import java.math.BigInteger;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+@Slf4j
 public class Web3jUtils {
 
-	public static Web3j buildHttpClient(String ip, String port) {
-//		String url = String.format("http://%s:%s", ip, port);
-//		return Web3j.build(new HttpService(url));
-		return Web3j.build(new HttpService());  // defaults to http://localhost:8545/
+	public static Web3j buildHttpClientByParams(String ip, String port) {
+		String url = String.format("http://%s:%s", ip, port);
+		log.debug(url);
+		return Web3j.build(new HttpService(url));
+	}
 
+	public static Web3j buildHttpClient() {
+		return Web3j.build(new HttpService());  // defaults to http://localhost:8545/
 	}
 
 	public static String getClientVersion(Web3j web3j) throws InterruptedException, ExecutionException {
@@ -90,11 +97,10 @@ public class Web3jUtils {
 	
 	/**
 	 * Transfers the specified amount of Wei from the coinbase to the specified account.
-	 * The method waits for the transfer to complete using method {@link waitForReceipt}.  
+	 * The method waits for the transfer to complete using method .
 	 */
 	public static TransactionReceipt transferFromCoinbaseAndWait(Web3j web3j, String to, BigInteger amountWei)
-			throws Exception 
-	{
+			throws Exception {
 		String coinbase = getCoinbase(web3j).getResult();
 		BigInteger nonce = getNonce(web3j, coinbase);
 		// this is a contract method call -> gas limit higher than simple fund transfer
@@ -123,9 +129,7 @@ public class Web3jUtils {
 	 * In the happy case the tx receipt object is returned.
 	 * Otherwise, a runtime exception is thrown. 
 	 */
-	public static TransactionReceipt waitForReceipt(Web3j web3j, String transactionHash)
-			throws Exception 
-	{
+	public static TransactionReceipt waitForReceipt(Web3j web3j, String transactionHash) throws ExecutionException, InterruptedException {
 
 		int attempts = Web3jConstants.CONFIRMATION_ATTEMPTS;
 		int sleep_millis = Web3jConstants.SLEEP_DURATION;
@@ -147,9 +151,7 @@ public class Web3jUtils {
 	/**
 	 * Returns the TransactionRecipt for the specified tx hash as an optional.
 	 */
-	public static Optional<TransactionReceipt> getReceipt(Web3j web3j, String transactionHash)
-			throws Exception 
-	{
+	public static Optional<TransactionReceipt> getReceipt(Web3j web3j, String transactionHash) throws ExecutionException, InterruptedException {
 		EthGetTransactionReceipt receipt = web3j
 				.ethGetTransactionReceipt(transactionHash)
 				.sendAsync()
@@ -190,5 +192,24 @@ public class Web3jUtils {
 		} catch (IOException io) {
 			throw new RuntimeException(io);
 		}
-	}	
+	}
+
+	public static TransactionReceipt transferWeiFromCoinbaseToCreatedAccount(Account account, BigInteger amountWei, Web3j web3j) throws ExecutionException, InterruptedException, IOException, TransactionException {
+
+		EthCoinbase coinbase = web3j.ethCoinbase().sendAsync().get();
+
+		log.debug("coinbase address: " + coinbase.getAddress());
+
+		BigInteger nonce = getNonce(web3j,coinbase.getAddress());
+		Transaction transaction = Transaction.createEtherTransaction(
+				coinbase.getAddress(), nonce, Web3jConstants.GAS_PRICE, Web3jConstants.GAS_LIMIT_ETHER_TX, account.getAddress(), amountWei);
+		EthSendTransaction ethSendTransaction = web3j.ethSendTransaction(transaction).send();
+
+		log.info("transferEther. nonce: " + nonce + " amount: " + amountWei + " to: " + account.getAddress());
+
+		String txHash = ethSendTransaction.getTransactionHash();
+		TransactionReceipt transactionReceipt = waitForReceipt(web3j,txHash);
+		return transactionReceipt;
+	}
+
 }

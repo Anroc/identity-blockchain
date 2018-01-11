@@ -36,4 +36,12 @@ public class UserClaimDB extends CouchbaseWrapper<UserClaim, String> {
     public List<UserClaim> findAllByEthID(@NonNull String ethID) {
         return userClaimRepository.findAllByEthID(ethID);
     }
+
+    public void upsert(UserClaim userClaim) {
+        if(bucket.exists(userClaim.getId())) {
+            update(userClaim);
+        } else {
+            insert(userClaim);
+        }
+    }
 }

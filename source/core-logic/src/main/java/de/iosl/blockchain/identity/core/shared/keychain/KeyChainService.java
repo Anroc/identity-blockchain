@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.keychain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.keychain.data.EncryptedKeyChain;
 import de.iosl.blockchain.identity.core.shared.keychain.data.EncryptedKeySpec;
 import de.iosl.blockchain.identity.core.shared.keychain.data.KeyInfo;
@@ -41,24 +42,22 @@ public class KeyChainService {
         Paths.get(path).toFile().mkdirs();
     }
 
-    public void saveKeyChain(@NonNull KeyPair keyPair,
-            @NonNull String path,
-            @NonNull String password,
-            @NonNull String accountPath) throws IOException {
+    public void saveKeyChain(@NonNull KeyChain keyChain, @NonNull String password, @NonNull String path) throws IOException {
         PasswordBasedCryptEngine passwordBasedCryptEngine = CryptEngine
                 .generate().pbe(password);
 
         EncryptedKeySpec publicKeySepc = generateEncryptedKeySpec(
-                keyPair.getPublic(), passwordBasedCryptEngine);
+                keyChain.getRsaKeyPair().getPublic(), passwordBasedCryptEngine);
         EncryptedKeySpec privateKeySepc = generateEncryptedKeySpec(
-                keyPair.getPrivate(), passwordBasedCryptEngine);
+                keyChain.getRsaKeyPair().getPrivate(), passwordBasedCryptEngine);
 
         EncryptedKeyChain encryptedKeyChain = new EncryptedKeyChain(
                 privateKeySepc,
                 publicKeySepc,
                 passwordBasedCryptEngine.getAlgorithm(),
                 passwordBasedCryptEngine.getBitSecurity(),
-                accountPath
+                keyChain.getAccount().getFile().getAbsolutePath(),
+                keyChain.getRegisterSmartContractAddress()
         );
 
         File file = getKeyChain(path);
@@ -85,7 +84,8 @@ public class KeyChainService {
                     passwordBasedCryptEngine);
             return new KeyInfo(
                         new KeyPair(publicKey, privateKey),
-                        encryptedKeyChain.getAccount()
+                        encryptedKeyChain.getAccount(),
+                        encryptedKeyChain.getRegisterSmartContractAddress()
                     );
         } else {
             throw new IOException("Could not find file.");
