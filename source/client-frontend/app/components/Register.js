@@ -8,11 +8,13 @@ import request from '../auth/request';
 class Register extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      statusCode: -1,
+    }
     this.register = this.register.bind(this);
   }
 
-  sendRequest() {
+  sendRequest(password) {
     const optionsForServer = {
       method: 'GET',
       headers: {
@@ -32,11 +34,33 @@ class Register extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        password: 'timsDickerDick',
+        password,
       }),
       mode: 'cors',
       credentials: 'include',
     };
+
+    /*
+    const actualReq = fetch('http://srv01.snet.tu-berlin.de:1112/account/register', options)
+      .then((response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return response;
+        }
+
+        const error = new Error(response.statusText);
+        error.response = response;
+        throw error;
+      })
+      .then((response) => {
+        if (response.status === 204 || response.status === 205) {
+          return null;
+        }
+        return response.json();
+      })
+      .then(json) => {
+
+    })
+    */
 
     const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/register', options)
       .then((json) => {
@@ -51,7 +75,7 @@ class Register extends Component {
 
   register(username, password) {
     this.props.dispatch(registerRequest({ username, password }));
-    this.sendRequest();
+    this.sendRequest(password);
   }
 
   render() {

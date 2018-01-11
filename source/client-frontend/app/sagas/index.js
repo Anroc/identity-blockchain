@@ -46,13 +46,11 @@ export function* authorize({ username, password, isRegistering }) {
     } else {
       response = yield call(auth.login, username, hash);
     }
-
     return response;
   } catch (error) {
     console.log('hi');
     // If we get an error we send Redux the appropriate action and return
     yield put({ type: REQUEST_ERROR, error: error.message });
-
     return false;
   } finally {
     // When done, we tell Redux we're not in the middle of a request any more
@@ -66,18 +64,17 @@ export function* authorize({ username, password, isRegistering }) {
 export function* logout() {
   // We tell Redux we're in the middle of a request
   yield put({ type: SENDING_REQUEST, sending: true });
-
+  let response = null;
   // Similar to above, we try to log out by calling the `logout` function in the
   // `auth` module. If we get an error, we send an appropriate action. If we don't,
   // we return the response.
   try {
-    const response = yield call(auth.logout);
+    response = yield call(auth.logout);
     yield put({ type: SENDING_REQUEST, sending: false });
-
-    return response;
   } catch (error) {
     yield put({ type: REQUEST_ERROR, error: error.message });
   }
+  return response;
 }
 
 /**

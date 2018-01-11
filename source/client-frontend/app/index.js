@@ -78,6 +78,7 @@ class LoginFlow extends Component {
               <Route path="/register" component={Register} />
               <Route path="/dashboard" component={Dashboard} />
             </Route>
+            <Route path="/provider" component={Provider} />
             <Route path="*" component={NotFound} />
           </Route>
         </Router>
