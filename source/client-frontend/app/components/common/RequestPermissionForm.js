@@ -11,6 +11,10 @@ class Form extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.changeUsername = this.changeUsername.bind(this);
     this.changePassword = this.changePassword.bind(this);
+
+    // new code:
+    this.changeGivenName = this.changeGivenName.bind(this);
+    this.changeFamilyName = this.changeFamilyName.bind(this);
   }
 
   onSubmit(event) {
@@ -18,12 +22,20 @@ class Form extends Component {
     this.props.onSubmit(this.props.data.username, this.props.data.password);
   }
 
-  changeUsername(event) {
+  changeGivenName(event) {
+    this.emitChange({ ...this.props.data, username: event.target.value });
+  }
+
+  changeFamilyName(event) {
     this.emitChange({ ...this.props.data, username: event.target.value });
   }
 
   changePassword(event) {
     this.emitChange({ ...this.props.data, password: event.target.value });
+  }
+
+  changeRequest(event) {
+    this.emitChange({ ...this.props.data, request: event.target.value });
   }
 
   emitChange(newFormState) {
@@ -41,28 +53,46 @@ class Form extends Component {
             className="form__field-input"
             type="text"
             id="username"
-            value={this.props.data.username}
-            placeholder="frank.underwood"
-            onChange={this.changeUsername}
+            value={this.props.data.givenName}
+            placeholder="frank"
+            onChange={this.changeGivenName}
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
           />
           <label className="form__field-label" htmlFor="username">
-            Username
+            Given Name
           </label>
         </div>
+
         <div className="form__field-wrapper">
           <input
             className="form__field-input"
-            id="password"
-            type="password"
-            value={this.props.data.password}
-            placeholder="••••••••••"
-            onChange={this.changePassword}
+            type="text"
+            id="username"
+            value={this.props.data.familyName}
+            placeholder="underwood"
+            onChange={this.changeFamilyName}
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
           />
-          <label className="form__field-label" htmlFor="password">
-            Password
+          <label className="form__field-label" htmlFor="username">
+            Family Name
+          </label>
+        </div>
+
+        <div className="form__field-wrapper">
+          <input
+            className="form__field-input"
+            id="request"
+            type="checkbox"
+            value={this.props.data.requests}
+            placeholder="isOver18"
+            onChange={this.changeRequest}
+          />
+          <label className="form__field-label" htmlFor="requests">
+            Request
           </label>
         </div>
         <div className="form__submit-btn-wrapper">
@@ -72,7 +102,7 @@ class Form extends Component {
             <button className="form__submit-btn" type="submit">
               {this.props.btnText}
             </button>
-             )}
+          )}
         </div>
       </form>
     );

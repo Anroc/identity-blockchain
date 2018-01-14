@@ -62,19 +62,9 @@ class Provider extends Component {
     return (
       <article>
         <section className="text-section">
-          <h1>Dashboard</h1>
+          <h1>Provider UI</h1>
           <p>
-            Welcome, you are logged in!
-          </p>
-          <p>
-            General:
-            {JSON.stringify(this.state.swaggerData)}
-          </p>
-          <p>
-            Claims:
-          </p>
-          <p>
-            Settings:
+            Welcome!
           </p>
         </section>
       </article>
