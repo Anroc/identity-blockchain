@@ -100,7 +100,13 @@ export function* loginFlow() {
       // ...we send Redux appropiate actions
       yield put({ type: SET_AUTH, newAuthState: true }); // User is logged in (authorized)
       yield put({ type: CHANGE_FORM, newFormState: { username: '', password: '', accountType: '' } }); // Clear form
-      forwardTo('/dashboard'); // Go to dashboard page
+      if (accountType === 'user') {
+        forwardTo('/dashboard'); // Go to dashboard page
+      } if (accountType === 'provider') {
+        forwardTo('/provider');
+      } else {
+        forwardTo('/thirdParty');
+      }
     }
   }
 }
@@ -134,11 +140,17 @@ export function* registerFlow() {
     // This returns `true` if the registering was successful, `false` if not
     const wasSuccessful = yield call(authorize, { username, password, accountType, isRegistering: true });
 
-    // If we could register a user, we send the appropiate actions
+    // If we could register a user, we send the appropriate actions
     if (wasSuccessful) {
       yield put({ type: SET_AUTH, newAuthState: true }); // User is logged in (authorized) after being registered
       yield put({ type: CHANGE_FORM, newFormState: { username: '', password: '', accountType: '' } }); // Clear form
-      forwardTo('/dashboard'); // Go to dashboard page
+      if (accountType === 'user') {
+        forwardTo('/dashboard'); // Go to dashboard page
+      } if (accountType === 'provider') {
+        forwardTo('/provider');
+      } else {
+        forwardTo('/thirdParty');
+      }
     }
   }
 }
