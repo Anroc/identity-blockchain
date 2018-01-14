@@ -19,6 +19,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import NotFound from './components/NotFound';
+import ThirdParty from './components/ThirdParty';
 
 const logger = createLogger({
   // Ignore `CHANGE_FORM` actions in the logger, since they fire after every keystroke
@@ -60,6 +61,8 @@ function checkAuth(nextState, replace) {
       } else {
         replace('/');
       }
+    } else {
+      replace('/');
     }
   }
 }
@@ -79,6 +82,7 @@ class LoginFlow extends Component {
               <Route path="/dashboard" component={Dashboard} />
             </Route>
             <Route path="/provider" component={Provider} />
+            <Route path="/thirdParty" component={ThirdParty} />
             <Route path="*" component={NotFound} />
           </Route>
         </Router>
