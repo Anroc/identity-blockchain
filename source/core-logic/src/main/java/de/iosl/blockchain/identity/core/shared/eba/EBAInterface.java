@@ -56,7 +56,7 @@ public interface EBAInterface {
     /**
      * Creates a new permission contract
      * @param sender the creator of this permission contract
-     * @param recipient the reciepient of the contract
+     * @param recipient the reciepient of the contract (user)
      * @param requestedClaims a set of strings that are the requested claim ids
      * @return the address of this smart contract
      */
