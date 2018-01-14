@@ -16,6 +16,8 @@ import org.web3j.tx.Contract;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Data
@@ -44,8 +46,8 @@ public class BlockchainAccess implements EBAInterface {
     }
 
     @Override
-    public Account accessWallet(String pw, File file) {
-        return accountAccess.accessWallet(pw, file);
+    public Account accessWallet(String password, File file) {
+        return accountAccess.accessWallet(password, file);
     }
 
     @Override
@@ -62,5 +64,30 @@ public class BlockchainAccess implements EBAInterface {
     @Override
     public boolean getRegisterApproval(Account account, String contractAddress){
         return this.registrarContractUtils.getApprovalByContractAdress(account, contractAddress, web3j);
+    }
+
+    @Override
+    public void approvePermissionContract(Account account, String smartContractAddress, Map<String, String> approvedClaims) {
+        // TODO: implement
+    }
+
+    @Override
+    public String createPermissionContract(Account sender, String recipient, Set<String> requestedClaims) {
+        // TODO: implement
+        return null;
+    }
+
+
+    @Override
+    public void rejectPermissionContract(Account account, String smartContractAddress) {
+        // TODO: implement
+    }
+
+    @Override
+    public void registerPermissionContractListener(
+            Account account,
+            String smartContractAddress,
+            PermissionContractListener listener) {
+        // TODO: implement
     }
 }

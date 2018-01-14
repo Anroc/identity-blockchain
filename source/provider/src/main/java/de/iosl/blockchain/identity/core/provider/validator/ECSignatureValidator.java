@@ -1,6 +1,6 @@
 package de.iosl.blockchain.identity.core.provider.validator;
 
-import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import lombok.NonNull;
@@ -12,18 +12,17 @@ public class ECSignatureValidator {
 
     private EthereumSigner algorithm = new EthereumSigner();
 
-    public boolean isValid(@NonNull ApiRequest<?> apiRequest, @NonNull String ethID) {
-        return isSignatureValid(apiRequest.getPayload(),
-                apiRequest.getSignature(),
+    public boolean isValid(@NonNull SignedRequest<?> signedRequest, @NonNull String ethID) {
+        return isSignatureValid(signedRequest.getPayload(),
+                signedRequest.getSignature(),
                 ethID);
     }
 
-    public boolean isGetRequestValid(@NonNull ApiRequest<String> ethIDRequest) {
-        return isSignatureValid(ethIDRequest.getPayload(), ethIDRequest.getSignature(), ethIDRequest.getPayload());
+    public boolean isGetRequestValid(@NonNull SignedRequest<?> signedRequest) {
+        return isSignatureValid(signedRequest.getPayload(), signedRequest.getSignature(), signedRequest.getEthID());
     }
 
-    private boolean isSignatureValid(@NonNull Object payload,
-            @NonNull ECSignature signature, @NonNull String address) {
+    private boolean isSignatureValid(@NonNull Object payload, @NonNull ECSignature signature, @NonNull String address) {
         Sign.SignatureData signatureData = signature.toSignatureData();
         return algorithm.verifySignature(payload, signatureData, address);
     }

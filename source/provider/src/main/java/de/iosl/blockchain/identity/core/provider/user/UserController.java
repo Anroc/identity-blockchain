@@ -5,7 +5,7 @@ import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
 import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
@@ -103,7 +103,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public void registerCredentialInformation(
             @PathVariable("userId") @NotBlank final String userId,
-            @RequestBody @Valid @NonNull ApiRequest<RegisterRequestDTO> registerRequest) {
+            @RequestBody @Valid @NonNull SignedRequest<RegisterRequestDTO> registerRequest) {
 
         if (! ecSignatureValidator.isValid(registerRequest, providerConfig.getStateWallet())) {
             throw new ServiceException(HttpStatus.FORBIDDEN);
@@ -113,7 +113,7 @@ public class UserController {
                 () -> new ServiceException(HttpStatus.NOT_FOUND)
         );
 
-        user.setEthId(registerRequest.getPayload().getEthereumID());
+        user.setEthId(registerRequest.getPayload().getEthID());
         user.setPublicKey(registerRequest.getPayload().getPublicKey());
         user.setRegisterContractAddress(registerRequest.getPayload().getRegisterContractAddress());
 

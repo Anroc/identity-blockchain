@@ -6,7 +6,8 @@ import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.ApiRequest;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.InfoDTO;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
@@ -62,9 +63,11 @@ public class ProviderAPIRestTest extends RestTestSuite {
 
         userDB.update(user);
 
-        ApiRequest<String> claimRequest = new ApiRequest<>(
-                USER_CREDENTIALS.getAddress(),
-                getSignature(USER_CREDENTIALS.getAddress(), USER_CREDENTIALS)
+        BasicEthereumDTO basicEthereumDTO = new BasicEthereumDTO(USER_CREDENTIALS.getAddress());
+
+        SignedRequest<BasicEthereumDTO> claimRequest = new SignedRequest<>(
+                basicEthereumDTO,
+                getSignature(basicEthereumDTO, USER_CREDENTIALS)
         );
 
         ResponseEntity<List<ClaimDTO>> responseEntity = restTemplate.exchange(
