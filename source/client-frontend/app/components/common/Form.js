@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ErrorMessage from './ErrorMessage';
 import LoadingButton from './LoadingButton';
 
@@ -8,7 +9,7 @@ class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      accountTypes: ['user', 'provider', '3rd party'],
+      accountTypes: ['user', 'provider', 'third party'],
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -113,7 +114,6 @@ class Form extends Component {
               </label>
             </div>
           </div>
-          {this.props.data.accountType}
         </div>
         <div className="form__submit-btn-wrapper">
           {this.props.currentlySending ? (
@@ -130,13 +130,13 @@ class Form extends Component {
 }
 
 Form.propTypes = {
-  dispatch: React.PropTypes.func,
-  data: React.PropTypes.object,
-  onSubmit: React.PropTypes.func,
-  changeForm: React.PropTypes.func,
-  btnText: React.PropTypes.string,
-  error: React.PropTypes.string,
-  currentlySending: React.PropTypes.bool,
+  dispatch: PropTypes.func,
+  data: PropTypes.object,
+  onSubmit: PropTypes.func,
+  changeForm: PropTypes.func,
+  btnText: PropTypes.string,
+  error: PropTypes.string,
+  currentlySending: PropTypes.bool,
 };
 
 export default Form;

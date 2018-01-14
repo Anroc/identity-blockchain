@@ -2,9 +2,9 @@
 * Fake XMLHttpRequest wrapper
 */
 
-import server from './fakeServer'
+import server from './fakeServer';
 
-server.init()
+server.init();
 
 const fakeRequest = {
   /**
@@ -12,18 +12,18 @@ const fakeRequest = {
   * @param  {string}  endpoint The endpoint of the server that should be contacted
   * @param  {?object} data     The data that should be transferred to the server
   */
-  post (endpoint, data) {
+  post(endpoint, data) {
     switch (endpoint) {
       case '/login':
-        return server.login(data.username, data.password)
+        return server.login(data.username, data.password);
       case '/register':
-        return server.register(data.username, data.password)
+        return server.register(data.username, data.password);
       case '/logout':
-        return server.logout()
+        return server.logout();
       default:
-        break
+        return null;
     }
-  }
-}
+  },
+};
 
-export default fakeRequest
+export default fakeRequest;
