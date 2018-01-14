@@ -15,7 +15,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.web3j.crypto.Sign;
 
@@ -57,7 +56,7 @@ public class DiscoveryControllerRestTest extends RestTestSuite {
         assertThat(registryEntryDB.findEntity(ETH_ID).get())
                 .isEqualToIgnoringGivenFields(
                         fromRegisterEntryDTO(requestDTO),
-                        "creationDate", "lastModified", "version", "creationDate");
+                        "creationDate", "lastModified", "version", "creationDate", "lastSeen");
     }
 
     @Test
@@ -84,7 +83,7 @@ public class DiscoveryControllerRestTest extends RestTestSuite {
         assertThat(registryEntryDB.findEntity(ETH_ID).get())
                 .isEqualToIgnoringGivenFields(
                         fromRegisterEntryDTO(requestDTO),
-                        "creationDate", "lastModified", "version", "creationDate");
+                        "creationDate", "lastModified", "version", "creationDate", "lastSeen");
     }
 
     @Test

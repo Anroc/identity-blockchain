@@ -6,10 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.couchbase.core.mapping.Document;
 
 import java.util.Date;
 
 @Data
+@Document
 @AllArgsConstructor
 @NoArgsConstructor
 public class Message {
