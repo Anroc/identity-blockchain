@@ -66,7 +66,7 @@ public class ApiController implements ProviderAPI {
     }
 
     @Override
-    @PostMapping(ProviderAPIConstances.ABSOLUTE_PPR_PATH)
+    @PutMapping(ProviderAPIConstances.ABSOLUTE_PPR_PATH)
     public List<ClaimDTO> executeSignedQuery(
             @PathVariable("ethID") String ethID,
             @RequestBody @Valid @NotNull SignedRequest<NestedSignedRequestDTO<QueryRequestDTO>> signedQueryDTO) {
