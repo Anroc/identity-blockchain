@@ -74,7 +74,8 @@ class Register extends Component {
   }
 
   register(username, password) {
-    this.props.dispatch(registerRequest({ username, password }));
+    const type = 'user';
+    this.props.dispatch(registerRequest({ username, password, accountType: type }));
     this.sendRequest(password);
   }
 

@@ -9,7 +9,6 @@ class Form extends Component {
     super(props);
     this.state = {
       accountTypes: ['user', 'provider', '3rd p'],
-      // selectedAccountType: '',
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -20,7 +19,7 @@ class Form extends Component {
 
   onSubmit(event) {
     event.preventDefault();
-    this.props.onSubmit(this.props.data.username, this.props.data.password);
+    this.props.onSubmit(this.props.data.username, this.props.data.password, this.props.data.accountType);
   }
 
   changeUsername(event) {
@@ -33,11 +32,6 @@ class Form extends Component {
 
   changeAccountType(event) {
     this.emitChange({ ...this.props.data, accountType: event.target.value });
-    /*
-    this.setState({
-      selectedAccountType: event.target.value,
-    });
-    */
   }
 
   emitChange(newFormState) {

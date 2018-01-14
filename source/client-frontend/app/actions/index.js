@@ -59,6 +59,7 @@ export function sendingRequest(sending) {
  * @param  {object} data          The data we're sending for log in
  * @param  {string} data.username The username of the user to log in
  * @param  {string} data.password The password of the user to log in
+ * @param  {string} data.accountType
  */
 export function loginRequest(data) {
   return { type: LOGIN_REQUEST, data };
@@ -76,6 +77,7 @@ export function logout() {
  * @param  {object} data          The data we're sending for registration
  * @param  {string} data.username The username of the user to register
  * @param  {string} data.password The password of the user to register
+ * @param  {string} data.accountType
  */
 export function registerRequest(data) {
   return { type: REGISTER_REQUEST, data };
