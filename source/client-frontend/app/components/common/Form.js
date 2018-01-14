@@ -7,16 +7,15 @@ import { changeForm } from '../../actions';
 class Form extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      accountTypes: ['user', 'provider', '3rd p'],
+      selectedAccountType: '',
+    };
 
     this.onSubmit = this.onSubmit.bind(this);
     this.changeUsername = this.changeUsername.bind(this);
     this.changePassword = this.changePassword.bind(this);
     this.changeAccountType = this.changeAccountType.bind(this);
-
-    this.state = {
-      accountTypes: ['user', 'provider', '3rd p'],
-      selectedAccountType: '',
-    };
   }
 
   onSubmit(event) {
@@ -34,12 +33,9 @@ class Form extends Component {
 
   changeAccountType(event) {
     // this.emitChange({ ...this.props.data, accountType: event.target.value });
-    console.log('EVENT: ', event);
-    console.log('BEFORE: selectedAccountType:', this.state.selectedAccountType);
     this.setState({
       selectedAccountType: event.target.value,
     });
-    console.log('AFTER: selectedAccountType:', this.state.selectedAccountType);
   }
 
   emitChange(newFormState) {
@@ -49,83 +45,30 @@ class Form extends Component {
   render() {
     const { error } = this.props;
 
-    const selectedAccountType = this.state.selectedAccountType;
-
-    const accTypeOptions = (
-      <div>
-        <div
-          key="user"
-          className="form__field-radioPad"
-        >
-          <label
-            className={
-              this.state.selectedAccountType === 'user' ?
-                'form__field-radioPad__wrapper form__field-radioPad__wrapper--selected' :
-                'form__field-radioPad__wrapper'
-            }
-            htmlFor="user"
-          >
-            <input
-              className="form__field-radioPad__radio"
-              type="radio"
-              name="accountTypes"
-              id="user"
-              value="user"
-              onChange={this.changeAccountType}
-            />
-            user
-          </label>
-        </div>
-        <div
-          key="provider"
-          className="form__field-radioPad"
-        >
-          <label
-            className={
-              this.state.selectedAccountType === 'provider' ?
-                'form__field-radioPad__wrapper form__field-radioPad__wrapper--selected' :
-                'form__field-radioPad__wrapper'
-            }
-            htmlFor="provider"
-          >
-            <input
-              className="form__field-radioPad__radio"
-              type="radio"
-              name="accountTypes"
-              id="provider"
-              value="provider"
-              onChange={this.changeAccountType}
-            />
-            provider
-          </label>
-        </div>
-      </div>
-    );
-
     const accountTypeOptions =
       this.state.accountTypes.map((accountType) => {
-        const isCurrent = this.state.selectedAccountType === accountType;
+        const isCurrentlySelectedAccountType = this.state.selectedAccountType === accountType;
         return (
           <div
             key={accountType}
             className="form__field-radioPad"
           >
-            <input
-              className="form__field-radioPad__radio"
-              type="radio"
-              name="accountTypes"
-              id={accountType}
-              value={accountType}
-              onChange={this.changeAccountType}
-            />
             <label
               className={
-                isCurrent ?
+                isCurrentlySelectedAccountType ?
                   'form__field-radioPad__wrapper form__field-radioPad__wrapper--selected' :
                   'form__field-radioPad__wrapper'
               }
               htmlFor={accountType}
             >
+              <input
+                className="form__field-radioPad__radio"
+                type="radio"
+                name="accountTypes"
+                id={accountType}
+                value={accountType}
+                onChange={this.changeAccountType}
+              />
 
               {accountType}
             </label>
@@ -174,6 +117,7 @@ class Form extends Component {
               </label>
             </div>
           </div>
+          {this.state.selectedAccountType}
         </div>
         <div className="form__submit-btn-wrapper">
           {this.props.currentlySending ? (
