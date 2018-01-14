@@ -32,6 +32,7 @@ export function changeRequestForm(newRequestFormState) {
  * @param  {object} newFormState          The new state of the form
  * @param  {string} newFormState.username The new text of the username input field of the form
  * @param  {string} newFormState.password The new text of the password input field of the form
+ * @param  {string} newFormState.accountType
  */
 export function changeForm(newFormState) {
   return { type: CHANGE_FORM, newFormState };

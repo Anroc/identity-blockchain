@@ -9,7 +9,7 @@ class Form extends Component {
     super(props);
     this.state = {
       accountTypes: ['user', 'provider', '3rd p'],
-      selectedAccountType: '',
+      // selectedAccountType: '',
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -32,10 +32,12 @@ class Form extends Component {
   }
 
   changeAccountType(event) {
-    // this.emitChange({ ...this.props.data, accountType: event.target.value });
+    this.emitChange({ ...this.props.data, accountType: event.target.value });
+    /*
     this.setState({
       selectedAccountType: event.target.value,
     });
+    */
   }
 
   emitChange(newFormState) {
@@ -47,7 +49,7 @@ class Form extends Component {
 
     const accountTypeOptions =
       this.state.accountTypes.map((accountType) => {
-        const isCurrentlySelectedAccountType = this.state.selectedAccountType === accountType;
+        const isCurrentlySelectedAccountType = this.props.data.accountType === accountType;
         return (
           <div
             key={accountType}
@@ -117,7 +119,7 @@ class Form extends Component {
               </label>
             </div>
           </div>
-          {this.state.selectedAccountType}
+          {this.props.data.accountType}
         </div>
         <div className="form__submit-btn-wrapper">
           {this.props.currentlySending ? (
