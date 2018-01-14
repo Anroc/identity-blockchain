@@ -16,6 +16,7 @@ import org.web3j.tx.Contract;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -66,15 +67,16 @@ public class BlockchainAccess implements EBAInterface {
     }
 
     @Override
+    public void approvePermissionContract(Account account, String smartContractAddress, Map<String, String> approvedClaims) {
+        // TODO: implement
+    }
+
+    @Override
     public String createPermissionContract(Account sender, String recipient, Set<String> requestedClaims) {
         // TODO: implement
         return null;
     }
 
-    @Override
-    public void approvePermissionContract(Account account, String smartContractAddress, String signedQuery) {
-        // TODO: implement
-    }
 
     @Override
     public void rejectPermissionContract(Account account, String smartContractAddress) {
