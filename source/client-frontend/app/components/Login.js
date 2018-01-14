@@ -10,8 +10,8 @@ class Login extends Component {
     this.login = this.login.bind(this);
   }
 
-  login(username, password) {
-    this.props.dispatch(loginRequest({ username, password }));
+  login(username, password, accountType) {
+    this.props.dispatch(loginRequest({ username, password, accountType }));
   }
 
   render() {

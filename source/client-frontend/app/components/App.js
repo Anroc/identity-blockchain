@@ -1,34 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import 'whatwg-fetch';
 import Nav from './common/Nav';
-import request from '../auth/request';
-
-/*
-const testRequest = request('http://jsonplaceholder.typicode.com/posts')
-  .then((json) => {
-    console.log(JSON.stringify(json[0]))
-  })
-console.log(testRequest)
-
-const options = {
-  method: 'GET',
-  headers: {
-    'Authorization': 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  },
-  mode: 'cors',
-  credentials: 'include'
-}
-
-const actualRequest = request('http://srv01.snet.tu-berlin.de:8100/v2/api-docs', options)
-  .then((json) => {
-    console.log('content' + JSON.stringify(json))
-  })
-
-console.log('actual' + actualRequest)
-*/
 
 class App extends Component {
   render() {
