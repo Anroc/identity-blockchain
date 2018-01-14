@@ -10,7 +10,7 @@ class Register extends Component {
     super(props);
     this.state = {
       statusCode: -1,
-    }
+    };
     this.register = this.register.bind(this);
   }
 
