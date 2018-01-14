@@ -57,7 +57,7 @@ public class DiscoveryControllerRestTest extends RestTestSuite {
         assertThat(registryEntryDB.findEntity(ETH_ID).get())
                 .isEqualToIgnoringGivenFields(
                         fromRegisterEntryDTO(requestDTO),
-                        "creationDate", "lastModified", "version", "lastSeen");
+                        "creationDate", "lastModified", "version", "creationDate");
     }
 
     @Test
@@ -84,7 +84,7 @@ public class DiscoveryControllerRestTest extends RestTestSuite {
         assertThat(registryEntryDB.findEntity(ETH_ID).get())
                 .isEqualToIgnoringGivenFields(
                         fromRegisterEntryDTO(requestDTO),
-                        "creationDate", "lastModified", "version", "lastSeen");
+                        "creationDate", "lastModified", "version", "creationDate");
     }
 
     @Test

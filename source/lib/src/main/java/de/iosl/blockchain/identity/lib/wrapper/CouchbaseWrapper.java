@@ -42,7 +42,7 @@ public class CouchbaseWrapper<T, ID extends Serializable> {
     }
 
     public T insert(T entity) {
-        couchbaseTemplate.insert(entity);
+        couchbaseTemplate.save(entity);
         return entity;
     }
 
