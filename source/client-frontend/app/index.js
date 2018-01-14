@@ -19,6 +19,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import NotFound from './components/NotFound';
+import IOSLProvider from './components/IOSLProvider';
 import ThirdParty from './components/ThirdParty';
 
 const logger = createLogger({
@@ -55,14 +56,14 @@ function checkAuth(nextState, replace) {
     }
   } else {
     // If the user is already logged in, forward them to the homepage
-    if(!loggedIn) {
+    if (!loggedIn) {
       if (nextState.location.state && nextState.location.pathname) {
         replace(nextState.location.pathname);
       } else {
         replace('/');
       }
     } else {
-      replace('/');
+      console.log('is logged in');
     }
   }
 }
@@ -81,7 +82,7 @@ class LoginFlow extends Component {
               <Route path="/register" component={Register} />
               <Route path="/dashboard" component={Dashboard} />
             </Route>
-            <Route path="/provider" component={Provider} />
+            <Route path="/provider" component={IOSLProvider} />
             <Route path="/thirdParty" component={ThirdParty} />
             <Route path="*" component={NotFound} />
           </Route>
