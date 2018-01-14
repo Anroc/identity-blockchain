@@ -15,6 +15,7 @@ public class ServiceException extends RuntimeException {
     private final HttpStatus httpStatus;
 
     public ServiceException(HttpStatus httpStatus) {
+        super(httpStatus.name());
         this.httpStatus = httpStatus;
     }
 

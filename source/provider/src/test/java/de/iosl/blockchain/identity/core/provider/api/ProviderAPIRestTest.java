@@ -63,9 +63,11 @@ public class ProviderAPIRestTest extends RestTestSuite {
 
         userDB.update(user);
 
+        BasicEthereumDTO basicEthereumDTO = new BasicEthereumDTO(USER_CREDENTIALS.getAddress());
+
         SignedRequest<BasicEthereumDTO> claimRequest = new SignedRequest<>(
-                new BasicEthereumDTO(USER_CREDENTIALS.getAddress()),
-                getSignature(USER_CREDENTIALS.getAddress(), USER_CREDENTIALS)
+                basicEthereumDTO,
+                getSignature(basicEthereumDTO, USER_CREDENTIALS)
         );
 
         ResponseEntity<List<ClaimDTO>> responseEntity = restTemplate.exchange(
