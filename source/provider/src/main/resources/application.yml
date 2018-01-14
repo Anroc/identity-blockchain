@@ -1,0 +1,71 @@
+spring:
+  application.name: Blockchain-Identity-Provider
+  profiles.active: default
+
+blockchain.identity:
+  protocol: http
+  provider:
+    buildVersion: 0.0.1-SNAPSHOT
+    apiVersion: v1
+    stateWallet: "0x92a1a8f45af1a0e5387a0a9d38a3b86ca9698b0b"
+    credentials:
+      username: admin
+      password: penispumpe
+
+---
+spring:
+  profiles: default
+  couchbase:
+    bootstrap-hosts: localhost
+    bucket:
+      name: default
+      password: password
+blockchain.identity:
+  type: PROVIDER
+  core:
+    port: 8080
+    address: localhost
+  discoveryService:
+    port: 8101
+    address: srv01.snet.tu-berlin.de
+  ethereum:
+    port: 7111
+    address: srv01.snet.tu-berlin.de
+---
+spring:
+  profiles: test
+  couchbase:
+    bootstrap-hosts: srv01.snet.tu-berlin.de
+    bucket:
+      name: claim_test
+      password: 1234qwer
+blockchain.identity:
+  type: PROVIDER
+  core:
+    port: 8080
+    address: localhost
+  discoveryService:
+    port: 8101
+    address: srv01.snet.tu-berlin.de
+  ethereum:
+    port: 7111 # set by jenkins
+    address: srv01.snet.tu-berlin.de
+---
+spring:
+  profiles: production
+  couchbase:
+    bootstrap-hosts: srv01.snet.tu-berlin.de
+    bucket:
+      name: provider
+      password: 1234qwer
+blockchain.identity:
+  type: GOVERMENT
+  core:
+    port: 8100
+    address: srv01.snet.tu-berlin.de
+  discoveryService:
+    port: 8101
+    address: srv01.snet.tu-berlin.de
+  ethereum:
+    port: 7111
+    address: srv01.snet.tu-berlin.de
