@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import 'whatwg-fetch';
 import Nav from './common/Nav';
 
 class App extends Component {
