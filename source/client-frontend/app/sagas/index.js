@@ -102,7 +102,7 @@ export function* loginFlow() {
       yield put({ type: CHANGE_FORM, newFormState: { username: '', password: '', accountType: '' } }); // Clear form
       if (accountType === 'user') {
         forwardTo('/dashboard'); // Go to dashboard page
-      } if (accountType === 'provider') {
+      } else if (accountType === 'provider') {
         forwardTo('/provider');
       } else {
         forwardTo('/thirdParty');
@@ -146,7 +146,7 @@ export function* registerFlow() {
       yield put({ type: CHANGE_FORM, newFormState: { username: '', password: '', accountType: '' } }); // Clear form
       if (accountType === 'user') {
         forwardTo('/dashboard'); // Go to dashboard page
-      } if (accountType === 'provider') {
+      } else if (accountType === 'provider') {
         forwardTo('/provider');
       } else {
         forwardTo('/thirdParty');
