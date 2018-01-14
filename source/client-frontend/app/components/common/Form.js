@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import ErrorMessage from './ErrorMessage';
 import LoadingButton from './LoadingButton';
@@ -16,11 +16,26 @@ class Form extends Component {
     this.changeUsername = this.changeUsername.bind(this);
     this.changePassword = this.changePassword.bind(this);
     this.changeAccountType = this.changeAccountType.bind(this);
+    // provider
+    this.changeProviderName = this.changeProviderName.bind(this);
+    this.changeDomainName = this.changeDomainName.bind(this);
+  }
+
+  componentDidMount() {
+    // this.props.data.accountType = 'user';
   }
 
   onSubmit(event) {
     event.preventDefault();
     this.props.onSubmit(this.props.data.username, this.props.data.password, this.props.data.accountType);
+  }
+
+  changeDomainName(event) {
+    this.emitChange({ ...this.props.data, domainName: event.target.value });
+  }
+
+  changeProviderName(event) {
+    this.emitChange({ ...this.props.data, providerName: event.target.value });
   }
 
   changeUsername(event) {
@@ -77,35 +92,6 @@ class Form extends Component {
       <form className="form" onSubmit={this.onSubmit}>
         {error ? <ErrorMessage error={error} /> : null}
         <div className="form__field-wrapper">
-          <input
-            className="form__field-input"
-            type="text"
-            id="username"
-            value={this.props.data.username}
-            placeholder="frank.underwood"
-            onChange={this.changeUsername}
-            autoCorrect="off"
-            autoCapitalize="off"
-            spellCheck="false"
-          />
-          <label className="form__field-label" htmlFor="username">
-            Username
-          </label>
-        </div>
-        <div className="form__field-wrapper">
-          <input
-            className="form__field-input"
-            id="password"
-            type="password"
-            value={this.props.data.password}
-            placeholder="••••••••••"
-            onChange={this.changePassword}
-          />
-          <label className="form__field-label" htmlFor="password">
-            Password
-          </label>
-        </div>
-        <div className="form__field-wrapper">
           <div className="container text-center">
             <div className="row">
               {accountTypeOptions}
@@ -115,15 +101,103 @@ class Form extends Component {
             </div>
           </div>
         </div>
-        <div className="form__submit-btn-wrapper">
-          {this.props.currentlySending ? (
-            <LoadingButton />
-          ) : (
-            <button className="form__submit-btn" type="submit">
-              {this.props.btnText}
-            </button>
-             )}
-        </div>
+        {this.props.data.accountType === 'user' ?
+          <Fragment>
+            <div className="form__field-wrapper">
+              <input
+                className="form__field-input"
+                type="text"
+                id="username"
+                value={this.props.data.username}
+                placeholder="frank.underwood"
+                onChange={this.changeUsername}
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+              />
+              <label className="form__field-label" htmlFor="username">
+                Username
+              </label>
+            </div>
+            <div className="form__field-wrapper">
+              <input
+                className="form__field-input"
+                id="password"
+                type="password"
+                value={this.props.data.password}
+                placeholder="••••••••••"
+                onChange={this.changePassword}
+              />
+              <label className="form__field-label" htmlFor="password">
+                Password
+              </label>
+            </div>
+            <div className="form__submit-btn-wrapper">
+              {this.props.currentlySending ? (
+                <LoadingButton />
+              ) : (
+                <button className="form__submit-btn" type="submit">
+                  {this.props.btnText}
+                </button>
+              )}
+            </div>
+          </Fragment> :
+          <Fragment>
+            <div className="form__field-wrapper">
+              <input
+                className="form__field-input"
+                type="text"
+                id="providerName"
+                value={this.props.data.providerName}
+                placeholder="telekom"
+                onChange={this.changeProviderName}
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+              />
+              <label className="form__field-label" htmlFor="providerName">
+                Provider name
+              </label>
+            </div>
+            <div className="form__field-wrapper">
+              <input
+                className="form__field-input"
+                type="text"
+                id="domainName"
+                value={this.props.data.domainName}
+                placeholder="www.snet.tu-berlin.de"
+                onChange={this.changeDomainName}
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+              />
+              <label className="form__field-label" htmlFor="domainName">
+                Domain name
+              </label>
+            </div>
+            <div className="form__field-wrapper">
+              <input
+                className="form__field-input"
+                id="password"
+                type="password"
+                value={this.props.data.password}
+                placeholder="••••••••••"
+                onChange={this.changePassword}
+              />
+              <label className="form__field-label" htmlFor="password">
+                Password
+              </label>
+            </div>
+            <div className="form__submit-btn-wrapper">
+              {this.props.currentlySending ? (
+                <LoadingButton />
+              ) : (
+                <button className="form__submit-btn" type="submit">
+                  {this.props.btnText}
+                </button>
+                 )}
+            </div>
+          </Fragment>}
       </form>
     );
   }
