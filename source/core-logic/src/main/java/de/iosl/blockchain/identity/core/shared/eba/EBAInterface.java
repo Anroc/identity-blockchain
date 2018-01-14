@@ -4,6 +4,7 @@ import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 
 public interface EBAInterface {
@@ -66,9 +67,11 @@ public interface EBAInterface {
      *
      * @param account the account performing the action
      * @param smartContractAddress the permission contract that shell be approved.
-     * @param signedQuery the signed query.
+     * @param approvedClaims are the claims that the user explicit approved. This means that the key is the claim id
+     *                       and the value is signature over the claimID, user address and requesters address.
+     *                       (<code>base64(signature(hash(claimID;userAddress;requestAddress)))</code>)
      */
-    void approvePermissionContract(Account account, String smartContractAddress, String signedQuery);
+    void approvePermissionContract(Account account, String smartContractAddress, Map<String, String> approvedClaims);
 
     /**
      * Rejects the permission contract.
