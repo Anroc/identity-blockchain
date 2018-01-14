@@ -32,7 +32,7 @@ public class ApplicationBootUpListener {
     @PostConstruct
     public void register() {
         Account account = null;
-        if(blockchainIdentityConfig.getType() == ClientType.GOVERMENT) {
+        if(blockchainIdentityConfig.getType() == ClientType.GOVERNMENT) {
             File file = Paths.get(KeyChain.WALLET_DIR + KeyChain.GOV_WALLET).toFile();
 
             account = ebaInterface.accessWallet(credentialConfig.getPassword(), file);

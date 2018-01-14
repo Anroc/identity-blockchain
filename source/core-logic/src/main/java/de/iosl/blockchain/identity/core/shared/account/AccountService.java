@@ -1,9 +1,5 @@
-package de.iosl.blockchain.identity.core.user.account;
+package de.iosl.blockchain.identity.core.shared.account;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.ds.registry.DiscoveryClient;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
@@ -12,34 +8,29 @@ import de.iosl.blockchain.identity.core.shared.keychain.KeyChainService;
 import de.iosl.blockchain.identity.core.shared.keychain.data.KeyInfo;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
-import de.iosl.blockchain.identity.lib.exception.ServiceException;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.KeyPair;
 
-@Service
-public class AccountService {
+public abstract class AccountService {
 
     @Autowired
-    private DiscoveryClient discoveryClient;
+    public DiscoveryClient discoveryClient;
     @Autowired
-    private KeyChain keyChain;
+    public KeyChain keyChain;
     @Autowired
-    private KeyChainService keyChainService;
+    public KeyChainService keyChainService;
     @Autowired
-    private EBAInterface ebaInterface;
+    public EBAInterface ebaInterface;
 
 
     public String register(String password) throws IOException {
+        return register(password, true);
+    }
+
+    public String register(String password, boolean deployContract) throws IOException {
         keyChainService.createDir(keyChainService.getDefaultWalletDir());
 
         Account account = ebaInterface.createWallet(password, Paths.get(KeyChain.WALLET_DIR));
@@ -48,9 +39,10 @@ public class AccountService {
         KeyPair keyPair = createKeyPair();
         keyChain.setRsaKeyPair(keyPair);
 
-        String contractAddress = ebaInterface.deployRegistrarContract(account);
-
-        keyChain.setRegisterSmartContractAddress(contractAddress);
+        if(deployContract) {
+            String contractAddress = ebaInterface.deployRegistrarContract(account);;
+            keyChain.setRegisterSmartContractAddress(contractAddress);
+        }
 
         registerToDS();
         keyChain.setRegistered(true);
@@ -99,44 +91,5 @@ public class AccountService {
                 keyChain.getAccount().getAddress(),
                 KeyConverter.from(keyChain.getRsaKeyPair().getPublic()).toBase64(),
                 keyChain.getAccount().getPrivateKey());
-    }
-
-    public byte[] getQRCode(int width, int height) {
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-
-        try {
-            StringBuilder stringBuilder = new StringBuilder()
-                    .append(keyChain.getAccount().getAddress())
-                    .append(":")
-                    .append(KeyConverter.from(keyChain.getRsaKeyPair().getPublic()).toBase64())
-                    .append(":")
-                    .append(keyChain.getRegisterSmartContractAddress());
-
-            if (stringBuilder.toString().getBytes().length > width * height) {
-                throw new ServiceException("Content does not fit into QR code size.", HttpStatus.UNPROCESSABLE_ENTITY);
-            }
-
-            BitMatrix matrix = qrCodeWriter.encode(stringBuilder.toString(), BarcodeFormat.QR_CODE, width, height);
-            BufferedImage image = bitMatrixToImage(matrix);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            return baos.toByteArray();
-        } catch (WriterException | IOException e) {
-            throw new ServiceException(e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private BufferedImage bitMatrixToImage(@NonNull BitMatrix bitMatrix) {
-        int width = bitMatrix.getWidth();
-        int height = bitMatrix.getHeight();
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB); // create an empty image
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                image.setRGB(i, j, bitMatrix.get(i, j) ? Color.BLACK.getRGB() : Color.WHITE.getRGB());
-            }
-        }
-        return image;
     }
 }
