@@ -25,6 +25,8 @@ public class BlockchainIdentityConfig {
 
     private ClientType type;
 
+    private String name;
+
     @JsonIgnore
     public String getHostUrl() {
         return String.format(

@@ -22,11 +22,4 @@ public class RegistryEntryDTO extends Payload {
     @Min(0)
     private int port;
 
-    public RegistryEntryDTO(String ethID, String publicKey,
-            String domainName, int port) {
-        super(ethID);
-        this.publicKey = publicKey;
-        this.domainName = domainName;
-        this.port = port;
-    }
 }

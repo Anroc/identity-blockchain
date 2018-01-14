@@ -56,10 +56,10 @@ spring:
   couchbase:
     bootstrap-hosts: srv01.snet.tu-berlin.de
     bucket:
-      name: provider
+      name: government
       password: 1234qwer
 blockchain.identity:
-  type: GOVERMENT
+  type: GOVERNMENT
   core:
     port: 8100
     address: srv01.snet.tu-berlin.de
