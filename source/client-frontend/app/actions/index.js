@@ -4,6 +4,7 @@
 
 // We import constants to name our actions' type
 import {
+  CHANGE_REQUEST_FORM,
   CHANGE_FORM,
   SET_AUTH,
   SENDING_REQUEST,
@@ -13,6 +14,18 @@ import {
   REQUEST_ERROR,
   CLEAR_ERROR,
 } from './constants';
+
+/**
+ * Sets the request form state
+ * @param {object} newRequestFormState
+ * @param {string} newRequestFormState.givenName
+ * @param {string} newRequestFormState.familyName
+ * @param {string} newRequestFormState.request
+ * @returns {{type, newRequestFormState: *}}
+ */
+export function changeRequestForm(newRequestFormState) {
+  return { type: CHANGE_REQUEST_FORM, newRequestFormState };
+}
 
 /**
  * Sets the form state

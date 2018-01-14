@@ -2,44 +2,39 @@ import React, { Component } from 'react';
 import ErrorMessage from './ErrorMessage';
 import LoadingButton from './LoadingButton';
 
-import { changeForm } from '../../actions';
+import { changeRequestForm } from '../../actions';
 
 class Form extends Component {
   constructor(props) {
     super(props);
 
     this.onSubmit = this.onSubmit.bind(this);
-    this.changeUsername = this.changeUsername.bind(this);
-    this.changePassword = this.changePassword.bind(this);
 
     // new code:
     this.changeGivenName = this.changeGivenName.bind(this);
     this.changeFamilyName = this.changeFamilyName.bind(this);
+    this.changeRequest = this.changeRequest.bind(this);
   }
 
   onSubmit(event) {
     event.preventDefault();
-    this.props.onSubmit(this.props.data.username, this.props.data.password);
+    this.props.onSubmit(this.props.data.givenName, this.props.data.familyName, this.props.data.request);
   }
 
   changeGivenName(event) {
-    this.emitChange({ ...this.props.data, username: event.target.value });
+    this.emitChange({ ...this.props.data, givenName: event.target.value });
   }
 
   changeFamilyName(event) {
-    this.emitChange({ ...this.props.data, username: event.target.value });
-  }
-
-  changePassword(event) {
-    this.emitChange({ ...this.props.data, password: event.target.value });
+    this.emitChange({ ...this.props.data, familyName: event.target.value });
   }
 
   changeRequest(event) {
     this.emitChange({ ...this.props.data, request: event.target.value });
   }
 
-  emitChange(newFormState) {
-    this.props.dispatch(changeForm(newFormState));
+  emitChange(newRequestFormState) {
+    this.props.dispatch(changeRequestForm(newRequestFormState));
   }
 
   render() {
