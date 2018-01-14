@@ -8,7 +8,7 @@ class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      accountTypes: ['user', 'provider', '3rd p'],
+      accountTypes: ['user', 'provider', '3rd party'],
     };
 
     this.onSubmit = this.onSubmit.bind(this);
