@@ -159,7 +159,7 @@ class Form extends Component {
                 className="form__field-input"
                 type="text"
                 id="domainName"
-                value={this.props.data.domainName}
+                value={this.props.data.domainName || ''}
                 placeholder="www.snet.tu-berlin.de"
                 onChange={this.changeDomainName}
                 autoCorrect="off"

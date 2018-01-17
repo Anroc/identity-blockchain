@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import request from '../auth/request';
+import LazyImage from './common/LazyImage';
 
 class Dashboard extends Component {
   constructor() {
@@ -8,6 +9,9 @@ class Dashboard extends Component {
       swaggerData: '',
       statusCode: -1,
       qrCode: [],
+      src: null,
+      loaded: false,
+      error: false,
     };
   }
 
@@ -110,7 +114,7 @@ class Dashboard extends Component {
           </p>
           <p>
             QR Code:
-            <img
+            <LazyImage
               src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
               alt="qr-code"
             />
