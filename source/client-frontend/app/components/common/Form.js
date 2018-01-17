@@ -17,7 +17,6 @@ class Form extends Component {
     this.changePassword = this.changePassword.bind(this);
     this.changeAccountType = this.changeAccountType.bind(this);
     // provider
-    this.changeProviderName = this.changeProviderName.bind(this);
     this.changeDomainName = this.changeDomainName.bind(this);
   }
 
@@ -32,10 +31,6 @@ class Form extends Component {
 
   changeDomainName(event) {
     this.emitChange({ ...this.props.data, domainName: event.target.value });
-  }
-
-  changeProviderName(event) {
-    this.emitChange({ ...this.props.data, providerName: event.target.value });
   }
 
   changeUsername(event) {
@@ -148,9 +143,9 @@ class Form extends Component {
                 className="form__field-input"
                 type="text"
                 id="providerName"
-                value={this.props.data.providerName}
+                value={this.props.data.username}
                 placeholder="telekom"
-                onChange={this.changeProviderName}
+                onChange={this.changeUsername}
                 autoCorrect="off"
                 autoCapitalize="off"
                 spellCheck="false"

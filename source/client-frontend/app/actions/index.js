@@ -33,6 +33,7 @@ export function changeRequestForm(newRequestFormState) {
  * @param  {string} newFormState.username The new text of the username input field of the form
  * @param  {string} newFormState.password The new text of the password input field of the form
  * @param  {string} newFormState.accountType
+ * @param  {string} newFormState.domainName
  */
 export function changeForm(newFormState) {
   return { type: CHANGE_FORM, newFormState };
@@ -60,6 +61,7 @@ export function sendingRequest(sending) {
  * @param  {string} data.username The username of the user to log in
  * @param  {string} data.password The password of the user to log in
  * @param  {string} data.accountType
+ * @param  {string} data.domainName
  */
 export function loginRequest(data) {
   return { type: LOGIN_REQUEST, data };
@@ -78,6 +80,7 @@ export function logout() {
  * @param  {string} data.username The username of the user to register
  * @param  {string} data.password The password of the user to register
  * @param  {string} data.accountType
+ * @param  {string} data.domainName
  */
 export function registerRequest(data) {
   return { type: REGISTER_REQUEST, data };

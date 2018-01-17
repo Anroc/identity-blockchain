@@ -18,6 +18,8 @@ const initialState = {
     username: '',
     password: '',
     accountType: '',
+    // might want to create another form state object
+    domainName: '',
   },
   requestFormState: {
     firstName: '',

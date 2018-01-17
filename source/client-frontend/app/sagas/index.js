@@ -87,6 +87,8 @@ export function* loginFlow() {
     const request = yield take(LOGIN_REQUEST);
     const { username, password, accountType } = request.data;
 
+    console.log('!!!!!!!!!!!!! account type: ', accountType);
+
     // A `LOGOUT` action may happen while the `authorize` effect is going on, which may
     // lead to a race condition. This is unlikely, but just in case, we call `race` which
     // returns the "winner", i.e. the one that finished first
@@ -100,6 +102,9 @@ export function* loginFlow() {
       // ...we send Redux appropiate actions
       yield put({ type: SET_AUTH, newAuthState: true }); // User is logged in (authorized)
       yield put({ type: CHANGE_FORM, newFormState: { username: '', password: '', accountType: '' } }); // Clear form
+
+      console.log('!!!!!!!!!!!!! account type: ', accountType);
+
       if (accountType === 'user') {
         forwardTo('/dashboard'); // Go to dashboard page
       } else if (accountType === 'provider') {
