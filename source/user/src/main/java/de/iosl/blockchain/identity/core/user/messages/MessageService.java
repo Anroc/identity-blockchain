@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,5 +25,15 @@ public class MessageService {
         Message message = new Message(UUID.randomUUID().toString(), messageType, false);
         messageDB.insert(message);
         return message;
+    }
+
+    public Message updateMessage(@NonNull Message message, @NonNull boolean seen) {
+        message.setSeen(seen);
+        messageDB.update(message);
+        return message;
+    }
+
+    public Optional<Message> findMessage(@NonNull String id) {
+        return messageDB.findEntity(id);
     }
 }

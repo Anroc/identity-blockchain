@@ -5,6 +5,8 @@ import de.iosl.blockchain.identity.core.user.RestTestSuite;
 import de.iosl.blockchain.identity.core.user.messages.data.Message;
 import de.iosl.blockchain.identity.core.user.messages.data.MessageType;
 import de.iosl.blockchain.identity.core.user.messages.dto.MessageDTO;
+import de.iosl.blockchain.identity.core.user.messages.dto.MessageUpdateDTO;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,10 +26,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
 public class MessageControllerRestTest extends RestTestSuite {
 
+    private Message message;
+
+    @Before
+    public void setup() {
+        message = new Message(UUID.randomUUID().toString(), MessageType.PERMISSION_REQUEST, false);
+        messageDB.insert(message);
+    }
+
     @Test
     public void getMessage() {
-        Message message = new Message(UUID.randomUUID().toString(), MessageType.PERMISSION_REQUEST, false);
-        messageDB.insert(message);
 
         ResponseEntity<List<MessageDTO>> responseEntity =
                 restTemplate.exchange(
@@ -41,6 +49,22 @@ public class MessageControllerRestTest extends RestTestSuite {
         List<MessageDTO> messageDTOs = responseEntity.getBody();
 
         assertThat(messageDTOs).isNotEmpty().hasSize(1);
-        assertThat(messageDTOs.get(0)).isEqualToIgnoringGivenFields(message, "id");
+        assertThat(messageDTOs.get(0)).isEqualToIgnoringGivenFields(message);
     }
+
+    @Test
+    public void updateMessage() {
+        MessageUpdateDTO messageUpdateDTO = new MessageUpdateDTO(true);
+
+        ResponseEntity<MessageDTO> responseEntity =
+                restTemplate.exchange(
+                        String.format("/messages/%s", message.getId()),
+                        HttpMethod.PUT,
+                        new HttpEntity<>(messageUpdateDTO),
+                        MessageDTO.class);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody().isSeen()).isTrue();
+    }
+
 }
