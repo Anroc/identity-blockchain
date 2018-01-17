@@ -1,6 +1,6 @@
 package de.iosl.blockchain.identity.core.user.ethereum;
 
-import de.iosl.blockchain.identity.core.user.AbstractAuthenticator;
+import de.iosl.blockchain.identity.core.shared.account.AbstractAuthenticator;
 import de.iosl.blockchain.identity.core.user.ethereum.dto.RegisterContractResultDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
