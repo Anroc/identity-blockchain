@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import request from '../auth/request';
 import LazyImage from './common/LazyImage';
+import ClaimsTable from './common/ClaimsTable';
 
 class Dashboard extends Component {
   constructor() {
     super();
     this.state = {
       swaggerData: '',
-      statusCode: -1,
       qrCode: [],
       src: null,
       loaded: false,
       error: false,
+      user: [],
     };
   }
 
@@ -19,6 +20,7 @@ class Dashboard extends Component {
     console.log('sending request');
     this.sendRequest();
     console.log('request sent');
+    this.getUserInformation();
   }
 
   // todo change password
@@ -28,34 +30,35 @@ class Dashboard extends Component {
   // todo provider user anlegen etc von 8100
   // solved research standalone version for react
 
-
-  getQRCode() {
-    console.log('getting qr code');
-    const qrOptions = {
-      method: 'GET',
-      headers: {},
-      body: JSON.stringify({
-        password: 'timsDickerDick',
-      }),
-      mode: 'cors',
-      credentials: 'include',
-    };
-
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/qr-code', qrOptions)
-      .then((json) => {
-        console.log(`qrcode' + ${JSON.stringify(json)}`);
-        this.setState({
-          qrCode: JSON.stringify(json),
-        });
-        console.log(`qr code in state: ${this.state.qrCode}`);
-      });
-    console.log(`actual request: ${actualRequest}`);
-  }
-
   displayClaims() {
     // TODO:
     // go against /claims
     // periodic polling
+  }
+
+  getUserInformation() {
+    const getUserInformationOptions = {
+      method: 'GET',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+      credentials: 'include',
+    };
+    console.log('get user information options: ', getUserInformationOptions);
+
+    const actualRequest = request('http://srv01.snet.tu-berlin.de:8100/user', getUserInformationOptions)
+      .then((json) => {
+        console.log(`user: ' + ${JSON.stringify(json)}`);
+        this.setState({
+          user: JSON.stringify(json),
+        });
+        console.log(`user in state: ${this.state.swaggerData}`);
+        this.getQRCode();
+      });
+    console.log(`actual user: ${actualRequest}`);
   }
 
   sendRequest() {
@@ -90,8 +93,6 @@ class Dashboard extends Component {
         this.setState({
           swaggerData: JSON.stringify(json),
         });
-        console.log(`content in state: ${this.state.swaggerData}`);
-        this.getQRCode();
       });
     console.log(`actual ${actualRequest}`);
   }
@@ -109,20 +110,18 @@ class Dashboard extends Component {
             {JSON.stringify(this.state.swaggerData)}
           </p>
           <p>
-            Potential Error:
-            {this.state.statusCode}
-          </p>
-          <p>
             QR Code:
             <LazyImage
               src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
               alt="qr-code"
             />
-            {this.state.qrCode}
           </p>
           <p>
             Claims:
           </p>
+          <ClaimsTable
+            user={this.state.user}
+          />
           <p>
             Settings:
           </p>
