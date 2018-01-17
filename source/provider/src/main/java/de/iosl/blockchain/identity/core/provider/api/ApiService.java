@@ -38,7 +38,7 @@ public class ApiService {
         claims.addAll(optionalClaims);
 
         // TODO: adapt interface to add requesting Provider
-        String ppr = ebaInterface.createPermissionContract(keyChain.getAccount(), user.getEthId(), claims);
+        String ppr = ebaInterface.createPermissionContract(keyChain.getAccount(), user.getEthId(), requestingProvider, claims);
         if(ppr == null) {
             throw new ServiceException("PPR address was null!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -57,7 +57,7 @@ public class ApiService {
         requestedClaims = filterForRequestingEthID(requestingEthID, requestedClaims);
         List<User> users = requestedUsers(requestedClaims);
 
-        if(users.size() > 1) {
+        if (users.size() > 1) {
             throw new ServiceException("It is not supported to request claims of more then 1 user. Requested was [{}]", HttpStatus.UNPROCESSABLE_ENTITY, users);
         } else if (requestedClaims.isEmpty()) {
             throw new ServiceException("This claim request is not issued for the given provider!", HttpStatus.FORBIDDEN);
@@ -72,7 +72,7 @@ public class ApiService {
                 .collect(Collectors.toList());
 
         return user.getClaims().stream()
-                .filter(requestedClaimIds::contains)
+                .filter(claim -> requestedClaimIds.contains(claim.getId()))
                 .collect(Collectors.toList());
 
     }
@@ -87,13 +87,13 @@ public class ApiService {
         return claims.stream()
                 .map(ApprovedClaim::getEthID)
                 .distinct()
-                .map(userService::findUser)
+                .map(userService::findUserByEthID)
                 .filter(
                         userOptional -> {
                             if(userOptional.isPresent()) {
                                 return true;
                             } else {
-                                log.warn("Could not find some users of [{}]", claims);
+                                log.warn("Could not find some users of {}", claims);
                                 return false;
                             }
                         })

@@ -14,7 +14,7 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.InfoDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SingedClaimRequestDTO;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
 import org.hibernate.validator.constraints.NotBlank;
@@ -71,9 +71,10 @@ public class ApiController extends AbstractAuthenticator implements ProviderAPI 
             throw new ServiceException("Sender signature was invalid", HttpStatus.FORBIDDEN);
         }
 
-        User user = getUser(permissionContractCreationDTO.getEthID());
+        User user = getUser(ethID);
 
         String permissionContract = apiService.createPermissionContract(
+                permissionContractCreationDTO.getEthID(),
                 user,
                 permissionContractCreationDTO.getPayload().getRequiredClaims(),
                 permissionContractCreationDTO.getPayload().getOptionalClaims());
@@ -86,20 +87,20 @@ public class ApiController extends AbstractAuthenticator implements ProviderAPI 
     @PutMapping(ProviderAPIConstances.ABSOLUTE_PPR_PATH)
     public List<ClaimDTO> retrieveClaimsByPPR(
             @PathVariable("ethID") String ethID,
-            @RequestBody @Valid @NotNull SignedRequest<SingedClaimRequestDTO> singedClaimsRequest) {
+            @RequestBody @Valid @NotNull SignedRequest<SignedClaimRequestDTO> signedClaimsRequest) {
         checkAuthentication();
-        if (! ecSignatureValidator.isRequestValid(singedClaimsRequest)) {
+        if (! ecSignatureValidator.isRequestValid(signedClaimsRequest)) {
             throw new ServiceException("Senders signature was invalid!", HttpStatus.FORBIDDEN);
         }
 
-        validateSingedRequestList(singedClaimsRequest.getPayload().getRequiredSingedClaims());
-        validateSingedRequestList(singedClaimsRequest.getPayload().getOptionalSingedClaims());
+        validateSingedRequestList(signedClaimsRequest.getPayload().getRequiredSingedClaims());
+        validateSingedRequestList(signedClaimsRequest.getPayload().getOptionalSingedClaims());
 
 
         List<ProviderClaim> claims = apiService.getClaimsForPermissionContract(
-                singedClaimsRequest.getEthID(),
-                extractApprovedClaims(singedClaimsRequest.getPayload().getRequiredSingedClaims()),
-                extractApprovedClaims(singedClaimsRequest.getPayload().getOptionalSingedClaims())
+                signedClaimsRequest.getEthID(),
+                extractApprovedClaims(signedClaimsRequest.getPayload().getRequiredSingedClaims()),
+                extractApprovedClaims(signedClaimsRequest.getPayload().getOptionalSingedClaims())
         );
 
         return claims.stream().map(ClaimDTO::new).collect(Collectors.toList());

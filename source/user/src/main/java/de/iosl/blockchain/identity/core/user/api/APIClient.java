@@ -6,9 +6,8 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.InfoDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.NestedSignedRequestDTO;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.QueryRequestDTO;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
@@ -32,5 +31,5 @@ public interface APIClient extends ProviderAPI {
 
     @Override
     @RequestLine("PUT " + ProviderAPIConstances.ABSOLUTE_PPR_PATH)
-    List<ClaimDTO> executeSignedQuery(@Param("ethID") String ethID, SignedRequest<NestedSignedRequestDTO<QueryRequestDTO>> signedQueryDTO);
+    List<ClaimDTO> retrieveClaimsByPPR(@Param("ethID") String ethID, SignedRequest<SignedClaimRequestDTO> singedClaimsRequest);
 }
