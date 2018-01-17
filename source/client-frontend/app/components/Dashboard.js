@@ -8,6 +8,7 @@ class Dashboard extends Component {
     super();
     this.state = {
       swaggerData: '',
+      ethID: '',
       qrCode: [],
       src: null,
       loaded: false,
@@ -20,21 +21,12 @@ class Dashboard extends Component {
     console.log('sending request');
     this.sendRequest();
     console.log('request sent');
-    this.getUserInformation();
   }
 
   // todo change password
   // todo error labelling
   // todo claims erst spaeter
   // todo warning no recovery possible, keep your password safe
-  // todo provider user anlegen etc von 8100
-  // solved research standalone version for react
-
-  displayClaims() {
-    // TODO:
-    // go against /claims
-    // periodic polling
-  }
 
   getUserInformation() {
     const getUserInformationOptions = {
@@ -47,18 +39,14 @@ class Dashboard extends Component {
       mode: 'cors',
       credentials: 'include',
     };
-    console.log('get user information options: ', getUserInformationOptions);
 
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:8100/user', getUserInformationOptions)
+    // const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
+    request('http://srv01.snet.tu-berlin.de:8100/user', getUserInformationOptions)
       .then((json) => {
-        console.log(`user: ' + ${JSON.stringify(json)}`);
         this.setState({
-          user: JSON.stringify(json),
+          user: json[0].claims,
         });
-        console.log(`user in state: ${this.state.swaggerData}`);
-        this.getQRCode();
       });
-    console.log(`actual user: ${actualRequest}`);
   }
 
   sendRequest() {
@@ -92,7 +80,11 @@ class Dashboard extends Component {
         console.log(`content' + ${JSON.stringify(json)}`);
         this.setState({
           swaggerData: JSON.stringify(json),
+          ethID: json.ethereumID,
         });
+      })
+      .then(() => {
+        this.getUserInformation();
       });
     console.log(`actual ${actualRequest}`);
   }
@@ -107,7 +99,7 @@ class Dashboard extends Component {
           </p>
           <p>
             General:
-            {JSON.stringify(this.state.swaggerData)}
+            {this.state.ethID}
           </p>
           <p>
             QR Code:
@@ -130,8 +122,7 @@ class Dashboard extends Component {
     );
   }
   /*
-
-  sendGetClaimsRequest() {
+    sendGetClaimsRequest() {
     const options = {
       method: 'POST',
       headers: {

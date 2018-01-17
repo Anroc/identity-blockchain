@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import PropTypes from 'prop-types';
-import LoadingButton from './LoadingButton';
 
+import LoadingButton from './LoadingButton';
 import { logout, clearError } from '../../actions';
 
 class Nav extends Component {

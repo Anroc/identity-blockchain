@@ -22,10 +22,10 @@ import {
 
 /**
  * Effect to handle authorization
- * @param  {string} username               The username of the user
- * @param  {string} password               The password of the user
- * @param  {object} options                Options
- * @param  {boolean} options.isRegistering Is this a register request?
+ * @param  {string}  username               The username of the user
+ * @param  {string}  password               The password of the user
+ * @param  {object}  options                Options
+ * @param  {boolean} options.isRegistering  Is this a register request?
  */
 export function* authorize({ username, password, accountType, isRegistering }) {
   // We send an action that tells Redux we're sending a request

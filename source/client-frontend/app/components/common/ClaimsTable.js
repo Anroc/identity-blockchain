@@ -13,15 +13,17 @@ class ClaimsTable extends React.Component {
   render() {
     return (
       <div>
-        hello claims table:
-        {this.props.user}
+        <p>
+        Here is your claims table:
+        {JSON.stringify(this.props.user)}
+        </p>
       </div>
     );
   }
 }
 
 ClaimsTable.propTypes = {
-  user: PropTypes.array.isRequired,
+  user: PropTypes.array,
 };
 
 export default ClaimsTable;

@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import ErrorMessage from './ErrorMessage';
-import LoadingButton from './LoadingButton';
+import ErrorMessage from '../ErrorMessage';
+import LoadingButton from '../LoadingButton';
 
-import { changeForm } from '../../actions';
+import { changeForm } from '../../../actions/index';
 
 class Form extends Component {
   constructor(props) {
