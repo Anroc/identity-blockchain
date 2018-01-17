@@ -6,7 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -14,10 +15,14 @@ import java.util.List;
 public class PermissionContractCreationDTO extends BasicEthereumDTO {
 
     @NotEmpty
-    private List<String> claimIds;
+    private Set<String> requiredClaims;
 
-    public PermissionContractCreationDTO(String ethID, List<String> claimIds) {
+    @NotNull
+    private Set<String> optionalClaims;
+
+    public PermissionContractCreationDTO(String ethID, Set<String> requiredClaims, Set<String> optionalClaims) {
         super(ethID);
-        this.claimIds = claimIds;
+        this.requiredClaims = requiredClaims;
+        this.optionalClaims = optionalClaims;
     }
 }

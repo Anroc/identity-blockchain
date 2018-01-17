@@ -18,7 +18,7 @@ public class ECSignatureValidator {
                 ethID);
     }
 
-    public boolean isGetRequestValid(@NonNull SignedRequest<?> signedRequest) {
+    public boolean isRequestValid(@NonNull SignedRequest<?> signedRequest) {
         return isSignatureValid(signedRequest.getPayload(), signedRequest.getSignature(), signedRequest.getEthID());
     }
 

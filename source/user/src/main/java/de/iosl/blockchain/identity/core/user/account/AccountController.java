@@ -1,6 +1,6 @@
 package de.iosl.blockchain.identity.core.user.account;
 
-import de.iosl.blockchain.identity.core.user.AbstractAuthenticator;
+import de.iosl.blockchain.identity.core.shared.account.AbstractAuthenticator;
 import de.iosl.blockchain.identity.core.shared.account.data.dto.LoginRequest;
 import de.iosl.blockchain.identity.core.shared.account.data.dto.LoginResponse;
 import io.swagger.annotations.ApiOperation;

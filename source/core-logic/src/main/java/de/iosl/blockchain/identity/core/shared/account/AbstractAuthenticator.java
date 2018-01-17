@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.user;
+package de.iosl.blockchain.identity.core.shared.account;
 
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;

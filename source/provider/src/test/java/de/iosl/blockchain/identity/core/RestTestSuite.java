@@ -27,6 +27,8 @@ public class RestTestSuite {
 
     protected static final String USER_FILE = "user-wallet.json";
     protected static final String STATE_FILE = "state-wallet.json";
+    protected static final String PROVIDER_FILE = "provider-wallet.json";
+    protected static final String PROVIDER_FILE_2 = "provider-wallet_2.json";
     protected static final String WALLET_PW = "asd";
 
     protected UserFactory userFactory = UserFactory.instance();

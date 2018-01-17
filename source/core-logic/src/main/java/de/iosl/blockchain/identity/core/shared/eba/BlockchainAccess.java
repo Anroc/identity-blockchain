@@ -72,11 +72,10 @@ public class BlockchainAccess implements EBAInterface {
     }
 
     @Override
-    public String createPermissionContract(Account sender, String recipient, Set<String> requestedClaims) {
+    public String createPermissionContract(Account sender, String recipient, String requesterAddress, Set<String> requestedClaims) {
         // TODO: implement
         return null;
     }
-
 
     @Override
     public void rejectPermissionContract(Account account, String smartContractAddress) {
