@@ -33,12 +33,14 @@ public class ApiService {
             @NonNull Set<String> requiredClaims,
             @NonNull Set<String> optionalClaims) {
 
-        // TODO: remove if interface gets adapted
-        Set<String> claims = new HashSet<>(requiredClaims);
-        claims.addAll(optionalClaims);
+        String ppr = ebaInterface.createPermissionContract(
+                keyChain.getAccount(),
+                user.getEthId(),
+                requestingProvider,
+                requiredClaims,
+                optionalClaims
+        );
 
-        // TODO: adapt interface to add requesting Provider
-        String ppr = ebaInterface.createPermissionContract(keyChain.getAccount(), user.getEthId(), requestingProvider, claims);
         if(ppr == null) {
             throw new ServiceException("PPR address was null!", HttpStatus.INTERNAL_SERVER_ERROR);
         }

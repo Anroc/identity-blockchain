@@ -58,10 +58,16 @@ public interface EBAInterface {
      * @param sender the creator of this permission contract
      * @param recipient the reciepient of the contract
      * @param requesterAddress the address of provider requesting the claims
-     * @param requestedClaims a set of strings that are the requested claim ids
+     * @param requiredClaims a set of strings (claim ids) that are the required by the requesting provider
+     * @param optionalClaims a set of strings (claim ids) that are not required by the requesting provider
      * @return the address of this smart contract
      */
-    String createPermissionContract(Account sender, String recipient, String requesterAddress, Set<String> requestedClaims);
+    String createPermissionContract(
+            Account sender,
+            String recipient,
+            String requesterAddress,
+            Set<String> requiredClaims,
+            Set<String> optionalClaims);
 
     /**
      * Approves the permission contract by putting a signed query into it.
