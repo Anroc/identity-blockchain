@@ -126,7 +126,8 @@ public class ProviderAPIRestTest extends RestTestSuite {
                 any(Account.class),
                 eq(user.getEthId()),
                 eq(REQUESTING_PROVIDER_CREDENTIALS.getAddress()),
-                eq(requiredClaim)
+                eq(requiredClaim),
+                eq(Sets.newHashSet())
         );
 
         PermissionContractCreationDTO permissionContractCreationDTO = new PermissionContractCreationDTO(
@@ -152,7 +153,8 @@ public class ProviderAPIRestTest extends RestTestSuite {
                 any(Account.class),
                 eq(user.getEthId()),
                 eq(REQUESTING_PROVIDER_CREDENTIALS.getAddress()),
-                eq(requiredClaim)
+                eq(requiredClaim),
+                eq(Sets.newHashSet())
         );
     }
 
