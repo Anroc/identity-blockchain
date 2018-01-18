@@ -16,6 +16,7 @@ import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.message.MessageService;
 import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.util.encoders.Base64;
@@ -43,7 +44,9 @@ public class PermissionRequestService {
     @Autowired
     private KeyChain keyChain;
 
+    @Getter
     private final ObjectMapper objectMapper = new ObjectMapper();
+    @Getter
     private final ECSignatureValidator ecSignatureValidator = new ECSignatureValidator();
 
     public void requestPermission(@NonNull PermissionRequest permissionRequest) {
@@ -52,6 +55,8 @@ public class PermissionRequestService {
                 permissionRequest.getEthID(),
                 permissionRequest.getRequiredClaims(),
                 permissionRequest.getOptionalClaims());
+
+        log.info("Retrieved PPR address at {}", pprAddress);
 
         Optional<User> userOptional = userService.findUserByEthID(permissionRequest.getEthID());
 
@@ -64,7 +69,7 @@ public class PermissionRequestService {
         registerPermissionContractListener(pprAddress, permissionRequest.getEthID(), permissionRequest.getUrl());
     }
 
-    private void registerPermissionContractListener(String pprAddress, String ethID, String url) {
+    protected void registerPermissionContractListener(String pprAddress, String ethID, String url) {
         ebaInterface.registerPermissionContractListener(keyChain.getAccount(), pprAddress,
                 claimResult -> {
                     if (! keyChain.isActive()) {
@@ -100,7 +105,7 @@ public class PermissionRequestService {
                 .map(Base64::decode)
                 .map(json -> {
                     try {
-                        return (SignedRequest<ApprovedClaim>) objectMapper.readValue(json, typeReference);
+                        return (SignedRequest<ApprovedClaim>) getObjectMapper().readValue(json, typeReference);
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
@@ -110,7 +115,7 @@ public class PermissionRequestService {
     private void validateApprovedClaims(List<SignedRequest<ApprovedClaim>> approvedClaims) {
         approvedClaims.forEach(
                 approvedClaimSignedRequest -> {
-                    if(! ecSignatureValidator.isRequestValid(approvedClaimSignedRequest)) {
+                    if(! getEcSignatureValidator().isRequestValid(approvedClaimSignedRequest)) {
                         throw new ServiceException("ApproveClaim request was not valid! DTO: %s", HttpStatus.INTERNAL_SERVER_ERROR, approvedClaimSignedRequest);
                     }
                 }

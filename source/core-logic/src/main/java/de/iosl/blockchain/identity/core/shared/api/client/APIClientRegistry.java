@@ -1,7 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.api.client;
 
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,13 +8,12 @@ import java.util.Optional;
 
 public class APIClientRegistry<T> {
 
-    @Autowired
-    private APIClientBeanFactory apiClientBeanFactory;
-
+    private final APIClientBeanFactory apiClientBeanFactory;
     private final Map<String, T> apiClients;
     private final Class<T> clazz;
 
-    public APIClientRegistry(Class<T> clazz) {
+    public APIClientRegistry(@NonNull APIClientBeanFactory apiClientBeanFactory, @NonNull Class<T> clazz) {
+        this.apiClientBeanFactory = apiClientBeanFactory;
         this.apiClients = new HashMap<>();
         this.clazz = clazz;
     }

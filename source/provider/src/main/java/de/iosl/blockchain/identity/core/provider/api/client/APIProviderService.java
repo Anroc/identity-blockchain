@@ -2,6 +2,7 @@ package de.iosl.blockchain.identity.core.provider.api.client;
 
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.api.client.APIClientBeanFactory;
 import de.iosl.blockchain.identity.core.shared.api.client.APIClientRegistry;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
@@ -32,9 +33,10 @@ public class APIProviderService {
     private final EthereumSigner ethereumSigner;
     private final APIClientRegistry<ProviderAPIClient> apiClientRegistry;
 
-    public APIProviderService() {
+    @Autowired
+    public APIProviderService(APIClientBeanFactory apiClientBeanFactory) {
         this.ethereumSigner = new EthereumSigner();
-        this.apiClientRegistry = new APIClientRegistry<>(ProviderAPIClient.class);
+        this.apiClientRegistry = new APIClientRegistry<>(apiClientBeanFactory, ProviderAPIClient.class);
     }
 
     /**

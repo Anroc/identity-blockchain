@@ -33,7 +33,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +40,8 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
@@ -73,13 +73,7 @@ public class ProviderAPIRestTest extends RestTestSuite {
 
         userDB.insert(user);
 
-        keyChain.setAccount(
-                new Account(
-                        PROVIDER_CREDENTIALS.getAddress(),
-                        PROVIDER_CREDENTIALS.getEcKeyPair().getPublicKey(),
-                        PROVIDER_CREDENTIALS.getEcKeyPair().getPrivateKey(),
-                        mock(File.class),
-                        PROVIDER_CREDENTIALS));
+        keyChain.setAccount(getAccountFromCredentials(PROVIDER_CREDENTIALS));
     }
 
     @Test
@@ -176,8 +170,7 @@ public class ProviderAPIRestTest extends RestTestSuite {
         SignedClaimRequestDTO signedClaimRequestDTO = new SignedClaimRequestDTO(
                 REQUESTING_PROVIDER_CREDENTIALS.getAddress(),
                 pprEthID,
-                Lists.newArrayList(signedClaimsRequest),
-                Lists.newArrayList()
+                Lists.newArrayList(signedClaimsRequest)
         );
 
         SignedRequest<SignedClaimRequestDTO> signedRequest = new SignedRequest<>(

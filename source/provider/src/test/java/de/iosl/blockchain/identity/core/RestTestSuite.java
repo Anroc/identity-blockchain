@@ -8,6 +8,7 @@ import de.iosl.blockchain.identity.core.provider.user.db.UserDB;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
+import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.After;
@@ -22,6 +23,8 @@ import org.web3j.crypto.WalletUtils;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.mockito.Mockito.mock;
 
 public class RestTestSuite {
 
@@ -71,5 +74,14 @@ public class RestTestSuite {
         return ECSignature.fromSignatureData(
                 signer.sign(paylaod, credentials.getEcKeyPair())
         );
+    }
+
+    public Account getAccountFromCredentials(Credentials credentials) {
+        return new Account(
+                credentials.getAddress(),
+                credentials.getEcKeyPair().getPublicKey(),
+                credentials.getEcKeyPair().getPrivateKey(),
+                mock(File.class),
+                credentials);
     }
 }
