@@ -14,10 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,7 +37,7 @@ public class UserDBTest extends RestTestSuite {
                 new Payload(true, PayloadType.BOOLEAN));
         Set<ProviderClaim> providerClaimHashSet = new HashSet<>();
         providerClaimHashSet.add(providerClaim);
-        user = new User("1", "1", "1", null, providerClaimHashSet);
+        user = new User("1", "1", "1", null, new ArrayList<>(), providerClaimHashSet);
     }
 
     @Test

@@ -1,10 +1,9 @@
-package de.iosl.blockchain.identity.core.user.messages;
+package de.iosl.blockchain.identity.core.shared.message;
 
-import de.iosl.blockchain.identity.core.user.messages.data.Message;
-import de.iosl.blockchain.identity.core.user.messages.dto.MessageDTO;
-import de.iosl.blockchain.identity.core.user.messages.dto.MessageUpdateDTO;
+import de.iosl.blockchain.identity.core.shared.message.data.Message;
+import de.iosl.blockchain.identity.core.shared.message.dto.MessageDTO;
+import de.iosl.blockchain.identity.core.shared.message.dto.MessageUpdateDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
-import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ public class MessageController {
     private MessageService messageService;
 
     @GetMapping
-    @ApiOperation("Get messages")
     public List<MessageDTO> getMessages(
             @RequestParam(value = "includeSeen", defaultValue = "false") boolean includeSeen) {
         return messageService.getMessages(includeSeen)
@@ -33,7 +31,6 @@ public class MessageController {
     }
 
     @PutMapping("/{id}")
-    @ApiOperation("Updates a message status")
     public MessageDTO updateMessage(
             @PathVariable("id") @NotBlank String id,
             @NotNull @Valid @RequestBody MessageUpdateDTO updatedMessage) {

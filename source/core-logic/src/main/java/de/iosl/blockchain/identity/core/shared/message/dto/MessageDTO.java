@@ -1,7 +1,7 @@
-package de.iosl.blockchain.identity.core.user.messages.dto;
+package de.iosl.blockchain.identity.core.shared.message.dto;
 
-import de.iosl.blockchain.identity.core.user.messages.data.Message;
-import de.iosl.blockchain.identity.core.user.messages.data.MessageType;
+import de.iosl.blockchain.identity.core.shared.message.data.Message;
+import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +19,8 @@ public class MessageDTO {
     private String id;
     @NotNull
     private MessageType messageType;
+
+    private String userId;
     @NotNull
     private Date creationDate;
 
@@ -29,5 +31,6 @@ public class MessageDTO {
         this.messageType = message.getMessageType();
         this.seen = message.isSeen();
         this.creationDate = message.getCreationDate();
+        this.userId = message.getUserId();
     }
 }

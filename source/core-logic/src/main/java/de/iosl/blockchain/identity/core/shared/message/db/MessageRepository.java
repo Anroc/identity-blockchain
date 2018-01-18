@@ -1,6 +1,6 @@
-package de.iosl.blockchain.identity.core.user.messages.db;
+package de.iosl.blockchain.identity.core.shared.message.db;
 
-import de.iosl.blockchain.identity.core.user.messages.data.Message;
+import de.iosl.blockchain.identity.core.shared.message.data.Message;
 import org.springframework.data.couchbase.core.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

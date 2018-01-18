@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.user.messages.dto;
+package de.iosl.blockchain.identity.core.shared.message.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

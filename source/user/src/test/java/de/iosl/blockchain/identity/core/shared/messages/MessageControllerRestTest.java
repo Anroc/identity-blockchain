@@ -1,11 +1,11 @@
-package de.iosl.blockchain.identity.core.user.messages;
+package de.iosl.blockchain.identity.core.shared.messages;
 
 import de.iosl.blockchain.identity.core.user.Application;
 import de.iosl.blockchain.identity.core.user.RestTestSuite;
-import de.iosl.blockchain.identity.core.user.messages.data.Message;
-import de.iosl.blockchain.identity.core.user.messages.data.MessageType;
-import de.iosl.blockchain.identity.core.user.messages.dto.MessageDTO;
-import de.iosl.blockchain.identity.core.user.messages.dto.MessageUpdateDTO;
+import de.iosl.blockchain.identity.core.shared.message.data.Message;
+import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
+import de.iosl.blockchain.identity.core.shared.message.dto.MessageDTO;
+import de.iosl.blockchain.identity.core.shared.message.dto.MessageUpdateDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

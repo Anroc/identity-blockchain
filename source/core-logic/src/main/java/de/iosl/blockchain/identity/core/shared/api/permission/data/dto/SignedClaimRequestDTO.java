@@ -19,17 +19,13 @@ public class SignedClaimRequestDTO extends BasicEthereumDTO {
     private String permissionContractAddress;
 
     @NotNull
-    private List<SignedRequest<ApprovedClaim>> requiredSingedClaims;
-    @NotNull
-    private List<SignedRequest<ApprovedClaim>> optionalSingedClaims;
+    private List<SignedRequest<ApprovedClaim>> singedClaims;
 
     public SignedClaimRequestDTO(String ethID,
             String permissionContractAddress,
-            List<SignedRequest<ApprovedClaim>> requiredSingedClaims,
-            List<SignedRequest<ApprovedClaim>> optionalSingedClaims) {
+            List<SignedRequest<ApprovedClaim>> singedClaims) {
         super(ethID);
         this.permissionContractAddress = permissionContractAddress;
-        this.requiredSingedClaims = requiredSingedClaims;
-        this.optionalSingedClaims = optionalSingedClaims;
+        this.singedClaims = singedClaims;
     }
 }

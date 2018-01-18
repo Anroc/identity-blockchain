@@ -1,8 +1,8 @@
-package de.iosl.blockchain.identity.core.user.messages;
+package de.iosl.blockchain.identity.core.shared.message;
 
-import de.iosl.blockchain.identity.core.user.messages.data.Message;
-import de.iosl.blockchain.identity.core.user.messages.data.MessageType;
-import de.iosl.blockchain.identity.core.user.messages.db.MessageDB;
+import de.iosl.blockchain.identity.core.shared.message.data.Message;
+import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
+import de.iosl.blockchain.identity.core.shared.message.db.MessageDB;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,14 @@ public class MessageService {
         return message;
     }
 
-    public Message updateMessage(@NonNull Message message, @NonNull boolean seen) {
+    public Message createMessage(@NonNull MessageType messageType, @NonNull String userId) {
+        Message message = new Message(UUID.randomUUID().toString(), messageType, false);
+        message.setUserId(userId);
+        messageDB.insert(message);
+        return message;
+    }
+
+    public Message updateMessage(@NonNull Message message, boolean seen) {
         message.setSeen(seen);
         messageDB.update(message);
         return message;

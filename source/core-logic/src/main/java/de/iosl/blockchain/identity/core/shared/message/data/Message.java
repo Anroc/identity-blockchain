@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.user.messages.data;
+package de.iosl.blockchain.identity.core.shared.message.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import lombok.AllArgsConstructor;
@@ -20,6 +20,8 @@ public class Message {
     private String id;
     @Field
     private MessageType messageType;
+    @Field
+    private String userId;
     @Field
     private boolean seen;
     @Field

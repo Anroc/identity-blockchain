@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.user;
 
-import de.iosl.blockchain.identity.core.user.messages.data.Message;
-import de.iosl.blockchain.identity.core.user.messages.db.MessageDB;
+import de.iosl.blockchain.identity.core.shared.message.data.Message;
+import de.iosl.blockchain.identity.core.shared.message.db.MessageDB;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;

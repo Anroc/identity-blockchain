@@ -10,6 +10,7 @@ import lombok.NonNull;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,7 @@ public class UserDTO {
                 getPublicKey(),
                 getEthId(),
                 getRegisterContractAddress(),
+                new ArrayList<>(),
                 getClaims().stream().map(ProviderClaim::new).collect(Collectors.toSet()));
     }
 }
