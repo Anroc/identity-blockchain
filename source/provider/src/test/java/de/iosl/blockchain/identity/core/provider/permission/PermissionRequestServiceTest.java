@@ -19,6 +19,7 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
+import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractListener;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.message.MessageService;
@@ -133,7 +134,14 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         doAnswer(returnsFirstArg()).when(userService).updateUser(any(User.class));
         doReturn(mock(Message.class)).when(messageService).createMessage(MessageType.PERMISSION_REQUEST, user.getId());
 
-        triggerPermissionContractListener(permissionContractAddress, userEthID, url, requiredClaimResult, optionalClaimResult);
+        triggerPermissionContractListener(
+                permissionContractAddress,
+                userEthID,
+                url,
+                requiredClaimResult,
+                optionalClaimResult,
+                providerEthID
+        );
 
         assertThat(user.getPermissionGrands()).hasSize(1);
         PermissionGrand permissionGrand = user.getPermissionGrands().get(0);
@@ -149,11 +157,14 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
             String ethID,
             String url,
             Map<String, String> requiredClaims,
-            Map<String, String> optionalClaims) {
+            Map<String, String> optionalClaims,
+            String providerEthID) {
+
+        PermissionContractContent pcc = new PermissionContractContent(requiredClaims, optionalClaims, providerEthID);
 
         doAnswer(invocation -> {
             PermissionContractListener listener = invocation.getArgumentAt(2, PermissionContractListener.class);
-            listener.callback(requiredClaims, optionalClaims);
+            listener.callback(pcc);
             return null;
         }).when(ebaInterface).registerPermissionContractListener(any(Account.class), anyString(), any(PermissionContractListener.class));
         permissionRequestService.registerPermissionContractListener(pprAddress, ethID, url);

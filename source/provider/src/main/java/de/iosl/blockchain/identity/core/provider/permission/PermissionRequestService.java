@@ -71,15 +71,15 @@ public class PermissionRequestService {
 
     protected void registerPermissionContractListener(String pprAddress, String ethID, String url) {
         ebaInterface.registerPermissionContractListener(keyChain.getAccount(), pprAddress,
-                (requiredClaims, optionalClaims) -> {
+                (permissionContractContent) -> {
                     if (! keyChain.isActive()) {
                         // TODO: better handle error state. e.g. save state in database
                         log.error("PPR received but provider is offline. Failing gracefully.");
                         return;
                     }
 
-                    Map<String, String> claimResult = new HashMap<>(requiredClaims);
-                    claimResult.putAll(optionalClaims);
+                    Map<String, String> claimResult = new HashMap<>(permissionContractContent.getRequiredClaims());
+                    claimResult.putAll(permissionContractContent.getOptionalClaims());
 
                     log.info("Received claims via PPR: requried {} and optional {} for user {}", claimResult, ethID);
 
