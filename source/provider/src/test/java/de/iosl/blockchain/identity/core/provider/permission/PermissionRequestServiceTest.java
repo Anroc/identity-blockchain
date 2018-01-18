@@ -109,10 +109,11 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
 
     @Test
     public void registerPermissionContractListener() {
-        Map<String, String> claimResults = new HashMap<>();
-        claimResults.put(claimID_givenName, buildApprovedClaim(claimID_givenName, providerEthID, userEthID));
-        claimResults.put(claimID_familyName, buildApprovedClaim(claimID_familyName, providerEthID, userEthID));
-        claimResults.put(claimID_age, buildApprovedClaim(claimID_age, providerEthID, userEthID));
+        Map<String, String> requiredClaimResult = new HashMap<>();
+        Map<String, String> optionalClaimResult = new HashMap<>();
+        requiredClaimResult.put(claimID_givenName, buildApprovedClaim(claimID_givenName, providerEthID, userEthID));
+        requiredClaimResult.put(claimID_familyName, buildApprovedClaim(claimID_familyName, providerEthID, userEthID));
+        optionalClaimResult.put(claimID_age, buildApprovedClaim(claimID_age, providerEthID, userEthID));
 
         user.putPermissionGrant(PermissionGrand.init(permissionContractAddress, requiredClaims, optionalClaims));
         assertThat(user.getPermissionGrands().get(0).getRequiredClaimGrants())
@@ -132,7 +133,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         doAnswer(returnsFirstArg()).when(userService).updateUser(any(User.class));
         doReturn(mock(Message.class)).when(messageService).createMessage(MessageType.PERMISSION_REQUEST, user.getId());
 
-        triggerPermissionContractListener(permissionContractAddress, userEthID, url, claimResults);
+        triggerPermissionContractListener(permissionContractAddress, userEthID, url, requiredClaimResult, optionalClaimResult);
 
         assertThat(user.getPermissionGrands()).hasSize(1);
         PermissionGrand permissionGrand = user.getPermissionGrands().get(0);
@@ -143,10 +144,16 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         verify(apiProviderService).requestClaimsForPPR(eq(url), eq(userEthID), eq(permissionContractAddress), anyList());
     }
 
-    private void triggerPermissionContractListener(String pprAddress, String ethID, String url, Map<String, String> claimResults) {
+    private void triggerPermissionContractListener(
+            String pprAddress,
+            String ethID,
+            String url,
+            Map<String, String> requiredClaims,
+            Map<String, String> optionalClaims) {
+
         doAnswer(invocation -> {
             PermissionContractListener listener = invocation.getArgumentAt(2, PermissionContractListener.class);
-            listener.callback(claimResults);
+            listener.callback(requiredClaims, optionalClaims);
             return null;
         }).when(ebaInterface).registerPermissionContractListener(any(Account.class), anyString(), any(PermissionContractListener.class));
         permissionRequestService.registerPermissionContractListener(pprAddress, ethID, url);
