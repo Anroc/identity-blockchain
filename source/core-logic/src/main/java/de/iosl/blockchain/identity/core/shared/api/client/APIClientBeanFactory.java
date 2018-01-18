@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.user.api;
+package de.iosl.blockchain.identity.core.shared.api.client;
 
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.feign.FeignAdapterBeanFactory;
@@ -14,11 +14,7 @@ public class APIClientBeanFactory {
     @Autowired
     private BlockchainIdentityConfig config;
 
-    public APIClient createAPIClient(@NonNull String url) {
-        return feignAdapterBeanFactory.buildBean(APIClient.class, url);
-    }
-
-    public String buildUrl(@NonNull String address, int port) {
-        return feignAdapterBeanFactory.buildURL(config.getProtocol(), address, port);
+    public <T> T createAPIClient(@NonNull String url, @NonNull Class<T> clazz) {
+        return feignAdapterBeanFactory.buildBean(clazz, url);
     }
 }

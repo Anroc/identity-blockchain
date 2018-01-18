@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.core.user.api;
 
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.api.client.APIClientRegistry;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
@@ -17,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.web3j.crypto.ECKeyPair;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,35 +29,26 @@ public class APIClientService {
     @Autowired
     private UserClaimDB userClaimDB;
     @Autowired
-    private APIClientBeanFactory apiClientBeanFactory;
-    @Autowired
     private HeartBeatService heartBeatService;
 
     private final EthereumSigner ethereumSigner;
-    private final Map<String, APIClient> apiClients;
+    private final APIClientRegistry<UserAPIClient> apiClientRegistry;
 
     public APIClientService() {
         this.ethereumSigner = new EthereumSigner();
-        this.apiClients = new HashMap<>();
+        this.apiClientRegistry = new APIClientRegistry<>(UserAPIClient.class);
     }
 
     @PostConstruct
     public void createSubscriber() {
         heartBeatService.subscribe(
                 (event, eventType) -> {
-                    String key = this.registerNewApiClient(event.getUrl());
-
                     if(eventType == EventType.NEW_CLAIMS) {
-                        getAndSaveClaims(key);
+                        apiClientRegistry.register(event.getUrl());
+                        getAndSaveClaims(event.getUrl());
                     }
                 }
         );
-    }
-
-    public String registerNewApiClient(@NonNull String url) {
-        APIClient apiClient = apiClientBeanFactory.createAPIClient(url);
-        apiClients.put(url, apiClient);
-        return url;
     }
 
     private List<UserClaim> requestGetClaims(String url) {
@@ -67,9 +56,7 @@ public class APIClientService {
             throw new ServiceException(HttpStatus.UNAUTHORIZED);
         }
 
-        APIClient apiClient = Optional.ofNullable(apiClients.get(url)).orElseGet(
-                () -> apiClients.get(registerNewApiClient(url))
-        );
+        UserAPIClient userApiClient = apiClientRegistry.getOrRegister(url);
 
         ECKeyPair ecKeyPair = new ECKeyPair(keyChain.getAccount().getPrivateKey(), keyChain.getAccount().getPublicKey());
 
@@ -79,7 +66,7 @@ public class APIClientService {
         );
 
 
-        return apiClient.getClaims(claimRequest)
+        return userApiClient.getClaims(claimRequest)
                 .stream()
                 .map(claimDTO -> new UserClaim(claimDTO, keyChain.getAccount().getAddress()))
                 .collect(Collectors.toList());

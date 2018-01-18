@@ -9,6 +9,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,6 +35,9 @@ public class User {
     private String registerContractAddress;
 
     @Field
+    private List<PermissionGrand> permissionGrands = new ArrayList<>();
+
+    @Field
     @NonNull
     private Set<ProviderClaim> claims;
 
@@ -50,5 +55,21 @@ public class User {
         return claims.stream()
                 .filter(claim -> claim.getId().equals(claimId))
                 .findAny();
+    }
+
+    public User addPermissionGrant(@NonNull PermissionGrand permissionGrand) {
+        permissionGrands.add(permissionGrand);
+        return this;
+    }
+
+    public User putPermissionGrant(@NonNull PermissionGrand permissionGrand) {
+        permissionGrands.removeIf(pg -> pg.getPermissionContractAddress().equals(permissionGrand.getPermissionContractAddress()));
+        return addPermissionGrant(permissionGrand);
+    }
+
+    public Optional<PermissionGrand> findPermissionGrand(@NonNull String smartContractAddress) {
+        return permissionGrands.stream().filter(
+                permissionGrand -> permissionGrand.getPermissionContractAddress().equals(smartContractAddress)
+        ).findAny();
     }
 }

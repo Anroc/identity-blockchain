@@ -48,11 +48,7 @@ public class ApiService {
 
     public List<ProviderClaim> getClaimsForPermissionContract(
             @NonNull String requestingEthID,
-            @NonNull List<ApprovedClaim> requiredClaims,
-            @NonNull List<ApprovedClaim> optionalClaims) {
-
-        List<ApprovedClaim> requestedClaims = new ArrayList<>(requiredClaims);
-        requestedClaims.addAll(optionalClaims);
+            @NonNull List<ApprovedClaim> requestedClaims) {
 
         requestedClaims = filterForRequestingEthID(requestingEthID, requestedClaims);
         List<User> users = requestedUsers(requestedClaims);

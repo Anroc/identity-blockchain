@@ -6,6 +6,7 @@ import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.account.AbstractAuthenticator;
+import de.iosl.blockchain.identity.core.shared.api.ClientAPI;
 import de.iosl.blockchain.identity.core.shared.api.ProviderAPI;
 import de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/")
-public class ApiController extends AbstractAuthenticator implements ProviderAPI {
+public class ApiController extends AbstractAuthenticator implements ClientAPI, ProviderAPI {
 
     @Autowired
     private ECSignatureValidator ecSignatureValidator;
@@ -93,14 +94,11 @@ public class ApiController extends AbstractAuthenticator implements ProviderAPI 
             throw new ServiceException("Senders signature was invalid!", HttpStatus.FORBIDDEN);
         }
 
-        validateSingedRequestList(signedClaimsRequest.getPayload().getRequiredSingedClaims());
-        validateSingedRequestList(signedClaimsRequest.getPayload().getOptionalSingedClaims());
-
+        validateSingedRequestList(signedClaimsRequest.getPayload().getSingedClaims());
 
         List<ProviderClaim> claims = apiService.getClaimsForPermissionContract(
                 signedClaimsRequest.getEthID(),
-                extractApprovedClaims(signedClaimsRequest.getPayload().getRequiredSingedClaims()),
-                extractApprovedClaims(signedClaimsRequest.getPayload().getOptionalSingedClaims())
+                extractApprovedClaims(signedClaimsRequest.getPayload().getSingedClaims())
         );
 
         return claims.stream().map(ClaimDTO::new).collect(Collectors.toList());
