@@ -125,6 +125,8 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         Account account = mock(Account.class);
         ECSignatureValidator validator = mock(ECSignatureValidator.class);
 
+        PermissionContractContent pcc = new PermissionContractContent(requiredClaims, optionalClaims, providerEthID);
+        doReturn(pcc).when(ebaInterface).getPermissionContractContent(account, permissionContractAddress);
         doReturn(account).when(keyChain).getAccount();
         doReturn(true).when(keyChain).isActive();
         doReturn(validator).when(permissionRequestService).getEcSignatureValidator();
@@ -134,14 +136,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         doAnswer(returnsFirstArg()).when(userService).updateUser(any(User.class));
         doReturn(mock(Message.class)).when(messageService).createMessage(MessageType.PERMISSION_REQUEST, user.getId());
 
-        triggerPermissionContractListener(
-                permissionContractAddress,
-                userEthID,
-                url,
-                requiredClaimResult,
-                optionalClaimResult,
-                providerEthID
-        );
+        permissionRequestService.permissionContractUpdateHandler(permissionContractAddress, userEthID, url);
 
         assertThat(user.getPermissionGrands()).hasSize(1);
         PermissionGrand permissionGrand = user.getPermissionGrands().get(0);
@@ -150,24 +145,6 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         assertThat(permissionGrand.getRequiredClaimGrants()).containsOnly(MapEntry.entry(claimID_givenName, true), MapEntry.entry(claimID_familyName, true));
         verify(messageService).createMessage(MessageType.NEW_CLAIMS, user.getId());
         verify(apiProviderService).requestClaimsForPPR(eq(url), eq(userEthID), eq(permissionContractAddress), anyList());
-    }
-
-    private void triggerPermissionContractListener(
-            String pprAddress,
-            String ethID,
-            String url,
-            Map<String, String> requiredClaims,
-            Map<String, String> optionalClaims,
-            String providerEthID) {
-
-        PermissionContractContent pcc = new PermissionContractContent(requiredClaims, optionalClaims, providerEthID);
-
-        doAnswer(invocation -> {
-            PermissionContractListener listener = invocation.getArgumentAt(2, PermissionContractListener.class);
-            listener.callback(pcc);
-            return null;
-        }).when(ebaInterface).registerPermissionContractListener(any(Account.class), anyString(), any(PermissionContractListener.class));
-        permissionRequestService.registerPermissionContractListener(pprAddress, ethID, url);
     }
 
     private String buildApprovedClaim(String claimID, String providerEthID, String userEthID) {
