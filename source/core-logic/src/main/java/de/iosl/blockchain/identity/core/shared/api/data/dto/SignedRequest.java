@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.api.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

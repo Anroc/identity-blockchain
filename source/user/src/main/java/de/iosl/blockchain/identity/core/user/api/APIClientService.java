@@ -6,8 +6,8 @@ import de.iosl.blockchain.identity.core.shared.api.client.APIClientRegistry;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
-import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
-import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.beats.EventType;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import de.iosl.blockchain.identity.core.user.claims.repository.UserClaimDB;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
@@ -46,8 +46,8 @@ public class APIClientService {
         heartBeatService.subscribe(
                 (event, eventType) -> {
                     if(eventType == EventType.NEW_CLAIMS) {
-                        apiClientRegistry.register(event.getUrl());
-                        getAndSaveClaims(event.getUrl());
+                        apiClientRegistry.register(event.getSubject());
+                        getAndSaveClaims(event.getSubject());
                     }
                 }
         );

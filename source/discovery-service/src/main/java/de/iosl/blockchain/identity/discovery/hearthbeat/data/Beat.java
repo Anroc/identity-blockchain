@@ -1,7 +1,9 @@
 package de.iosl.blockchain.identity.discovery.hearthbeat.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
-import de.iosl.blockchain.identity.discovery.data.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.beats.EventType;
+import de.iosl.blockchain.identity.lib.dto.beats.SubjectType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,11 +31,18 @@ public class Beat {
     @Field
     private BeatContent payload;
 
-    public Beat(long messageNumber, String recipientEthID, String senderEthID, String url, EventType eventType, ECSignature signature) {
+    public Beat(
+            long messageNumber,
+            String recipientEthID,
+            String senderEthID,
+            String subject,
+            SubjectType subjectType,
+            EventType eventType,
+            ECSignature signature) {
         this.id = buildID(recipientEthID, messageNumber);
         this.messageNumber = messageNumber;
 
-        this.payload = new BeatContent(senderEthID, url, eventType);
+        this.payload = new BeatContent(senderEthID, subject, subjectType, eventType);
         this.signature = signature;
     }
 

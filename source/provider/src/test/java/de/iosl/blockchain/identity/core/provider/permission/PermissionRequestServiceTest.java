@@ -17,7 +17,7 @@ import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
-import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractListener;

@@ -1,8 +1,8 @@
 package de.iosl.blockchain.identity.discovery.validator;
 
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
-import de.iosl.blockchain.identity.discovery.data.ECSignature;
-import de.iosl.blockchain.identity.discovery.data.RequestDTO;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.RequestDTO;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

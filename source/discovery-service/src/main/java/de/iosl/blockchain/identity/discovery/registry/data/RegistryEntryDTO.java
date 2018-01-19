@@ -1,6 +1,6 @@
 package de.iosl.blockchain.identity.discovery.registry.data;
 
-import de.iosl.blockchain.identity.discovery.data.Payload;
+import de.iosl.blockchain.identity.lib.dto.Payload;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

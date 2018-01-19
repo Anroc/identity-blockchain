@@ -1,13 +1,13 @@
 package de.iosl.blockchain.identity.discovery.hearthbeat;
 
-import de.iosl.blockchain.identity.discovery.data.RequestDTO;
 import de.iosl.blockchain.identity.discovery.hearthbeat.data.Beat;
 import de.iosl.blockchain.identity.discovery.hearthbeat.data.HeartBeatInfoDTO;
-import de.iosl.blockchain.identity.discovery.hearthbeat.data.HeartBeatRequest;
 import de.iosl.blockchain.identity.discovery.hearthbeat.data.LifeState;
 import de.iosl.blockchain.identity.discovery.registry.DiscoveryService;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.discovery.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.lib.dto.RequestDTO;
+import de.iosl.blockchain.identity.lib.dto.beats.HeartBeatRequest;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.NotBlank;
