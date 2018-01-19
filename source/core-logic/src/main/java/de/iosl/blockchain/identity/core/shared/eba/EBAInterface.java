@@ -70,6 +70,17 @@ public interface EBAInterface {
             Set<String> optionalClaims);
 
     /**
+     * Returns the content of the given permission contract.
+     *
+     * @param account the account performing the action
+     * @param smartContractAddress the address of the permission contract
+     * @return the object holding the requested permissions and the requester's address.
+     * See {@link #createPermissionContract(Account, String, String, Set, Set)} for information how to where to find
+     * this information
+     */
+    PermissionContractContent getPermissionContractContent(Account account, String smartContractAddress);
+
+    /**
      * Approves the permission contract by putting a signed query into it.
      *
      * @param account the account performing the action
