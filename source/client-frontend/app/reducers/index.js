@@ -4,6 +4,9 @@
 
 import {
   CHANGE_REQUEST_FORM,
+  CHANGE_USER_STATE,
+  CHANGE_PROVIDER_STATE,
+  CHANGE_THIRD_PARTY_STATE,
   CHANGE_FORM,
   SET_AUTH,
   SENDING_REQUEST,
@@ -14,6 +17,20 @@ import auth from '../auth';
 
 // The initial application state
 const initialState = {
+  userState: {
+    password: '',
+    ethID: '',
+    qrCode: [],
+    claims: [],
+  },
+  providerState: {
+    password: '',
+    ethID: '',
+  },
+  thirdPartyState: {
+    password: '',
+    ethID: '',
+  },
   formState: {
     username: '',
     password: '',
@@ -36,6 +53,14 @@ function reducer(state = initialState, action) {
   switch (action.type) {
     case CHANGE_REQUEST_FORM:
       return { ...state, requestFormState: action.newRequestFormState };
+    case CHANGE_USER_STATE:
+      return { ...state, userState: action.newUserState };
+    case CHANGE_PROVIDER_STATE:
+      return { ...state, providerState: action.newProviderState };
+    case CHANGE_THIRD_PARTY_STATE:
+      return { ...state, thirdPartyState: action.newThirdPartyState };
+
+    // stable
     case CHANGE_FORM:
       return { ...state, formState: action.newFormState };
     case SET_AUTH:

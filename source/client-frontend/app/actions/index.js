@@ -12,7 +12,7 @@ import {
   REGISTER_REQUEST,
   LOGOUT,
   REQUEST_ERROR,
-  CLEAR_ERROR,
+  CLEAR_ERROR, CHANGE_USER_STATE, CHANGE_PROVIDER_STATE, CHANGE_THIRD_PARTY_STATE,
 } from './constants';
 
 /**
@@ -25,6 +25,27 @@ import {
  */
 export function changeRequestForm(newRequestFormState) {
   return { type: CHANGE_REQUEST_FORM, newRequestFormState };
+}
+/**
+ * Sets the request form state
+ * @returns {{type, newRequestFormState: *}}
+ */
+export function changeUserState(newUserState) {
+  return { type: CHANGE_USER_STATE, newUserState };
+}
+/**
+ * Sets the request form state
+ * @returns {{type, newRequestFormState: *}}
+ */
+export function changeProviderState(newProviderState) {
+  return { type: CHANGE_PROVIDER_STATE, newProviderState };
+}
+/**
+ * Sets the request form state
+ * @returns {{type, newRequestFormState: *}}
+ */
+export function changeThirdPartyState(newThirdPartyState) {
+  return { type: CHANGE_THIRD_PARTY_STATE, newThirdPartyState };
 }
 
 /**
