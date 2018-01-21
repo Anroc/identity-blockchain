@@ -16,12 +16,12 @@ const auth = {
   * @param  {string} username The username of the user
   * @param  {string} password The password of the user
   */
-  login(username, password) {
+  login(username, password, accountType) {
     if (auth.loggedIn()) {
       return Promise.resolve(true);
     }
     // Post a fake request
-    return request.post('/login', { username, password })
+    return request.post('/login', { username, password, accountType })
       .then((response) => {
         // Save token to local storage
         localStorage.token = response.token;
@@ -44,12 +44,13 @@ const auth = {
   * Registers a user and then logs them in
   * @param  {string} username The username of the user
   * @param  {string} password The password of the user
+   * @param {string} accountType
   */
-  register(username, password) {
+  register(username, password, accountType) {
     // Post a fake request
-    return request.post('/register', { username, password })
+    return request.post('/register', { username, password, accountType })
       // Log user in after registering
-      .then(() => auth.login(username, password));
+      .then(() => auth.login(username, password, accountType));
   },
   onChange() {},
 };

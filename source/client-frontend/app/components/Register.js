@@ -9,10 +9,6 @@ import request from '../auth/request';
 class Register extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      statusCode: -1,
-      swaggerData: {},
-    };
     this.register = this.register.bind(this);
   }
 
@@ -42,9 +38,8 @@ class Register extends Component {
     console.log(`actual ${actualRequest}`);
   }
 
-  register(username, password) {
-    const type = 'user';
-    this.props.dispatch(registerRequest({ username, password, accountType: type }));
+  register(username, password, accountType) {
+    this.props.dispatch(registerRequest({ username, password, accountType}));
     this.sendRegisterRequest(password);
   }
 

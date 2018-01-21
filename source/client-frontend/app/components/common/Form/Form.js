@@ -85,6 +85,10 @@ class Form extends Component {
 
     return (
       <form className="form" onSubmit={this.onSubmit}>
+        <div>
+          account type
+          {this.props.data.accountType}
+        </div>
         {error ? <ErrorMessage error={error} /> : null}
         <div className="form__field-wrapper">
           <div className="container text-center">

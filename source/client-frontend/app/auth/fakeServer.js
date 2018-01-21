@@ -40,7 +40,7 @@ const server = {
  * @param  {string} username The username of the user
  * @param  {string} password The password of the user
  */
-  login(username, password) {
+  login(username, password, accountType) {
     const userExists = this.doesUserExist(username);
 
     return new Promise((resolve, reject) => {
@@ -71,7 +71,7 @@ const server = {
  * @param  {string} username The username of the user
  * @param  {string} password The password of the user
  */
-  register(username, password) {
+  register(username, password, accountType) {
     return new Promise((resolve, reject) => {
       // If the username isn't used, hash the password with bcrypt to store it in localStorage
       if (!this.doesUserExist(username)) {

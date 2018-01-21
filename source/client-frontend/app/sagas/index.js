@@ -107,10 +107,13 @@ export function* loginFlow() {
       console.log('!!!!!!!!!!!!! account type: ', accountType);
 
       if (accountType === 'user') {
+        console.log('user');
         forwardTo('/dashboard'); // Go to dashboard page
       } else if (accountType === 'provider') {
+        console.log('provider');
         forwardTo('/provider');
       } else {
+        console.log('thirdparty');
         forwardTo('/thirdParty');
       }
     }
@@ -141,7 +144,7 @@ export function* registerFlow() {
     // We always listen to `REGISTER_REQUEST` actions
     const request = yield take(REGISTER_REQUEST);
     const { username, password, accountType } = request.data;
-
+    console.log('register flow: ', accountType);
     // We call the `authorize` task with the data, telling it that we are registering a user
     // This returns `true` if the registering was successful, `false` if not
     const wasSuccessful = yield call(authorize, { username, password, accountType, isRegistering: true });

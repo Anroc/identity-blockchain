@@ -5,7 +5,6 @@ class Provider extends Component {
   constructor() {
     super();
     this.state = {
-      swaggerData: '',
     };
   }
 
