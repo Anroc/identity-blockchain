@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.ds.beats;
 
-import de.iosl.blockchain.identity.core.shared.ds.beats.data.Beat;
+import de.iosl.blockchain.identity.lib.dto.beats.Beat;
+import de.iosl.blockchain.identity.lib.dto.beats.SubjectType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,12 +15,14 @@ import java.util.Date;
 public class Event {
 
     private String ethID;
-    private String url;
+    private String subject;
     private Date createdAt;
+    private SubjectType subjectType;
 
     public Event(@NonNull Beat beat) {
         this.ethID = beat.getPayload().getEthID();
-        this.url = beat.getPayload().getUrl();
+        this.subject = beat.getPayload().getSubject();
+        this.subjectType = beat.getPayload().getSubjectType();
         this.createdAt = beat.getCreatedAt();
     }
 }

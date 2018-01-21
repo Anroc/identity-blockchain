@@ -12,9 +12,12 @@ import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
+import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.message.MessageService;
 import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
+import de.iosl.blockchain.identity.lib.dto.beats.SubjectType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.Getter;
 import lombok.NonNull;
@@ -43,6 +46,8 @@ public class PermissionRequestService {
     private EBAInterface ebaInterface;
     @Autowired
     private KeyChain keyChain;
+    @Autowired
+    private HeartBeatService heartBeatService;
 
     @Getter
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -66,36 +71,52 @@ public class PermissionRequestService {
             updateUser(userOptional.get(), pprAddress, permissionRequest);
         }
 
-        registerPermissionContractListener(pprAddress, permissionRequest.getEthID(), permissionRequest.getUrl());
+        registerPermissionContractListener(permissionRequest.getEthID(), permissionRequest.getUrl());
     }
 
-    protected void registerPermissionContractListener(String pprAddress, String ethID, String url) {
-        ebaInterface.registerPermissionContractListener(keyChain.getAccount(), pprAddress,
-                (permissionContractContent) -> {
-                    if (! keyChain.isActive()) {
-                        // TODO: better handle error state. e.g. save state in database
-                        log.error("PPR received but provider is offline. Failing gracefully.");
-                        return;
+    protected void registerPermissionContractListener(String ethID, String url) {
+        heartBeatService.subscribe(
+                (event, eventType) -> {
+                    switch (eventType) {
+                        case PPR_UPDATE:
+                            log.info("Received new PPR update event for ethID {}", event.getSubject());
+                            if(event.getSubjectType() != SubjectType.ETHEREUM_ADDRESS) {
+                                throw new IllegalStateException("Event was a PPR update but not of type Etherem Address");
+                            }
+                            permissionContractUpdateHandler(event.getSubject(), ethID, url);
+                            break;
                     }
+                }
+        );
+    }
 
-                    Map<String, String> claimResult = new HashMap<>(permissionContractContent.getRequiredClaims());
-                    claimResult.putAll(permissionContractContent.getOptionalClaims());
+    protected void permissionContractUpdateHandler(String pprAddress, String ethID, String url) {
+        PermissionContractContent contractContent =
+                ebaInterface.getPermissionContractContent(keyChain.getAccount(), pprAddress);
 
-                    log.info("Received claims via PPR: requried {} and optional {} for user {}", claimResult, ethID);
+        if (! keyChain.isActive()) {
+            // TODO: better handle error state. e.g. save state in database
+            log.error("PPR received but provider is offline. Failing gracefully.");
+            return;
+        }
 
-                    List<SignedRequest<ApprovedClaim>> approvedClaims = mapResultsToApprovedClaimRequest(claimResult);
-                    log.info("Successful extracted {} approvedClaims.", approvedClaims.size());
+        Map<String, String> claimResult = new HashMap<>(contractContent.getRequiredClaims());
+        claimResult.putAll(contractContent.getOptionalClaims());
 
-                    validateApprovedClaims(approvedClaims);
-                    log.info("Successful validated {} approvedClaims for user [{}]", ethID);
+        log.info("Received claims via PPR: requried {} and optional {} for user {}", claimResult, ethID);
 
-                    List<ProviderClaim> claims = apiProviderService.requestClaimsForPPR(url, ethID, pprAddress, approvedClaims);
+        List<SignedRequest<ApprovedClaim>> approvedClaims = mapResultsToApprovedClaimRequest(claimResult);
+        log.info("Successful extracted {} approvedClaims.", approvedClaims.size());
 
-                    User user = updateUserClaims(ethID, claims);
-                    updateUserPermissionGrants(user, pprAddress, claims);
+        validateApprovedClaims(approvedClaims);
+        log.info("Successful validated {} approvedClaims for user [{}]", ethID);
 
-                    messageService.createMessage(MessageType.NEW_CLAIMS, user.getId());
-                });
+        List<ProviderClaim> claims = apiProviderService.requestClaimsForPPR(url, ethID, pprAddress, approvedClaims);
+
+        User user = updateUserClaims(ethID, claims);
+        updateUserPermissionGrants(user, pprAddress, claims);
+
+        messageService.createMessage(MessageType.NEW_CLAIMS, user.getId());
     }
 
     @SuppressWarnings("unchecked")

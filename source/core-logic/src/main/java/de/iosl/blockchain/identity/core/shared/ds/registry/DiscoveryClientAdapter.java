@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.ds.registry;
 
 import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
-import de.iosl.blockchain.identity.core.shared.ds.dto.RequestDTO;
+import de.iosl.blockchain.identity.lib.dto.RequestDTO;
 import feign.Headers;
 import feign.Param;
 import feign.QueryMap;

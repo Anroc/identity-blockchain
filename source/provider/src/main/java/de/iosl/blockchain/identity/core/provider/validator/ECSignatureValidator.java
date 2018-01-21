@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.provider.validator;
 
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
-import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;

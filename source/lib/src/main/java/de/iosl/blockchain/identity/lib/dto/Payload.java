@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.discovery.data;
+package de.iosl.blockchain.identity.lib.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
