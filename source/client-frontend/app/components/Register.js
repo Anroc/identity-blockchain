@@ -1,32 +1,21 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Form from './common/Form';
+import Form from './common/Form/Form';
 
 import { registerRequest } from '../actions';
+import userRegistrationRequest from '../auth/registration/userRegistrationRequest';
+import bankRegistrationRequest from '../auth/registration/bankRegistrationRequest';
 import request from '../auth/request';
 
 class Register extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      statusCode: -1,
-    };
     this.register = this.register.bind(this);
   }
 
-  sendRequest(password) {
-    const optionsForServer = {
-      method: 'GET',
-      headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      mode: 'cors',
-      credentials: 'include',
-    };
-    console.log(optionsForServer);
-
+  sendRegisterRequest(password) {
+    console.log('sending register request');
     const options = {
       method: 'POST',
       headers: {
@@ -40,43 +29,37 @@ class Register extends Component {
       credentials: 'include',
     };
 
-    /*
-    const actualReq = fetch('http://srv01.snet.tu-berlin.de:1112/account/register', options)
-      .then((response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response;
-        }
-
-        const error = new Error(response.statusText);
-        error.response = response;
-        throw error;
-      })
-      .then((response) => {
-        if (response.status === 204 || response.status === 205) {
-          return null;
-        }
-        return response.json();
-      })
-      .then(json) => {
-
-    })
-    */
-
     const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/register', options)
       .then((json) => {
         console.log(`content' + ${JSON.stringify(json)}`);
         this.setState({
-          swaggerData: JSON.stringify(json),
+          ethId: json,
         });
-        console.log(`content in state: ${this.state.swaggerData}`);
       });
     console.log(`actual ${actualRequest}`);
   }
 
-  register(username, password) {
-    const type = 'user';
-    this.props.dispatch(registerRequest({ username, password, accountType: type }));
-    this.sendRequest(password);
+  /**
+   * h
+   * @param {string} username
+   * @param {string} password
+   * @param {string} accountType
+   */
+  register(username, password, accountType) {
+    this.props.dispatch(registerRequest({ username, password, accountType, domainName: '' }));
+    switch (accountType) {
+      case 'user':
+        userRegistrationRequest(password);
+        break;
+      case 'bank':
+        bankRegistrationRequest(password);
+        break;
+      default:
+        break;
+    }
+    /*
+      this.sendRegisterRequest(password);
+    */
   }
 
   render() {
@@ -105,9 +88,9 @@ class Register extends Component {
 }
 
 Register.propTypes = {
-  data: React.PropTypes.object,
-  history: React.PropTypes.object,
-  dispatch: React.PropTypes.func,
+  data: PropTypes.object,
+  history: PropTypes.object,
+  dispatch: PropTypes.func,
 };
 
 function select(state) {

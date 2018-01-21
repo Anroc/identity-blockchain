@@ -22,15 +22,16 @@ import {
 
 /**
  * Effect to handle authorization
- * @param  {string} username               The username of the user
- * @param  {string} password               The password of the user
- * @param  {object} options                Options
- * @param  {boolean} options.isRegistering Is this a register request?
+ * @param  {string}  username               The username of the user
+ * @param  {string}  password               The password of the user
+ * @param  {object}  options                Options
+ * @param  {boolean} options.isRegistering  Is this a register request?
  */
 export function* authorize({ username, password, accountType, isRegistering }) {
   // We send an action that tells Redux we're sending a request
   yield put({ type: SENDING_REQUEST, sending: true });
 
+  console.log(`authorizing account type: ${accountType}`);
   // We then try to register or log in the user, depending on the request
   try {
     const salt = genSalt(username);
@@ -87,6 +88,8 @@ export function* loginFlow() {
     const request = yield take(LOGIN_REQUEST);
     const { username, password, accountType } = request.data;
 
+    console.log('!!!!!!!!!!!!! account type: ', accountType);
+
     // A `LOGOUT` action may happen while the `authorize` effect is going on, which may
     // lead to a race condition. This is unlikely, but just in case, we call `race` which
     // returns the "winner", i.e. the one that finished first
@@ -100,7 +103,9 @@ export function* loginFlow() {
       // ...we send Redux appropiate actions
       yield put({ type: SET_AUTH, newAuthState: true }); // User is logged in (authorized)
       yield put({ type: CHANGE_FORM, newFormState: { username: '', password: '', accountType: '' } }); // Clear form
-      forwardTo('/dashboard'); // Go to dashboard page
+
+      console.log('login account type: ', accountType);
+      forwardTo(`/${accountType}`);
     }
   }
 }
@@ -129,16 +134,16 @@ export function* registerFlow() {
     // We always listen to `REGISTER_REQUEST` actions
     const request = yield take(REGISTER_REQUEST);
     const { username, password, accountType } = request.data;
-
+    console.log('register flow: ', accountType);
     // We call the `authorize` task with the data, telling it that we are registering a user
     // This returns `true` if the registering was successful, `false` if not
     const wasSuccessful = yield call(authorize, { username, password, accountType, isRegistering: true });
 
-    // If we could register a user, we send the appropiate actions
+    // If we could register a user, we send the appropriate actions
     if (wasSuccessful) {
       yield put({ type: SET_AUTH, newAuthState: true }); // User is logged in (authorized) after being registered
       yield put({ type: CHANGE_FORM, newFormState: { username: '', password: '', accountType: '' } }); // Clear form
-      forwardTo('/dashboard'); // Go to dashboard page
+      forwardTo(`/${accountType}`); // user, provider and thirdParty
     }
   }
 }

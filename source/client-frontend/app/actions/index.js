@@ -13,6 +13,9 @@ import {
   LOGOUT,
   REQUEST_ERROR,
   CLEAR_ERROR,
+  CHANGE_USER_STATE,
+  CHANGE_GOVERNMENT_STATE,
+  CHANGE_BANK_STATE,
 } from './constants';
 
 /**
@@ -26,6 +29,27 @@ import {
 export function changeRequestForm(newRequestFormState) {
   return { type: CHANGE_REQUEST_FORM, newRequestFormState };
 }
+/**
+ * Sets the request form state
+ * @returns {{type, newRequestFormState: *}}
+ */
+export function changeUserState(newUserState) {
+  return { type: CHANGE_USER_STATE, newUserState };
+}
+/**
+ * Sets the request form state
+ * @returns {{type, newRequestFormState: *}}
+ */
+export function changeGovernmentState(newGovernmentState) {
+  return { type: CHANGE_GOVERNMENT_STATE, newGovernmentState };
+}
+/**
+ * Sets the request form state
+ * @returns {{type, newRequestFormState: *}}
+ */
+export function changeBankState(newBankState) {
+  return { type: CHANGE_BANK_STATE, newBankState };
+}
 
 /**
  * Sets the form state
@@ -33,6 +57,7 @@ export function changeRequestForm(newRequestFormState) {
  * @param  {string} newFormState.username The new text of the username input field of the form
  * @param  {string} newFormState.password The new text of the password input field of the form
  * @param  {string} newFormState.accountType
+ * @param  {string} newFormState.domainName
  */
 export function changeForm(newFormState) {
   return { type: CHANGE_FORM, newFormState };
@@ -60,6 +85,7 @@ export function sendingRequest(sending) {
  * @param  {string} data.username The username of the user to log in
  * @param  {string} data.password The password of the user to log in
  * @param  {string} data.accountType
+ * @param  {string} data.domainName
  */
 export function loginRequest(data) {
   return { type: LOGIN_REQUEST, data };
@@ -78,6 +104,7 @@ export function logout() {
  * @param  {string} data.username The username of the user to register
  * @param  {string} data.password The password of the user to register
  * @param  {string} data.accountType
+ * @param  {string} data.domainName
  */
 export function registerRequest(data) {
   return { type: REGISTER_REQUEST, data };

@@ -7,6 +7,11 @@ import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
 import { createLogger } from 'redux-logger';
+
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import createMuiTheme from 'material-ui/styles/createMuiTheme';
+import { grey, amber, red } from 'material-ui/colors';
+
 import reducer from './reducers';
 import rootSaga from './sagas';
 import { clearError } from './actions';
@@ -17,10 +22,10 @@ import App from './components/App';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
-import Dashboard from './components/Dashboard';
+import User from './components/User';
 import NotFound from './components/NotFound';
-import IOSLProvider from './components/IOSLProvider';
-import ThirdParty from './components/ThirdParty';
+import Government from './components/Government';
+import Bank from './components/Bank';
 
 const logger = createLogger({
   // Ignore `CHANGE_FORM` actions in the logger, since they fire after every keystroke
@@ -44,9 +49,9 @@ function checkAuth(nextState, replace) {
 
   store.dispatch(clearError());
 
-  // Check if the path isn't dashboard. That way we can apply specific logic to
+  // Check if the path isn't user. That way we can apply specific logic to
   // display/render the path we want to
-  if (nextState.location.pathname !== '/dashboard') {
+  if (nextState.location.pathname !== '/user') {
     if (loggedIn) {
       if (nextState.location.state && nextState.location.pathname) {
         replace(nextState.location.pathname);
@@ -68,26 +73,47 @@ function checkAuth(nextState, replace) {
   }
 }
 
+
+const muiTheme = createMuiTheme({
+  palette: {
+    primary: grey,
+    accent: amber,
+    error: red,
+    type: 'light',
+  },
+});
+
 // Mostly boilerplate, except for the routes. These are the pages you can go to,
 // which are all wrapped in the App component, which contains the navigation etc
 class LoginFlow extends Component {
+
+  constructor() {
+    super();
+    this.state = {
+      ethID: '',
+    };
+  }
+
+
   render() {
     return (
-      <Provider store={store}>
-        <Router history={browserHistory}>
-          <Route component={App}>
-            <Route path="/" component={Home} />
-            <Route onEnter={checkAuth}>
-              <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
-              <Route path="/dashboard" component={Dashboard} />
+      <MuiThemeProvider theme={muiTheme}>
+        <Provider store={store}>
+          <Router history={browserHistory}>
+            <Route component={App}>
+              <Route path="/" component={Home} />
+              <Route onEnter={checkAuth}>
+                <Route path="/login" component={Login} />
+                <Route path="/register" component={Register} />
+                <Route path="/user" component={User} />
+              </Route>
+              <Route path="/government" component={Government} />
+              <Route path="/bank" component={Bank} />
+              <Route path="*" component={NotFound} />
             </Route>
-            <Route path="/provider" component={IOSLProvider} />
-            <Route path="/thirdParty" component={ThirdParty} />
-            <Route path="*" component={NotFound} />
-          </Route>
-        </Router>
-      </Provider>
+          </Router>
+        </Provider>
+      </MuiThemeProvider>
     );
   }
 }

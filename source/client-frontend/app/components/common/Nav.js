@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
-import LoadingButton from './LoadingButton';
+import PropTypes from 'prop-types';
 
+import LoadingButton from './LoadingButton';
 import { logout, clearError } from '../../actions';
 
 class Nav extends Component {
@@ -22,7 +23,8 @@ class Nav extends Component {
   render() {
     const navButtons = this.props.loggedIn ? (
       <div>
-        <Link to="/dashboard" className="btn btn--dash btn--nav">Dashboard</Link>
+        <Link to="/user" className="btn btn--dash btn--nav">User</Link>
+        <Link to="/provider" className="btn btn--dash btn--nav">Government</Link>
         {this.props.currentlySending ? (
           <LoadingButton className="btn--nav" />
         ) : (
@@ -57,9 +59,9 @@ class Nav extends Component {
 }
 
 Nav.propTypes = {
-  loggedIn: React.PropTypes.bool,
-  currentlySending: React.PropTypes.bool,
-  dispatch: React.PropTypes.func,
+  loggedIn: PropTypes.bool,
+  currentlySending: PropTypes.bool,
+  dispatch: PropTypes.func,
 };
 
 export default Nav;

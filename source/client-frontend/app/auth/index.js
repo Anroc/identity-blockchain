@@ -1,13 +1,13 @@
-import request from './fakeRequest'
+import request from './fakeRequest';
 
-let localStorage
+let localStorage;
 
 // If we're testing, use a local storage polyfill
 if (global.process && process.env.NODE_ENV === 'test') {
-  localStorage = require('localStorage')
+  localStorage = require('localStorage');
 } else {
   // If not, use the browser one
-  localStorage = global.window.localStorage
+  localStorage = global.window.localStorage;
 }
 
 const auth = {
@@ -16,41 +16,43 @@ const auth = {
   * @param  {string} username The username of the user
   * @param  {string} password The password of the user
   */
-  login (username, password) {
-    if (auth.loggedIn()) return Promise.resolve(true)
-
+  login(username, password, accountType) {
+    if (auth.loggedIn()) {
+      return Promise.resolve(true);
+    }
     // Post a fake request
-    return request.post('/login', {username, password})
-      .then(response => {
+    return request.post('/login', { username, password, accountType })
+      .then((response) => {
         // Save token to local storage
-        localStorage.token = response.token
-        return Promise.resolve(true)
-      })
+        localStorage.token = response.token;
+        return Promise.resolve(true);
+      });
   },
   /**
   * Logs the current user out
   */
-  logout () {
-    return request.post('/logout')
+  logout() {
+    return request.post('/logout');
   },
   /**
   * Checks if a user is logged in
   */
-  loggedIn () {
-    return !!localStorage.token
+  loggedIn() {
+    return !!localStorage.token;
   },
   /**
   * Registers a user and then logs them in
   * @param  {string} username The username of the user
   * @param  {string} password The password of the user
+   * @param {string} accountType
   */
-  register (username, password) {
+  register(username, password, accountType) {
     // Post a fake request
-    return request.post('/register', {username, password})
+    return request.post('/register', { username, password, accountType })
       // Log user in after registering
-      .then(() => auth.login(username, password))
+      .then(() => auth.login(username, password, accountType));
   },
-  onChange () {}
-}
+  onChange() {},
+};
 
-export default auth
+export default auth;
