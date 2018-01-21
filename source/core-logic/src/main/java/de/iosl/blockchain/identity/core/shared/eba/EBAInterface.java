@@ -62,7 +62,7 @@ public interface EBAInterface {
      * @param optionalClaims a set of strings (claim ids) that are not required by the requesting provider
      * @return the address of this smart contract
      */
-    String createPermissionContract(
+    String deployPermissionContract(
             Account sender,
             String recipient,
             String requesterAddress,
@@ -75,7 +75,7 @@ public interface EBAInterface {
      * @param account the account performing the action
      * @param smartContractAddress the address of the permission contract
      * @return the object holding the requested permissions and the requester's address.
-     * See {@link #createPermissionContract(Account, String, String, Set, Set)} for information how to where to find
+     * See {@link #deployPermissionContract(Account, String, String, Set, Set)} for information how to where to find
      * this information
      */
     PermissionContractContent getPermissionContractContent(Account account, String smartContractAddress);

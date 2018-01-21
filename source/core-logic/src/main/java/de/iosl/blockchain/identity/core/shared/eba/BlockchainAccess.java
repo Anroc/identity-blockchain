@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.core.shared.eba;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.eba.main.AccountAccess;
+import de.iosl.blockchain.identity.core.shared.eba.main.PermissionContractUtils;
 import de.iosl.blockchain.identity.core.shared.eba.main.RegistrarContractUtils;
 import lombok.Data;
 import lombok.NonNull;
@@ -31,6 +32,9 @@ public class BlockchainAccess implements EBAInterface {
     private RegistrarContractUtils registrarContractUtils;
 
     @Autowired
+    private PermissionContractUtils permissionContractUtils;
+
+    @Autowired
     private Web3j web3j;
 
     @Bean
@@ -52,8 +56,7 @@ public class BlockchainAccess implements EBAInterface {
 
     @Override
     public String deployRegistrarContract(Account account){
-        Contract contract = registrarContractUtils.deployRegistrarContract(account, web3j);
-        return contract.getContractAddress();
+        return registrarContractUtils.deployRegistrarContract(account, web3j);
     }
 
     @Override
@@ -67,20 +70,19 @@ public class BlockchainAccess implements EBAInterface {
     }
 
     @Override
-    public void approvePermissionContract(Account account, String smartContractAddress, Map<String, String> approvedClaims) {
-        // TODO: implement
-    }
-
-    @Override
-    public String createPermissionContract(Account sender, String recipient, String requesterAddress, Set<String> requiredClaims, Set<String> optionalClaims) {
-        // TODO: implement
-        return null;
+    public String deployPermissionContract(Account sender, String recipient, String requesterAddress, Set<String> requiredClaims, Set<String> optionalClaims) {
+        return permissionContractUtils.deployPermissionContract(sender ,recipient, requesterAddress, requiredClaims, optionalClaims, web3j);
     }
 
     @Override
     public PermissionContractContent getPermissionContractContent(Account account, String smartContractAddress) {
-        // TODO: implement
-        return null;
+        //will be called by the user and the provider, who requested the claims
+        return permissionContractUtils.getPermissionContractContent(account, smartContractAddress, web3j);
+    }
+
+    @Override
+    public void approvePermissionContract(Account account, String smartContractAddress, Map<String, String> approvedClaims) {
+        permissionContractUtils.setApprovedClaims(account, smartContractAddress, approvedClaims, web3j);
     }
 
     @Override

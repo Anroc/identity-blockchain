@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @Data
 @RequiredArgsConstructor
-public class PermissionContractContent {
+public class PermissionContractContent implements Serializable{
 
     /**
      * the map of claimID to user base64 approvals of required claims.

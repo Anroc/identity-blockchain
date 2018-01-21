@@ -122,7 +122,7 @@ public class ProviderAPIRestTest extends RestTestSuite {
 
         Set<String> requiredClaim = Sets.newHashSet(claimID);
 
-        doReturn(pprEthID).when(ebaInterface).createPermissionContract(
+        doReturn(pprEthID).when(ebaInterface).deployPermissionContract(
                 any(Account.class),
                 eq(user.getEthId()),
                 eq(REQUESTING_PROVIDER_CREDENTIALS.getAddress()),
@@ -149,7 +149,7 @@ public class ProviderAPIRestTest extends RestTestSuite {
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody().getEthID()).isEqualTo(pprEthID);
-        verify(ebaInterface).createPermissionContract(
+        verify(ebaInterface).deployPermissionContract(
                 any(Account.class),
                 eq(user.getEthId()),
                 eq(REQUESTING_PROVIDER_CREDENTIALS.getAddress()),
