@@ -20,6 +20,7 @@ class User extends Component {
 
   componentDidMount() {
     console.log('user mounted');
+    this.getUserInformation();
   }
 
   // todo change password
@@ -39,11 +40,10 @@ class User extends Component {
       credentials: 'include',
     };
 
-    // const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
-    request('http://srv01.snet.tu-berlin.de:8100/user', getUserInformationOptions)
+    request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
       .then((json) => {
         this.setState({
-          user: json[0].claims,
+          user: json,
         });
       });
   }
