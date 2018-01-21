@@ -55,7 +55,6 @@ public class PermissionContractUtils {
                     BigInteger.valueOf(0)
             );
             if (contract == null)
-
                 throw new NullPointerException("Contract is null. Contract does not exists");
 
             PermissionContractContent permissionContractContent = (PermissionContractContent) ObjectToString.fromString(contract.getClaims().send());
@@ -67,7 +66,7 @@ public class PermissionContractUtils {
     }
 
 
-    public void setApprovedClaims(Account account, String smartContractAddress, Map<String, String> approvedClaims, Web3j web3j) {
-        
+    public void setApprovedClaims(Account account, String smartContractAddress, PermissionContractContent permissionContractContent, Web3j web3j) {
+
     }
 }
