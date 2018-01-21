@@ -56,6 +56,8 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
     private KeyChain keyChain;
     @SpyBean
     private APIProviderService apiProviderService;
+    @SpyBean
+    private PermissionRequestService permissionRequestService;
 
     @BeforeClass
     public static void setup() throws IOException, CipherException {
@@ -81,8 +83,7 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
     public void createPermissionRequest_existingUser() {
         PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(userEthID, url, requiredClaims, optionalClaims);
 
-        doNothing().when(ebaInterface)
-                .registerPermissionContractListener(any(Account.class), anyString(), any(PermissionContractListener.class));
+        doNothing().when(permissionRequestService).registerPermissionContractListener(userEthID, url);
         doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(url, userEthID, requiredClaims, optionalClaims);
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
@@ -106,8 +107,7 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
         final String otherEthID = "0xcafeaffe";
         PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(otherEthID, url, requiredClaims, optionalClaims);
 
-        doNothing().when(ebaInterface)
-                .registerPermissionContractListener(any(Account.class), anyString(), any(PermissionContractListener.class));
+        doNothing().when(permissionRequestService).registerPermissionContractListener(userEthID, url);
         doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(url, otherEthID, requiredClaims, optionalClaims);
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
