@@ -3,7 +3,6 @@ package de.iosl.blockchain.identity.core.shared.eba;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.eba.main.AccountAccess;
-import de.iosl.blockchain.identity.core.shared.eba.main.PermissionContractUtils;
 import de.iosl.blockchain.identity.core.shared.eba.main.RegistrarContractUtils;
 import lombok.Data;
 import lombok.NonNull;
