@@ -141,7 +141,7 @@ public class PermissionService {
 
         try {
             String json = objectMapper.writeValueAsString(signedRequest);
-            return new String(Base64.decode(json));
+            return new String(Base64.encode(json.getBytes()));
         } catch (JsonProcessingException e) {
             throw new UncheckedIOException(e);
         }

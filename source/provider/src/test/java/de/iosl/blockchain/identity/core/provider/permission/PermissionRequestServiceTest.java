@@ -18,14 +18,13 @@ import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
-import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
-import de.iosl.blockchain.identity.core.shared.eba.PermissionContractListener;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.message.MessageService;
 import de.iosl.blockchain.identity.core.shared.message.data.Message;
 import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import org.assertj.core.data.MapEntry;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.Before;
@@ -41,7 +40,6 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

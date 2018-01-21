@@ -36,6 +36,11 @@ public class PermissionController extends AbstractAuthenticator {
 
         permissionRequest.setOptionalClaims(permissionRequestDTO.getOptionalClaims());
         permissionRequest.setRequiredClaims(permissionRequestDTO.getRequiredClaims());
+
+        if( permissionRequestDTO.getRequiredClaims().containsValue(true) && permissionRequestDTO.getRequiredClaims().containsValue(false)) {
+            throw new ServiceException("Either accept no claims or all required claims.", HttpStatus.BAD_REQUEST);
+        }
+
         return permissionService.updatePermissionRequest(permissionRequest);
     }
 
