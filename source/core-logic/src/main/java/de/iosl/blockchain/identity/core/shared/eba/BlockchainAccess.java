@@ -32,9 +32,6 @@ public class BlockchainAccess implements EBAInterface {
     private RegistrarContractUtils registrarContractUtils;
 
     @Autowired
-    private PermissionContractUtils permissionContractUtils;
-
-    @Autowired
     private Web3j web3j;
 
     @Bean
