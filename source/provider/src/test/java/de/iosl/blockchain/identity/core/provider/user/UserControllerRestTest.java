@@ -175,7 +175,7 @@ public class UserControllerRestTest extends RestTestSuite {
         Credentials stateCredentials = loadWallet(STATE_FILE, WALLET_PW);
 
         Beat beat = new Beat();
-        doReturn(beat).when(heartBeatService).createBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
+        doReturn(beat).when(heartBeatService).createURLBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
         doNothing().when(ebaInterface).setRegisterApproval(any(Account.class), eq("0x123"), eq(true));
 
         RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO(
@@ -204,7 +204,7 @@ public class UserControllerRestTest extends RestTestSuite {
         assertThat(user.getPublicKey()).isEqualTo(registerRequest.getPayload().getPublicKey());
         assertThat(user.getRegisterContractAddress()).isEqualTo(registerRequest.getPayload().getRegisterContractAddress());
         assertThat(userDB.findUserByEthId(user.getEthId())).isPresent();
-        verify(heartBeatService, times(1)).createBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
+        verify(heartBeatService, times(1)).createURLBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
     }
 
     @Test

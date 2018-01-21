@@ -21,14 +21,14 @@ public class MessageService {
         return messageDB.findMessagesBySeen(includeSeen);
     }
 
-    public Message createMessage(@NonNull MessageType messageType) {
-        Message message = new Message(UUID.randomUUID().toString(), messageType, false);
+    public Message createMessage(@NonNull MessageType messageType, String subjectID) {
+        Message message = new Message(UUID.randomUUID().toString(), messageType, false, subjectID);
         messageDB.insert(message);
         return message;
     }
 
-    public Message createMessage(@NonNull MessageType messageType, @NonNull String userId) {
-        Message message = new Message(UUID.randomUUID().toString(), messageType, false);
+    public Message createMessage(@NonNull MessageType messageType, @NonNull String userId, String subjectID) {
+        Message message = new Message(UUID.randomUUID().toString(), messageType, false, subjectID);
         message.setUserId(userId);
         messageDB.insert(message);
         return message;

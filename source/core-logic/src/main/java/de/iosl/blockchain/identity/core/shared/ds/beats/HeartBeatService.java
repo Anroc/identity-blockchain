@@ -60,16 +60,24 @@ public class HeartBeatService {
         eventListeners.add(eventListener);
     }
 
-    public Beat createBeat(@NonNull String ethID, @NonNull EventType eventType) {
+    public Beat createURLBeat(@NonNull String ethID, @NonNull EventType eventType) {
+        return createBeat(ethID, eventType, config.getHostUrl(), SubjectType.URL);
+    }
+
+    public Beat createEthIdBeat(@NonNull String ethID, @NonNull EventType eventType, @NonNull String subjectEthId) {
+        return createBeat(ethID, eventType, subjectEthId, SubjectType.ETHEREUM_ADDRESS);
+    }
+
+    private Beat createBeat(@NonNull String ethId, @NonNull EventType eventType, @NonNull String subject, @NonNull SubjectType subjectType) {
         if(! keyChain.isActive()) {
             throw new ServiceException("Keychain is not unlocked.", HttpStatus.UNAUTHORIZED);
         }
 
         HeartBeatRequest heartBeatRequest = new HeartBeatRequest(
                 keyChain.getAccount().getAddress(),
-                config.getHostUrl(),
+                subject,
                 eventType,
-                SubjectType.URL
+                subjectType
         );
 
         ECKeyPair ecKeyPair = ECKeyPair.create(keyChain.getAccount().getPrivateKey());
@@ -78,8 +86,8 @@ public class HeartBeatService {
                 ECSignature.fromSignatureData(signer.sign(heartBeatRequest, ecKeyPair))
         );
 
-        log.info("Creating beat for {} with event {}", ethID, eventType);
-        return heartBeatAdapter.createBeat(ethID, heartBeatRequestRequestDTO);
+        log.info("Creating beat for {} with event {} for subject {} and subjectType", ethId, eventType, subject, subjectType);
+        return heartBeatAdapter.createBeat(ethId, heartBeatRequestRequestDTO);
     }
 
     @Scheduled(fixedRate = RATE, initialDelay = INITIAL_DELAY)

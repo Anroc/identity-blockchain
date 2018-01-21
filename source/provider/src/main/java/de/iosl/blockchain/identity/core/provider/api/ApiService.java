@@ -5,7 +5,9 @@ import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
+import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,12 +30,18 @@ public class ApiService {
     private KeyChain keyChain;
     @Autowired
     private UserService userService;
+    @Autowired
+    private HeartBeatService heartBeatService;
 
     public String createPermissionContract(
             @NonNull String requestingProvider,
             @NonNull User user,
             @NonNull Set<String> requiredClaims,
             @NonNull Set<String> optionalClaims) {
+
+        if(user.getEthId() == null) {
+            throw new ServiceException("User [%s] is not yet known to the system.", HttpStatus.UNPROCESSABLE_ENTITY, user.getId());
+        }
 
         String ppr = ebaInterface.deployPermissionContract(
                 keyChain.getAccount(),
@@ -44,6 +54,8 @@ public class ApiService {
         if(ppr == null) {
             throw new ServiceException("PPR address was null!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        heartBeatService.createEthIdBeat(user.getEthId(), EventType.NEW_PPR, ppr);
 
         return ppr;
     }

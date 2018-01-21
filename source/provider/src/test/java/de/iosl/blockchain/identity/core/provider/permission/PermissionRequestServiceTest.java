@@ -134,7 +134,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         doReturn(receivedClaims).when(apiProviderService).requestClaimsForPPR(eq(url), eq(userEthID), eq(permissionContractAddress), anyList());
         doReturn(Optional.of(user)).when(userService).findUserByEthID(userEthID);
         doAnswer(returnsFirstArg()).when(userService).updateUser(any(User.class));
-        doReturn(mock(Message.class)).when(messageService).createMessage(MessageType.PERMISSION_REQUEST, user.getId());
+        doReturn(mock(Message.class)).when(messageService).createMessage(MessageType.PERMISSION_REQUEST, user.getId(), null);
 
         permissionRequestService.permissionContractUpdateHandler(permissionContractAddress, userEthID, url);
 
@@ -143,7 +143,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         assertThat(permissionGrand.getPermissionContractAddress()).isEqualTo(permissionContractAddress);
         assertThat(permissionGrand.getOptionalClaimGrants()).containsOnly(MapEntry.entry(claimID_age, true));
         assertThat(permissionGrand.getRequiredClaimGrants()).containsOnly(MapEntry.entry(claimID_givenName, true), MapEntry.entry(claimID_familyName, true));
-        verify(messageService).createMessage(MessageType.NEW_CLAIMS, user.getId());
+        verify(messageService).createMessage(MessageType.NEW_CLAIMS, user.getId(), null);
         verify(apiProviderService).requestClaimsForPPR(eq(url), eq(userEthID), eq(permissionContractAddress), anyList());
     }
 
