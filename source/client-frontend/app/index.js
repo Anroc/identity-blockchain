@@ -7,6 +7,11 @@ import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
 import { createLogger } from 'redux-logger';
+
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import createMuiTheme from 'material-ui/styles/createMuiTheme';
+import { grey, amber, red } from 'material-ui/colors';
+
 import reducer from './reducers';
 import rootSaga from './sagas';
 import { clearError } from './actions';
@@ -68,6 +73,16 @@ function checkAuth(nextState, replace) {
   }
 }
 
+
+const muiTheme = createMuiTheme({
+  palette: {
+    primary: grey,
+    accent: amber,
+    error: red,
+    type: 'light',
+  },
+});
+
 // Mostly boilerplate, except for the routes. These are the pages you can go to,
 // which are all wrapped in the App component, which contains the navigation etc
 class LoginFlow extends Component {
@@ -79,23 +94,26 @@ class LoginFlow extends Component {
     };
   }
 
+
   render() {
     return (
-      <Provider store={store}>
-        <Router history={browserHistory}>
-          <Route component={App}>
-            <Route path="/" component={Home} />
-            <Route onEnter={checkAuth}>
-              <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
-              <Route path="/user" component={User} />
+      <MuiThemeProvider theme={muiTheme}>
+        <Provider store={store}>
+          <Router history={browserHistory}>
+            <Route component={App}>
+              <Route path="/" component={Home} />
+              <Route onEnter={checkAuth}>
+                <Route path="/login" component={Login} />
+                <Route path="/register" component={Register} />
+                <Route path="/user" component={User} />
+              </Route>
+              <Route path="/government" component={Government} />
+              <Route path="/bank" component={Bank} />
+              <Route path="*" component={NotFound} />
             </Route>
-            <Route path="/government" component={Government} />
-            <Route path="/bank" component={Bank} />
-            <Route path="*" component={NotFound} />
-          </Route>
-        </Router>
-      </Provider>
+          </Router>
+        </Provider>
+      </MuiThemeProvider>
     );
   }
 }
