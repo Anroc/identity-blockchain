@@ -50,7 +50,8 @@ class Dashboard extends Component {
 
   displayClaims() {
     // TODO:
-    // periodic pplling
+    // go against /claims
+    // periodic polling
   }
 
   sendRequest() {

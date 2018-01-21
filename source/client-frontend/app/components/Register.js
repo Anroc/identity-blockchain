@@ -10,7 +10,7 @@ class Register extends Component {
     super(props);
     this.state = {
       statusCode: -1,
-    }
+    };
     this.register = this.register.bind(this);
   }
 
@@ -74,7 +74,8 @@ class Register extends Component {
   }
 
   register(username, password) {
-    this.props.dispatch(registerRequest({ username, password }));
+    const type = 'user';
+    this.props.dispatch(registerRequest({ username, password, accountType: type }));
     this.sendRequest(password);
   }
 

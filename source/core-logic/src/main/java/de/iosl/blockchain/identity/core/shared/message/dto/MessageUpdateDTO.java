@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.user.account.data;
+package de.iosl.blockchain.identity.core.shared.message.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class MessageUpdateDTO {
 
-    private String ethereumID;
+    private boolean seen;
+
 }

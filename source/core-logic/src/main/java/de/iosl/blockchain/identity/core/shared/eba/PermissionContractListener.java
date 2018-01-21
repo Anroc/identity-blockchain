@@ -1,7 +1,5 @@
 package de.iosl.blockchain.identity.core.shared.eba;
 
-import java.util.Map;
-
 public interface PermissionContractListener {
 
     /**
@@ -9,8 +7,7 @@ public interface PermissionContractListener {
      * After execution this object can be destroyed. See {@link Runnable#run()}
      * for more information about this method.
      *
-     * @param claimResult the result that the permission contract resulted in.
-     *                    Empty map would indicate a rejection.
+     * @param permissionContractContent object holding the result of the permission contract
      */
-    void callback(Map<String, String> claimResult);
+    void callback(PermissionContractContent permissionContractContent);
 }

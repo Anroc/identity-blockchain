@@ -1,27 +1,35 @@
 import React, { Component } from 'react';
 import request from '../auth/request';
 
-class Provider extends Component {
+class ThirdParty extends Component {
   constructor() {
     super();
     this.state = {
-      swaggerData: '',
     };
   }
 
   componentDidMount() {
-    console.log('sending request');
-    this.sendRequest();
-    console.log('request sent');
+    console.log('TODO: give option to request permission from user');
+    console.log('TODO: give section where retrieved data is displayed');
   }
 
   // todo change password
   // todo error labelling
-  // claims erst spaeter
+  // todo claims erst spaeter
   // todo warning no recovery possible, keep your password safe
   // todo provider user anlegen etc von 8100
+  // solved research standalone version for react
 
-  sendRequest() {
+  displayClaims() {
+    // TODO:
+    // periodic pplling
+  }
+
+  clickSendRequestButton() {
+    this.sendPermissionRequest();
+  }
+
+  sendPermissionRequest() {
     const optionsForServer = {
       method: 'GET',
       headers: {
@@ -47,7 +55,8 @@ class Provider extends Component {
       credentials: 'include',
     };
 
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/register', options)
+    // TODO fix url
+    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/permission/???', options)
       .then((json) => {
         console.log(`content' + ${JSON.stringify(json)}`);
         this.setState({
@@ -62,19 +71,16 @@ class Provider extends Component {
     return (
       <article>
         <section className="text-section">
-          <h1>Dashboard</h1>
+          <h1>Third Party</h1>
           <p>
-            Welcome, you are logged in!
+            Hello, third party!
           </p>
           <p>
-            General:
-            {JSON.stringify(this.state.swaggerData)}
+            Permission request form e.g.
+            GET isOver18 from timo
           </p>
           <p>
-            Claims:
-          </p>
-          <p>
-            Settings:
+            If clicked, show result
           </p>
         </section>
       </article>
@@ -82,4 +88,4 @@ class Provider extends Component {
   }
 }
 
-export default Provider;
+export default ThirdParty;

@@ -1,8 +1,8 @@
 package de.iosl.blockchain.identity.core.user.account;
 
-import de.iosl.blockchain.identity.core.user.AbstractAuthenticator;
-import de.iosl.blockchain.identity.core.user.account.data.LoginRequest;
-import de.iosl.blockchain.identity.core.user.account.data.LoginResponse;
+import de.iosl.blockchain.identity.core.shared.account.AbstractAuthenticator;
+import de.iosl.blockchain.identity.core.shared.account.data.dto.LoginRequest;
+import de.iosl.blockchain.identity.core.shared.account.data.dto.LoginResponse;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class AccountController extends AbstractAuthenticator {
 
     @Autowired
-    private AccountService accountService;
+    private UserAccountService accountService;
 
     @PostMapping("/register")
     public LoginResponse register(@RequestBody @Valid LoginRequest loginRequest) throws IOException {
