@@ -18,14 +18,13 @@ import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
-import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
-import de.iosl.blockchain.identity.core.shared.eba.PermissionContractListener;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.message.MessageService;
 import de.iosl.blockchain.identity.core.shared.message.data.Message;
 import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import org.assertj.core.data.MapEntry;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.Before;
@@ -41,7 +40,6 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -134,7 +132,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         doReturn(receivedClaims).when(apiProviderService).requestClaimsForPPR(eq(url), eq(userEthID), eq(permissionContractAddress), anyList());
         doReturn(Optional.of(user)).when(userService).findUserByEthID(userEthID);
         doAnswer(returnsFirstArg()).when(userService).updateUser(any(User.class));
-        doReturn(mock(Message.class)).when(messageService).createMessage(MessageType.PERMISSION_REQUEST, user.getId());
+        doReturn(mock(Message.class)).when(messageService).createMessage(MessageType.PERMISSION_REQUEST, user.getId(), null);
 
         permissionRequestService.permissionContractUpdateHandler(permissionContractAddress, userEthID, url);
 
@@ -143,7 +141,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         assertThat(permissionGrand.getPermissionContractAddress()).isEqualTo(permissionContractAddress);
         assertThat(permissionGrand.getOptionalClaimGrants()).containsOnly(MapEntry.entry(claimID_age, true));
         assertThat(permissionGrand.getRequiredClaimGrants()).containsOnly(MapEntry.entry(claimID_givenName, true), MapEntry.entry(claimID_familyName, true));
-        verify(messageService).createMessage(MessageType.NEW_CLAIMS, user.getId());
+        verify(messageService).createMessage(MessageType.NEW_CLAIMS, user.getId(), null);
         verify(apiProviderService).requestClaimsForPPR(eq(url), eq(userEthID), eq(permissionContractAddress), anyList());
     }
 

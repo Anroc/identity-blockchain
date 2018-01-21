@@ -1,11 +1,11 @@
 package de.iosl.blockchain.identity.core.shared.messages;
 
-import de.iosl.blockchain.identity.core.user.Application;
-import de.iosl.blockchain.identity.core.user.RestTestSuite;
 import de.iosl.blockchain.identity.core.shared.message.data.Message;
 import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
 import de.iosl.blockchain.identity.core.shared.message.dto.MessageDTO;
 import de.iosl.blockchain.identity.core.shared.message.dto.MessageUpdateDTO;
+import de.iosl.blockchain.identity.core.user.Application;
+import de.iosl.blockchain.identity.core.RestTestSuite;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,9 +28,11 @@ public class MessageControllerRestTest extends RestTestSuite {
 
     private Message message;
 
+    private final String smartContractAddress = "0x123";
+
     @Before
     public void setup() {
-        message = new Message(UUID.randomUUID().toString(), MessageType.PERMISSION_REQUEST, false);
+        message = new Message(UUID.randomUUID().toString(), MessageType.PERMISSION_REQUEST, false, smartContractAddress);
         messageDB.insert(message);
     }
 

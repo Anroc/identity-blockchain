@@ -116,7 +116,7 @@ public class PermissionRequestService {
         User user = updateUserClaims(ethID, claims);
         updateUserPermissionGrants(user, pprAddress, claims);
 
-        messageService.createMessage(MessageType.NEW_CLAIMS, user.getId());
+        messageService.createMessage(MessageType.NEW_CLAIMS, user.getId(), null);
     }
 
     @SuppressWarnings("unchecked")

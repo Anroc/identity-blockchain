@@ -17,6 +17,8 @@ import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.Permissio
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
+import de.iosl.blockchain.identity.lib.dto.beats.Beat;
+import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,6 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
@@ -129,6 +132,8 @@ public class ProviderAPIRestTest extends RestTestSuite {
                 eq(requiredClaim),
                 eq(Sets.newHashSet())
         );
+
+        doReturn(mock(Beat.class)).when(heartBeatService).createEthIdBeat(user.getEthId(), EventType.NEW_PPR, pprEthID);
 
         PermissionContractCreationDTO permissionContractCreationDTO = new PermissionContractCreationDTO(
                 REQUESTING_PROVIDER_CREDENTIALS.getAddress(),
