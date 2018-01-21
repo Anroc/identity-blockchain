@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import request from '../auth/request';
 
-class ThirdParty extends Component {
+class Bank extends Component {
   constructor() {
     super();
     this.state = {
@@ -17,9 +17,9 @@ class ThirdParty extends Component {
     return (
       <article>
         <section className="text-section">
-          <h1>Third Party</h1>
+          <h1>Bank</h1>
           <p>
-            Hello, third party!
+            Hello, bank!
           </p>
           <p>
             Permission request form e.g.
@@ -34,4 +34,4 @@ class ThirdParty extends Component {
   }
 }
 
-export default ThirdParty;
+export default Bank;

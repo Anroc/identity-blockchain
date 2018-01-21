@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Form from './common/Form/Form';
 
 import { registerRequest } from '../actions';
+import { userRegistrationRequest } from '../auth/registration/userRegistrationRequest';
 import request from '../auth/request';
 
 class Register extends Component {
@@ -44,16 +45,21 @@ class Register extends Component {
    * @param {string} accountType
    */
   register(username, password, accountType) {
+    /*
     switch (accountType) {
       case 'user':
+        userRegistrationRequest(password);
         break;
       case 'provider':
+        providerRegistrationRequest(password);
         break;
       case 'thirdParty':
+        thirdPartyRegistrationRequest(password);
         break;
       default:
         break;
     }
+    */
     this.props.dispatch(registerRequest({ username, password, accountType, domainName: '' }));
     this.sendRegisterRequest(password);
   }

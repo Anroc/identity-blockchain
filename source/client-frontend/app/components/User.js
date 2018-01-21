@@ -4,7 +4,7 @@ import request from '../auth/request';
 import LazyImage from './common/LazyImage';
 import ClaimsTable from './common/ClaimsTable';
 
-class Dashboard extends Component {
+class User extends Component {
   constructor() {
     super();
     this.state = {
@@ -83,8 +83,8 @@ class Dashboard extends Component {
   }
 }
 
-Dashboard.propTypes = {
+User.propTypes = {
   ethID: PropTypes.string,
 };
 
-export default Dashboard;
+export default User;

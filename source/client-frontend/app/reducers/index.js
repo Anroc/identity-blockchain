@@ -5,8 +5,8 @@
 import {
   CHANGE_REQUEST_FORM,
   CHANGE_USER_STATE,
-  CHANGE_PROVIDER_STATE,
-  CHANGE_THIRD_PARTY_STATE,
+  CHANGE_GOVERNMENT_STATE,
+  CHANGE_BANK_STATE,
   CHANGE_FORM,
   SET_AUTH,
   SENDING_REQUEST,
@@ -55,10 +55,10 @@ function reducer(state = initialState, action) {
       return { ...state, requestFormState: action.newRequestFormState };
     case CHANGE_USER_STATE:
       return { ...state, userState: action.newUserState };
-    case CHANGE_PROVIDER_STATE:
-      return { ...state, providerState: action.newProviderState };
-    case CHANGE_THIRD_PARTY_STATE:
-      return { ...state, thirdPartyState: action.newThirdPartyState };
+    case CHANGE_GOVERNMENT_STATE:
+      return { ...state, providerState: action.newGovernmentState };
+    case CHANGE_BANK_STATE:
+      return { ...state, thirdPartyState: action.newBankState };
 
     // stable
     case CHANGE_FORM:

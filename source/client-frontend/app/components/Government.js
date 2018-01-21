@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import request from '../auth/request';
 
-class Provider extends Component {
+class Government extends Component {
   constructor() {
     super();
     this.state = {
@@ -9,14 +9,14 @@ class Provider extends Component {
   }
 
   componentDidMount() {
-    console.log('hi provider, component mounted');
+    console.log('government component mounted');
   }
 
   render() {
     return (
       <article>
         <section className="text-section">
-          <h1>Provider UI</h1>
+          <h1>Government UI</h1>
           <p>
             Welcome!
           </p>
@@ -26,4 +26,4 @@ class Provider extends Component {
   }
 }
 
-export default Provider;
+export default Government;

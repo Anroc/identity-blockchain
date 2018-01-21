@@ -9,14 +9,14 @@ class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      accountTypes: ['user', 'provider', 'thirdParty'],
+      accountTypes: ['user', 'government', 'bank'],
     };
 
     this.onSubmit = this.onSubmit.bind(this);
     this.changeUsername = this.changeUsername.bind(this);
     this.changePassword = this.changePassword.bind(this);
     this.changeAccountType = this.changeAccountType.bind(this);
-    // provider
+    // government
     this.changeDomainName = this.changeDomainName.bind(this);
   }
 
@@ -153,8 +153,8 @@ class Form extends Component {
                 autoCapitalize="off"
                 spellCheck="false"
               />
-              <label className="form__field-label" htmlFor="providerName">
-                Provider name
+              <label className="form__field-label" htmlFor="governmentName">
+                Government name
               </label>
             </div>
             <div className="form__field-wrapper">

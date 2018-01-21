@@ -16,7 +16,7 @@ const postUserOptions = {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    password: 'timsDickerDick',
+    password: '',
   }),
   mode: 'cors',
   credentials: 'include',

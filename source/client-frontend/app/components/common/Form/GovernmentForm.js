@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import LoadingButton from '../LoadingButton';
 
-class ProviderForm extends React.Component {
+class GovernmentForm extends React.Component {
 
   render() {
     return (
@@ -19,8 +19,8 @@ class ProviderForm extends React.Component {
             autoCapitalize="off"
             spellCheck="false"
           />
-          <label className="form__field-label" htmlFor="providerName">
-            Provider name
+          <label className="form__field-label" htmlFor="governmentName">
+            Government name
           </label>
         </div>
         <div className="form__field-wrapper">
@@ -66,7 +66,7 @@ class ProviderForm extends React.Component {
   }
 }
 
-ProviderForm.propTypes = {
+GovernmentForm.propTypes = {
   data: PropTypes.object,
   btnText: PropTypes.string,
   currentlySending: PropTypes.bool,
@@ -75,4 +75,4 @@ ProviderForm.propTypes = {
   changeDomainName: PropTypes.func,
 };
 
-export default ProviderForm;
+export default GovernmentForm;

@@ -19,8 +19,8 @@ import Login from './components/Login';
 import Register from './components/Register';
 import User from './components/User';
 import NotFound from './components/NotFound';
-import IOSLProvider from './components/IOSLProvider';
-import ThirdParty from './components/ThirdParty';
+import Government from './components/Government';
+import Bank from './components/Bank';
 
 const logger = createLogger({
   // Ignore `CHANGE_FORM` actions in the logger, since they fire after every keystroke
@@ -90,8 +90,8 @@ class LoginFlow extends Component {
               <Route path="/register" component={Register} />
               <Route path="/user" component={User} />
             </Route>
-            <Route path="/provider" component={IOSLProvider} />
-            <Route path="/thirdParty" component={ThirdParty} />
+            <Route path="/government" component={Government} />
+            <Route path="/bank" component={Bank} />
             <Route path="*" component={NotFound} />
           </Route>
         </Router>
