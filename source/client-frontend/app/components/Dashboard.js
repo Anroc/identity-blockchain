@@ -18,9 +18,7 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    console.log('sending request');
-    this.sendRequest();
-    console.log('request sent');
+    console.log('dashboard mounted');
   }
 
   // todo change password
@@ -47,46 +45,6 @@ class Dashboard extends Component {
           user: json[0].claims,
         });
       });
-  }
-
-  sendRequest() {
-    const optionsForServer = {
-      method: 'GET',
-      headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      mode: 'cors',
-      credentials: 'include',
-    };
-    console.log(optionsForServer);
-
-    const options = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        password: 'timsDickerDick',
-      }),
-      mode: 'cors',
-      credentials: 'include',
-    };
-
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/register', options)
-      .then((json) => {
-        console.log(`content' + ${JSON.stringify(json)}`);
-        this.setState({
-          swaggerData: JSON.stringify(json),
-          ethID: json.ethereumID,
-        });
-      })
-      .then(() => {
-        this.getUserInformation();
-      });
-    console.log(`actual ${actualRequest}`);
   }
 
   render() {

@@ -11,23 +11,13 @@ class Register extends Component {
     super(props);
     this.state = {
       statusCode: -1,
+      swaggerData: {},
     };
     this.register = this.register.bind(this);
   }
 
-  sendRequest(password) {
-    const optionsForServer = {
-      method: 'GET',
-      headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      mode: 'cors',
-      credentials: 'include',
-    };
-    console.log(optionsForServer);
-
+  sendRegisterRequest(password) {
+    console.log('sending register request');
     const options = {
       method: 'POST',
       headers: {
@@ -41,33 +31,11 @@ class Register extends Component {
       credentials: 'include',
     };
 
-    /*
-    const actualReq = fetch('http://srv01.snet.tu-berlin.de:1112/account/register', options)
-      .then((response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response;
-        }
-
-        const error = new Error(response.statusText);
-        error.response = response;
-        throw error;
-      })
-      .then((response) => {
-        if (response.status === 204 || response.status === 205) {
-          return null;
-        }
-        return response.json();
-      })
-      .then(json) => {
-
-    })
-    */
-
     const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/register', options)
       .then((json) => {
         console.log(`content' + ${JSON.stringify(json)}`);
         this.setState({
-          swaggerData: JSON.stringify(json),
+          swaggerData: json,
         });
         console.log(`content in state: ${this.state.swaggerData}`);
       });
@@ -77,7 +45,7 @@ class Register extends Component {
   register(username, password) {
     const type = 'user';
     this.props.dispatch(registerRequest({ username, password, accountType: type }));
-    this.sendRequest(password);
+    this.sendRegisterRequest(password);
   }
 
   render() {

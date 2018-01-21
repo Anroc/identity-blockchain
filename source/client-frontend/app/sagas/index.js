@@ -31,6 +31,7 @@ export function* authorize({ username, password, accountType, isRegistering }) {
   // We send an action that tells Redux we're sending a request
   yield put({ type: SENDING_REQUEST, sending: true });
 
+  console.log(`authorizing account type: ${accountType}`);
   // We then try to register or log in the user, depending on the request
   try {
     const salt = genSalt(username);
