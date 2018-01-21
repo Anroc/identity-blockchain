@@ -4,7 +4,6 @@ import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Set;
 
 public interface EBAInterface {
@@ -62,7 +61,7 @@ public interface EBAInterface {
      * @param optionalClaims a set of strings (claim ids) that are not required by the requesting provider
      * @return the address of this smart contract
      */
-    String createPermissionContract(
+    String deployPermissionContract(
             Account sender,
             String recipient,
             String requesterAddress,
@@ -75,42 +74,18 @@ public interface EBAInterface {
      * @param account the account performing the action
      * @param smartContractAddress the address of the permission contract
      * @return the object holding the requested permissions and the requester's address.
-     * See {@link #createPermissionContract(Account, String, String, Set, Set)} for information how to where to find
+     * See {@link #deployPermissionContract(Account, String, String, Set, Set)} for information how to where to find
      * this information
      */
     PermissionContractContent getPermissionContractContent(Account account, String smartContractAddress);
 
     /**
      * Approves the permission contract by putting a signed query into it.
-     *
-     * @param account the account performing the action
+     *  @param account the account performing the action
      * @param smartContractAddress the permission contract that shell be approved.
-     * @param approvedClaims are the claims that the user explicit approved. This means that the key is the claim id
-     *                       and the value is signature over the claimID, user address and requesters address.
-     *                       (<code>base64(signature(hash(claimID;userAddress;requestAddress)))</code>)
+     * @param permissionContractContent are the claims that the user explicit approved. This means that the key is the claim id
+ *                       and the value is signature over the claimID, user address and requesters address.
      */
-    void approvePermissionContract(Account account, String smartContractAddress, Map<String, String> approvedClaims);
-
-    /**
-     * Rejects the permission contract.
-     *
-     * @param account the account performing the action
-     * @param smartContractAddress the permission contract that shell be rejected.
-     */
-    void rejectPermissionContract(Account account, String smartContractAddress);
-
-    /**
-     * Registers the given listener to the event that the permission request smart contract gets updated.
-     *
-     * @param account the account that is registered
-     * @param smartContractAddress the smart contract address of the permission contract
-     * @param listener the listener that gets executed on an update event
-     */
-    void registerPermissionContractListener(
-            Account account,
-            String smartContractAddress,
-            PermissionContractListener listener
-    );
-
+    void approvePermissionContract(Account account, String smartContractAddress, PermissionContractContent permissionContractContent);
 
 }

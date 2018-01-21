@@ -33,7 +33,7 @@ public class ApiService {
             @NonNull Set<String> requiredClaims,
             @NonNull Set<String> optionalClaims) {
 
-        String ppr = ebaInterface.createPermissionContract(
+        String ppr = ebaInterface.deployPermissionContract(
                 keyChain.getAccount(),
                 user.getEthId(),
                 requestingProvider,

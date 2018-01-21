@@ -88,8 +88,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
 
         doReturn(Optional.of(user)).when(userService).findUserByEthID(userEthID);
         doAnswer(returnsFirstArg()).when(userService).updateUser(any(User.class));
-        doNothing().when(ebaInterface)
-                .registerPermissionContractListener(any(Account.class), anyString(), any(PermissionContractListener.class));
+        doNothing().when(permissionRequestService).registerPermissionContractListener(userEthID, url);
 
         permissionRequestService.requestPermission(permissionRequest);
 
@@ -102,8 +101,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
 
         doReturn(Optional.empty()).when(userService).findUserByEthID(userEthID);
         doAnswer(returnsFirstArg()).when(userService).insertUser(any(User.class));
-        doNothing().when(ebaInterface)
-                .registerPermissionContractListener(any(Account.class), anyString(), any(PermissionContractListener.class));
+        doNothing().when(permissionRequestService).registerPermissionContractListener(userEthID, url);
 
         permissionRequestService.requestPermission(permissionRequest);
 

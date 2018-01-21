@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 @Component
 public class RegistrarContractUtils {
 
-    public Contract deployRegistrarContract(Account account, Web3j web3j) {
+    public String deployRegistrarContract(Account account, Web3j web3j) {
         try {
             log.info("wallet balance before deployment", getBalanceWei(web3j, account.getAddress()));
             Registrar_sol_FirstContract contract = Registrar_sol_FirstContract.deploy(
@@ -32,7 +32,7 @@ public class RegistrarContractUtils {
 
             log.info("Smart Contract Address: {}, Approval: {}", contract.getContractAddress(), contract.getApproval().send());
             log.info("wallet balance after deployment: {}", getBalanceWei(web3j, account.getAddress()));
-            return contract;
+            return contract.getContractAddress();
 
         } catch (Exception e) {
             throw new EBAException(e);

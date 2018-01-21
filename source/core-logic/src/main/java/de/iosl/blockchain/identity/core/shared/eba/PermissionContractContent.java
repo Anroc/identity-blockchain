@@ -23,7 +23,7 @@ import java.util.Set;
  */
 @Data
 @RequiredArgsConstructor
-public class PermissionContractContent {
+public class PermissionContractContent{
 
     /**
      * the map of claimID to user base64 approvals of required claims.
