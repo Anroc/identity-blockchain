@@ -17,6 +17,7 @@ import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
@@ -51,6 +52,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
     @Mock private MessageService messageService;
     @Mock private EBAInterface ebaInterface;
     @Mock private KeyChain keyChain;
+    @Mock private HeartBeatService heartBeatService;
 
     @Spy
     @InjectMocks
@@ -91,7 +93,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
 
         permissionRequestService.requestPermission(permissionRequest);
 
-        verify(ebaInterface).registerPermissionContractListener(any(Account.class), anyString(), any(PermissionContractListener.class));
+        verify(permissionRequestService).registerPermissionContractListener(userEthID, url);
     }
 
     @Test
@@ -105,7 +107,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
 
         permissionRequestService.requestPermission(permissionRequest);
 
-        verify(ebaInterface).registerPermissionContractListener(any(Account.class), anyString(), any(PermissionContractListener.class));
+        verify(permissionRequestService).registerPermissionContractListener(userEthID, url);
     }
 
     @Test
