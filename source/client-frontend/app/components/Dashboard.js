@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import request from '../auth/request';
 import LazyImage from './common/LazyImage';
 import ClaimsTable from './common/ClaimsTable';
@@ -61,10 +62,11 @@ class Dashboard extends Component {
           </p>
           <p>
             QR Code:
-            <LazyImage
-              src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
-              alt="qr-code"
-            />
+            {this.state.ethID !== '' ?
+              (<LazyImage
+                src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
+                alt="qr-code"
+              />) : null }
           </p>
           <p>
             Claims:
@@ -79,80 +81,10 @@ class Dashboard extends Component {
       </article>
     );
   }
-  /*
-    sendGetClaimsRequest() {
-    const options = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        TO_BE_DECIDED: 'random',
-      }),
-      mode: 'cors',
-      credentials: 'include',
-    };
-
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/claims', options)
-      .then((json) => {
-        console.log(`claims content ${JSON.stringify(json)}`);
-        this.setState({
-          swaggerData: JSON.stringify(json),
-        });
-        console.log(`claims content in state: ' ${this.state.swaggerData}`);
-      });
-    console.log(`actual claims ${actualRequest}`);
-  }
-
-  sendLogoutRequest() {
-    const options = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({}),
-      mode: 'cors',
-      credentials: 'include',
-    };
-
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/logout', options)
-      .then((json) => {
-        console.log(`logout content ${JSON.stringify(json)}`);
-        this.setState({
-          swaggerData: JSON.stringify(json),
-        });
-        console.log(`logout content in state: ${this.state.swaggerData}`);
-      });
-    console.log(`actual logout ${actualRequest}`);
-  }
-
-  sendLoginRequest() {
-    const options = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        password: 'timsDickerDick',
-      }),
-      mode: 'cors',
-      credentials: 'include',
-    };
-
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/login', options)
-      .then((json) => {
-        console.log(`login content ${JSON.stringify(json)}`);
-        this.setState({
-          swaggerData: JSON.stringify(json),
-        });
-        console.log(`login content in state: ${this.state.swaggerData}`);
-      });
-    console.log(`actual login ${actualRequest}`);
-  }
-   */
 }
+
+Dashboard.propTypes = {
+  ethID: PropTypes.string,
+};
 
 export default Dashboard;
