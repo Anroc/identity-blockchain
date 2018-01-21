@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Form from './common/Form/Form';
 
 import { loginRequest } from '../actions';
+import userLoginRequest from '../auth/login/userLoginRequest';
 
 class Login extends Component {
   constructor(props) {
@@ -13,6 +14,9 @@ class Login extends Component {
 
   login(username, password, accountType) {
     this.props.dispatch(loginRequest({ username, password, accountType }));
+    if (accountType === 'user') {
+      userLoginRequest(password);
+    }
   }
 
   render() {
