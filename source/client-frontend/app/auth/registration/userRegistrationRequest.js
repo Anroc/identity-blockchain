@@ -1,6 +1,6 @@
 import request from '../request';
 
-const userRegistrationRequest = (password) => {
+function userRegistrationRequest(password) {
   console.log('sending register request');
   const options = {
     method: 'POST',
@@ -23,6 +23,6 @@ const userRegistrationRequest = (password) => {
       });
     });
   console.log(`actual ${actualRequest}`);
-};
+}
 
 export default userRegistrationRequest;

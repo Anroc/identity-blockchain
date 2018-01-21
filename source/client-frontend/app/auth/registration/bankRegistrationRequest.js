@@ -1,6 +1,6 @@
 import request from '../request';
 
-const thirdPartyRegistrationRequest = (password) => {
+function bankRegistrationRequest(password) {
   console.log('sending register request');
   const options = {
     method: 'POST',
@@ -17,12 +17,12 @@ const thirdPartyRegistrationRequest = (password) => {
 
   const actualRequest = request('http://srv01.snet.tu-berlin.de:8102/account/register', options)
     .then((json) => {
-      console.log(`content' + ${JSON.stringify(json)}`);
+      console.log(`content bank registration ' + ${JSON.stringify(json)}`);
       this.setState({
         ethId: json,
       });
     });
   console.log(`actual ${actualRequest}`);
-};
+}
 
-export default thirdPartyRegistrationRequest;
+export default bankRegistrationRequest;
