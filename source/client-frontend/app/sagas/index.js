@@ -104,18 +104,8 @@ export function* loginFlow() {
       yield put({ type: SET_AUTH, newAuthState: true }); // User is logged in (authorized)
       yield put({ type: CHANGE_FORM, newFormState: { username: '', password: '', accountType: '' } }); // Clear form
 
-      console.log('!!!!!!!!!!!!! account type: ', accountType);
-
-      if (accountType === 'user') {
-        console.log('user');
-        forwardTo('/dashboard'); // Go to dashboard page
-      } else if (accountType === 'provider') {
-        console.log('provider');
-        forwardTo('/provider');
-      } else {
-        console.log('thirdparty');
-        forwardTo('/thirdParty');
-      }
+      console.log('login account type: ', accountType);
+      forwardTo(`/${accountType}`);
     }
   }
 }
@@ -153,13 +143,7 @@ export function* registerFlow() {
     if (wasSuccessful) {
       yield put({ type: SET_AUTH, newAuthState: true }); // User is logged in (authorized) after being registered
       yield put({ type: CHANGE_FORM, newFormState: { username: '', password: '', accountType: '' } }); // Clear form
-      if (accountType === 'user') {
-        forwardTo('/dashboard'); // Go to dashboard page
-      } else if (accountType === 'provider') {
-        forwardTo('/provider');
-      } else {
-        forwardTo('/thirdParty');
-      }
+      forwardTo(`/${accountType}`); // user, provider and thirdParty
     }
   }
 }

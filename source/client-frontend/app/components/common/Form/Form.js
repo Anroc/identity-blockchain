@@ -9,7 +9,7 @@ class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      accountTypes: ['user', 'provider', 'third party'],
+      accountTypes: ['user', 'provider', 'thirdParty'],
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -86,8 +86,7 @@ class Form extends Component {
     return (
       <form className="form" onSubmit={this.onSubmit}>
         <div>
-          account type
-          {this.props.data.accountType}
+          account type {this.props.data.accountType}
         </div>
         {error ? <ErrorMessage error={error} /> : null}
         <div className="form__field-wrapper">

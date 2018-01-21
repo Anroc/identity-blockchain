@@ -17,7 +17,7 @@ import App from './components/App';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
-import Dashboard from './components/Dashboard';
+import User from './components/User';
 import NotFound from './components/NotFound';
 import IOSLProvider from './components/IOSLProvider';
 import ThirdParty from './components/ThirdParty';
@@ -44,9 +44,9 @@ function checkAuth(nextState, replace) {
 
   store.dispatch(clearError());
 
-  // Check if the path isn't dashboard. That way we can apply specific logic to
+  // Check if the path isn't user. That way we can apply specific logic to
   // display/render the path we want to
-  if (nextState.location.pathname !== '/dashboard') {
+  if (nextState.location.pathname !== '/user') {
     if (loggedIn) {
       if (nextState.location.state && nextState.location.pathname) {
         replace(nextState.location.pathname);
@@ -88,7 +88,7 @@ class LoginFlow extends Component {
             <Route onEnter={checkAuth}>
               <Route path="/login" component={Login} />
               <Route path="/register" component={Register} />
-              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/user" component={User} />
             </Route>
             <Route path="/provider" component={IOSLProvider} />
             <Route path="/thirdParty" component={ThirdParty} />

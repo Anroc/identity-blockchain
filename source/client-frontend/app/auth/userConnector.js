@@ -60,7 +60,6 @@ const userConnector = {
         this.setState({
           swaggerData: JSON.stringify(json),
         });
-        console.log(`login content in state: ${this.state.swaggerData}`);
       });
     console.log(`actual login ${actualRequest}`);
   },
@@ -104,7 +103,6 @@ const userConnector = {
         this.setState({
           swaggerData: JSON.stringify(json),
         });
-        console.log(`logout content in state: ${this.state.swaggerData}`);
       });
     console.log(`actual logout ${actualRequest}`);
   },
@@ -127,7 +125,6 @@ const userConnector = {
         this.setState({
           swaggerData: JSON.stringify(json),
         });
-        console.log(`logout content in state: ${this.state.swaggerData}`);
       });
     console.log(`actual logout ${actualRequest}`);
   },

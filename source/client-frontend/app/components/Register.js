@@ -31,15 +31,30 @@ class Register extends Component {
       .then((json) => {
         console.log(`content' + ${JSON.stringify(json)}`);
         this.setState({
-          swaggerData: json,
+          ethId: json,
         });
-        console.log(`content in state: ${this.state.swaggerData}`);
       });
     console.log(`actual ${actualRequest}`);
   }
 
+  /**
+   * h
+   * @param {string} username
+   * @param {string} password
+   * @param {string} accountType
+   */
   register(username, password, accountType) {
-    this.props.dispatch(registerRequest({ username, password, accountType}));
+    switch (accountType) {
+      case 'user':
+        break;
+      case 'provider':
+        break;
+      case 'thirdParty':
+        break;
+      default:
+        break;
+    }
+    this.props.dispatch(registerRequest({ username, password, accountType, domainName: '' }));
     this.sendRegisterRequest(password);
   }
 

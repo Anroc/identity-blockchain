@@ -19,7 +19,7 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    console.log('dashboard mounted');
+    console.log('user mounted');
   }
 
   // todo change password
