@@ -71,30 +71,18 @@ public class BlockchainAccess implements EBAInterface {
 
     @Override
     public String deployPermissionContract(Account sender, String recipient, String requesterAddress, Set<String> requiredClaims, Set<String> optionalClaims) {
-        return permissionContractUtils.deployPermissionContract(sender ,recipient, requesterAddress, requiredClaims, optionalClaims, web3j);
+        // TODO: implement
+        return null;
     }
 
     @Override
     public PermissionContractContent getPermissionContractContent(Account account, String smartContractAddress) {
-        //will be called by the user and the provider, who requested the claims
-        return permissionContractUtils.getPermissionContractContent(account, smartContractAddress, web3j);
-    }
-
-    @Override
-    public void approvePermissionContract(Account account, String smartContractAddress, Map<String, String> approvedClaims) {
-        permissionContractUtils.setApprovedClaims(account, smartContractAddress, approvedClaims, web3j);
-    }
-
-    @Override
-    public void rejectPermissionContract(Account account, String smartContractAddress) {
         // TODO: implement
+        return null;
     }
 
-    @Override
-    public void registerPermissionContractListener(
-            Account account,
-            String smartContractAddress,
-            PermissionContractListener listener) {
+
+    public void approvePermissionContract(Account account, String smartContractAddress, PermissionContractContent permissionContractContent) {
         // TODO: implement
     }
 }

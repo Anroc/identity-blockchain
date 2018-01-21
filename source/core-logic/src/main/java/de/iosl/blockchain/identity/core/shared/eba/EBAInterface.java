@@ -4,7 +4,6 @@ import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Set;
 
 public interface EBAInterface {
@@ -82,35 +81,11 @@ public interface EBAInterface {
 
     /**
      * Approves the permission contract by putting a signed query into it.
-     *
-     * @param account the account performing the action
+     *  @param account the account performing the action
      * @param smartContractAddress the permission contract that shell be approved.
-     * @param approvedClaims are the claims that the user explicit approved. This means that the key is the claim id
-     *                       and the value is signature over the claimID, user address and requesters address.
-     *                       (<code>base64(signature(hash(claimID;userAddress;requestAddress)))</code>)
+     * @param permissionContractContent are the claims that the user explicit approved. This means that the key is the claim id
+ *                       and the value is signature over the claimID, user address and requesters address.
      */
-    void approvePermissionContract(Account account, String smartContractAddress, Map<String, String> approvedClaims);
-
-    /**
-     * Rejects the permission contract.
-     *
-     * @param account the account performing the action
-     * @param smartContractAddress the permission contract that shell be rejected.
-     */
-    void rejectPermissionContract(Account account, String smartContractAddress);
-
-    /**
-     * Registers the given listener to the event that the permission request smart contract gets updated.
-     *
-     * @param account the account that is registered
-     * @param smartContractAddress the smart contract address of the permission contract
-     * @param listener the listener that gets executed on an update event
-     */
-    void registerPermissionContractListener(
-            Account account,
-            String smartContractAddress,
-            PermissionContractListener listener
-    );
-
+    void approvePermissionContract(Account account, String smartContractAddress, PermissionContractContent permissionContractContent);
 
 }
