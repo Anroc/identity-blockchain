@@ -84,6 +84,7 @@ public class PermissionService {
     }
 
     public PermissionRequest updatePermissionRequest(@NonNull PermissionRequest permissionRequest) {
+        log.info("Start updating permission Request...");
         PermissionRequest permissionRequestOld = permissionRequestDB.findEntity(permissionRequest.getId())
                 .orElseThrow(() -> new IllegalStateException("Could not find old object Permission object"));
 
@@ -97,23 +98,31 @@ public class PermissionService {
 
         permissionRequest = permissionRequestDB.update(permissionRequest);
 
-        updatePermissionRequest(permissionRequest);
+        updatePermissionContract(permissionRequest);
         createHeartBeat(permissionRequest);
 
+        log.info("Finished updating permission Request...");
         return permissionRequest;
     }
 
     private void createHeartBeat(PermissionRequest permissionRequest) {
+        log.info("Creating beat for permission request");
         heartBeatService.createEthIdBeat(permissionRequest.getRequestingProvider(), EventType.PPR_UPDATE, permissionRequest.getPermissionContractAddress());
     }
 
     private void updatePermissionContract(@NonNull PermissionRequest permissionRequest) {
+        log.info("Generating signed objects...");
         Map<String, String> requiredSignedClaims = generateSignatures(permissionRequest.getRequiredClaims(), permissionRequest.getRequestingProvider());
         Map<String, String> optionalSignedClaims = generateSignatures(permissionRequest.getOptionalClaims(), permissionRequest.getRequestingProvider());
 
-        // TODO: implement
+        PermissionContractContent permissionContractContent = new PermissionContractContent(
+                requiredSignedClaims,
+                optionalSignedClaims,
+                permissionRequest.getRequestingProvider()
+        );
 
-
+        log.info("Updating PPR in ethereum");
+        ebaInterface.approvePermissionContract(keyChain.getAccount(), permissionRequest.getPermissionContractAddress(), permissionContractContent);
     }
 
     private Map<String, String> generateSignatures(@NonNull Map<String, Boolean> requestedClaims, @NonNull String providerEthId) {
