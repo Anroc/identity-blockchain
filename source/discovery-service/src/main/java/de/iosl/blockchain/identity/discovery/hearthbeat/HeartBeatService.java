@@ -1,10 +1,10 @@
 package de.iosl.blockchain.identity.discovery.hearthbeat;
 
-import de.iosl.blockchain.identity.discovery.data.RequestDTO;
 import de.iosl.blockchain.identity.discovery.hearthbeat.data.Beat;
-import de.iosl.blockchain.identity.discovery.hearthbeat.data.HeartBeatRequest;
 import de.iosl.blockchain.identity.discovery.hearthbeat.db.BeatDB;
 import de.iosl.blockchain.identity.discovery.registry.db.RegistryEntryDB;
+import de.iosl.blockchain.identity.lib.dto.RequestDTO;
+import de.iosl.blockchain.identity.lib.dto.beats.HeartBeatRequest;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,8 @@ public class HeartBeatService {
                 counter,
                 ethID,
                 messageRequest.getPayload().getEthID(),
-                messageRequest.getPayload().getUrl(),
+                messageRequest.getPayload().getSubject(),
+                messageRequest.getPayload().getSubjectType(),
                 messageRequest.getPayload().getEventType(),
                 messageRequest.getSignature()
         );

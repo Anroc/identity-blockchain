@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.shared.ds.dto;
+package de.iosl.blockchain.identity.lib.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

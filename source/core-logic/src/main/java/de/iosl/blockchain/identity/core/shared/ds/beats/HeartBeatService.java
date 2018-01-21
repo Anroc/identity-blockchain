@@ -4,12 +4,13 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.JsonLongDocument;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
-import de.iosl.blockchain.identity.core.shared.ds.beats.data.Beat;
-import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
-import de.iosl.blockchain.identity.core.shared.ds.beats.data.HeartBeatRequest;
-import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
-import de.iosl.blockchain.identity.core.shared.ds.dto.RequestDTO;
+import de.iosl.blockchain.identity.lib.dto.beats.Beat;
+import de.iosl.blockchain.identity.lib.dto.beats.EventType;
+import de.iosl.blockchain.identity.lib.dto.beats.HeartBeatRequest;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.RequestDTO;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
+import de.iosl.blockchain.identity.lib.dto.beats.SubjectType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import feign.FeignException;
 import lombok.Getter;
@@ -67,7 +68,8 @@ public class HeartBeatService {
         HeartBeatRequest heartBeatRequest = new HeartBeatRequest(
                 keyChain.getAccount().getAddress(),
                 config.getHostUrl(),
-                eventType
+                eventType,
+                SubjectType.URL
         );
 
         ECKeyPair ecKeyPair = ECKeyPair.create(keyChain.getAccount().getPrivateKey());

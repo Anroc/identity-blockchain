@@ -4,10 +4,9 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This class represents the result of the given permission contract.
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @Data
 @RequiredArgsConstructor
-public class PermissionContractContent implements Serializable{
+public class PermissionContractContent{
 
     /**
      * the map of claimID to user base64 approvals of required claims.
@@ -44,9 +43,25 @@ public class PermissionContractContent implements Serializable{
     private final String requesterAddress;
 
     public PermissionContractContent(@NonNull Set<String> requiredClaims, @NonNull Set<String> optionalClaims, @NonNull String requesterAddress) {
-        this.requiredClaims = requiredClaims.stream().collect(Collectors.toMap(s -> s, null));
-        this.optionalClaims = optionalClaims.stream().collect(Collectors.toMap(s -> s, null));
+        this.requiredClaims = initMapKeys(requiredClaims, String.class);
+        this.optionalClaims = initMapKeys(optionalClaims, String.class);
+
         this.requesterAddress = requesterAddress;
+    }
+
+    /**
+     * Initializes a new map for the given key set.
+     *
+     * @param keys the keys that shell be present in the map.
+     * @param valueType the type class of the values
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return initialized map
+     */
+    private final <K, V> Map<K, V> initMapKeys(@NonNull Set<K> keys, @SuppressWarnings("unused") Class<V> valueType) {
+        Map<K, V> map = new HashMap<>();
+        keys.stream().forEach(key -> map.put(key, null));
+        return map;
     }
 
 }

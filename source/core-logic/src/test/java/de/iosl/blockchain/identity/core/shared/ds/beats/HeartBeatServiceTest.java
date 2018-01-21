@@ -2,12 +2,13 @@ package de.iosl.blockchain.identity.core.shared.ds.beats;
 
 import de.iosl.blockchain.identity.core.shared.BasicMockSuite;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
-import de.iosl.blockchain.identity.core.shared.ds.beats.data.Beat;
-import de.iosl.blockchain.identity.core.shared.ds.beats.data.EventType;
-import de.iosl.blockchain.identity.core.shared.ds.beats.data.HeartBeatRequest;
-import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.beats.Beat;
+import de.iosl.blockchain.identity.lib.dto.beats.EventType;
+import de.iosl.blockchain.identity.lib.dto.beats.HeartBeatRequest;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
+import de.iosl.blockchain.identity.lib.dto.beats.SubjectType;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -47,7 +48,8 @@ public class HeartBeatServiceTest extends BasicMockSuite {
         Beat beat = new Beat("ID", 0L, new Date(), ecSignature, new HeartBeatRequest(
                 "ethID",
                 "/myEndpoint/ethID",
-                EventType.NEW_CLAIMS
+                EventType.NEW_CLAIMS,
+                SubjectType.URL
         ));
         Account account = new Account("0x123", BigInteger.TEN, BigInteger.TEN, mock(File.class), mock(Credentials.class));
 
@@ -75,7 +77,8 @@ public class HeartBeatServiceTest extends BasicMockSuite {
         Beat beat = new Beat("ID", 0L, new Date(), ecSignature, new HeartBeatRequest(
                 "ethID",
                 "/myEndpoint/ethID",
-                EventType.NEW_CLAIMS
+                EventType.NEW_CLAIMS,
+                SubjectType.URL
         ));
         Account account = new Account("0x123", BigInteger.TEN, BigInteger.TEN, mock(File.class), mock(Credentials.class));
         Queue<EventListener> listenerQueue = new ConcurrentLinkedQueue<>();

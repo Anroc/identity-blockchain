@@ -10,7 +10,7 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
-import de.iosl.blockchain.identity.core.shared.ds.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
