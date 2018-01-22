@@ -118,9 +118,6 @@ public class PermissionContractTest extends RestTestSuite{
         });
     }
 
-
-
-
     @Test
     public void setApprovedClaimsAsUserInContractTest() throws Exception{
 
