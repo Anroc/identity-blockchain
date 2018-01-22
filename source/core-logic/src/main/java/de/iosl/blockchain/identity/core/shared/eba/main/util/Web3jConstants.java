@@ -33,7 +33,7 @@ public class Web3jConstants {
 	public static final String EXT_ABI = "abi";
 
 	public static final String DEFAULT_START_AMOUNT = "0.0";
-	public static final String GOV_MONEY_FROM_COAINBASE = "20.0";
+	public static final String GOV_MONEY_FROM_COAINBASE = "0.0";
 
 
 	public static BigInteger amountToEther(String amount) {
