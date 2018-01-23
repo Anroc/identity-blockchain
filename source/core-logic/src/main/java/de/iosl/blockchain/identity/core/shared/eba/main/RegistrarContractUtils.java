@@ -20,7 +20,7 @@ public class RegistrarContractUtils {
 
     public String deployRegistrarContract(Account account, Web3j web3j) {
         try {
-            log.info("wallet balance before deployment", getBalanceWei(web3j, account.getAddress()));
+            log.info("wallet balance before deployment {}", getBalanceWei(web3j, account.getAddress()));
             Registrar_sol_FirstContract contract = Registrar_sol_FirstContract.deploy(
                     web3j,
                     account.getCredentials(),

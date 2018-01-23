@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.core.shared.eba;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.eba.main.AccountAccess;
+import de.iosl.blockchain.identity.core.shared.eba.main.PermissionContractUtils;
 import de.iosl.blockchain.identity.core.shared.eba.main.RegistrarContractUtils;
 import lombok.Data;
 import lombok.NonNull;
@@ -29,6 +30,9 @@ public class BlockchainAccess implements EBAInterface {
 
     @Autowired
     private RegistrarContractUtils registrarContractUtils;
+
+    @Autowired
+    private PermissionContractUtils permissionContractUtils;
 
     @Autowired
     private Web3j web3j;
@@ -67,18 +71,16 @@ public class BlockchainAccess implements EBAInterface {
 
     @Override
     public String deployPermissionContract(Account sender, String recipient, String requesterAddress, Set<String> requiredClaims, Set<String> optionalClaims) {
-        // TODO: implement
-        return null;
+        return permissionContractUtils.deployPermissionContract(sender, recipient, requesterAddress, requiredClaims, optionalClaims, web3j);
     }
 
     @Override
     public PermissionContractContent getPermissionContractContent(Account account, String smartContractAddress) {
-        // TODO: implement
-        return null;
+        return permissionContractUtils.getPermissionContractContent(account, smartContractAddress, web3j);
     }
 
 
     public void approvePermissionContract(Account account, String smartContractAddress, PermissionContractContent permissionContractContent) {
-        // TODO: implement
+        permissionContractUtils.setApprovedClaims(account, smartContractAddress, permissionContractContent, web3j);
     }
 }
