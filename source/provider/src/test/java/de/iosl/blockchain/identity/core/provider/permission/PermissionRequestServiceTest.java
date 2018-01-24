@@ -86,11 +86,11 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
 
         doReturn(Optional.of(user)).when(userService).findUserByEthID(userEthID);
         doAnswer(returnsFirstArg()).when(userService).updateUser(any(User.class));
-        doNothing().when(permissionRequestService).registerPermissionContractListener(pprAddress, userEthID, url);
+        doNothing().when(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
 
         permissionRequestService.requestPermission(permissionRequest);
 
-        verify(permissionRequestService).registerPermissionContractListener(pprAddress, userEthID, url);
+        verify(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
     }
 
     @Test
@@ -99,11 +99,11 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
 
         doReturn(Optional.empty()).when(userService).findUserByEthID(userEthID);
         doAnswer(returnsFirstArg()).when(userService).insertUser(any(User.class));
-        doNothing().when(permissionRequestService).registerPermissionContractListener(pprAddress, userEthID, url);
+        doNothing().when(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
 
         permissionRequestService.requestPermission(permissionRequest);
 
-        verify(permissionRequestService).registerPermissionContractListener(pprAddress, userEthID, url);
+        verify(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
     }
 
     @Test

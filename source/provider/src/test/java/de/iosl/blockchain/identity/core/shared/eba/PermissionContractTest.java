@@ -1,32 +1,20 @@
 package de.iosl.blockchain.identity.core.shared.eba;
 
 import com.google.common.collect.Sets;
-import com.sun.org.apache.regexp.internal.RE;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
-import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jConstants;
-import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.web3j.crypto.Credentials;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
-import static de.iosl.blockchain.identity.core.shared.KeyChain.WALLET_DIR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
