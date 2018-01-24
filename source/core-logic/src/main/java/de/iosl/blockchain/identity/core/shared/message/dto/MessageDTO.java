@@ -6,25 +6,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageDTO {
-    @NotBlank
+
     private String id;
-    @NotNull
     private MessageType messageType;
-
     private String userId;
-    @NotNull
     private Date creationDate;
-
     private boolean seen;
+    private String subjectID;
 
     public MessageDTO(@NonNull Message message) {
         this.id = message.getId();
@@ -32,5 +27,6 @@ public class MessageDTO {
         this.seen = message.isSeen();
         this.creationDate = message.getCreationDate();
         this.userId = message.getUserId();
+        this.subjectID = message.getSubjectID();
     }
 }

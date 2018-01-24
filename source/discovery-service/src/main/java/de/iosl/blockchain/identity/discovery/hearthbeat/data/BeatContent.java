@@ -17,7 +17,7 @@ public class BeatContent {
     @Field
     private String ethID;
     @Field
-    private String url;
+    private String subject;
     @Field
     private SubjectType subjectType;
     @Field

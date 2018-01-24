@@ -63,9 +63,11 @@ public class APIClientService {
 
         ECKeyPair ecKeyPair = new ECKeyPair(keyChain.getAccount().getPrivateKey(), keyChain.getAccount().getPublicKey());
 
+        BasicEthereumDTO basicEthereumDTO = new BasicEthereumDTO(keyChain.getAccount().getAddress());
+
         SignedRequest<BasicEthereumDTO> claimRequest = new SignedRequest<>(
                 new BasicEthereumDTO(keyChain.getAccount().getAddress()),
-                ECSignature.fromSignatureData(ethereumSigner.sign(keyChain.getAccount().getAddress(), ecKeyPair))
+                ECSignature.fromSignatureData(ethereumSigner.sign(basicEthereumDTO, ecKeyPair))
         );
 
 

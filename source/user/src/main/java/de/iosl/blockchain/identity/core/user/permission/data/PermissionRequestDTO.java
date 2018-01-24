@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 @Data
@@ -20,6 +21,7 @@ public class PermissionRequestDTO {
 
     @NotEmpty
     private Map<String, Boolean> requiredClaims;
+    @NotNull
     private Map<String, Boolean> optionalClaims;
 
     public PermissionRequestDTO(@NonNull PermissionRequest permissionRequest) {

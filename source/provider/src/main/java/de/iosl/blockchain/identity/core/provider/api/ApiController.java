@@ -18,6 +18,7 @@ import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.Permissio
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/")
 public class ApiController extends AbstractAuthenticator implements ClientAPI, ProviderAPI {
@@ -94,6 +96,8 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
             throw new ServiceException("Senders signature was invalid!", HttpStatus.FORBIDDEN);
         }
 
+        log.info("Received new Claim retrival by PPR contract");
+
         validateSingedRequestList(signedClaimsRequest.getPayload().getSingedClaims());
 
         List<ProviderClaim> claims = apiService.getClaimsForPermissionContract(
@@ -101,6 +105,7 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
                 extractApprovedClaims(signedClaimsRequest.getPayload().getSingedClaims())
         );
 
+        log.info("Returning {} to provider", claims);
         return claims.stream().map(ClaimDTO::new).collect(Collectors.toList());
     }
 
