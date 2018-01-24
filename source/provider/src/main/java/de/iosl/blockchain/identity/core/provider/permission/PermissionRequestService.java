@@ -71,10 +71,10 @@ public class PermissionRequestService {
             updateUser(userOptional.get(), pprAddress, permissionRequest);
         }
 
-        registerPermissionContractListener(permissionRequest.getEthID(), permissionRequest.getUrl());
+        registerPermissionContractListener(pprAddress, permissionRequest.getEthID(), permissionRequest.getUrl());
     }
 
-    protected void registerPermissionContractListener(String ethID, String url) {
+    protected void registerPermissionContractListener(String pprAddress, String ethID, String url) {
         heartBeatService.subscribe(
                 (event, eventType) -> {
                     switch (eventType) {
@@ -83,7 +83,10 @@ public class PermissionRequestService {
                             if(event.getSubjectType() != SubjectType.ETHEREUM_ADDRESS) {
                                 throw new IllegalStateException("Event was a PPR update but not of type Etherem Address");
                             }
-                            permissionContractUpdateHandler(event.getSubject(), ethID, url);
+
+                            if(event.getSubject().equals(pprAddress)) {
+                                permissionContractUpdateHandler(event.getSubject(), ethID, url);
+                            }
                             break;
                     }
                 }

@@ -7,8 +7,6 @@ import de.iosl.blockchain.identity.core.provider.api.client.APIProviderService;
 import de.iosl.blockchain.identity.core.provider.permission.data.dto.PermissionRequestDTO;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
-import de.iosl.blockchain.identity.core.shared.eba.PermissionContractListener;
-import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,7 +27,6 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
@@ -83,7 +80,7 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
     public void createPermissionRequest_existingUser() {
         PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(userEthID, url, requiredClaims, optionalClaims);
 
-        doNothing().when(permissionRequestService).registerPermissionContractListener(userEthID, url);
+        doNothing().when(permissionRequestService).registerPermissionContractListener(pprAddress, userEthID, url);
         doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(url, userEthID, requiredClaims, optionalClaims);
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
@@ -107,7 +104,7 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
         final String otherEthID = "0xcafeaffe";
         PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(otherEthID, url, requiredClaims, optionalClaims);
 
-        doNothing().when(permissionRequestService).registerPermissionContractListener(userEthID, url);
+        doNothing().when(permissionRequestService).registerPermissionContractListener(pprAddress, userEthID, url);
         doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(url, otherEthID, requiredClaims, optionalClaims);
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
