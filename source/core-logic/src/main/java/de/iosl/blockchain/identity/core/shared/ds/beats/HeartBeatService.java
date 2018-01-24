@@ -114,8 +114,7 @@ public class HeartBeatService {
                                 return true;
                             } else {
                                 log.warn("Untrusted (invalid) new beat from [{}]. Ignored.", beat.getPayload().getEthID());
-                                log.warn("{}", beat.getPayload());
-                                return true;
+                                return false;
                             }
                         })
                         .sorted()
