@@ -59,7 +59,7 @@ class User extends Component {
 
   componentDidMount() {
     console.log('user mounted');
-    // this.getUserInformation();
+    this.getUserInformation();
   }
 
   // todo change password
@@ -82,12 +82,14 @@ class User extends Component {
     // const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
     request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
       .then((json) => {
+        console.log(JSON.stringify(json));
         this.setState({
           claims: json,
         });
       });
   }
 
+  // TODO proposal: you are registered but not approved yet, please scan the QR code
   render() {
     return (
       <article>
@@ -102,7 +104,7 @@ class User extends Component {
           </p>
           <p>
             QR Code:
-            {this.state.ethID !== '' ?
+            {this.state.ethID === '' ?
               (<LazyImage
                 src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
                 alt="qr-code"
