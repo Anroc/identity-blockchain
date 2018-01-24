@@ -6,6 +6,7 @@ import java.io.*;
 /**
  * Usage sample serializing SomeClass instance
  */
+
 public class ObjectToString {
 
 //    public static void main( String [] args )  throws IOException,

@@ -5,6 +5,10 @@
 
 // double check this
 export const CHANGE_REQUEST_FORM = 'CHANGE_REQUEST_FORM';
+export const CHANGE_USER_STATE = 'CHANGE_USER_STATE';
+export const CHANGE_GOVERNMENT_STATE = 'CHANGE_GOVERNMENT_STATE';
+export const CHANGE_BANK_STATE = 'CHANGE_BANK_STATE';
+
 // stable
 export const CHANGE_FORM = 'CHANGE_FORM';
 export const SET_AUTH = 'SET_AUTH';
