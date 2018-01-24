@@ -21,6 +21,14 @@
 % v1.5 - 2013-01-16
 
 \documentclass[twoside,11pt,titlepage,a4paper,english,bibliography=totocnumbered,listof=numbered]{scrbook}
+
+%--------------------------------------------------------------
+% DOCUMENT VARIABLES
+%--------------------------------------------------------------
+
+\newcommand{\projectName}{BlockID}
+\newcommand{\projectVersion}{0.0.1}
+
 %
 % Template Style
 \include{style/style}
@@ -36,7 +44,7 @@ TCP
 %make readable references
 \usepackage[pdftex,pdfpagelabels=true]{hyperref}
 \hypersetup{%
-	pdftitle={Blockchain-Identity},
+	pdftitle={\projectName{} \projectVersion{}},
 	pdfauthor={Michael Chlepakov, Marvin Petzolt, Timo Runck, Oskar Schlösinger},
 	pdfkeywords={key1, key2, key3},
 	pdfsubject={Thesis Subject}
