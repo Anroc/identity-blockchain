@@ -31,10 +31,37 @@ The aforementioned governmental agency can now check the blockchain for the requ
 Lastly the agency signs and approves this registrar contract. By adding its signature the user is now a fully registered member within our community. Henceforth he can use this identity to request services and offer claims to and from other registered parties. 
 \end{enumerate}
 
-\subsection{Permission Request}
-After registration the user is now able to use \projectName{} for identification purposes. 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{concept/registration.png}
+\caption{Registration}
+\label{fig:registration_concept}
+\end{figure}
 
-\begin{figure}
+\subsection{Permission Request}
+After registration the user is now able to use \projectName{} for identification and verification purposes. Lets consider opening a new bank account using \projectName() for verification.
+
+
+
+\begin{enumerate}
+\item \label{permission_request_item_one}
+We have a user called Tom who has just recently moved and is interested in opening a new bank account for his local dealings. He therefore visits a local branch of Bank X and requests a new bank account. He now hands his ethereum address, public key, Name, Address etc. to the bank teller.
+\item \label{permission_request_item_two}
+The bank teller now enters that information into a \textbf{Request Permission} form and sends it to the government for verification purposes.
+\item \label{permission_request_item_three}
+The government now writes a new permission request contract into the ethereum blockchain. This contract contains the following information:
+\begin{itemize}
+\item @EthereumAddress; This is Toms Address, as his information is requested
+\item ThirdPartyName; This is the requesting Party's Name Bank 
+\item AttributesRequested[GivenName, FamilyName, StreetName, StreetNumber, PostalCode, DateOfBirth, ...]; This is an Array containing all Variables requested by the Third Party
+\end{itemize}
+\item \label{permission_request_item_four}
+The user now polls the blockchain for new messages and finds this permission request by the third party.
+\item \label{permission_request_item_five}
+Tom now checks each requested attribute and selects the attributes he wants to share with the third party. After his selection a specific query is created imitating his choices.
+\end{enumerate}
+
+\begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{concept/permission_request_bank.png}
 \caption{Permission Request}
@@ -44,7 +71,7 @@ After registration the user is now able to use \projectName{} for identification
 \subsection{Closures}
 %Create closure figure in draw.io and insert here
 \begin{comment}
-\begin{figure}
+\begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{concept/closure.png}
 \caption{Closure}
@@ -54,7 +81,7 @@ After registration the user is now able to use \projectName{} for identification
 
 \subsection{Changing Attributes}
 
-\begin{figure}
+\begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{concept/change_attribute.png}
 \caption{Change attribute}
