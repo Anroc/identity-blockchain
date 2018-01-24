@@ -20,14 +20,14 @@ public class PermissionController extends AbstractAuthenticator {
     private PermissionService permissionService;
 
     @GetMapping("/{id}")
-    public PermissionRequest findPermissionRequest(@PathVariable("id") final String id) {
+    public PermissionRequestDTO findPermissionRequest(@PathVariable("id") final String id) {
         checkAuthentication();
 
-        return getPermissionRequest(id);
+        return new PermissionRequestDTO(getPermissionRequest(id));
     }
 
     @PutMapping("/{id}")
-    public PermissionRequest updatePermissionRequest(
+    public PermissionRequestDTO updatePermissionRequest(
             @PathVariable("id") final String id,
             @Valid @NotNull @RequestBody PermissionRequestDTO permissionRequestDTO) {
         checkAuthentication();
@@ -41,7 +41,7 @@ public class PermissionController extends AbstractAuthenticator {
             throw new ServiceException("Either accept no claims or all required claims.", HttpStatus.BAD_REQUEST);
         }
 
-        return permissionService.updatePermissionRequest(permissionRequest);
+        return new PermissionRequestDTO(permissionService.updatePermissionRequest(permissionRequest));
     }
 
     private PermissionRequest getPermissionRequest(@NonNull String id) {

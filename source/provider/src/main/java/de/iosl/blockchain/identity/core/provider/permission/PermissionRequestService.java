@@ -109,10 +109,11 @@ public class PermissionRequestService {
         log.info("Successful extracted {} approvedClaims.", approvedClaims.size());
 
         validateApprovedClaims(approvedClaims);
-        log.info("Successful validated {} approvedClaims for user [{}]", ethID);
+        log.info("Successful validated {} approvedClaims for user [{}]", ethID, approvedClaims);
 
         List<ProviderClaim> claims = apiProviderService.requestClaimsForPPR(url, ethID, pprAddress, approvedClaims);
 
+        log.info("Received claims from Provider: {}", claims);
         User user = updateUserClaims(ethID, claims);
         updateUserPermissionGrants(user, pprAddress, claims);
 
