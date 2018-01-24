@@ -49,6 +49,7 @@ public class PermissionContractUtils {
 
     public PermissionContractContent getPermissionContractContent(Account account, String smartContractAddress, Web3j web3j) {
         try {
+            log.info("get Claims from permission request");
             Permission_sol_PermissionContract contract = Permission_sol_PermissionContract.load(
                     smartContractAddress,
                     web3j,
@@ -70,6 +71,7 @@ public class PermissionContractUtils {
 
     public void setApprovedClaims(Account account, String smartContractAddress, PermissionContractContent permissionContractContent, Web3j web3j) {
         try {
+            log.info("set Claims from permission request");
             Permission_sol_PermissionContract contract = Permission_sol_PermissionContract.load(
                     smartContractAddress,
                     web3j,
@@ -81,7 +83,8 @@ public class PermissionContractUtils {
                 throw new NullPointerException("Contract is null. Contract does not exists");
 
             TransactionReceipt transactionReceipt = contract.setAndApproveClaims(ObjectToString.toString(permissionContractContent)).send();
-            log.info("PermissionContract Contract Address: {}, claims approved by user with transactionReceipt status: {}", contract.getContractAddress(),transactionReceipt.getStatus());
+            PermissionContractContent permissionContractContentFromContract = (PermissionContractContent) ObjectToString.fromString(contract.getClaims().send());
+            log.info("PermissionContract Contract Address: {}, claims approved by user with transactionReceipt status: {} , with required claims: {} and optional claims {}", contract.getContractAddress(),transactionReceipt.getStatus(),permissionContractContentFromContract.getRequiredClaims().size(), permissionContractContentFromContract.getOptionalClaims());
         } catch (Exception e) {
             throw new EBAException(e);
         }
