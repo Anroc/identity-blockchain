@@ -64,7 +64,8 @@ class User extends Component {
 
   // todo change password
   // todo error labelling
-  // todo claims erst spaeter
+  // todo claims erst spaeter requesten
+  // todo alle requests erst später stellen
   // todo warning no recovery possible, keep your password safe
 
   getUserInformation() {
