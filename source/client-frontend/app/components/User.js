@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
@@ -12,6 +13,7 @@ class User extends Component {
       swaggerData: '',
       ethID: '',
       qrCode: [],
+      showQR: false,
       src: null,
       loaded: false,
       error: false,
@@ -57,9 +59,19 @@ class User extends Component {
     };
   }
 
+  showQRCode() {
+    this.setState({
+      showQR: true,
+    });
+  }
+
+  showClaims() {
+    this.getUserInformation();
+  }
+
+
   componentDidMount() {
     console.log('user mounted');
-    this.getUserInformation();
   }
 
   // todo change password
@@ -103,14 +115,17 @@ class User extends Component {
             General:
             {this.state.ethID}
           </p>
-          <p>
-            QR Code:
-            {this.state.ethID === '' ?
-              (<LazyImage
+          <Button raised color="primary" onClick={this.showQRCode}>
+            Show QR Code
+          </Button>
+          { this.showQR ?
+            <p>
+              QR Code:
+              <LazyImage
                 src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
                 alt="qr-code"
-              />) : null }
-          </p>
+              />
+            </p> : null }
           <p>
             Claims:
           </p>
