@@ -9,6 +9,7 @@ import LazyImage from './common/LazyImage';
 class User extends Component {
   constructor() {
     super();
+    this.showQRCode = this.showQRCode.bind(this);
     this.state = {
       swaggerData: '',
       ethID: '',
@@ -59,16 +60,6 @@ class User extends Component {
     };
   }
 
-  showQRCode() {
-    this.setState({
-      showQR: true,
-    });
-  }
-
-  showClaims() {
-    this.getUserInformation();
-  }
-
 
   componentDidMount() {
     console.log('user mounted');
@@ -102,6 +93,44 @@ class User extends Component {
       });
   }
 
+  /*
+   * TODO messages 1112, lookup, schaue nach id, gib
+   * TODO setze claims auf true
+   * TODO PUT auf permissions/id
+   */
+  getPermissionRequests() {
+    const getUserInformationOptions = {
+      method: 'GET',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+      credentials: 'include',
+    };
+
+    // const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
+    request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
+      .then((json) => {
+        console.log(JSON.stringify(json));
+        this.setState({
+          claims: json,
+        });
+      });
+  }
+
+  showQRCode() {
+    console.log('showing qr code');
+    this.setState({
+      showQR: true,
+    });
+  }
+
+  showClaims() {
+    this.getUserInformation();
+  }
+
   // TODO proposal: you are registered but not approved yet, please scan the QR code
   render() {
     return (
@@ -113,12 +142,12 @@ class User extends Component {
           </p>
           <p>
             General:
-            {this.state.ethID}
+            {this.props.ethID}
           </p>
           <Button raised color="primary" onClick={this.showQRCode}>
             Show QR Code
           </Button>
-          { this.showQR ?
+          { this.state.showQR ?
             <p>
               QR Code:
               <LazyImage

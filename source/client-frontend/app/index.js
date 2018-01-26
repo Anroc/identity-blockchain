@@ -94,8 +94,15 @@ class LoginFlow extends Component {
     };
   }
 
-
   render() {
+    const setEthId = (ethID) => {
+      console.log('hey');
+      console.log(`updating eth id in app to: ${ethID}`, ethID);
+      this.setState({
+        ethID,
+      });
+    };
+
     return (
       <MuiThemeProvider theme={muiTheme}>
         <Provider store={store}>
@@ -104,8 +111,21 @@ class LoginFlow extends Component {
               <Route path="/" component={Home} />
               <Route onEnter={checkAuth}>
                 <Route path="/login" component={Login} />
-                <Route path="/register" component={Register} />
-                <Route path="/user" component={User} />
+                <Route
+                  path="/register"
+                  component={() => (
+                    <Register
+                      ethId={this.state.ethID}
+                      setEthId={setEthId}
+                    />)}
+                />
+                <Route
+                  path="/user"
+                  component={() => (
+                    <User
+                      ethID={this.state.ethID}
+                    />)}
+                />
               </Route>
               <Route path="/government" component={Government} />
               <Route path="/bank" component={Bank} />
