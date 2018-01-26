@@ -1,13 +1,13 @@
 package de.iosl.blockchain.identity.core.provider.api;
 
 import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
-import de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.InfoDTO;
@@ -19,7 +19,6 @@ import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
-import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,16 +38,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import static de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
-public class ProviderAPIRestTest extends RestTestSuite {
+public class ApiControllerRestTest extends RestTestSuite {
 
     private static Credentials USER_CREDENTIALS;
     private static Credentials REQUESTING_PROVIDER_CREDENTIALS;
@@ -94,7 +92,7 @@ public class ProviderAPIRestTest extends RestTestSuite {
         );
 
         ResponseEntity<List<ClaimDTO>> responseEntity = restTemplate.exchange(
-                ProviderAPIConstances.ABSOLUTE_CLAIM_ATH,
+                ABSOLUTE_CLAIM_ATH,
                 HttpMethod.POST,
                 new HttpEntity<>(claimRequest),
                 new ParameterizedTypeReference<List<ClaimDTO>>() {});
@@ -108,7 +106,7 @@ public class ProviderAPIRestTest extends RestTestSuite {
         InfoDTO expected = new InfoDTO(config.getBuildVersion(), config.getApiVersion(), config.getApplicationName());
 
         ResponseEntity<InfoDTO> responseEntity = restTemplate.getForEntity(
-                ProviderAPIConstances.ABSOLUTE_INFO_PATH,
+                ABSOLUTE_INFO_PATH,
                 InfoDTO.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -147,7 +145,7 @@ public class ProviderAPIRestTest extends RestTestSuite {
         );
 
         ResponseEntity<BasicEthereumDTO> responseEntity = restTemplate.exchange(
-                getUrl(ProviderAPIConstances.ABSOLUTE_PPR_PATH, user.getEthId()),
+                getUrl(ABSOLUTE_PPR_PATH, user.getEthId()),
                 HttpMethod.POST,
                 new HttpEntity<>(signedRequest),
                 BasicEthereumDTO.class);
@@ -186,7 +184,7 @@ public class ProviderAPIRestTest extends RestTestSuite {
         );
 
         ResponseEntity<List<ClaimDTO>> responseEntity = restTemplate.exchange(
-                getUrl(ProviderAPIConstances.ABSOLUTE_PPR_PATH, user.getEthId()),
+                getUrl(ABSOLUTE_PPR_PATH, user.getEthId()),
                 HttpMethod.PUT,
                 new HttpEntity<>(signedRequest),
                 new ParameterizedTypeReference<List<ClaimDTO>>() {});
@@ -200,6 +198,6 @@ public class ProviderAPIRestTest extends RestTestSuite {
 
     private String getUrl(String url, String ethID) {
         String resolvedUrl = new String(url);
-        return resolvedUrl.replaceAll("\\{ethID\\}", ethID);
+        return resolvedUrl.replaceAll("\\{" + ETH_ID_PARAM +"\\}", ethID);
     }
 }

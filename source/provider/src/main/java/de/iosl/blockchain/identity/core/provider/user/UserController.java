@@ -5,8 +5,8 @@ import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
 import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -134,4 +135,15 @@ public class UserController {
             @RequestParam(value = "familyName", defaultValue = "") String familyName) {
         return userService.search(givenName, familyName).stream().map(User::getId).collect(Collectors.toList());
     }
+
+    @GetMapping("/ethID/{ethID}/claimIDs")
+    @ApiOperation("Get the claimIDs of a user")
+    public Set<String> getClaimIds(@PathVariable("ethID") @NotBlank String ethID) {
+        User user = userService.findUserByEthID(ethID).orElseThrow(
+                () -> new ServiceException("Could not find user with ethID [%s]", HttpStatus.NOT_FOUND, ethID)
+        );
+
+        return user.getClaims().stream().map(SharedClaim::getId).collect(Collectors.toSet());
+    }
+
 }

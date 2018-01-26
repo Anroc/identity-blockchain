@@ -5,14 +5,15 @@ import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
-import de.iosl.blockchain.identity.lib.dto.beats.Beat;
-import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
+import de.iosl.blockchain.identity.lib.dto.beats.Beat;
+import de.iosl.blockchain.identity.lib.dto.beats.EventType;
+import org.assertj.core.util.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,7 @@ import org.web3j.crypto.Credentials;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -214,6 +216,27 @@ public class UserControllerRestTest extends RestTestSuite {
                         HttpEntity.EMPTY, Object.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    public void getClaimIds() {
+        final String claimID1 = "CLASSIC_CLAIM_1";
+        final String claimID2 = "CLASSIC_CLAIM_2";
+        final String claimID3 = new String(claimID2);
+        user.setClaims(Sets.newHashSet());
+        user.getClaims().add(claimFactory.create(claimID1));
+        user.getClaims().add(claimFactory.create(claimID2));
+        user.getClaims().add(claimFactory.create(claimID3));
+        userDB.update(user);
+
+        ResponseEntity<Set<String>> responseEntity = restTemplate.exchange(
+                String.format("/users/ethID/%s/claimIDs", user.getEthId()),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Set<String>>() {});
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).containsExactlyInAnyOrder(claimID1, claimID2);
     }
 
 }

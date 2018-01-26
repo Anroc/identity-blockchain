@@ -8,7 +8,6 @@ import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.account.AbstractAuthenticator;
 import de.iosl.blockchain.identity.core.shared.api.ClientAPI;
 import de.iosl.blockchain.identity.core.shared.api.ProviderAPI;
-import de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.InfoDTO;
@@ -16,6 +15,7 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
+import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances.*;
 
 @Slf4j
 @RestController
@@ -44,7 +47,7 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
     private ApiService apiService;
 
     @Override
-    @PostMapping(ProviderAPIConstances.ABSOLUTE_CLAIM_ATH)
+    @PostMapping(ABSOLUTE_CLAIM_ATH)
     public List<ClaimDTO> getClaims(@NotNull @Valid @RequestBody SignedRequest<BasicEthereumDTO> claimRequest) {
         if (! ecSignatureValidator.isRequestValid(claimRequest)) {
             throw new ServiceException(HttpStatus.FORBIDDEN);
@@ -59,15 +62,15 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
     }
 
     @Override
-    @GetMapping(ProviderAPIConstances.ABSOLUTE_INFO_PATH)
+    @GetMapping(ABSOLUTE_INFO_PATH)
     public InfoDTO info() {
         return new InfoDTO(config.getBuildVersion(), config.getApiVersion(), config.getApplicationName());
     }
 
     @Override
-    @PostMapping(ProviderAPIConstances.ABSOLUTE_PPR_PATH)
+    @PostMapping(ABSOLUTE_PPR_PATH)
     public BasicEthereumDTO createPermissionContract(
-            @PathVariable("ethID") @NotBlank String ethID,
+            @PathVariable(ETH_ID_PARAM) @NotBlank String ethID,
             @RequestBody @Valid @NotNull  SignedRequest<PermissionContractCreationDTO> permissionContractCreationDTO) {
         checkAuthentication();
         if (! ecSignatureValidator.isRequestValid(permissionContractCreationDTO)) {
@@ -87,9 +90,9 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
     }
 
     @Override
-    @PutMapping(ProviderAPIConstances.ABSOLUTE_PPR_PATH)
+    @PutMapping(ABSOLUTE_PPR_PATH)
     public List<ClaimDTO> retrieveClaimsByPPR(
-            @PathVariable("ethID") String ethID,
+            @PathVariable(ETH_ID_PARAM) String ethID,
             @RequestBody @Valid @NotNull SignedRequest<SignedClaimRequestDTO> signedClaimsRequest) {
         checkAuthentication();
         if (! ecSignatureValidator.isRequestValid(signedClaimsRequest)) {
