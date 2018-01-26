@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import request from '../auth/request';
+// import request from '../auth/request';
 
 class Government extends Component {
   constructor() {
@@ -20,6 +20,7 @@ class Government extends Component {
           <p>
             Welcome!
           </p>
+
         </section>
       </article>
     );

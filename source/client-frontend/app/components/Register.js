@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Form from './common/Form/Form';
 
 import { registerRequest } from '../actions';
-import userRegistrationRequest from '../auth/registration/userRegistrationRequest';
+// import userRegistrationRequest from '../auth/registration/userRegistrationRequest';
 import bankRegistrationRequest from '../auth/registration/bankRegistrationRequest';
 import request from '../auth/request';
 
@@ -12,6 +12,7 @@ class Register extends Component {
   constructor(props) {
     super(props);
     this.register = this.register.bind(this);
+    this.props.setEthId.bind(this);
   }
 
   sendRegisterRequest(password) {
@@ -49,7 +50,7 @@ class Register extends Component {
     this.props.dispatch(registerRequest({ username, password, accountType, domainName: '' }));
     switch (accountType) {
       case 'user':
-        userRegistrationRequest(password);
+        this.abc(password);
         break;
       case 'bank':
         bankRegistrationRequest(password);
@@ -60,6 +61,35 @@ class Register extends Component {
     /*
       this.sendRegisterRequest(password);
     */
+  }
+
+  abc(password) {
+    console.log('start');
+    // this.props.setEthId(userRegistrationRequest(password));
+    console.log('sending register request');
+    const options = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        password,
+      }),
+      mode: 'cors',
+      credentials: 'include',
+    };
+    // TODO currently setting it in wrong state
+    request('http://srv01.snet.tu-berlin.de:1112/account/register', options)
+      .then((json) => {
+        const ethId = json.ethereumID;
+        console.log('ETH ID', ethId);
+        console.log(`content' + ${JSON.stringify(json)}`);
+        this.props.setEthId(ethId);
+      });
+    console.log('ETH ID');
+    console.log('ETH ID', this.props.ethId);
+    console.log('ETH ID2');
   }
 
   render() {
@@ -91,6 +121,8 @@ Register.propTypes = {
   data: PropTypes.object,
   history: PropTypes.object,
   dispatch: PropTypes.func,
+  ethId: PropTypes.string,
+  setEthId: PropTypes.func,
 };
 
 function select(state) {
