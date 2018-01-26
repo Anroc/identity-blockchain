@@ -148,7 +148,8 @@
     "redux-saga": "^0.16.0",
     "whatwg-fetch": "2.0.3",
     "prop-types": "^15.6.0",
-    "material-ui": "^1.0.0-beta.29"
+    "material-ui": "^1.0.0-beta.29",
+    "material-ui-icons-next": "^1.0.0-beta.17-next"
   },
   "babel": {
     "presets": [

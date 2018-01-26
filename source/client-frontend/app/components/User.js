@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
+import Radio, { RadioGroup } from 'material-ui/Radio';
+import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
 import Paper from 'material-ui/Paper';
 import request from '../auth/request';
 import LazyImage from './common/LazyImage';
@@ -10,6 +12,7 @@ class User extends Component {
   constructor() {
     super();
     this.showQRCode = this.showQRCode.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.state = {
       swaggerData: '',
       ethID: '',
@@ -57,6 +60,7 @@ class User extends Component {
           },
         },
       ],
+      value: '',
     };
   }
 
@@ -127,8 +131,15 @@ class User extends Component {
     });
   }
 
+
   showClaims() {
     this.getUserInformation();
+  }
+
+  handleChange(event, value) {
+    this.setState({
+      value,
+    });
   }
 
   // TODO proposal: you are registered but not approved yet, please scan the QR code
@@ -185,6 +196,25 @@ class User extends Component {
               </TableBody>
             </Table>
           </Paper>
+        </section>
+        <section>
+          <FormControl component="fieldset" required error>
+            <FormLabel component="legend">
+              Incoming Permission Request:
+              <br />
+              Bank wants to know: FAMILY_NAME
+            </FormLabel>
+            <RadioGroup
+              aria-label="Your answer:"
+              name="answer"
+              value={this.state.value}
+              onChange={this.handleChange}
+            >
+              <FormControlLabel value="male" control={<Radio />} label="APPROVE" />
+              <FormControlLabel value="female" control={<Radio />} label="DENY" />
+            </RadioGroup>
+            <FormHelperText>Please select an option.</FormHelperText>
+          </FormControl>
         </section>
       </article>
     );
