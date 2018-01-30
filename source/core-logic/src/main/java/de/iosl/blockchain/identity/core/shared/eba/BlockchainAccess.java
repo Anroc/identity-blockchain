@@ -13,12 +13,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.tx.Contract;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.Set;
 
 @Slf4j
 @Data
@@ -70,8 +67,8 @@ public class BlockchainAccess implements EBAInterface {
     }
 
     @Override
-    public String deployPermissionContract(Account sender, String recipient, String requesterAddress, Set<String> requiredClaims, Set<String> optionalClaims) {
-        return permissionContractUtils.deployPermissionContract(sender, recipient, requesterAddress, requiredClaims, optionalClaims, web3j);
+    public String deployPermissionContract(Account sender, String recipient, PermissionContractContent permissionContractContent) {
+        return permissionContractUtils.deployPermissionContract(sender, recipient, permissionContractContent, web3j);
     }
 
     @Override
