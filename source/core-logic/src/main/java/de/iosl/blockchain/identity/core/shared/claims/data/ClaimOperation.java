@@ -3,7 +3,7 @@ package de.iosl.blockchain.identity.core.shared.claims.data;
 import lombok.Getter;
 
 @Getter
-public enum ClaimOperations {
+public enum ClaimOperation {
 
     EQ("equals"),
     NEQ("not equals"),
@@ -14,7 +14,7 @@ public enum ClaimOperations {
 
     private final String description;
 
-    ClaimOperations(String description) {
+    ClaimOperation(String description) {
         this.description = description;
     }
 }

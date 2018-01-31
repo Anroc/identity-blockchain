@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +44,25 @@ public class ClaimTest {
     public void saveClaimTest() {
         userClaimDB.save(userClaim);
         assertThat(userClaimDB.findEntity(userClaim.getId())).isPresent();
+    }
+
+    @Test
+    public void saveAndReadDateClaimTest() {
+        UserClaim userClaim = new UserClaim(
+                "id",
+                new Date(),
+                new Provider("1", "1"),
+                new Payload(LocalDateTime.now(), ClaimType.DATE),
+                "0x123"
+        );
+
+        assertThat(userClaim.getClaimValue().getPayload()).isInstanceOf(LocalDateTime.class);
+
+        userClaimDB.save(userClaim);
+        UserClaim retrievedClaim = userClaimDB.findEntity("id").get();
+
+        assertThat(userClaim).isEqualTo(retrievedClaim);
+        assertThat(userClaim.getClaimValue().getPayload()).isInstanceOf(LocalDateTime.class);
     }
 
     @Test

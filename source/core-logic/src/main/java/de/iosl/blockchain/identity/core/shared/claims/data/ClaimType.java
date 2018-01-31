@@ -1,18 +1,25 @@
 package de.iosl.blockchain.identity.core.shared.claims.data;
 
-import static de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperations.*;
+import lombok.Getter;
 
+import java.time.LocalDateTime;
+
+import static de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation.*;
+
+@Getter
 public enum ClaimType {
 
-    STRING(EQ, NEQ),
-    NUMBER(EQ, NEQ, GT, GE, LT, LE),
-    OBJECT(),
-    DATE(EQ, NEQ, GT, GE, LT, LE),
-    BOOLEAN(EQ, NEQ);
+    STRING(String.class, EQ, NEQ),
+    NUMBER(Double.class, EQ, NEQ, GT, GE, LT, LE),
+    OBJECT(Object.class),
+    DATE(LocalDateTime.class, EQ, NEQ, GT, GE, LT, LE),
+    BOOLEAN(Boolean.class, EQ, NEQ);
 
-    private final ClaimOperations[] supportedClaimOperation;
+    private final ClaimOperation[] supportedClaimOperation;
+    private final Class<?> clazz;
 
-    ClaimType(ClaimOperations... claimOperations) {
+    ClaimType(Class<?> clazz, ClaimOperation... claimOperations) {
         this.supportedClaimOperation = claimOperations;
+        this.clazz = clazz;
     }
 }
