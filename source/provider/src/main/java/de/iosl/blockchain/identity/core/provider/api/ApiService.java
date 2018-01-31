@@ -7,6 +7,7 @@ import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
+import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
@@ -43,12 +44,17 @@ public class ApiService {
             throw new ServiceException("User [%s] is not yet known to the system.", HttpStatus.UNPROCESSABLE_ENTITY, user.getId());
         }
 
+        PermissionContractContent permissionContractContent = new PermissionContractContent(
+                requiredClaims,
+                optionalClaims,
+                requestingProvider,
+                null // TODO @Marvin: Implement Closure requests -- see Issue #91
+        );
+
         String ppr = ebaInterface.deployPermissionContract(
                 keyChain.getAccount(),
                 user.getEthId(),
-                requestingProvider,
-                requiredClaims,
-                optionalClaims
+                permissionContractContent
         );
 
         if(ppr == null) {

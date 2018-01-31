@@ -1,30 +1,25 @@
 package de.iosl.blockchain.identity.core.shared.eba.main;
 
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
+import de.iosl.blockchain.identity.core.shared.eba.contracts.Permission_sol_PermissionContract;
 import de.iosl.blockchain.identity.core.shared.eba.main.exception.EBAException;
 import de.iosl.blockchain.identity.core.shared.eba.main.util.ObjectToString;
 import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jConstants;
 import de.iosl.blockchain.identity.core.shared.eba.main.util.Web3jUtils;
-import de.iosl.blockchain.identity.core.shared.eba.contracts.Permission_sol_PermissionContract;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
-import java.math.BigInteger;
-import java.util.Map;
-import java.util.Set;
-
 @Slf4j
 @Component
 public class PermissionContractUtils {
 
-    public String deployPermissionContract(Account sender, String recipient, String requesterAddress, Set<String> requiredClaims, Set<String> optionalClaims, Web3j web3j){
+    public String deployPermissionContract(Account sender, String recipient, PermissionContractContent permissionContractContent, Web3j web3j){
 
         try {
             log.info("wallet balance before deployment: {}", Web3jUtils.getBalanceWei(web3j, sender.getAddress()));
-            PermissionContractContent permissionContractContent = new PermissionContractContent(requiredClaims, optionalClaims, requesterAddress);
+            // TODO @Timo: handle additional permissionContractContent.getClosureRequest() values
 
             Permission_sol_PermissionContract contract = Permission_sol_PermissionContract.deploy(
                     web3j,

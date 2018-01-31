@@ -118,7 +118,8 @@ public class PermissionService {
         PermissionContractContent permissionContractContent = new PermissionContractContent(
                 requiredSignedClaims,
                 optionalSignedClaims,
-                permissionRequest.getRequestingProvider()
+                permissionRequest.getRequestingProvider(),
+                null // TODO @Marvin adapt to closure workflow -- see Issue #91
         );
 
         log.info("Updating PPR in ethereum");

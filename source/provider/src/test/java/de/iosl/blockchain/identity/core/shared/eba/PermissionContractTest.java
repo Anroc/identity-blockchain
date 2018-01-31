@@ -81,14 +81,14 @@ public class PermissionContractTest extends RestTestSuite{
 
     @Test
     public void deployPermissionContract() throws Exception {
-        String permissionContractAddress= blockchainAccess.deployPermissionContract(governmentAccount, userAccount.getAddress(), providerAccount.getAddress(), requiredClaims, optionalClaims);
+        String permissionContractAddress= blockchainAccess.deployPermissionContract(governmentAccount, userAccount.getAddress(), permissionContractContent);
         assertThat(permissionContractAddress).isNotNull();
     }
 
 
     @Test
     public void rightClaimsSetInContractAsGovernmentForProviderTest() throws  Exception{
-        String permissionContractAddress= blockchainAccess.deployPermissionContract(governmentAccount, userAccount.getAddress(), providerAccount.getAddress(), requiredClaims, optionalClaims);
+        String permissionContractAddress= blockchainAccess.deployPermissionContract(governmentAccount, userAccount.getAddress(), permissionContractContent);
         PermissionContractContent permissionContractContent= blockchainAccess.getPermissionContractContent(providerAccount, permissionContractAddress);
 
         permissionContractContent.getRequiredClaims().entrySet().stream().forEach(entry -> {
@@ -109,7 +109,7 @@ public class PermissionContractTest extends RestTestSuite{
     @Test
     public void setApprovedClaimsAsUserInContractTest() throws Exception{
 
-        String permissionContractAddress= blockchainAccess.deployPermissionContract(governmentAccount, userAccount.getAddress(), providerAccount.getAddress(), requiredClaims, optionalClaims);
+        String permissionContractAddress= blockchainAccess.deployPermissionContract(governmentAccount, userAccount.getAddress(), permissionContractContent);
         PermissionContractContent permissionContractContent= blockchainAccess.getPermissionContractContent(providerAccount, permissionContractAddress);
 
         String name = "Isol";
@@ -119,7 +119,7 @@ public class PermissionContractTest extends RestTestSuite{
         permissionContractContent.getRequiredClaims().put(claimID_familyName, familyName);
         permissionContractContent.getOptionalClaims().put(claimID_age, age);
 
-        PermissionContractContent permissionContractContentCompare = new PermissionContractContent(permissionContractContent.getRequiredClaims(), permissionContractContent.getOptionalClaims(), providerAccount.getAddress());
+        PermissionContractContent permissionContractContentCompare = new PermissionContractContent(permissionContractContent.getRequiredClaims(), permissionContractContent.getOptionalClaims(), providerAccount.getAddress(), null);
 
         permissionContractContent.getRequiredClaims().entrySet().stream().forEach(entry -> {
             log.info("Claim: "+entry.getKey());

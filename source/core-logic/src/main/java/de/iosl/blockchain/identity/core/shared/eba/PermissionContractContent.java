@@ -3,7 +3,10 @@ package de.iosl.blockchain.identity.core.shared.eba;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,20 +23,22 @@ import java.util.Set;
  * instances.</ul>
  * </li>
  *
- * All fields are strict to be not null.
+ * Note: Hibernate annotation are not jet evaluated
+ * see https://stackoverflow.com/a/40887477/6190424 for information how to do so
  */
 @Data
 @RequiredArgsConstructor
 public class PermissionContractContent implements Serializable{
 
     /**
-     * the map of claimID to user base64 approvals of required claims.
+     * The map of claimID to user base64 approvals of required claims.
      * Value not present (null) or empty would indicate a rejection of this claim.
      */
+    @NotEmpty
     private final Map<String, String> requiredClaims;
 
     /**
-     * the result that the permission contract resulted in.
+     * The result that the permission contract resulted in.
      * Value not present (null) or empty would indicate a rejection of this claim.
      */
     private final Map<String, String> optionalClaims;
@@ -41,13 +46,28 @@ public class PermissionContractContent implements Serializable{
     /**
      * The address of the third party requesting the claims.
      */
+    @NotBlank
     private final String requesterAddress;
 
+    /**
+     * Content for eventual closure request.
+     *
+     * Null of not present.
+     */
+    @Valid
+    private final ClosureContent closureContent;
+
     public PermissionContractContent(@NonNull Set<String> requiredClaims, @NonNull Set<String> optionalClaims, @NonNull String requesterAddress) {
+        this(requiredClaims, optionalClaims, requesterAddress, null);
+    }
+
+    public PermissionContractContent(@NonNull Set<String> requiredClaims, @NonNull Set<String> optionalClaims, @NonNull String requesterAddress, ClosureContent closureContent) {
         this.requiredClaims = initMapKeys(requiredClaims, String.class);
         this.optionalClaims = initMapKeys(optionalClaims, String.class);
 
         this.requesterAddress = requesterAddress;
+
+        this.closureContent = closureContent;
     }
 
     /**

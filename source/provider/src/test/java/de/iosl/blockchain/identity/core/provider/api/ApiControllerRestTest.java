@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.provider.api;
 
-import com.google.common.collect.Sets;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
@@ -15,6 +15,7 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
+import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
@@ -126,9 +127,7 @@ public class ApiControllerRestTest extends RestTestSuite {
         doReturn(pprEthID).when(ebaInterface).deployPermissionContract(
                 any(Account.class),
                 eq(user.getEthId()),
-                eq(REQUESTING_PROVIDER_CREDENTIALS.getAddress()),
-                eq(requiredClaim),
-                eq(Sets.newHashSet())
+                any(PermissionContractContent.class)
         );
 
         doReturn(mock(Beat.class)).when(heartBeatService).createEthIdBeat(user.getEthId(), EventType.NEW_PPR, pprEthID);
@@ -155,9 +154,7 @@ public class ApiControllerRestTest extends RestTestSuite {
         verify(ebaInterface).deployPermissionContract(
                 any(Account.class),
                 eq(user.getEthId()),
-                eq(REQUESTING_PROVIDER_CREDENTIALS.getAddress()),
-                eq(requiredClaim),
-                eq(Sets.newHashSet())
+                any(PermissionContractContent.class)
         );
     }
 
