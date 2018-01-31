@@ -2,9 +2,9 @@ package de.iosl.blockchain.identity.core.provider.user.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
-import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
-import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
-import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
+import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
+import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
+import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

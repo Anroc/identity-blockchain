@@ -1,8 +1,8 @@
 package de.iosl.blockchain.identity.core.provider.factories;
 
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
-import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
-import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
+import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
+import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
 
 import java.util.Date;
 import java.util.UUID;

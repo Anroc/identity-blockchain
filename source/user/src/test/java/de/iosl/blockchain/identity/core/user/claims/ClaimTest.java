@@ -1,9 +1,9 @@
 package de.iosl.blockchain.identity.core.user.claims;
 
 import de.iosl.blockchain.identity.core.user.Application;
-import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
-import de.iosl.blockchain.identity.core.shared.claims.payload.PayloadType;
-import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
+import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
+import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import de.iosl.blockchain.identity.core.user.claims.repository.UserClaimDB;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
@@ -35,7 +35,7 @@ public class ClaimTest {
     public void init() {
         userClaim = new UserClaim("1", lastModifiedDate,
                 new Provider("1", "1"),
-                new Payload("1", PayloadType.STRING),
+                new Payload("1", ClaimType.STRING),
                 "0x123");
     }
 

@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.shared.claims.payload;
+package de.iosl.blockchain.identity.core.shared.claims.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import lombok.AllArgsConstructor;
@@ -20,6 +20,6 @@ public class Payload {
 
     @NotNull
     @Field
-    private PayloadType payloadType;
+    private ClaimType payloadType;
 
 }
