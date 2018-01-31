@@ -5,10 +5,14 @@ import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 @Getter
 public class ClosureExpression<T> {
+
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final Payload claim;
     private final ClaimOperation claimOperation;
@@ -49,6 +53,17 @@ public class ClosureExpression<T> {
             default:
                 throw new UnsupportedOperationException("Operations on this type are not supported");
         }
+    }
+
+    public String describe(String claimId) {
+        Object printablePayload = getClaim().getPayload();
+        Object printableValue = value;
+        if(getClaim().getPayload() instanceof LocalDateTime) {
+            printablePayload = DATE_TIME_FORMATTER.format((LocalDateTime) getClaim().getPayload());
+            printableValue = DATE_TIME_FORMATTER.format((LocalDateTime) value);
+        }
+        String parsedClaimId = claimId.toLowerCase().replaceAll("_", " ");
+        return String.format("Is the claim \"%s\" (your value is \"%s\") %s %s?", parsedClaimId, printablePayload, claimOperation.getDescription(), printableValue);
     }
 
     private boolean evaluateDate() {
