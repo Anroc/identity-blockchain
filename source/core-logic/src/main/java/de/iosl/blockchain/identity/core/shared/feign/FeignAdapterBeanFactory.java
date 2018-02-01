@@ -45,12 +45,24 @@ public class FeignAdapterBeanFactory {
 
     public <T> T buildBean(@NonNull Class<T> clazz, @NonNull String url) {
         return Feign.builder()
-                .errorDecoder((methodKey, response) ->
-                        new InterServiceCallError(
+                .errorDecoder((methodKey, response) -> {
+                    if(response.status() / 100 == 4) {
+                        // any client error message
+                        // forward error in that case
+                        throw new InterServiceCallError(
+                                HttpStatus.valueOf(response.status()),
+                                "InterService call error [" + methodKey + "], "
+                                        + "with message [" + response.reason() + "].",
+                                response.body()
+                        );
+                    } else {
+                        return new InterServiceCallError(
                                 HttpStatus.INTERNAL_SERVER_ERROR,
                                 "InterService call error [" + methodKey +
                                         ", " + response.status() + "]: " + response.reason(),
-                                response.body()))
+                                response.body());
+                    }
+                })
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
                 .target(clazz, url);

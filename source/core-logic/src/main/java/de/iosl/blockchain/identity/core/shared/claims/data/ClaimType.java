@@ -1,8 +1,10 @@
 package de.iosl.blockchain.identity.core.shared.claims.data;
 
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation.*;
 
@@ -21,5 +23,26 @@ public enum ClaimType {
     ClaimType(Class<?> clazz, ClaimOperation... claimOperations) {
         this.supportedClaimOperation = claimOperations;
         this.clazz = clazz;
+    }
+
+    public boolean supports(@NonNull ClaimOperation claimOperation) {
+        return Arrays.stream(supportedClaimOperation)
+                .anyMatch(supportedClaimOperation -> supportedClaimOperation == claimOperation);
+    }
+
+    public boolean validateType(@NonNull Object value) {
+        switch (this) {
+            case DATE:
+                return value instanceof LocalDateTime;
+            case NUMBER:
+                return value instanceof Double;
+            case STRING:
+                return value instanceof String;
+            case BOOLEAN:
+                return value instanceof Boolean;
+            case OBJECT:
+            default:
+                return true;
+        }
     }
 }

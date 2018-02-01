@@ -77,12 +77,12 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         user = userFactory.create();
 
         doReturn(permissionContractAddress).when(apiProviderService)
-                .requestUserClaims(url, userEthID, requiredClaims, optionalClaims);
+                .requestUserClaims(any(PermissionRequest.class));
     }
 
     @Test
     public void requestPermission_updatingUser() {
-        PermissionRequest permissionRequest = new PermissionRequest(userEthID, url, requiredClaims, optionalClaims);
+        PermissionRequest permissionRequest = new PermissionRequest(userEthID, url, requiredClaims, optionalClaims, null);
 
         doReturn(Optional.of(user)).when(userService).findUserByEthID(userEthID);
         doAnswer(returnsFirstArg()).when(userService).updateUser(any(User.class));
@@ -95,7 +95,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
 
     @Test
     public void requestPermission_creatingUser() {
-        PermissionRequest permissionRequest = new PermissionRequest(userEthID, url, requiredClaims, optionalClaims);
+        PermissionRequest permissionRequest = new PermissionRequest(userEthID, url, requiredClaims, optionalClaims, null);
 
         doReturn(Optional.empty()).when(userService).findUserByEthID(userEthID);
         doAnswer(returnsFirstArg()).when(userService).insertUser(any(User.class));

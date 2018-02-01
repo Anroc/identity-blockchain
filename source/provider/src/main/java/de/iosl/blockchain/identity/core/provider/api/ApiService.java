@@ -5,6 +5,8 @@ import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
@@ -115,6 +117,39 @@ public class ApiService {
                         })
                 .map(Optional::get)
                 .collect(Collectors.toList());
+
+    }
+
+    public void validateClosureExpression(@NonNull User user, @NonNull ClosureContractRequestDTO closureContractRequestDTO) {
+        Optional<ProviderClaim> providerClaimOptional = user.findClaim(closureContractRequestDTO.getClaimID());
+
+        if(! providerClaimOptional.isPresent()) {
+            throw new ServiceException(
+                    "Claim with id [%s] was not found for [%s].",
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    closureContractRequestDTO.getClaimID(), user.getEthId());
+        }
+
+        ProviderClaim providerClaim = providerClaimOptional.get();
+        ClaimType claimType = providerClaim.getClaimValue().getPayloadType();
+
+        if(! claimType.supports(closureContractRequestDTO.getClaimOperation())) {
+            throw new ServiceException(
+                    "Claim with id [%s] does not support [%s]",
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    closureContractRequestDTO.getClaimID(),
+                    closureContractRequestDTO.getClaimOperation()
+            );
+        }
+
+        if(! claimType.validateType(closureContractRequestDTO.getStaticValue())) {
+            throw new ServiceException(
+                    "Claim with id [%s] is not of expected type [%s].",
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    closureContractRequestDTO.getClaimID(),
+                    claimType
+            );
+        }
 
     }
 }

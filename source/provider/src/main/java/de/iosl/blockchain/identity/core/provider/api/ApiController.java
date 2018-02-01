@@ -13,6 +13,7 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.InfoDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances.*;
@@ -74,8 +76,9 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
         if (! ecSignatureValidator.isRequestValid(permissionContractCreationDTO)) {
             throw new ServiceException("Sender signature was invalid", HttpStatus.FORBIDDEN);
         }
-
         User user = getUser(ethID);
+
+        validateClosureExpression(user, permissionContractCreationDTO.getPayload().getClosureContractRequestDTOs());
 
         String permissionContract = apiService.createPermissionContract(
                 permissionContractCreationDTO.getEthID(),
@@ -85,6 +88,12 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
 
         return new BasicEthereumDTO(permissionContract);
 
+    }
+
+    private void validateClosureExpression(User user, Set<ClosureContractRequestDTO> closureContractRequestDTOs) {
+        closureContractRequestDTOs.forEach(
+                (closureContractRequestDTO) -> apiService.validateClosureExpression(user, closureContractRequestDTO)
+        );
     }
 
     @Override

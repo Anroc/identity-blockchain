@@ -55,11 +55,7 @@ public class PermissionRequestService {
     private final ECSignatureValidator ecSignatureValidator = new ECSignatureValidator();
 
     public void requestPermission(@NonNull PermissionRequest permissionRequest) {
-        String pprAddress = apiProviderService.requestUserClaims(
-                permissionRequest.getUrl(),
-                permissionRequest.getEthID(),
-                permissionRequest.getRequiredClaims(),
-                permissionRequest.getOptionalClaims());
+        String pprAddress = apiProviderService.requestUserClaims(permissionRequest);
 
         log.info("Retrieved PPR address at {}", pprAddress);
 

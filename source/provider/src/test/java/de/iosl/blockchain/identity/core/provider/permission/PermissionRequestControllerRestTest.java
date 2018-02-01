@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.api.client.APIProviderService;
+import de.iosl.blockchain.identity.core.provider.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.provider.permission.data.dto.PermissionRequestDTO;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
@@ -77,10 +79,10 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
 
     @Test
     public void createPermissionRequest_existingUser() {
-        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(userEthID, url, requiredClaims, optionalClaims);
+        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(userEthID, url, requiredClaims, optionalClaims, null);
 
         doNothing().when(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
-        doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(url, userEthID, requiredClaims, optionalClaims);
+        doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(any(PermissionRequest.class));
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
                 "/permissions",
@@ -101,10 +103,10 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
     @Test
     public void createPermissionRequest_nonExisitingUser() {
         final String otherEthID = "0xcafeaffe";
-        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(otherEthID, url, requiredClaims, optionalClaims);
+        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(otherEthID, url, requiredClaims, optionalClaims, null);
 
         doNothing().when(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
-        doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(url, otherEthID, requiredClaims, optionalClaims);
+        doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(any(PermissionRequest.class));
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
                 "/permissions",

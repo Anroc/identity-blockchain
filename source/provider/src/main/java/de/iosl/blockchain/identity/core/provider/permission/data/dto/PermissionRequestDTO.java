@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,4 +30,8 @@ public class PermissionRequestDTO {
 
     @ApiModelProperty(required = false)
     private Set<String> optionalClaims = new HashSet<>();
+
+    @Valid
+    @ApiModelProperty(required = false)
+    private Set<ClosureRequestDTO> closureRequests;
 }

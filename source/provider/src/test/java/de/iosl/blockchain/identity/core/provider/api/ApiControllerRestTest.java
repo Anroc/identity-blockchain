@@ -135,6 +135,7 @@ public class ApiControllerRestTest extends RestTestSuite {
         PermissionContractCreationDTO permissionContractCreationDTO = new PermissionContractCreationDTO(
                 REQUESTING_PROVIDER_CREDENTIALS.getAddress(),
                 requiredClaim,
+                Sets.newHashSet(),
                 Sets.newHashSet()
         );
 
