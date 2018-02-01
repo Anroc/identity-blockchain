@@ -8,7 +8,7 @@ import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
-import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
+import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
@@ -200,7 +200,7 @@ public class UserControllerRestTest extends RestTestSuite {
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        user = userDB.findOne(user.getId()).get();
+        user = userDB.findEntity(user.getId()).get();
 
         assertThat(user.getEthId()).isEqualTo(registerRequest.getPayload().getEthID());
         assertThat(user.getPublicKey()).isEqualTo(registerRequest.getPayload().getPublicKey());

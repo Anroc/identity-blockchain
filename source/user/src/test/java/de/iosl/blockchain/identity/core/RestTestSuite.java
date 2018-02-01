@@ -5,7 +5,7 @@ import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.message.data.Message;
 import de.iosl.blockchain.identity.core.shared.message.db.MessageDB;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
-import de.iosl.blockchain.identity.core.user.claims.repository.UserClaimDB;
+import de.iosl.blockchain.identity.core.user.claims.db.UserClaimDB;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.user.permission.db.PermissionRequestDB;
 import org.junit.After;

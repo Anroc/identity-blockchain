@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.api.data.dto;
 
-import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
-import de.iosl.blockchain.identity.core.shared.claims.payload.PayloadType;
+import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,7 @@ public class PayloadDTO {
     @NotNull
     private Object payload;
     @NotNull
-    private PayloadType payloadType;
+    private ClaimType payloadType;
 
     public PayloadDTO(@NonNull Payload claimValue) {
         this.payload = claimValue.getPayload();

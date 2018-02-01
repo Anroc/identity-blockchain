@@ -4,9 +4,9 @@ import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
-import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
-import de.iosl.blockchain.identity.core.shared.claims.payload.PayloadType;
-import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
+import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
+import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +31,10 @@ public class UserDBTest extends RestTestSuite {
     public void init() {
         providerClaim = new ProviderClaim("1", lastModifiedDate,
                 new Provider("1", "1"),
-                new Payload("1", PayloadType.STRING));
+                new Payload("1", ClaimType.STRING));
         providerClaimTwo = new ProviderClaim("2", lastModifiedDate,
                 new Provider("2", "2"),
-                new Payload(true, PayloadType.BOOLEAN));
+                new Payload(true, ClaimType.BOOLEAN));
         Set<ProviderClaim> providerClaimHashSet = new HashSet<>();
         providerClaimHashSet.add(providerClaim);
         user = new User("1", "1", "1", null, new ArrayList<>(), providerClaimHashSet);
@@ -82,7 +82,7 @@ public class UserDBTest extends RestTestSuite {
     @Test
     public void findUserByFindOne() {
         userDB.updateOrCreateUser(user);
-        assertThat(userDB.findOne(user.getId())).isPresent();
+        assertThat(userDB.findEntity(user.getId())).isPresent();
     }
 
     @Test

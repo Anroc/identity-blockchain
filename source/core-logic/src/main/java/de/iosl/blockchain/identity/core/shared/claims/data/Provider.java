@@ -1,25 +1,23 @@
-package de.iosl.blockchain.identity.core.shared.claims.payload;
+package de.iosl.blockchain.identity.core.shared.claims.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.couchbase.core.mapping.Document;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document
-public class Payload {
+public class Provider {
 
-    @NotNull
     @Field
-    private Object payload;
+    private String ethID;
 
-    @NotNull
     @Field
-    private PayloadType payloadType;
+    @NotBlank
+    private String name;
 
 }

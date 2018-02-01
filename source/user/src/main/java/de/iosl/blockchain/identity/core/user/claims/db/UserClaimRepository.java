@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.user.claims.repository;
+package de.iosl.blockchain.identity.core.user.claims.db;
 
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import org.springframework.data.couchbase.core.query.Query;
@@ -9,9 +9,6 @@ import java.util.List;
 
 @Repository
 public interface UserClaimRepository extends CrudRepository<UserClaim, String> {
-
-    @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter}")
-    List<UserClaim> findAll();
 
     @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter} AND targetUserEthID = $1")
     List<UserClaim> findAllByEthID(String ethID);

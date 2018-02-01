@@ -8,7 +8,7 @@ import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
-import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
+import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;

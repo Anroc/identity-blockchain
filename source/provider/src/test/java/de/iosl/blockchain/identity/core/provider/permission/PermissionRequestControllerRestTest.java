@@ -89,7 +89,7 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
                 Void.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        User user = userDB.getUser(this.user.getId()).get();
+        User user = userDB.findEntity(this.user.getId()).get();
         assertThat(user.getPermissionGrands()).hasSize(1);
         assertThat(user.getPermissionGrands().get(0).getPermissionContractAddress()).isEqualTo(permissionContractAddress);
         assertThat(user.getPermissionGrands().get(0).getRequiredClaimGrants())

@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.user.claims.repository;
+package de.iosl.blockchain.identity.core.user.claims.db;
 
 import com.couchbase.client.java.Bucket;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
@@ -19,14 +19,6 @@ public class UserClaimDB extends CouchbaseWrapper<UserClaim, String> {
         super(userClaimRepository);
         this.userClaimRepository = userClaimRepository;
         this.bucket = bucket;
-    }
-
-    public List<UserClaim> findAll() {
-        return userClaimRepository.findAll();
-    }
-
-    public void save(UserClaim claim){
-        userClaimRepository.save(claim);
     }
 
     public void delete(String id){
