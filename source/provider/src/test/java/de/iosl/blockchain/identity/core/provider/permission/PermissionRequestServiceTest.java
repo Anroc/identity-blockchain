@@ -114,7 +114,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         requiredClaimResult.put(claimID_familyName, buildApprovedClaim(claimID_familyName, providerEthID, userEthID));
         optionalClaimResult.put(claimID_age, buildApprovedClaim(claimID_age, providerEthID, userEthID));
 
-        user.putPermissionGrant(PermissionGrand.init(permissionContractAddress, requiredClaims, optionalClaims));
+        user.putPermissionGrant(PermissionGrand.init(permissionContractAddress, requiredClaims, optionalClaims, Sets.newHashSet()));
         assertThat(user.getPermissionGrands().get(0).getRequiredClaimGrants())
                 .containsOnlyKeys(claimID_givenName, claimID_familyName).doesNotContainValue(true);
         assertThat(user.getPermissionGrands().get(0).getOptionalClaimGrants())

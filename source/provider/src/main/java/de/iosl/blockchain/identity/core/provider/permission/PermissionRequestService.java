@@ -190,15 +190,24 @@ public class PermissionRequestService {
     }
 
     private void updateUser(User user, String pprAddress, PermissionRequest permissionRequest) {
-        PermissionGrand permissionGrand =
-                PermissionGrand.init(pprAddress, permissionRequest.getRequiredClaims(), permissionRequest.getOptionalClaims());
+        PermissionGrand permissionGrand = PermissionGrand.init(
+                pprAddress,
+                permissionRequest.getRequiredClaims(),
+                permissionRequest.getOptionalClaims(),
+                permissionRequest.getClosuresRequests()
+        );
         user.addPermissionGrant(permissionGrand);
         userService.updateUser(user);
     }
 
     private void createNewUser(String pprAddress, PermissionRequest permissionRequest) {
         List<PermissionGrand> permissionGrands = new ArrayList<>();
-        permissionGrands.add(PermissionGrand.init(pprAddress, permissionRequest.getRequiredClaims(), permissionRequest.getOptionalClaims()));
+        permissionGrands.add(
+                PermissionGrand.init(
+                        pprAddress,
+                        permissionRequest.getRequiredClaims(),
+                        permissionRequest.getOptionalClaims(),
+                        permissionRequest.getClosuresRequests()));
 
         User user = new User(
                 UUID.randomUUID().toString(),

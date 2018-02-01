@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.api.client.APIProviderService;
+import de.iosl.blockchain.identity.core.provider.permission.data.ClosureRequest;
 import de.iosl.blockchain.identity.core.provider.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.provider.permission.data.dto.ClosureRequestDTO;
 import de.iosl.blockchain.identity.core.provider.permission.data.dto.PermissionRequestDTO;
@@ -152,5 +153,17 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
                 Void.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        User user = userDB.findEntity(this.user.getId()).get();
+        assertThat(user.getPermissionGrands()).hasSize(1);
+        assertThat(user.getPermissionGrands().get(0).getPermissionContractAddress()).isEqualTo(permissionContractAddress);
+        assertThat(user.getPermissionGrands().get(0).getRequiredClaimGrants()).isEmpty();
+        assertThat(user.getPermissionGrands().get(0).getOptionalClaimGrants()).isEmpty();
+        assertThat(user.getPermissionGrands().get(0).getClosureRequests()).hasSize(1);
+
+        ClosureRequest closureRequest = user.getPermissionGrands().get(0).getClosureRequests().get(0);
+        assertThat(closureRequest.getClaimID()).isEqualTo(claimID_familyName);
+        assertThat(closureRequest.getClaimOperation()).isEqualTo(ClaimOperation.EQ);
+        assertThat(closureRequest.getStaticValue()).isEqualTo("Hans");
+        assertThat(closureRequest.isApproved()).isFalse();
     }
 }
