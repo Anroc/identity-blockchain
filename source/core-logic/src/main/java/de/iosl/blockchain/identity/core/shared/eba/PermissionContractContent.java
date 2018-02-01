@@ -79,7 +79,7 @@ public class PermissionContractContent implements Serializable{
      * @param <V> Value type
      * @return initialized map
      */
-    private final <K, V> Map<K, V> initMapKeys(@NonNull Set<K> keys, @SuppressWarnings("unused") Class<V> valueType) {
+    protected static final <K, V> Map<K, V> initMapKeys(@NonNull Set<K> keys, @SuppressWarnings("unused") Class<V> valueType) {
         Map<K, V> map = new HashMap<>();
         keys.stream().forEach(key -> map.put(key, null));
         return map;

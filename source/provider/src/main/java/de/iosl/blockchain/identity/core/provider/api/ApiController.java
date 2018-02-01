@@ -83,6 +83,7 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
                 permissionContractCreationDTO.getPayload().getRequiredClaims(),
                 permissionContractCreationDTO.getPayload().getOptionalClaims());
 
+        //TODO @Marvin Adapt so that provider knows what closures where accepted and what are rejected
         return new BasicEthereumDTO(permissionContract);
 
     }
