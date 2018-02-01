@@ -82,7 +82,7 @@ public class UserDBTest extends RestTestSuite {
     @Test
     public void findUserByFindOne() {
         userDB.updateOrCreateUser(user);
-        assertThat(userDB.findOne(user.getId())).isPresent();
+        assertThat(userDB.findEntity(user.getId())).isPresent();
     }
 
     @Test

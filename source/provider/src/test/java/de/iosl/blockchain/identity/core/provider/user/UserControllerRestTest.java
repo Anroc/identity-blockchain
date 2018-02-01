@@ -200,7 +200,7 @@ public class UserControllerRestTest extends RestTestSuite {
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        user = userDB.findOne(user.getId()).get();
+        user = userDB.findEntity(user.getId()).get();
 
         assertThat(user.getEthId()).isEqualTo(registerRequest.getPayload().getEthID());
         assertThat(user.getPublicKey()).isEqualTo(registerRequest.getPayload().getPublicKey());

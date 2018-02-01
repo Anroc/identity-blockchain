@@ -7,7 +7,7 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
-import de.iosl.blockchain.identity.core.user.claims.repository.UserClaimDB;
+import de.iosl.blockchain.identity.core.user.claims.db.UserClaimDB;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;

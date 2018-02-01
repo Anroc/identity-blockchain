@@ -5,7 +5,7 @@ import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
-import de.iosl.blockchain.identity.core.user.claims.repository.UserClaimDB;
+import de.iosl.blockchain.identity.core.user.claims.db.UserClaimDB;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +42,7 @@ public class ClaimTest {
 
     @Test
     public void saveClaimTest() {
-        userClaimDB.save(userClaim);
+        userClaimDB.insert(userClaim);
         assertThat(userClaimDB.findEntity(userClaim.getId())).isPresent();
     }
 
@@ -58,7 +58,7 @@ public class ClaimTest {
 
         assertThat(userClaim.getClaimValue().getPayload()).isInstanceOf(LocalDateTime.class);
 
-        userClaimDB.save(userClaim);
+        userClaimDB.insert(userClaim);
         UserClaim retrievedClaim = userClaimDB.findEntity("id").get();
 
         assertThat(userClaim).isEqualTo(retrievedClaim);
@@ -67,14 +67,14 @@ public class ClaimTest {
 
     @Test
     public void removeClaimTest() {
-        userClaimDB.save(userClaim);
+        userClaimDB.insert(userClaim);
         userClaimDB.delete(userClaim.getId());
         assertThat(userClaimDB.findEntity(userClaim.getId())).isNotPresent();
     }
 
     @Test
     public void retrieveClaimByEthId() {
-        userClaimDB.save(userClaim);
+        userClaimDB.insert(userClaim);
         assertThat(userClaimDB.findAllByEthID(userClaim.getTargetUserEthID())).hasSize(1);
     }
 
