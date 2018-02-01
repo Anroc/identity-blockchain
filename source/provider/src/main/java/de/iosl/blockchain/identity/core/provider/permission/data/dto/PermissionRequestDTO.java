@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -24,14 +23,13 @@ public class PermissionRequestDTO {
     @ApiModelProperty(required = true, example = "https://deutscheBank.de:4123")
     private String providerURL;
 
-    @NotEmpty
-    @ApiModelProperty(required = true)
-    private Set<String> requiredClaims;
+    @ApiModelProperty()
+    private Set<String> requiredClaims = new HashSet<>();
 
-    @ApiModelProperty(required = false)
+    @ApiModelProperty()
     private Set<String> optionalClaims = new HashSet<>();
 
     @Valid
-    @ApiModelProperty(required = false)
-    private Set<ClosureRequestDTO> closureRequests;
+    @ApiModelProperty()
+    private Set<ClosureRequestDTO> closureRequests = new HashSet<>();
 }

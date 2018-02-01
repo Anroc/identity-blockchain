@@ -5,9 +5,11 @@ import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.api.client.APIProviderService;
 import de.iosl.blockchain.identity.core.provider.permission.data.PermissionRequest;
+import de.iosl.blockchain.identity.core.provider.permission.data.dto.ClosureRequestDTO;
 import de.iosl.blockchain.identity.core.provider.permission.data.dto.PermissionRequestDTO;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -127,5 +129,28 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
                 .containsOnlyKeys(claimID_givenName, claimID_familyName).doesNotContainValue(true);
         assertThat(user.getPermissionGrands().get(0).getOptionalClaimGrants())
                 .containsOnlyKeys(claimID_age).doesNotContainValue(true);
+    }
+
+    @Test
+    public void createPermissionRequest_withClosureRequet() {
+        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(
+                userEthID,
+                url,
+                null,
+                null,
+                Sets.newHashSet(
+                        new ClosureRequestDTO(claimID_familyName, ClaimOperation.EQ, "Hans")
+                ));
+
+        doNothing().when(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
+        doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(any(PermissionRequest.class));
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange(
+                "/permissions",
+                HttpMethod.POST,
+                new HttpEntity<>(permissionRequestDTO, headers),
+                Void.class);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

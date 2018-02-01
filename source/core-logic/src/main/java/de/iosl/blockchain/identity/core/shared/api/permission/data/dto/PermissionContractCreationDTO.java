@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -16,7 +15,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class PermissionContractCreationDTO extends BasicEthereumDTO {
 
-    @NotEmpty
+    @NotNull
     private Set<String> requiredClaims;
 
     @NotNull

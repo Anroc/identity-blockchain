@@ -13,11 +13,15 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.InfoDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
+import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
+import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import org.junit.Before;
@@ -137,6 +141,63 @@ public class ApiControllerRestTest extends RestTestSuite {
                 requiredClaim,
                 Sets.newHashSet(),
                 Sets.newHashSet()
+        );
+
+        SignedRequest<PermissionContractCreationDTO> signedRequest = new SignedRequest<>(
+                permissionContractCreationDTO,
+                getSignature(permissionContractCreationDTO, REQUESTING_PROVIDER_CREDENTIALS)
+        );
+
+        ResponseEntity<BasicEthereumDTO> responseEntity = restTemplate.exchange(
+                getUrl(ABSOLUTE_PPR_PATH, user.getEthId()),
+                HttpMethod.POST,
+                new HttpEntity<>(signedRequest),
+                BasicEthereumDTO.class);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody().getEthID()).isEqualTo(pprEthID);
+        verify(ebaInterface).deployPermissionContract(
+                any(Account.class),
+                eq(user.getEthId()),
+                any(PermissionContractContent.class)
+        );
+    }
+
+    @Test
+    public void createPermissionContractWithClosure() {
+        AsymmetricCryptEngine<String> cryptEngine = CryptEngine.generate().string().rsa();
+        String userPublicKey = new KeyConverter().from(
+                cryptEngine.getPublicKey()
+        ).toBase64();
+
+        final String claimID = "SPECIAL_CLAIM_ID";
+        final String pprEthID = "0x1";
+        ProviderClaim providerClaim = claimFactory.create(claimID);
+        user.putClaim(providerClaim);
+        user.setPublicKey(userPublicKey);
+        userDB.update(user);
+
+        Set<String> requiredClaim = Sets.newHashSet(claimID);
+
+        doReturn(pprEthID).when(ebaInterface).deployPermissionContract(
+                any(Account.class),
+                eq(user.getEthId()),
+                any(PermissionContractContent.class)
+        );
+
+        doReturn(mock(Beat.class)).when(heartBeatService).createEthIdBeat(user.getEthId(), EventType.NEW_PPR, pprEthID);
+
+        PermissionContractCreationDTO permissionContractCreationDTO = new PermissionContractCreationDTO(
+                REQUESTING_PROVIDER_CREDENTIALS.getAddress(),
+                Sets.newHashSet(),
+                Sets.newHashSet(),
+                Sets.newHashSet(
+                        new ClosureContractRequestDTO(
+                                claimID,
+                                ClaimOperation.EQ,
+                                "content"
+                        )
+                )
         );
 
         SignedRequest<PermissionContractCreationDTO> signedRequest = new SignedRequest<>(

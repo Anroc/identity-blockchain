@@ -84,7 +84,8 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
                 permissionContractCreationDTO.getEthID(),
                 user,
                 permissionContractCreationDTO.getPayload().getRequiredClaims(),
-                permissionContractCreationDTO.getPayload().getOptionalClaims());
+                permissionContractCreationDTO.getPayload().getOptionalClaims(),
+                permissionContractCreationDTO.getPayload().getClosureContractRequestDTOs());
 
         return new BasicEthereumDTO(permissionContract);
 

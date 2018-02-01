@@ -22,12 +22,18 @@ public class PermissionRequest {
     private Set<String> requiredClaims;
     private Set<String> optionalClaims;
 
-    private Set<ClosureRequest> closureRequests;
+    private Set<ClosureRequest> closuresRequests;
 
     public PermissionRequest(@NonNull PermissionRequestDTO permissionRequestDTO) {
         this.ethID = permissionRequestDTO.getUserEthID();
         this.url = permissionRequestDTO.getProviderURL();
-        this.requiredClaims = permissionRequestDTO.getRequiredClaims();
+
+        if(permissionRequestDTO.getRequiredClaims() != null) {
+            this.requiredClaims = permissionRequestDTO.getRequiredClaims();
+        } else {
+            this.requiredClaims = new HashSet<>();
+        }
+
         if (permissionRequestDTO.getOptionalClaims() == null) {
             this.optionalClaims = new HashSet<>();
         } else {
@@ -35,22 +41,22 @@ public class PermissionRequest {
         }
 
         if(permissionRequestDTO.getClosureRequests() != null) {
-            this.closureRequests = permissionRequestDTO.getClosureRequests()
+            this.closuresRequests = permissionRequestDTO.getClosureRequests()
                     .stream()
                     .map(ClosureRequest::new)
                     .collect(Collectors.toSet());
         } else {
-            this.closureRequests = new HashSet<>();
+            this.closuresRequests = new HashSet<>();
         }
     }
 
     @JsonIgnore
     public Set<ClosureContractRequestDTO> getClosreRequestsAsClosureContractRequestDTOs() {
-        return closureRequests.stream().map(
-                closureRequest -> new ClosureContractRequestDTO(
-                        closureRequest.getClaimID(),
-                        closureRequest.getClaimOperation(),
-                        closureRequest.getStaticValue()
+        return closuresRequests.stream().map(
+                closure -> new ClosureContractRequestDTO(
+                        closure.getClaimID(),
+                        closure.getClaimOperation(),
+                        closure.getStaticValue()
                 )
         ).collect(Collectors.toSet());
     }

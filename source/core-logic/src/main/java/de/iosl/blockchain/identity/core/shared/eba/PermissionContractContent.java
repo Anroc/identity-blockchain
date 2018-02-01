@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import java.io.Serializable;
@@ -34,7 +33,6 @@ public class PermissionContractContent implements Serializable{
      * The map of claimID to user base64 approvals of required claims.
      * Value not present (null) or empty would indicate a rejection of this claim.
      */
-    @NotEmpty
     private final Map<String, String> requiredClaims;
 
     /**
