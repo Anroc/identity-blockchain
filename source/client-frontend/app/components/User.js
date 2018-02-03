@@ -13,6 +13,8 @@ class User extends Component {
     super();
     this.showQRCode = this.showQRCode.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.getMessages = this.getMessages.bind(this);
+    this.getPermissionRequest = this.getPermissionRequest.bind(this);
     this.state = {
       swaggerData: '',
       ethID: '',
@@ -61,6 +63,9 @@ class User extends Component {
         },
       ],
       value: '',
+      messages: null,
+      permissionId: '',
+      permission: null,
     };
   }
 
@@ -102,7 +107,7 @@ class User extends Component {
    * TODO setze claims auf true
    * TODO PUT auf permissions/id
    */
-  getPermissionRequests() {
+  getPermissionRequest() {
     const getUserInformationOptions = {
       method: 'GET',
       headers: {
@@ -115,11 +120,33 @@ class User extends Component {
     };
 
     // const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
-    request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
+    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions)
       .then((json) => {
         console.log(JSON.stringify(json));
         this.setState({
-          claims: json,
+          permission: json,
+        });
+      });
+  }
+
+  getMessages() {
+    const getUserInformationOptions = {
+      method: 'GET',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+      credentials: 'include',
+    };
+
+    request('http://srv01.snet.tu-berlin.de:1112/messages', getUserInformationOptions)
+      .then((json) => {
+        console.log(JSON.stringify(json));
+        this.setState({
+          messages: json,
+          permissionId: json[0].id,
         });
       });
   }
@@ -158,14 +185,14 @@ class User extends Component {
           <Button raised color="primary" onClick={this.showQRCode}>
             Show QR Code
           </Button>
-          { this.state.showQR ?
+          {this.state.showQR ?
             <p>
               QR Code:
               <LazyImage
                 src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
                 alt="qr-code"
               />
-            </p> : null }
+            </p> : null}
           <p>
             Claims:
           </p>
@@ -198,6 +225,31 @@ class User extends Component {
           </Paper>
         </section>
         <section>
+          <Button
+            onClick={this.getMessages}
+          >
+            Get Messages
+          </Button>
+          {this.state.messages !== null ? JSON.stringify(this.state.messages) : null}
+        </section>
+        <section>
+          <Button
+            onClick={this.getPermissionRequest}
+          >
+            Get Permissions mit id von message
+          </Button>
+        </section>
+        <section>
+          <Button>
+            PUT auf messages, sodass seen auf true gesetzt wird
+          </Button>
+        </section>
+        <section>
+          <Button>
+            PUT approval oder denial auf 1112/permissions/id
+          </Button>
+        </section>
+        <section>
           <FormControl component="fieldset" required error>
             <FormLabel component="legend">
               Incoming Permission Request:
@@ -214,6 +266,13 @@ class User extends Component {
               <FormControlLabel value="female" control={<Radio />} label="DENY" />
             </RadioGroup>
             <FormHelperText>Please select an option.</FormHelperText>
+            <Button
+              raised
+              color="primary"
+              onClick={console.log('click')}
+            >
+              send answer
+            </Button>
           </FormControl>
         </section>
       </article>
