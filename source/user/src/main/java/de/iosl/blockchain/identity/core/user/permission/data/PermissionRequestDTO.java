@@ -4,10 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -19,10 +20,13 @@ public class PermissionRequestDTO {
     private String issuedProvider;
     private String permissionContractAddress;
 
-    @NotEmpty
+    @NotNull
     private Map<String, Boolean> requiredClaims;
     @NotNull
     private Map<String, Boolean> optionalClaims;
+    @NotNull
+    private Set<ClosureRequestDTO> closureRequestDTO;
+
 
     public PermissionRequestDTO(@NonNull PermissionRequest permissionRequest) {
         this.id = permissionRequest.getId();
@@ -32,5 +36,10 @@ public class PermissionRequestDTO {
 
         this.requiredClaims = permissionRequest.getRequiredClaims();
         this.optionalClaims = permissionRequest.getOptionalClaims();
+
+        this.closureRequestDTO = permissionRequest.getClosureRequests()
+                .stream()
+                .map(ClosureRequestDTO::new).collect(
+                Collectors.toSet());
     }
 }

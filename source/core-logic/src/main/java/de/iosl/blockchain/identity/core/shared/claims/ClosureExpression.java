@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class ClosureExpression<T> {
 
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
     private final Payload claim;
     private final ClaimOperation claimOperation;
@@ -63,7 +63,7 @@ public class ClosureExpression<T> {
             printableValue = DATE_TIME_FORMATTER.format((LocalDateTime) value);
         }
         String parsedClaimId = claimId.toLowerCase().replaceAll("_", " ");
-        return String.format("Is the claim \"%s\" (your value is \"%s\") %s %s?", parsedClaimId, printablePayload, claimOperation.getDescription(), printableValue);
+        return String.format("Is the claim \"%s\" (your value is \"%s\") %s \"%s\"?", parsedClaimId, printablePayload, claimOperation.getDescription(), printableValue);
     }
 
     private boolean evaluateDate() {
@@ -81,7 +81,7 @@ public class ClosureExpression<T> {
             case LT:
                 return localDateTime.isBefore(localDateTimeValue);
             case LE:
-                return localDateTime.isAfter(localDateTimeValue) || localDateTime.isEqual(localDateTimeValue);
+                return localDateTime.isBefore(localDateTimeValue) || localDateTime.isEqual(localDateTimeValue);
             default:
                 throw new UnsupportedOperationException("Operations on this type are not supported");
         }

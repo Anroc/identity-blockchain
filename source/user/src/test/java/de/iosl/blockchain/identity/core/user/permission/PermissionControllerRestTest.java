@@ -86,7 +86,8 @@ public class PermissionControllerRestTest extends RestTestSuite {
                 issuedProviderEthID,
                 permissionContractAddress,
                 requiredClaims.stream().collect(Collectors.toMap(s -> s, s -> false)),
-                optionalClaims.stream().collect(Collectors.toMap(s -> s, s -> false))
+                optionalClaims.stream().collect(Collectors.toMap(s -> s, s -> false)),
+                Sets.newHashSet()
         );
 
         permissionRequestDB.insert(permissionRequest);

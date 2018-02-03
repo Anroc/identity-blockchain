@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.BasicMockSuite;
 import de.iosl.blockchain.identity.core.provider.user.UserService;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
@@ -12,7 +12,7 @@ import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
-import de.iosl.blockchain.identity.crypt.symmetric.JsonSymmetricCryptEngine;
+import de.iosl.blockchain.identity.crypt.symmetric.ObjectSymmetricCryptEngine;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -22,7 +22,9 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,28 +55,39 @@ public class ApiServiceTest extends BasicMockSuite {
                 cryptEngine.getPublicKey()
         ).toBase64();
 
-        ClosureContractRequestDTO ccr = new ClosureContractRequestDTO(
+        ClosureContractRequest ccr1 = new ClosureContractRequest(
                 "GIVEN_NAME",
                 ClaimOperation.EQ,
                 "Hans"
         );
-        Set<ClosureContractRequestDTO> ccrs = Sets.newHashSet(ccr);
+        ClosureContractRequest ccr2 = new ClosureContractRequest(
+                "BIRTHDAY",
+                ClaimOperation.EQ,
+                LocalDateTime.now()
+        );
+
+        Set<ClosureContractRequest> ccrs = Sets.newHashSet(ccr1, ccr2);
 
         ClosureContent closureContent = apiService.buildCloseContent(userPublicKey, ccrs);
 
         assertThat(closureContent.getEncryptedKey()).isNotEqualTo(userPublicKey);
-        assertThat(closureContent.getEncryptedRequests()).isNotEmpty().hasSize(1);
+        assertThat(closureContent.getEncryptedRequests()).isNotEmpty().hasSize(2);
 
         //decrypt
         Key privateKey = cryptEngine.getPrivateKey();
         String secret = cryptEngine.decrypt(closureContent.getEncryptedKey(), privateKey);
         Key sharedKey = keyConverter.from(secret).toSymmetricKey();
 
-        JsonSymmetricCryptEngine jsonSymmetricCryptEngine = (JsonSymmetricCryptEngine) CryptEngine.from(sharedKey).json().aes();
+        ObjectSymmetricCryptEngine objectSymmetricCryptEngine = new ObjectSymmetricCryptEngine();
 
-        for(String content : closureContent.getEncryptedRequests()) {
-            ClosureContractRequestDTO ccrExtracted = jsonSymmetricCryptEngine.decryptEntity(content, sharedKey, ClosureContractRequestDTO.class);
-            assertThat(ccrExtracted).isEqualTo(ccr);
-        }
+        Set<ClosureContractRequest> ccrsExtracted = closureContent.getEncryptedRequests().stream()
+                .map(content -> {
+                    try {
+                        return objectSymmetricCryptEngine.decryptAndCast(content, sharedKey, ClosureContractRequest.class);
+                    } catch (BadPaddingException | InvalidKeyException | IllegalBlockSizeException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).collect(Collectors.toSet());
+        assertThat(ccrsExtracted).containsExactlyInAnyOrder(ccr1, ccr2);
     }
 }

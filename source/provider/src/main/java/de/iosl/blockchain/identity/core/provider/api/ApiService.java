@@ -5,6 +5,7 @@ import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
@@ -14,7 +15,7 @@ import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
-import de.iosl.blockchain.identity.crypt.symmetric.JsonSymmetricCryptEngine;
+import de.iosl.blockchain.identity.crypt.symmetric.ObjectSymmetricCryptEngine;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
@@ -69,7 +70,11 @@ public class ApiService {
                     user.getPublicKey());
         }
 
-        ClosureContent closure = buildCloseContent(user.getPublicKey(), closureContractRequestDTOs);
+        Set<ClosureContractRequest> closureContractRequests = closureContractRequestDTOs.stream()
+                .map(ClosureContractRequest::new)
+                .collect(Collectors.toSet());
+
+        ClosureContent closure = buildCloseContent(user.getPublicKey(), closureContractRequests);
 
         PermissionContractContent permissionContractContent = new PermissionContractContent(
                 requiredClaims,
@@ -93,14 +98,14 @@ public class ApiService {
         return ppr;
     }
 
-    protected ClosureContent buildCloseContent(String publicKey, Set<ClosureContractRequestDTO> closureContractRequestDTOs) {
-        if(closureContractRequestDTOs.isEmpty()) {
+    protected ClosureContent buildCloseContent(String publicKey, Set<ClosureContractRequest> closureContractRequests) {
+        if(closureContractRequests.isEmpty()) {
             return null;
         }
         log.info("Init new symmetric crypt engine for closure request and public key {}.", publicKey);
-        JsonSymmetricCryptEngine jsonSymmetricCryptEngine = (JsonSymmetricCryptEngine) CryptEngine.generate().json().aes();
+        ObjectSymmetricCryptEngine objectSymmetricCryptEngine = new ObjectSymmetricCryptEngine();
         log.info("Generating new shared secret.");
-        Key symmetricKey = jsonSymmetricCryptEngine.getSymmetricCipherKey();
+        Key symmetricKey = objectSymmetricCryptEngine.getSymmetricCipherKey();
         String base64Key = keyConverter.from(symmetricKey).toBase64();
         try {
             // encrypt key with users public key
@@ -112,12 +117,12 @@ public class ApiService {
         }
         log.info("Generated encrypted shared secret: {}", base64Key);
 
-        Set<String> closures = closureContractRequestDTOs
+        Set<String> closures = closureContractRequests
                 .stream()
                 .map(ccr -> {
                     try {
                         log.info("Encrypting {}", ccr);
-                        return jsonSymmetricCryptEngine.encryptEntity(ccr, symmetricKey);
+                        return objectSymmetricCryptEngine.encrypt(ccr, symmetricKey);
                     } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
                         throw new ServiceException(e, HttpStatus.INTERNAL_SERVER_ERROR);
                     }

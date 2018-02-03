@@ -5,11 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -30,8 +30,9 @@ public class PermissionRequest {
     @NotBlank
     private String permissionContractAddress;
     @Field
-    @NotEmpty
     private Map<String, Boolean> requiredClaims;
     @Field
     private Map<String, Boolean> optionalClaims;
+    @Field
+    private Set<ClosureRequest> closureRequests;
 }
