@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.core.provider.user;
 import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
+import de.iosl.blockchain.identity.core.provider.user.data.dto.ClaimInformationResponse;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
 import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
@@ -138,12 +139,19 @@ public class UserController {
 
     @GetMapping("/ethID/{ethID}/claimIDs")
     @ApiOperation("Get the claimIDs of a user")
-    public Set<String> getClaimIds(@PathVariable("ethID") @NotBlank String ethID) {
+    public Set<ClaimInformationResponse> getClaimInformation(@PathVariable("ethID") @NotBlank String ethID) {
         User user = userService.findUserByEthID(ethID).orElseThrow(
                 () -> new ServiceException("Could not find user with ethID [%s]", HttpStatus.NOT_FOUND, ethID)
         );
 
-        return user.getClaims().stream().map(SharedClaim::getId).collect(Collectors.toSet());
+        return user.getClaims()
+                .stream()
+                .map(sharedClaim -> new ClaimInformationResponse(
+                        sharedClaim.getId(),
+                        sharedClaim.getClaimValue().getPayloadType(),
+                        sharedClaim.getClaimValue().getPayloadType().getSupportedClaimOperation()
+                ))
+                .collect(Collectors.toSet());
     }
 
 }
