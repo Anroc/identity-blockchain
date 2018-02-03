@@ -3,7 +3,7 @@ package de.iosl.blockchain.identity.core.user.permission;
 import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;

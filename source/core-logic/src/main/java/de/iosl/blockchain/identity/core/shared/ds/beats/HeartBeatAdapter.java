@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.ds.beats;
 
+import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
 import de.iosl.blockchain.identity.lib.dto.beats.HeartBeatRequest;
 import de.iosl.blockchain.identity.lib.dto.RequestDTO;
@@ -19,4 +20,7 @@ public interface HeartBeatAdapter {
     @Headers("Content-Type: application/json")
     @RequestLine("POST " + HEARTBEAT_PATH + "/{ethID}")
     Beat createBeat(@Param("ethID") String ethId, RequestDTO<HeartBeatRequest> heartBeatRequestRequestDTO);
+
+    @RequestLine("GET " + HEARTBEAT_PATH + "/{ethID}")
+    RequestDTO<RegistryEntryDTO> discover(@Param("ethID") String ethID);
 }

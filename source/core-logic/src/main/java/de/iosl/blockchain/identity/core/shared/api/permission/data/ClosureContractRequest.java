@@ -1,5 +1,6 @@
-package de.iosl.blockchain.identity.core.shared.api.permission.data.dto;
+package de.iosl.blockchain.identity.core.shared.api.permission.data;
 
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;

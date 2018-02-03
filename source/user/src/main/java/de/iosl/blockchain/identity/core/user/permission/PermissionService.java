@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.claims.ClosureExpression;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
+import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
@@ -18,11 +20,7 @@ import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import de.iosl.blockchain.identity.core.user.permission.data.ClosureRequest;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.user.permission.db.PermissionRequestDB;
-import de.iosl.blockchain.identity.crypt.CryptEngine;
-import de.iosl.blockchain.identity.crypt.KeyConverter;
-import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
-import de.iosl.blockchain.identity.crypt.symmetric.ObjectSymmetricCryptEngine;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
@@ -33,12 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import java.io.UncheckedIOException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.PrivateKey;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,19 +51,15 @@ public class PermissionService {
     private HeartBeatService heartBeatService;
     @Autowired
     private ClaimService claimService;
+    @Autowired
+    private ClosureContentCryptEngine closureContentCryptEngine;
 
     private final EthereumSigner ethereumSigner;
     private final ObjectMapper objectMapper;
-    private final KeyConverter keyConverter;
-    private final AsymmetricCryptEngine<String> asymmetricStringCryptEngine;
-    private final ObjectSymmetricCryptEngine symmetricObjectCryptEngine;
 
     public PermissionService() {
         this.ethereumSigner = new EthereumSigner();
         this.objectMapper = new ObjectMapper();
-        this.keyConverter = new KeyConverter();
-        this.asymmetricStringCryptEngine = CryptEngine.generate().string().rsa();
-        this.symmetricObjectCryptEngine = new ObjectSymmetricCryptEngine();
     }
 
     public void handleNewPermissionRequest(@NonNull String ethID, @NonNull String pprAddress) {
@@ -106,43 +95,8 @@ public class PermissionService {
     }
 
     private Set<ClosureRequest> extractClosureRequests(ClosureContent closureContent) {
-        if(closureContent == null) {
-            return new HashSet<>();
-        }
-
-        log.info("Found {} closure requests", closureContent.getEncryptedRequests().size());
-
-        // setup
-        PrivateKey privateKey = keyChain.getRsaKeyPair().getPrivate();
-        Key sharedSecret;
-        try {
-            log.info("Extracting shared secret");
-            String secretBase64 = asymmetricStringCryptEngine.decrypt(closureContent.getEncryptedKey(), privateKey);
-            sharedSecret = keyConverter.from(secretBase64).toSymmetricKey();
-        } catch (IllegalBlockSizeException  | BadPaddingException e) {
-            throw new ServiceException("Could not decrypt shared secret.", e);
-        } catch (InvalidKeyException e) {
-            throw new ServiceException("Private key is malformed.", e);
-        }
-
-        // decrypt content
-        Set<ClosureContractRequest> closureContractRequests = closureContent.getEncryptedRequests().stream()
-                .map(encryptedRequest -> {
-                        try {
-                            log.info("Decrypting content...");
-                            ClosureContractRequest closureContractRequestDTO = symmetricObjectCryptEngine.decryptAndCast(
-                                    encryptedRequest,
-                                    sharedSecret,
-                                    ClosureContractRequest.class);
-                            log.info("Decrypted: {}", closureContractRequestDTO);
-                            return closureContractRequestDTO;
-                        } catch (IllegalBlockSizeException  | BadPaddingException e) {
-                            throw new ServiceException("Could not decrypt shared secret.", e);
-                        } catch (InvalidKeyException e) {
-                            throw new ServiceException("Private key is malformed.", e);
-                        }
-                    })
-                .collect(Collectors.toSet());
+        Set<ClosureContractRequest> closureContractRequests =
+                closureContentCryptEngine.decrypt(closureContent, keyChain.getRsaKeyPair().getPrivate());
 
         log.info("Requesting current user claims.");
         List<UserClaim> userClaims = claimService.getClaims();
@@ -214,15 +168,37 @@ public class PermissionService {
         Map<String, String> requiredSignedClaims = generateSignatures(permissionRequest.getRequiredClaims(), permissionRequest.getRequestingProvider());
         Map<String, String> optionalSignedClaims = generateSignatures(permissionRequest.getOptionalClaims(), permissionRequest.getRequestingProvider());
 
+        ClosureContent closureContent = buildClosureContent(permissionRequest);
+
         PermissionContractContent permissionContractContent = new PermissionContractContent(
                 requiredSignedClaims,
                 optionalSignedClaims,
                 permissionRequest.getRequestingProvider(),
-                null // TODO @Marvin adapt to closure workflow -- see Issue #91
+                closureContent
         );
 
         log.info("Updating PPR in ethereum");
         ebaInterface.approvePermissionContract(keyChain.getAccount(), permissionRequest.getPermissionContractAddress(), permissionContractContent);
+    }
+
+    private ClosureContent buildClosureContent(PermissionRequest permissionRequest) {
+        if(permissionRequest.getClosureRequests().isEmpty()) {
+            return null;
+        }
+
+        RegistryEntryDTO registryEntryDTO = heartBeatService.discover(permissionRequest.getRequestingProvider())
+                .orElseThrow(
+                        () -> new ServiceException("Could not retrieve/validate registry entry from Discovery Service.", HttpStatus.UNPROCESSABLE_ENTITY)
+                );
+
+        String publicKey = registryEntryDTO.getPublicKey();
+
+        Set<ClosureContractRequest> closureContractRequests = permissionRequest.getClosureRequests().stream()
+                .filter(closureRequest -> closureRequest.isApproved())
+                .map(ClosureRequest::toClosureContentRequest)
+                .collect(Collectors.toSet());
+
+        return closureContentCryptEngine.encrypt(publicKey, closureContractRequests);
     }
 
     private Map<String, String> generateSignatures(@NonNull Map<String, Boolean> requestedClaims, @NonNull String providerEthId) {

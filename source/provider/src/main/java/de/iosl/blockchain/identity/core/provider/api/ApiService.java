@@ -4,18 +4,15 @@ import de.iosl.blockchain.identity.core.provider.user.UserService;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
-import de.iosl.blockchain.identity.crypt.CryptEngine;
-import de.iosl.blockchain.identity.crypt.KeyConverter;
-import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
-import de.iosl.blockchain.identity.crypt.symmetric.ObjectSymmetricCryptEngine;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
@@ -24,10 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import java.security.InvalidKeyException;
-import java.security.Key;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -45,14 +38,8 @@ public class ApiService {
     private UserService userService;
     @Autowired
     private HeartBeatService heartBeatService;
-
-    private final AsymmetricCryptEngine<String> cryptEngine;
-    private final KeyConverter keyConverter;
-
-    public ApiService() {
-        this.cryptEngine = CryptEngine.instance().string().rsa();
-        this.keyConverter = new KeyConverter();
-    }
+    @Autowired
+    private ClosureContentCryptEngine closureContentCryptEngine;
 
     public String createPermissionContract(
             @NonNull String requestingProvider,
@@ -74,7 +61,7 @@ public class ApiService {
                 .map(ClosureContractRequest::new)
                 .collect(Collectors.toSet());
 
-        ClosureContent closure = buildCloseContent(user.getPublicKey(), closureContractRequests);
+        ClosureContent closure = closureContentCryptEngine.encrypt(user.getPublicKey(), closureContractRequests);
 
         PermissionContractContent permissionContractContent = new PermissionContractContent(
                 requiredClaims,
@@ -96,40 +83,6 @@ public class ApiService {
         heartBeatService.createEthIdBeat(user.getEthId(), EventType.NEW_PPR, ppr);
 
         return ppr;
-    }
-
-    protected ClosureContent buildCloseContent(String publicKey, Set<ClosureContractRequest> closureContractRequests) {
-        if(closureContractRequests.isEmpty()) {
-            return null;
-        }
-        log.info("Init new symmetric crypt engine for closure request and public key {}.", publicKey);
-        ObjectSymmetricCryptEngine objectSymmetricCryptEngine = new ObjectSymmetricCryptEngine();
-        log.info("Generating new shared secret.");
-        Key symmetricKey = objectSymmetricCryptEngine.getSymmetricCipherKey();
-        String base64Key = keyConverter.from(symmetricKey).toBase64();
-        try {
-            // encrypt key with users public key
-            base64Key = cryptEngine.encrypt(base64Key, keyConverter.from(publicKey).toPublicKey());
-        } catch (IllegalBlockSizeException | BadPaddingException e) {
-            throw new ServiceException(e, HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (InvalidKeyException e) {
-            throw new ServiceException("Users public key is malformed.", e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        log.info("Generated encrypted shared secret: {}", base64Key);
-
-        Set<String> closures = closureContractRequests
-                .stream()
-                .map(ccr -> {
-                    try {
-                        log.info("Encrypting {}", ccr);
-                        return objectSymmetricCryptEngine.encrypt(ccr, symmetricKey);
-                    } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-                        throw new ServiceException(e, HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
-                })
-                .collect(Collectors.toSet());
-
-        return new ClosureContent(closures, base64Key);
     }
 
     public List<ProviderClaim> getClaimsForPermissionContract(

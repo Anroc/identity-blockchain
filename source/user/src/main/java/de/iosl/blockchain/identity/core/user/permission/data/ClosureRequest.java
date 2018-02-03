@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.user.permission.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,6 +34,8 @@ public class ClosureRequest {
     private String description;
     @Field
     private boolean expressionResult;
+    @Field
+    private boolean approved;
 
     public ClosureRequest(@NonNull ClosureContractRequest closureContractRequest, @NonNull String description, boolean expressionResult) {
         this.claimID = closureContractRequest.getClaimID();
@@ -41,5 +43,14 @@ public class ClosureRequest {
         this.staticValue = new ValueHolder(closureContractRequest.getStaticValue());
         this.description = description;
         this.expressionResult = expressionResult;
+        this.approved = false;
+    }
+
+    public ClosureContractRequest toClosureContentRequest() {
+        return new ClosureContractRequest(
+                this.claimID,
+                this.claimOperation,
+                this.getStaticValue().getUnifiedValue()
+        );
     }
 }

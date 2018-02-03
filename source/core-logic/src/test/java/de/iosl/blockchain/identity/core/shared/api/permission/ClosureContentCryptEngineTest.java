@@ -1,53 +1,38 @@
-package de.iosl.blockchain.identity.core.provider.api;
+package de.iosl.blockchain.identity.core.shared.api.permission;
 
-import com.google.common.collect.Sets;
-import de.iosl.blockchain.identity.core.BasicMockSuite;
-import de.iosl.blockchain.identity.core.provider.user.UserService;
-import de.iosl.blockchain.identity.core.shared.KeyChain;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequest;
+import de.iosl.blockchain.identity.core.shared.BasicMockSuite;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
-import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
-import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
 import de.iosl.blockchain.identity.crypt.symmetric.ObjectSymmetricCryptEngine;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ApiServiceTest extends BasicMockSuite {
+public class ClosureContentCryptEngineTest extends BasicMockSuite {
 
-    @Mock
-    private EBAInterface ebaInterface;
-    @Mock
-    private KeyChain keyChain;
-    @Mock
-    private UserService userService;
-    @Mock
-    private HeartBeatService heartBeatService;
-    @InjectMocks
-    private ApiService apiService;
+    private ClosureContentCryptEngine closureContentCryptEngine;
 
-    private KeyConverter keyConverter;
+    private final KeyConverter keyConverter = new KeyConverter();
 
     @Before
     public void setup() {
-        this.keyConverter = new KeyConverter();
+        this.closureContentCryptEngine = new ClosureContentCryptEngine();
     }
-    
+
     @Test
     public void buildClosureContent() throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
         AsymmetricCryptEngine<String> cryptEngine = CryptEngine.generate().string().rsa();
@@ -66,9 +51,9 @@ public class ApiServiceTest extends BasicMockSuite {
                 LocalDateTime.now()
         );
 
-        Set<ClosureContractRequest> ccrs = Sets.newHashSet(ccr1, ccr2);
+        Set<ClosureContractRequest> ccrs = Arrays.stream(new ClosureContractRequest[]{ccr1, ccr2}).collect(Collectors.toSet());
 
-        ClosureContent closureContent = apiService.buildCloseContent(userPublicKey, ccrs);
+        ClosureContent closureContent = closureContentCryptEngine.encrypt(userPublicKey, ccrs);
 
         assertThat(closureContent.getEncryptedKey()).isNotEqualTo(userPublicKey);
         assertThat(closureContent.getEncryptedRequests()).isNotEmpty().hasSize(2);
@@ -90,4 +75,5 @@ public class ApiServiceTest extends BasicMockSuite {
                 }).collect(Collectors.toSet());
         assertThat(ccrsExtracted).containsExactlyInAnyOrder(ccr1, ccr2);
     }
+
 }

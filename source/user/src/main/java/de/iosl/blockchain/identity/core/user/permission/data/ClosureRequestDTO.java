@@ -23,11 +23,14 @@ public class ClosureRequestDTO {
     private String description;
     private boolean expressionResult;
 
+    boolean approved;
+
     public ClosureRequestDTO(@NonNull ClosureRequest closureRequest) {
         this.claimID = closureRequest.getClaimID();
         this.claimOperation = closureRequest.getClaimOperation();
         this.staticValue = closureRequest.getStaticValue();
         this.description = closureRequest.getDescription();
         this.expressionResult = closureRequest.isExpressionResult();
+        this.approved = false;
     }
 }

@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.user.permission.data;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,15 +16,54 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class PermissionRequestDTO {
 
+    @ApiModelProperty(
+            value = "Genereated UUID",
+            example = "e5dffa5e-dd75-496c-90dd-630c68d56a3c",
+            required = false
+    )
     private String id;
+
+    @ApiModelProperty(
+            value = "The ethereum ID of the provider issued the request",
+            example = "0x3c56cfa07f6d65d113ac9fcd1326355ae6db1083",
+            required = false
+    )
     private String requestingProvider;
+
+    @ApiModelProperty(
+            value = "The ethereum ID of the provider holding the claims that are requested.",
+            example = "0x9a06cfa07f6d65d113ac9fcd1326355ae6db1083",
+            required = false
+    )
     private String issuedProvider;
+
+    @ApiModelProperty(
+            value = "The address of the permission contract holding refering this values.",
+            example = "0x1d78cfa07f6d65d113ac9fcd1326355ae6db1083"
+    )
     private String permissionContractAddress;
 
     @NotNull
+    @ApiModelProperty(
+            value = "Map from required claimIDs to approved by the frontend.",
+            required = true,
+            notes = "If not present please send an empty map."
+    )
     private Map<String, Boolean> requiredClaims;
+
+    @ApiModelProperty(
+            value = "Map from optional claimIDs to approved by the frontend.",
+            required = true,
+            notes = "If not present please send an empty map."
+    )
     @NotNull
     private Map<String, Boolean> optionalClaims;
+
+    @ApiModelProperty(
+            value = "List of closure objects. Set the n'approved flag' inside them.",
+            required = true,
+            notes = "If not present please send an empty list."
+    )
     @NotNull
     private Set<ClosureRequestDTO> closureRequestDTO;
 
