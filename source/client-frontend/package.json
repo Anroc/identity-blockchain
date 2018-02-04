@@ -139,6 +139,10 @@
     "babel-polyfill": "^6.23.0",
     "bcryptjs": "^2.4.3",
     "btoa": "1.1.2",
+    "material-ui": "^1.0.0-beta.29",
+    "material-ui-icons": "^1.0.0-beta.17",
+    "material-ui-icons-next": "^1.0.0-beta.17-next",
+    "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.6",
@@ -146,10 +150,7 @@
     "redux": "3.6.0",
     "redux-logger": "^3.0.1",
     "redux-saga": "^0.16.0",
-    "whatwg-fetch": "2.0.3",
-    "prop-types": "^15.6.0",
-    "material-ui": "^1.0.0-beta.29",
-    "material-ui-icons-next": "^1.0.0-beta.17-next"
+    "whatwg-fetch": "2.0.3"
   },
   "babel": {
     "presets": [
