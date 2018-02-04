@@ -4,6 +4,7 @@ import com.couchbase.client.java.repository.annotation.Field;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -32,6 +33,7 @@ public class Closure extends BasicEthereumDTO {
     private boolean expressionResult;
 
     @NotNull
+    @ApiModelProperty(dataType = "java.util.List")
     private LocalDateTime creationDate;
 
     public static Closure init(@NonNull ClosureContractRequestPayload closureContractRequestPayload) {

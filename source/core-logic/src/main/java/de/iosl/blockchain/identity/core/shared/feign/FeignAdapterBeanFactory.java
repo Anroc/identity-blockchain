@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.feign;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatAdapter;
 import de.iosl.blockchain.identity.core.shared.ds.registry.DiscoveryClientAdapter;
@@ -20,6 +21,8 @@ public class FeignAdapterBeanFactory {
 
     @Autowired
     private BlockchainIdentityConfig blockchainIdentityConfig;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Bean
     public DiscoveryClientAdapter discoveryClientAdapter() {
@@ -63,8 +66,8 @@ public class FeignAdapterBeanFactory {
                                 response.body());
                     }
                 })
-                .encoder(new JacksonEncoder())
-                .decoder(new JacksonDecoder())
+                .encoder(new JacksonEncoder(objectMapper))
+                .decoder(new JacksonDecoder(objectMapper))
                 .target(clazz, url);
     }
 }
