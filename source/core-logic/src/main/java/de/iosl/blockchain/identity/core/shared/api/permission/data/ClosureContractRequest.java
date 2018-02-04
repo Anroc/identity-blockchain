@@ -2,11 +2,13 @@ package de.iosl.blockchain.identity.core.shared.api.permission.data;
 
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.NotBlank;
+import lombok.NonNull;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -17,19 +19,34 @@ public class ClosureContractRequest implements Serializable {
 
     private static final long serialVersionUID = -487991492884225033L;
 
-    @NotBlank
-    private String claimID;
-
+    @Valid
     @NotNull
-    private ClaimOperation claimOperation;
+    private ClosureContractRequestPayload closureContractRequestPayload;
 
-    @NotNull
-    private Object staticValue;
+    /**
+     * Set by user.
+     */
+    @Valid
+    private ECSignature ecSignature;
 
     public ClosureContractRequest(ClosureContractRequestDTO closureContractRequestDTO) {
-        this.claimID = closureContractRequestDTO.getClaimID();
-        this.claimOperation = closureContractRequestDTO.getClaimOperation();
-        this.staticValue = closureContractRequestDTO.getStaticValue();
+        this.closureContractRequestPayload = new ClosureContractRequestPayload(
+                null,
+                closureContractRequestDTO.getClaimID(),
+                closureContractRequestDTO.getClaimOperation(),
+                closureContractRequestDTO.getStaticValue()
+        );
+    }
+
+    public static ClosureContractRequest init(@NonNull String claimID, @NonNull ClaimOperation claimOperation, @NonNull Object staticValue) {
+        return new ClosureContractRequest(
+                new ClosureContractRequestPayload(
+                        claimID,
+                        claimOperation,
+                        staticValue
+                ),
+                null
+        );
     }
 
 }

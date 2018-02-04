@@ -2,6 +2,7 @@ package de.iosl.blockchain.identity.core.user.permission.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequestPayload;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,16 +39,18 @@ public class ClosureRequest {
     private boolean approved;
 
     public ClosureRequest(@NonNull ClosureContractRequest closureContractRequest, @NonNull String description, boolean expressionResult) {
-        this.claimID = closureContractRequest.getClaimID();
-        this.claimOperation = closureContractRequest.getClaimOperation();
-        this.staticValue = new ValueHolder(closureContractRequest.getStaticValue());
+        ClosureContractRequestPayload payload = closureContractRequest.getClosureContractRequestPayload();
+        this.claimID = payload.getClaimID();
+        this.claimOperation = payload.getClaimOperation();
+        this.staticValue = new ValueHolder(payload.getStaticValue());
         this.description = description;
         this.expressionResult = expressionResult;
         this.approved = false;
     }
 
-    public ClosureContractRequest toClosureContentRequest() {
-        return new ClosureContractRequest(
+    public ClosureContractRequestPayload toClosureContentRequestPayload(String ethID) {
+        return new ClosureContractRequestPayload(
+                ethID,
                 this.claimID,
                 this.claimOperation,
                 this.getStaticValue().getUnifiedValue()

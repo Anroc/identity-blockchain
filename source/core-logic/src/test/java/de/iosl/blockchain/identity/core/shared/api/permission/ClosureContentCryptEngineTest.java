@@ -40,12 +40,12 @@ public class ClosureContentCryptEngineTest extends BasicMockSuite {
                 cryptEngine.getPublicKey()
         ).toBase64();
 
-        ClosureContractRequest ccr1 = new ClosureContractRequest(
+        ClosureContractRequest ccr1 = ClosureContractRequest.init(
                 "GIVEN_NAME",
                 ClaimOperation.EQ,
                 "Hans"
         );
-        ClosureContractRequest ccr2 = new ClosureContractRequest(
+        ClosureContractRequest ccr2 = ClosureContractRequest.init(
                 "BIRTHDAY",
                 ClaimOperation.EQ,
                 LocalDateTime.now()

@@ -6,6 +6,7 @@ import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequestPayload;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.claims.ClosureExpression;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
@@ -111,16 +112,16 @@ public class PermissionService {
             List<UserClaim> userClaims) {
 
         UserClaim userClaim = userClaims.stream()
-                .filter(uc -> uc.getId().equals(closureContractRequest.getClaimID()))
+                .filter(uc -> uc.getId().equals(closureContractRequest.getClosureContractRequestPayload().getClaimID()))
                 .findFirst()
                 .orElseThrow(
-                        () -> new ServiceException("Could not find claim with id [%s]. Need update.", HttpStatus.UNPROCESSABLE_ENTITY, closureContractRequest.getClaimID())
+                        () -> new ServiceException("Could not find claim with id [%s]. Need update.", HttpStatus.UNPROCESSABLE_ENTITY, closureContractRequest.getClosureContractRequestPayload().getClaimID())
                 );
 
         ClosureExpression<?> closureExpression = new ClosureExpression<>(
                 userClaim.getClaimValue(),
-                closureContractRequest.getClaimOperation(),
-                closureContractRequest.getStaticValue()
+                closureContractRequest.getClosureContractRequestPayload().getClaimOperation(),
+                closureContractRequest.getClosureContractRequestPayload().getStaticValue()
         );
 
         String description = closureExpression.describe(userClaim.getId());
@@ -192,10 +193,19 @@ public class PermissionService {
                 );
 
         String publicKey = registryEntryDTO.getPublicKey();
+        String ethID = keyChain.getAccount().getAddress();
 
         Set<ClosureContractRequest> closureContractRequests = permissionRequest.getClosureRequests().stream()
                 .filter(closureRequest -> closureRequest.isApproved())
-                .map(ClosureRequest::toClosureContentRequest)
+                .map(closureRequest -> {
+                    ClosureContractRequestPayload payload = closureRequest.toClosureContentRequestPayload(ethID);
+                    return new ClosureContractRequest(
+                            payload,
+                            ECSignature.fromSignatureData(
+                                    ethereumSigner.sign(payload, keyChain.getAccount().getECKeyPair())
+                            )
+                    );
+                })
                 .collect(Collectors.toSet());
 
         return closureContentCryptEngine.encrypt(publicKey, closureContractRequests);

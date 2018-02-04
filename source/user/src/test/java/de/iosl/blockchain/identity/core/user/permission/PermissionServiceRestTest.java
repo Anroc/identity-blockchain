@@ -115,8 +115,8 @@ public class PermissionServiceRestTest extends RestTestSuite {
 
     @Test
     public void handleNewClosureRequest() throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
-        ClosureContractRequest closureContractRequest1 = new ClosureContractRequest(claimID_givenName, ClaimOperation.EQ, "Hans");
-        ClosureContractRequest closureContractRequest2 = new ClosureContractRequest(
+        ClosureContractRequest closureContractRequest1 = ClosureContractRequest.init(claimID_givenName, ClaimOperation.EQ, "Hans");
+        ClosureContractRequest closureContractRequest2 = ClosureContractRequest.init(
                 claimID_age,
                 ClaimOperation.LE,
                 LocalDateTime.of(2015, 4, 1, 12, 12).minus(18L, ChronoUnit.YEARS)
@@ -168,7 +168,9 @@ public class PermissionServiceRestTest extends RestTestSuite {
                 .map(ClosureRequest::getStaticValue)
                 .map(ValueHolder::getUnifiedValue)
                 .collect(Collectors.toSet());
-        assertThat(staticValues).containsExactlyInAnyOrder(closureContractRequest1.getStaticValue(), closureContractRequest2.getStaticValue());
+        assertThat(staticValues).containsExactlyInAnyOrder(
+                closureContractRequest1.getClosureContractRequestPayload().getStaticValue(),
+                closureContractRequest2.getClosureContractRequestPayload().getStaticValue());
     }
 
     private ClosureContent generateEncryptedClosureContentRequest(Set<ClosureContractRequest> closureContractRequest) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
