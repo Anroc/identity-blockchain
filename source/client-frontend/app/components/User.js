@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
-import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
-import Paper from 'material-ui/Paper';
+import QRCode from './User/QR_Code';
 import request from '../auth/request';
 import LazyImage from './common/LazyImage';
 import ClaimsTable from './User/ClaimsTable';
+import Welcome from './User/Welcome';
 
 class User extends Component {
   constructor() {
@@ -218,25 +218,8 @@ class User extends Component {
     return (
       <article>
         <section className="text-section">
-          <h1>Dashboard</h1>
-          <p>
-            Welcome, you are logged in!
-          </p>
-          <p>
-            General:
-            {this.props.ethID}
-          </p>
-          <Button raised color="primary" onClick={this.showQRCode}>
-            Show QR Code
-          </Button>
-          {this.state.showQR ?
-            <p>
-              QR Code:
-              <LazyImage
-                src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
-                alt="qr-code"
-              />
-            </p> : null }
+          <Welcome ethID={this.props.ethID} />
+          <QRCode showQRCode={this.showQRCode} showQR={this.state.showQR} />
           <ClaimsTable claims={this.state.claims} />
         </section>
         <section>
