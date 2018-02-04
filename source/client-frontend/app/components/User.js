@@ -7,6 +7,7 @@ import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'materi
 import Paper from 'material-ui/Paper';
 import request from '../auth/request';
 import LazyImage from './common/LazyImage';
+import ClaimsTable from './User/ClaimsTable';
 
 class User extends Component {
   constructor() {
@@ -235,37 +236,8 @@ class User extends Component {
                 src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
                 alt="qr-code"
               />
-            </p> : null}
-          <p>
-            Claims:
-          </p>
-
-          <Paper className="">
-            <Table className="">
-              <TableHead>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell numeric>Modification Date</TableCell>
-                  <TableCell numeric>Claim Value Type</TableCell>
-                  <TableCell numeric>Claim Value Payload</TableCell>
-                  <TableCell numeric>Provider Name</TableCell>
-                  <TableCell numeric>Provider EthID</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {this.state.claims.map((n) => (
-                  <TableRow key={n.id}>
-                    <TableCell>{n.id}</TableCell>
-                    <TableCell>{new Date(n.modificationDate).toDateString()}</TableCell>
-                    <TableCell numeric>{n.claimValue.payloadType}</TableCell>
-                    <TableCell numeric>{n.claimValue.payload}</TableCell>
-                    <TableCell numeric>{n.provider.name}</TableCell>
-                    <TableCell numeric>{n.provider.ethID}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
+            </p> : null }
+          <ClaimsTable claims={this.state.claims} />
         </section>
         <section>
           <Button
