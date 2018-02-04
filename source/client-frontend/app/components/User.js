@@ -15,6 +15,8 @@ class User extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.getMessages = this.getMessages.bind(this);
     this.getPermissionRequest = this.getPermissionRequest.bind(this);
+    this.putMessageSeen = this.putMessageSeen.bind(this);
+    this.putPermissionAnswer = this.putPermissionAnswer.bind(this);
     this.state = {
       swaggerData: '',
       ethID: '',
@@ -80,6 +82,9 @@ class User extends Component {
   // todo alle requests erst später stellen
   // todo warning no recovery possible, keep your password safe
 
+  /**
+   * get user claims
+   */
   getUserInformation() {
     const getUserInformationOptions = {
       method: 'GET',
@@ -92,7 +97,6 @@ class User extends Component {
       credentials: 'include',
     };
 
-    // const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
     request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
       .then((json) => {
         console.log(JSON.stringify(json));
@@ -102,11 +106,6 @@ class User extends Component {
       });
   }
 
-  /*
-   * TODO messages 1112, lookup, schaue nach id, gib
-   * TODO setze claims auf true
-   * TODO PUT auf permissions/id
-   */
   getPermissionRequest() {
     const getUserInformationOptions = {
       method: 'GET',
@@ -118,10 +117,12 @@ class User extends Component {
       mode: 'cors',
       credentials: 'include',
     };
+    console.log('GET PERMISSION REQUEST');
+    console.log('current permissions id is:', this.state.permissionId);
 
-    // const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
     request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions)
       .then((json) => {
+        console.log('GOT RESULT');
         console.log(JSON.stringify(json));
         this.setState({
           permission: json,
@@ -140,7 +141,7 @@ class User extends Component {
       mode: 'cors',
       credentials: 'include',
     };
-
+    console.log('GET MESSAGES');
     request('http://srv01.snet.tu-berlin.de:1112/messages', getUserInformationOptions)
       .then((json) => {
         console.log(JSON.stringify(json));
@@ -151,13 +152,56 @@ class User extends Component {
       });
   }
 
+  /**
+   * TODO
+   */
+  putMessageSeen() {
+    const getUserInformationOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: {
+        id: this.state.message,
+        seen: true,
+      },
+      mode: 'cors',
+      credentials: 'include',
+    };
+
+    request('http://srv01.snet.tu-berlin.de:1112/messages', getUserInformationOptions);
+  }
+
+  /**
+   * TODO
+   */
+  putPermissionAnswer() {
+    const getUserInformationOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: {
+        permission: this.state.permissionId,
+        answer: this.state.answer,
+      },
+      mode: 'cors',
+      credentials: 'include',
+    };
+
+    request('http://srv01.snet.tu-berlin.de:1112/messages', getUserInformationOptions);
+  }
+
   showQRCode() {
     console.log('showing qr code');
     this.setState({
       showQR: true,
     });
   }
-
 
   showClaims() {
     this.getUserInformation();
@@ -230,7 +274,9 @@ class User extends Component {
           >
             Get Messages
           </Button>
-          {this.state.messages !== null ? JSON.stringify(this.state.messages) : null}
+          <div>
+            {this.state.messages && JSON.stringify(this.state.messages)}
+          </div>
         </section>
         <section>
           <Button
@@ -240,12 +286,16 @@ class User extends Component {
           </Button>
         </section>
         <section>
-          <Button>
+          <Button
+            onClick={this.putMessageSeen}
+          >
             PUT auf messages, sodass seen auf true gesetzt wird
           </Button>
         </section>
         <section>
-          <Button>
+          <Button
+            onClick={this.putPermissionAnswer}
+          >
             PUT approval oder denial auf 1112/permissions/id
           </Button>
         </section>
@@ -262,14 +312,14 @@ class User extends Component {
               value={this.state.value}
               onChange={this.handleChange}
             >
-              <FormControlLabel value="male" control={<Radio />} label="APPROVE" />
-              <FormControlLabel value="female" control={<Radio />} label="DENY" />
+              <FormControlLabel value="APPROVE" control={<Radio />} label="APPROVE" />
+              <FormControlLabel value="DENY" control={<Radio />} label="DENY" />
             </RadioGroup>
             <FormHelperText>Please select an option.</FormHelperText>
             <Button
               raised
               color="primary"
-              onClick={console.log('click')}
+              onClick={console.log('clicked to put approval or denial')}
             >
               send answer
             </Button>
