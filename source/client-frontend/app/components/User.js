@@ -147,7 +147,7 @@ class User extends Component {
         console.log(JSON.stringify(json));
         this.setState({
           messages: json,
-          permissionId: json[0].id,
+          permissionId: json[0].subjectID,
         });
       });
   }
@@ -167,7 +167,6 @@ class User extends Component {
         id: this.state.message,
         seen: true,
       },
-      mode: 'cors',
       credentials: 'include',
     };
 
