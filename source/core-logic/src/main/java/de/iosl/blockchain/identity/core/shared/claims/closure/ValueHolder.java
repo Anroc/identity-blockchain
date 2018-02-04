@@ -2,6 +2,7 @@ package de.iosl.blockchain.identity.core.shared.claims.closure;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,8 +23,17 @@ public class ValueHolder implements Serializable {
     private static final long serialVersionUID = -349128374L;
 
     @Field
+    @ApiModelProperty(
+            value = "For data that are not dates."
+    )
     private Object value;
+
     @Field
+    @ApiModelProperty(
+            value = "For date related input/output.",
+            notes = "Will return a list of the following values: [Year, Month, DayOfMonth, Hour, Minute, Second]",
+            dataType = "java.util.List"
+    )
     private LocalDateTime timeValue;
 
     public ValueHolder(Object value) {
