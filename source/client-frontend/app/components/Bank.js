@@ -64,18 +64,18 @@ class Bank extends Component{
   // Required Attributes Block
   createUIRequiredAttributes(){
     return this.state.requiredAttributes.map((el, i) => (
-      <div key={i}>
+      <div>
         <FormControl>
           <InputLabel htmlFor={`requiredAttribute-${i}-helper`}>Required attribute</InputLabel>
           <Input
             id={`requiredAttribute-${i}`}
             value={el || ''}
-            onChange={this.handleChangeRequiredAttributes.bind(this, i)}
+            onChange={() => this.handleChangeRequiredAttributes(i)}
           />
         </FormControl>
         <IconButton
           aria-label="delete"
-          onClick={this.removeClickRequiredAttributes.bind(this, i)}
+          onClick={() => this.removeClickRequiredAttributes(i)}
           style={{ marginLeft: '15px' }}
         ><DeleteIcon/></IconButton>
         <Divider/>
@@ -102,28 +102,30 @@ class Bank extends Component{
   // Optional Attributes Block
   createUIOptionalAttributes(){
     return this.state.optionalAttributes.map((el, i) =>
-      <div key={i}>
-        <FormControl>
-          <InputLabel
-            htmlFor={`optionalAttribute-${i}-helper`}
+      (
+        <div>
+          <FormControl>
+            <InputLabel
+              htmlFor={`optionalAttribute-${i}-helper`}
+            >
+              Optional attribute
+            </InputLabel>
+            <Input
+              id={`optionalAttribute-${i}`}
+              value={el || ''}
+              onChange={() => this.handleChangeOptionalAttributes(i)}
+            />
+          </FormControl>
+          <IconButton
+            aria-label="delete"
+            onClick={() => this.removeClickOptionalAttributes(i)}
+            style={{ marginLeft: '15px' }}
           >
-            Optional attribute
-          </InputLabel>
-          <Input
-            id={`optionalAttribute-${i}`}
-            value={el || ''}
-            onChange={this.handleChangeOptionalAttributes.bind(this, i)}
-          />
-        </FormControl>
-        <IconButton
-          aria-label="delete"
-          onClick={this.removeClickOptionalAttributes.bind(this, i)}
-          style={{ marginLeft: '15px' }}
-        >
-          <DeleteIcon/>
-        </IconButton>
-        <Divider/>
-      </div>,
+            <DeleteIcon/>
+          </IconButton>
+          <Divider/>
+        </div>
+      )
     );
   }
 
