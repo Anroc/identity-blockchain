@@ -19,8 +19,6 @@ public class PermissionContractUtils {
 
         try {
             log.info("wallet balance before deployment: {}", Web3jUtils.getBalanceWei(web3j, sender.getAddress()));
-            // TODO @Timo: handle additional permissionContractContent.getClosureRequest() values
-
             Permission_sol_PermissionContract contract = Permission_sol_PermissionContract.deploy(
                     web3j,
                     sender.getCredentials(),
@@ -32,7 +30,7 @@ public class PermissionContractUtils {
             if (contract == null)
                 throw new NullPointerException("Contract is null. Contract could not be created");
 
-            log.info("PermissionContract Address: {}, approvedClaims: {}", contract.getContractAddress(), contract.getClaimsApproved());
+            log.info("PermissionContract Address: {}, approvedClaims: {}", contract.getContractAddress());
             log.info("wallet balance after deployment: {}", Web3jUtils.getBalanceWei(web3j, sender.getAddress()));
             return contract.getContractAddress();
 
