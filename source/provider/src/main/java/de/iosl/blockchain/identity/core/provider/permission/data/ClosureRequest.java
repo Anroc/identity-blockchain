@@ -2,6 +2,7 @@ package de.iosl.blockchain.identity.core.provider.permission.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import de.iosl.blockchain.identity.core.provider.permission.data.dto.ClosureRequestDTO;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class ClosureRequest {
     private ClaimOperation claimOperation;
     @Field
     @NotEmpty
-    private Object staticValue;
+    private ValueHolder staticValue;
 
     @Field
     private boolean approved;

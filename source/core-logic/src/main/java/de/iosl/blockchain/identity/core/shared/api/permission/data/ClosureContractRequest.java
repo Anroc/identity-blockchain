@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.api.permission.data;
 
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import lombok.AllArgsConstructor;
@@ -43,7 +44,7 @@ public class ClosureContractRequest implements Serializable {
                 new ClosureContractRequestPayload(
                         claimID,
                         claimOperation,
-                        staticValue
+                        new ValueHolder(staticValue)
                 ),
                 null
         );

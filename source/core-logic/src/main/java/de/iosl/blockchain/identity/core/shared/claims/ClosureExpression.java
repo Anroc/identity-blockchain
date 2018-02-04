@@ -58,8 +58,8 @@ public class ClosureExpression<T> {
     public String describe(String claimId) {
         Object printablePayload = getClaim().getPayload();
         Object printableValue = value;
-        if(getClaim().getPayload() instanceof LocalDateTime) {
-            printablePayload = DATE_TIME_FORMATTER.format((LocalDateTime) getClaim().getPayload());
+        if(getClaim().getPayload().getUnifiedValue() instanceof LocalDateTime) {
+            printablePayload = DATE_TIME_FORMATTER.format((LocalDateTime) getClaim().getPayload().getUnifiedValue());
             printableValue = DATE_TIME_FORMATTER.format((LocalDateTime) value);
         }
         String parsedClaimId = claimId.toLowerCase().replaceAll("_", " ");

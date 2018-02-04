@@ -17,7 +17,7 @@ import de.iosl.blockchain.identity.core.user.Application;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import de.iosl.blockchain.identity.core.user.permission.data.ClosureRequest;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequest;
-import de.iosl.blockchain.identity.core.user.permission.data.ValueHolder;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
@@ -81,9 +81,9 @@ public class PermissionServiceRestTest extends RestTestSuite {
         keyChain.setAccount(getAccountFromCredentials(USER_CREDENTIALS));
         keyChain.setRsaKeyPair(CryptEngine.generate().string().rsa().getAsymmetricCipherKeyPair());
 
-        userClaimDB.insert(new UserClaim(claimID_givenName, new Date(), new Provider("0x111", "gov"), new Payload("Hans", ClaimType.STRING), keyChain.getAccount().getAddress()));
-        userClaimDB.insert(new UserClaim(claimID_familyName, new Date(), new Provider("0x111", "gov"), new Payload("Wurst", ClaimType.STRING), keyChain.getAccount().getAddress()));
-        userClaimDB.insert(new UserClaim(claimID_age, new Date(), new Provider("0x111", "gov"), new Payload("2000-04-11 12:12:12", ClaimType.DATE), keyChain.getAccount().getAddress()));
+        userClaimDB.insert(new UserClaim(claimID_givenName, new Date(), new Provider("0x111", "gov"), new Payload(new ValueHolder("Hans"), ClaimType.STRING), keyChain.getAccount().getAddress()));
+        userClaimDB.insert(new UserClaim(claimID_familyName, new Date(), new Provider("0x111", "gov"), new Payload(new ValueHolder("Wurst"), ClaimType.STRING), keyChain.getAccount().getAddress()));
+        userClaimDB.insert(new UserClaim(claimID_age, new Date(), new Provider("0x111", "gov"), new Payload(new ValueHolder(LocalDateTime.of(2000,04,11,12,12,12)), ClaimType.DATE), keyChain.getAccount().getAddress()));
     }
 
     @Test

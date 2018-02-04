@@ -22,7 +22,7 @@ public class ECSignatureValidator {
         return isSignatureValid(signedRequest.getPayload(), signedRequest.getSignature(), signedRequest.getEthID());
     }
 
-    private boolean isSignatureValid(@NonNull Object payload, @NonNull ECSignature signature, @NonNull String address) {
+    public boolean isSignatureValid(@NonNull Object payload, @NonNull ECSignature signature, @NonNull String address) {
         Sign.SignatureData signatureData = signature.toSignatureData();
         return algorithm.verifySignature(payload, signatureData, address);
     }

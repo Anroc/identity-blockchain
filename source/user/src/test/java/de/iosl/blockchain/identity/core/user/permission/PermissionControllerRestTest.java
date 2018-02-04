@@ -7,8 +7,8 @@ import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
-import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
@@ -18,7 +18,6 @@ import de.iosl.blockchain.identity.core.user.Application;
 import de.iosl.blockchain.identity.core.user.permission.data.ClosureRequest;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequestDTO;
-import de.iosl.blockchain.identity.core.user.permission.data.ValueHolder;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
@@ -29,7 +28,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpEntity;
@@ -74,9 +72,6 @@ public class PermissionControllerRestTest extends RestTestSuite {
     private KeyChain keyChain;
     @SpyBean
     private HeartBeatService heartBeatService;
-
-    @Autowired
-    private ClosureContentCryptEngine closureContentCryptEngine;
 
     private EthereumSigner signer = new EthereumSigner();
     private ObjectMapper objectMapper = new ObjectMapper();

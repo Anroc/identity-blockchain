@@ -12,10 +12,8 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.InfoDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.*;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
@@ -195,7 +193,7 @@ public class ApiControllerRestTest extends RestTestSuite {
                         new ClosureContractRequestDTO(
                                 claimID,
                                 ClaimOperation.EQ,
-                                "content"
+                                new ValueHolder("content")
                         )
                 )
         );
@@ -234,7 +232,8 @@ public class ApiControllerRestTest extends RestTestSuite {
         SignedClaimRequestDTO signedClaimRequestDTO = new SignedClaimRequestDTO(
                 REQUESTING_PROVIDER_CREDENTIALS.getAddress(),
                 pprEthID,
-                Lists.newArrayList(signedClaimsRequest)
+                Lists.newArrayList(signedClaimsRequest),
+                Sets.newHashSet()
         );
 
         SignedRequest<SignedClaimRequestDTO> signedRequest = new SignedRequest<>(
@@ -242,15 +241,15 @@ public class ApiControllerRestTest extends RestTestSuite {
                 getSignature(signedClaimRequestDTO, REQUESTING_PROVIDER_CREDENTIALS)
         );
 
-        ResponseEntity<List<ClaimDTO>> responseEntity = restTemplate.exchange(
+        ResponseEntity<PermissionContractResponse> responseEntity = restTemplate.exchange(
                 getUrl(ABSOLUTE_PPR_PATH, user.getEthId()),
                 HttpMethod.PUT,
                 new HttpEntity<>(signedRequest),
-                new ParameterizedTypeReference<List<ClaimDTO>>() {});
+                PermissionContractResponse.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isNotNull().isNotEmpty().hasSize(1);
-        assertThat(responseEntity.getBody().get(0)).isEqualTo(new ClaimDTO(providerClaim));
+        assertThat(responseEntity.getBody().getClaims()).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(responseEntity.getBody().getClaims().get(0)).isEqualToIgnoringGivenFields(new ClaimDTO(providerClaim), "signedClosures");
     }
 
 

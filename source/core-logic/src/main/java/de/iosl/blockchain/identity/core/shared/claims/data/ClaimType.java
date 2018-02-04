@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims.data;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -30,7 +31,8 @@ public enum ClaimType {
                 .anyMatch(supportedClaimOperation -> supportedClaimOperation == claimOperation);
     }
 
-    public boolean validateType(@NonNull Object value) {
+    public boolean validateType(@NonNull ValueHolder valueHolder) {
+        Object value = valueHolder.getUnifiedValue();
         switch (this) {
             case DATE:
                 return value instanceof LocalDateTime;

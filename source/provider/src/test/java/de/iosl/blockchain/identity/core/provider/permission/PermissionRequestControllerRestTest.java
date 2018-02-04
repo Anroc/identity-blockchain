@@ -10,6 +10,7 @@ import de.iosl.blockchain.identity.core.provider.permission.data.dto.ClosureRequ
 import de.iosl.blockchain.identity.core.provider.permission.data.dto.PermissionRequestDTO;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -140,7 +141,7 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
                 null,
                 null,
                 Sets.newHashSet(
-                        new ClosureRequestDTO(claimID_familyName, ClaimOperation.EQ, "Hans")
+                        new ClosureRequestDTO(claimID_familyName, ClaimOperation.EQ, new ValueHolder("Hans"))
                 ));
 
         doNothing().when(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
@@ -163,7 +164,7 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
         ClosureRequest closureRequest = user.getPermissionGrands().get(0).getClosureRequests().get(0);
         assertThat(closureRequest.getClaimID()).isEqualTo(claimID_familyName);
         assertThat(closureRequest.getClaimOperation()).isEqualTo(ClaimOperation.EQ);
-        assertThat(closureRequest.getStaticValue()).isEqualTo("Hans");
+        assertThat(closureRequest.getStaticValue().getUnifiedValue()).isEqualTo("Hans");
         assertThat(closureRequest.isApproved()).isFalse();
     }
 }

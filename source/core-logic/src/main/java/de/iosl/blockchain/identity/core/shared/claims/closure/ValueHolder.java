@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.user.permission.data;
+package de.iosl.blockchain.identity.core.shared.claims.closure;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -16,7 +17,9 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ValueHolder {
+public class ValueHolder implements Serializable {
+
+    private static final long serialVersionUID = -349128374L;
 
     @Field
     private Object value;

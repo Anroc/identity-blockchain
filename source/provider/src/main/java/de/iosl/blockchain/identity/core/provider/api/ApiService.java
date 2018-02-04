@@ -4,15 +4,20 @@ import de.iosl.blockchain.identity.core.provider.user.UserService;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.Closure;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
+import de.iosl.blockchain.identity.core.shared.claims.ClosureExpression;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
+import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
@@ -21,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,6 +46,12 @@ public class ApiService {
     private HeartBeatService heartBeatService;
     @Autowired
     private ClosureContentCryptEngine closureContentCryptEngine;
+
+    private final EthereumSigner ethereumSigner;
+
+    public ApiService() {
+        this.ethereumSigner = new EthereumSigner();
+    }
 
     public String createPermissionContract(
             @NonNull String requestingProvider,
@@ -168,5 +180,49 @@ public class ApiService {
             );
         }
 
+    }
+
+    public List<SignedRequest<Closure>> evaluateAndSignClosures(@NonNull User user, @NonNull List<Closure> closures) {
+        for(Closure closure : closures) {
+            ProviderClaim providerClaim = user.findClaim(closure.getClaimID())
+                    .orElseThrow(
+                            () -> new IllegalStateException("Could not find claim with id " + closure.getClaimID() + ".")
+                    );
+
+            ClosureExpression closureExpression = new ClosureExpression(providerClaim.getClaimValue(), closure.getClaimOperation(), closure.getStaticValue());
+            closure.setDescription(closureExpression.describe(closure.getClaimID()));
+            closure.setExpressionResult(closureExpression.evaluate());
+            closure.setCreationDate(LocalDateTime.now());
+        }
+
+        log.info("Updating user");
+        List<SignedRequest<Closure>> signedClosures = closures.stream().map(this::signClosure).collect(Collectors.toList());
+        updateUserForClosures(user, signedClosures);
+
+        log.info("Creating beat.");
+        heartBeatService.createURLBeat(user.getEthId(), EventType.NEW_CLAIMS);
+        return signedClosures;
+    }
+
+    private void updateUserForClosures(User user, List<SignedRequest<Closure>> closures) {
+        user.getClaims().forEach(
+                providerClaim -> {
+                    List<SignedRequest<Closure>> closuresToAdd = closures.stream()
+                            .filter(closure -> closure.getPayload().getClaimID().equals(providerClaim.getId()))
+                            .collect(Collectors.toList());
+
+                    providerClaim.getSignedClosures().addAll(closuresToAdd);
+                }
+        );
+
+        userService.updateUser(user);
+    }
+
+    private SignedRequest<Closure> signClosure(Closure closure) {
+        closure.setEthID(keyChain.getAccount().getAddress());
+        return new SignedRequest<>(
+                closure,
+                ECSignature.fromSignatureData(ethereumSigner.sign(closure, keyChain.getAccount().getECKeyPair()))
+        );
     }
 }

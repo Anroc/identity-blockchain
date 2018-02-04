@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.core.user.permission.data;
 import com.couchbase.client.java.repository.annotation.Field;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequestPayload;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,7 +54,7 @@ public class ClosureRequest {
                 ethID,
                 this.claimID,
                 this.claimOperation,
-                this.getStaticValue().getUnifiedValue()
+                this.getStaticValue()
         );
     }
 }

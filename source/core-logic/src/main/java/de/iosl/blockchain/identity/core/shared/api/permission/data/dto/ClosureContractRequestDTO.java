@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.api.permission.data.dto;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class ClosureContractRequestDTO {
     private ClaimOperation claimOperation;
 
     @NotNull
-    private Object staticValue;
+    private ValueHolder staticValue;
 
 }
 

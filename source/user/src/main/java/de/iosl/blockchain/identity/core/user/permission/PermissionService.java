@@ -121,7 +121,7 @@ public class PermissionService {
         ClosureExpression<?> closureExpression = new ClosureExpression<>(
                 userClaim.getClaimValue(),
                 closureContractRequest.getClosureContractRequestPayload().getClaimOperation(),
-                closureContractRequest.getClosureContractRequestPayload().getStaticValue()
+                closureContractRequest.getClosureContractRequestPayload().getStaticValue().getUnifiedValue()
         );
 
         String description = closureExpression.describe(userClaim.getId());

@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
@@ -15,8 +16,8 @@ public class BooleanClosureExpressionTest {
 
     @Before
     public void setup() {
-        payloadTrue = new Payload(Boolean.TRUE, ClaimType.BOOLEAN);
-        payloadFalse = new Payload(Boolean.FALSE, ClaimType.BOOLEAN);
+        payloadTrue = new Payload(new ValueHolder(Boolean.TRUE), ClaimType.BOOLEAN);
+        payloadFalse = new Payload(new ValueHolder(Boolean.FALSE), ClaimType.BOOLEAN);
     }
 
     @Test

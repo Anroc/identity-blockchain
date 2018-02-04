@@ -15,8 +15,10 @@ import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractResponse;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
@@ -36,6 +38,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -69,6 +72,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
     private final Set<String> optionalClaims = Sets.newHashSet(claimID_age);
     private final String permissionContractAddress = "0xabc";
     private final List<ProviderClaim> receivedClaims = Lists.newArrayList(claimFactory.create(claimID_familyName), claimFactory.create(claimID_givenName), claimFactory.create(claimID_age));
+    private final List<ClaimDTO> receivedClaimDTOs = receivedClaims.stream().map(ClaimDTO::new).collect(Collectors.toList());
 
     private User user;
 
@@ -124,12 +128,13 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         ECSignatureValidator validator = mock(ECSignatureValidator.class);
 
         PermissionContractContent pcc = new PermissionContractContent(requiredClaims, optionalClaims, providerEthID);
+        PermissionContractResponse permissionContractResponse = new PermissionContractResponse( receivedClaimDTOs, Lists.newArrayList());
         doReturn(pcc).when(ebaInterface).getPermissionContractContent(account, permissionContractAddress);
         doReturn(account).when(keyChain).getAccount();
         doReturn(true).when(keyChain).isActive();
         doReturn(validator).when(permissionRequestService).getEcSignatureValidator();
         doReturn(true).when(validator).isRequestValid(any(SignedRequest.class));
-        doReturn(receivedClaims).when(apiProviderService).requestClaimsForPPR(eq(url), eq(userEthID), eq(permissionContractAddress), anyList());
+        doReturn(permissionContractResponse).when(apiProviderService).requestClaimsForPPR(eq(url), eq(userEthID), eq(permissionContractAddress), anyList(), anySet());
         doReturn(Optional.of(user)).when(userService).findUserByEthID(userEthID);
         doAnswer(returnsFirstArg()).when(userService).updateUser(any(User.class));
         doReturn(mock(Message.class)).when(messageService).createMessage(MessageType.PERMISSION_REQUEST, user.getId(), null);
@@ -142,7 +147,7 @@ public class PermissionRequestServiceTest extends BasicMockSuite {
         assertThat(permissionGrand.getOptionalClaimGrants()).containsOnly(MapEntry.entry(claimID_age, true));
         assertThat(permissionGrand.getRequiredClaimGrants()).containsOnly(MapEntry.entry(claimID_givenName, true), MapEntry.entry(claimID_familyName, true));
         verify(messageService).createMessage(MessageType.NEW_CLAIMS, user.getId(), null);
-        verify(apiProviderService).requestClaimsForPPR(eq(url), eq(userEthID), eq(permissionContractAddress), anyList());
+        verify(apiProviderService).requestClaimsForPPR(eq(url), eq(userEthID), eq(permissionContractAddress), anyList(), anySet());
     }
 
     private String buildApprovedClaim(String claimID, String providerEthID, String userEthID) {

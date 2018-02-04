@@ -160,8 +160,7 @@ public class UserController {
     }
 
     private void validateClaim(@NonNull SharedClaim claim) {
-        if(! claim.getClaimValue().getPayloadType()
-                .validateType(claim.getClaimValue().getPayload())) {
+        if(! claim.getClaimValue().getPayloadType().validateType(claim.getClaimValue().getPayload())) {
             throw new ServiceException(
                     "Invalid payload [%s] for payload type [%s].",
                     HttpStatus.BAD_REQUEST,

@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
@@ -15,8 +16,8 @@ public class NumberClosureExpressionTest {
 
     @Before
     public void setup() {
-        payloadDouble = new Payload(3.4, ClaimType.NUMBER);
-        payloadInteger = new Payload((double) 18, ClaimType.NUMBER);
+        payloadDouble = new Payload(new ValueHolder(3.4), ClaimType.NUMBER);
+        payloadInteger = new Payload(new ValueHolder((double) 18), ClaimType.NUMBER);
     }
 
     @Test

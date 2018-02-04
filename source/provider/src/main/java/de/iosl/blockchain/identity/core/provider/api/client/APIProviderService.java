@@ -1,15 +1,15 @@
 package de.iosl.blockchain.identity.core.provider.api.client;
 
 import de.iosl.blockchain.identity.core.provider.permission.data.PermissionRequest;
-import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.client.APIClientBeanFactory;
 import de.iosl.blockchain.identity.core.shared.api.client.APIClientRegistry;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractResponse;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
@@ -21,7 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -79,19 +79,22 @@ public class APIProviderService {
      * @param ethID the ethID of the user
      * @param pprAddress the permission contract address that backs this approval
      * @param approvedClaims the list of approved claims
-     * @return list of provider claims
+     * @param closureContractRequests set of signed closure requets
+     * @return the provider permission contract response
      */
-    public List<ProviderClaim> requestClaimsForPPR(
+    public PermissionContractResponse requestClaimsForPPR(
             @NonNull String url,
             @NonNull String ethID,
             @NonNull String pprAddress,
-            @NonNull List<SignedRequest<ApprovedClaim>> approvedClaims) {
+            @NonNull List<SignedRequest<ApprovedClaim>> approvedClaims,
+            @NonNull Set<ClosureContractRequest> closureContractRequests) {
 
         // create request
         SignedClaimRequestDTO signedClaimRequestDTO = new SignedClaimRequestDTO(
                 keyChain.getAccount().getAddress(),
                 pprAddress,
-                approvedClaims
+                approvedClaims,
+                closureContractRequests
         );
 
         SignedRequest<SignedClaimRequestDTO> signedRequest = new SignedRequest<>(
@@ -100,8 +103,6 @@ public class APIProviderService {
                         ethereumSigner.sign(signedClaimRequestDTO, keyChain.getAccount().getECKeyPair()))
         );
 
-        List<ClaimDTO> claimDTOS = apiClientRegistry.getOrRegister(url).retrieveClaimsByPPR(ethID, signedRequest);
-
-        return claimDTOS.stream().map(ProviderClaim::new).collect(Collectors.toList());
+        return apiClientRegistry.getOrRegister(url).retrieveClaimsByPPR(ethID, signedRequest);
     }
 }

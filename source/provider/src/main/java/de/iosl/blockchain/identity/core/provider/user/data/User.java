@@ -42,6 +42,7 @@ public class User {
     private Set<ProviderClaim> claims;
 
     public User putClaim(@NonNull ProviderClaim claim) {
+        claims.removeIf(c -> c.getId().equals(claim.getId()));
         claims.add(claim);
         return this;
     }

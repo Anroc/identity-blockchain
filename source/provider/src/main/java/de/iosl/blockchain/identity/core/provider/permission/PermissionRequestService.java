@@ -11,7 +11,11 @@ import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.Closure;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractResponse;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
@@ -48,6 +52,8 @@ public class PermissionRequestService {
     private KeyChain keyChain;
     @Autowired
     private HeartBeatService heartBeatService;
+    @Autowired
+    private ClosureContentCryptEngine closureContentCryptEngine;
 
     @Getter
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -102,20 +108,37 @@ public class PermissionRequestService {
         Map<String, String> claimResult = new HashMap<>(contractContent.getRequiredClaims());
         claimResult.putAll(contractContent.getOptionalClaims());
 
-        log.info("Received claims via PPR: requried {} and optional {} for user {}", claimResult, ethID);
+        log.info("Received claims via PPR: requried {}, optional {} and closures {} for user {}",
+                contractContent.getRequiredClaims(),
+                contractContent.getOptionalClaims(),
+                contractContent.getClosureContent(),
+                ethID);
 
         List<SignedRequest<ApprovedClaim>> approvedClaims = mapResultsToApprovedClaimRequest(claimResult);
         log.info("Successful extracted {} approvedClaims.", approvedClaims.size());
-
         validateApprovedClaims(approvedClaims);
-        log.info("Successful validated {} approvedClaims for user [{}]", ethID, approvedClaims);
+        log.info("Successful validated {} approvedClaims for user [{}]", approvedClaims, ethID);
 
-        List<ProviderClaim> claims = apiProviderService.requestClaimsForPPR(url, ethID, pprAddress, approvedClaims);
+        Set<ClosureContractRequest> closureContractRequests;
+        if(contractContent.getClosureContent() != null) {
+            closureContractRequests = closureContentCryptEngine.decrypt(contractContent.getClosureContent(), keyChain.getRsaKeyPair().getPrivate());
+            log.info("Successful decrypted {} approved closure requests.", closureContractRequests.size());
+            validateClosures(closureContractRequests);
+            log.info("Successful validated {} approved closure requests {}", closureContractRequests);
+        } else {
+            log.info("No closures found.");
+            closureContractRequests = new HashSet<>();
+        }
 
+        PermissionContractResponse response = apiProviderService.requestClaimsForPPR(url, ethID, pprAddress, approvedClaims, closureContractRequests);
+
+        List<ProviderClaim> claims = response.getClaims().stream().map(ProviderClaim::new).collect(Collectors.toList());
         log.info("Received claims from Provider: {}", claims);
         User user = updateUserClaims(ethID, claims);
-        updateUserPermissionGrants(user, pprAddress, claims);
 
+        user = updateUserClosures(user, response.getSignedClosures());
+
+        updateUserPermissionGrants(user, pprAddress, claims);
         messageService.createMessage(MessageType.NEW_CLAIMS, user.getId(), null);
     }
 
@@ -137,6 +160,19 @@ public class PermissionRequestService {
                 }).collect(Collectors.toList());
     }
 
+    private void validateClosures(Set<ClosureContractRequest> closureContractRequests) {
+        closureContractRequests.forEach(
+                closureContractRequest -> {
+                    if(! getEcSignatureValidator().isSignatureValid(
+                            closureContractRequest.getClosureContractRequestPayload(),
+                            closureContractRequest.getEcSignature(),
+                            closureContractRequest.getClosureContractRequestPayload().getEthID())) {
+                        throw new ServiceException("Closure request was not valid! Object: %s", HttpStatus.INTERNAL_SERVER_ERROR, closureContractRequest);
+                    }
+                }
+        );
+    }
+
     private void validateApprovedClaims(List<SignedRequest<ApprovedClaim>> approvedClaims) {
         approvedClaims.forEach(
                 approvedClaimSignedRequest -> {
@@ -156,9 +192,26 @@ public class PermissionRequestService {
         claims.forEach(
                 claim -> {
                     claim.setModificationDate(currentDate);
+                    Optional<ProviderClaim> providerClaim = user.findClaim(claim.getId());
+                    if(providerClaim.isPresent()) {
+                        List<SignedRequest<Closure>> closures = providerClaim.get().getSignedClosures();
+                        claim.getSignedClosures().addAll(closures);
+                    }
                     user.putClaim(claim);
                 }
         );
+
+        return userService.updateUser(user);
+    }
+
+    private User updateUserClosures(User user, List<SignedRequest<Closure>> signedClosures) {
+        for(ProviderClaim providerClaim: user.getClaims()) {
+            List<SignedRequest<Closure>> closures = signedClosures.stream()
+                    .filter(signedClosure -> signedClosure.getPayload().getClaimID().equals(providerClaim.getId()))
+                    .collect(Collectors.toList());
+
+            providerClaim.getSignedClosures().addAll(closures);
+        }
 
         return userService.updateUser(user);
     }

@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
@@ -14,7 +15,7 @@ public class StringClosureExpressionTest {
 
     @Before
     public void setup() {
-        payload = new Payload("value", ClaimType.STRING);
+        payload = new Payload(new ValueHolder("value"), ClaimType.STRING);
     }
 
     @Test

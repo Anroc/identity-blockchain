@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.provider.permission.data.dto;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,6 @@ public class ClosureRequestDTO {
 
     @NotNull
     @ApiModelProperty(required = true, example = "Hans")
-    private Object staticValue;
+    private ValueHolder staticValue;
 
 }
