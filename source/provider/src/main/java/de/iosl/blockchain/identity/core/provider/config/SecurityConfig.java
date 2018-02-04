@@ -1,13 +1,13 @@
 package de.iosl.blockchain.identity.core.provider.config;
 
 import de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances;
+import de.iosl.blockchain.identity.core.shared.config.CorsPermitAllConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .httpBasic().realmName("blockchain-identity")
                 .and()
-                    .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                    .cors().configurationSource(request -> new CorsPermitAllConfiguration().applyPermitDefaultValues())
                 .and()
                     .csrf().disable();
     }
