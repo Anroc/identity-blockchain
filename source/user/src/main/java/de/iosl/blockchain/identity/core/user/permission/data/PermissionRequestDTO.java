@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
