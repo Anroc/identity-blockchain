@@ -5,9 +5,11 @@ import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
 import QRCode from './User/QR_Code';
 import request from '../auth/request';
-import LazyImage from './common/LazyImage';
 import ClaimsTable from './User/ClaimsTable';
 import Welcome from './User/Welcome';
+import DefaultClaims from './User/DefaultClaims';
+import MessageSection from './User/MessageSection';
+import PermissionsSection from './User/PermissionSection';
 
 class User extends Component {
   constructor() {
@@ -27,44 +29,7 @@ class User extends Component {
       loaded: false,
       error: false,
       user: [],
-      claims: [
-        {
-          modificationDate: 1515684492235,
-          claimValue: {
-            payloadType: 'STRING',
-            payload: 'Schloessinger',
-          },
-          id: 'FAMILY_NAME',
-          provider: {
-            name: 'Bürgeramt Reinickendorf',
-            ethID: '0xf1239acb6bb5e3a4a45de8cd14090c1944dce581',
-          },
-        },
-        {
-          modificationDate: 1515684492235,
-          claimValue: {
-            payloadType: 'DATE',
-            payload: '29.2.1994',
-          },
-          id: 'GIVEN_NAME',
-          provider: {
-            name: 'Bürgeramt Reinickendorf',
-            ethID: '0xf1239acb6bb5e3a4a45de8cd14090c1944dce581',
-          },
-        },
-        {
-          modificationDate: 1515684492235,
-          claimValue: {
-            payloadType: 'STRING',
-            payload: 'Oskar',
-          },
-          id: 'BIRTHDAT',
-          provider: {
-            name: 'Bürgeramt Reinickendorf',
-            ethID: '0xf1239acb6bb5e3a4a45de8cd14090c1944dce581',
-          },
-        },
-      ],
+      claims: DefaultClaims,
       value: '',
       messages: null,
       permissionId: '',
@@ -157,6 +122,7 @@ class User extends Component {
    * TODO
    */
   putMessageSeen() {
+    console.log('PUT MESSAGE TO SEEN:', this.state.permissionId);
     const getUserInformationOptions = {
       method: 'PUT',
       headers: {
@@ -164,14 +130,16 @@ class User extends Component {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: {
-        id: this.state.message,
-        seen: true,
-      },
+      body: JSON.stringify({
+        id: this.state.permissionId,
+        updatedMessage: {
+          seen: true,
+        },
+      }),
       credentials: 'include',
     };
 
-    request('http://srv01.snet.tu-berlin.de:1112/messages', getUserInformationOptions);
+    request(`http://srv01.snet.tu-berlin.de:1112/messages/${this.state.permissionId}`, getUserInformationOptions);
   }
 
   /**
@@ -185,15 +153,17 @@ class User extends Component {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: {
-        permission: this.state.permissionId,
-        answer: this.state.answer,
-      },
-      mode: 'cors',
+      body: JSON.stringify({
+        id: this.state.permissionId,
+        permissionRequestDTO: {
+          requiredClaims: {},
+          optionalClaims: {},
+        },
+      }),
       credentials: 'include',
     };
 
-    request('http://srv01.snet.tu-berlin.de:1112/messages', getUserInformationOptions);
+    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions);
   }
 
   showQRCode() {
@@ -222,23 +192,8 @@ class User extends Component {
           <QRCode showQRCode={this.showQRCode} showQR={this.state.showQR} />
           <ClaimsTable claims={this.state.claims} />
         </section>
-        <section>
-          <Button
-            onClick={this.getMessages}
-          >
-            Get Messages
-          </Button>
-          <div>
-            {this.state.messages && JSON.stringify(this.state.messages)}
-          </div>
-        </section>
-        <section>
-          <Button
-            onClick={this.getPermissionRequest}
-          >
-            Get Permissions mit id von message
-          </Button>
-        </section>
+        <MessageSection getMessages={this.getMessages} messages={this.state.messages} />
+        <PermissionsSection getPermissionRequest={this.getPermissionRequest} />
         <section>
           <Button
             onClick={this.putMessageSeen}
@@ -252,6 +207,9 @@ class User extends Component {
           >
             PUT approval oder denial auf 1112/permissions/id
           </Button>
+          <p>
+            test
+          </p>
         </section>
         <section>
           <FormControl component="fieldset" required error>
