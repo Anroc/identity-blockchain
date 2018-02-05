@@ -169,8 +169,8 @@ public class PermissionServiceRestTest extends RestTestSuite {
                 .map(ValueHolder::getUnifiedValue)
                 .collect(Collectors.toSet());
         assertThat(staticValues).containsExactlyInAnyOrder(
-                closureContractRequest1.getClosureContractRequestPayload().getStaticValue(),
-                closureContractRequest2.getClosureContractRequestPayload().getStaticValue());
+                closureContractRequest1.getClosureContractRequestPayload().getStaticValue().getUnifiedValue(),
+                closureContractRequest2.getClosureContractRequestPayload().getStaticValue().getUnifiedValue());
     }
 
     private ClosureContent generateEncryptedClosureContentRequest(Set<ClosureContractRequest> closureContractRequest) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {

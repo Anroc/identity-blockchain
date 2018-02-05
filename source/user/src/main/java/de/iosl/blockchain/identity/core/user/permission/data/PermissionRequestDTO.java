@@ -43,20 +43,18 @@ public class PermissionRequestDTO {
     )
     private String permissionContractAddress;
 
-    @NotNull
     @ApiModelProperty(
             value = "Map from required claimIDs to approved by the frontend.",
-            required = true,
+            required = false,
             notes = "If not present please send an empty map."
     )
     private Map<String, Boolean> requiredClaims;
 
     @ApiModelProperty(
             value = "Map from optional claimIDs to approved by the frontend.",
-            required = true,
+            required = false,
             notes = "If not present please send an empty map."
     )
-    @NotNull
     private Map<String, Boolean> optionalClaims;
 
     @ApiModelProperty(

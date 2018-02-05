@@ -32,6 +32,6 @@ public class ClosureRequestDTO {
         this.staticValue = closureRequest.getStaticValue();
         this.description = closureRequest.getDescription();
         this.expressionResult = closureRequest.isExpressionResult();
-        this.approved = false;
+        this.approved = closureRequest.isApproved();
     }
 }

@@ -139,17 +139,6 @@ public class PermissionService {
 
     public PermissionRequest updatePermissionRequest(@NonNull PermissionRequest permissionRequest) {
         log.info("Start updating permission Request...");
-        PermissionRequest permissionRequestOld = permissionRequestDB.findEntity(permissionRequest.getId())
-                .orElseThrow(() -> new IllegalStateException("Could not find old object Permission object"));
-
-        if(! verifyPermissionClaims(permissionRequestOld.getRequiredClaims(), permissionRequest.getRequiredClaims())) {
-            throw new ServiceException("Updated required claim set contained more/less keys then the old one.", HttpStatus.BAD_REQUEST);
-        }
-
-        if(! verifyPermissionClaims(permissionRequestOld.getOptionalClaims(), permissionRequest.getOptionalClaims())) {
-            throw new ServiceException("Updated optional claim set contained more/less keys then the old one.", HttpStatus.BAD_REQUEST);
-        }
-
         permissionRequest = permissionRequestDB.update(permissionRequest);
 
         updatePermissionContract(permissionRequest);
@@ -166,8 +155,19 @@ public class PermissionService {
 
     private void updatePermissionContract(@NonNull PermissionRequest permissionRequest) {
         log.info("Generating signed objects...");
-        Map<String, String> requiredSignedClaims = generateSignatures(permissionRequest.getRequiredClaims(), permissionRequest.getRequestingProvider());
-        Map<String, String> optionalSignedClaims = generateSignatures(permissionRequest.getOptionalClaims(), permissionRequest.getRequestingProvider());
+        Map<String, String> requiredSignedClaims;
+        if(permissionRequest.getRequiredClaims() != null) {
+            requiredSignedClaims = generateSignatures(permissionRequest.getRequiredClaims(), permissionRequest.getRequestingProvider());
+        } else {
+            requiredSignedClaims = new HashMap<>();
+        }
+
+        Map<String, String> optionalSignedClaims;
+        if(permissionRequest.getOptionalClaims() != null) {
+            optionalSignedClaims = generateSignatures(permissionRequest.getOptionalClaims(), permissionRequest.getRequestingProvider());
+        } else {
+            optionalSignedClaims = new HashMap<>();
+        }
 
         ClosureContent closureContent = buildClosureContent(permissionRequest);
 
@@ -183,7 +183,7 @@ public class PermissionService {
     }
 
     private ClosureContent buildClosureContent(PermissionRequest permissionRequest) {
-        if(permissionRequest.getClosureRequests().isEmpty()) {
+        if(permissionRequest.getClosureRequests() == null || permissionRequest.getClosureRequests().isEmpty()) {
             return null;
         }
 

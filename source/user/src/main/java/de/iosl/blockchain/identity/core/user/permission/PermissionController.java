@@ -38,12 +38,20 @@ public class PermissionController extends AbstractAuthenticator {
 
         PermissionRequest permissionRequest = getPermissionRequest(id);
 
-        permissionRequest.setOptionalClaims(permissionRequestDTO.getOptionalClaims());
-        permissionRequest.setRequiredClaims(permissionRequestDTO.getRequiredClaims());
-        setApprovedFlagForClosures(permissionRequest, permissionRequestDTO);
+        if(permissionRequestDTO.getOptionalClaims() != null && permissionRequest.getOptionalClaims() != null) {
+            permissionRequest.getOptionalClaims().putAll(permissionRequestDTO.getOptionalClaims());
+        }
+        if(permissionRequestDTO.getRequiredClaims() != null && permissionRequest.getRequiredClaims() != null) {
+            permissionRequest.getRequiredClaims().putAll(permissionRequestDTO.getRequiredClaims());
+        }
+        if(permissionRequestDTO.getClosureRequestDTO() != null && permissionRequest.getClosureRequests() != null) {
+            setApprovedFlagForClosures(permissionRequest, permissionRequestDTO);
+        }
 
-        if( permissionRequestDTO.getRequiredClaims().containsValue(true) && permissionRequestDTO.getRequiredClaims().containsValue(false)) {
-            throw new ServiceException("Either accept no claims or all required claims.", HttpStatus.BAD_REQUEST);
+        if(permissionRequest.getRequiredClaims() != null && permissionRequest.getOptionalClaims() != null) {
+            if (permissionRequest.getOptionalClaims().containsValue(true) && permissionRequest.getRequiredClaims().containsValue(false)) {
+                throw new ServiceException("Either accept no claims or all required claims.", HttpStatus.BAD_REQUEST);
+            }
         }
 
         return new PermissionRequestDTO(permissionService.updatePermissionRequest(permissionRequest));
@@ -51,15 +59,6 @@ public class PermissionController extends AbstractAuthenticator {
 
     private void setApprovedFlagForClosures(PermissionRequest permissionRequest, PermissionRequestDTO permissionRequestDTO) {
         Set<ClosureRequest> closureRequests = permissionRequest.getClosureRequests();
-        if(closureRequests == null && permissionRequestDTO.getClosureRequestDTO() == null) {
-            return;
-        } else if (closureRequests == null && permissionRequestDTO.getClosureRequestDTO() != null) {
-            throw new ServiceException("Could not update PermissionRequest object without closures with DTO with closures.", HttpStatus.UNPROCESSABLE_ENTITY);
-        } else if (permissionRequestDTO.getClosureRequestDTO() == null) {
-            // no approval
-            return;
-        }
-
         Set<ClosureRequestDTO> closureRequestDTOs = permissionRequestDTO.getClosureRequestDTO();
 
         for(ClosureRequestDTO searchEntity : closureRequestDTOs) {
