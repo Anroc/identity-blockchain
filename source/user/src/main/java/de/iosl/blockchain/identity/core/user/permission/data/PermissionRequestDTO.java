@@ -75,9 +75,13 @@ public class PermissionRequestDTO {
         this.requiredClaims = permissionRequest.getRequiredClaims();
         this.optionalClaims = permissionRequest.getOptionalClaims();
 
-        this.closureRequestDTO = permissionRequest.getClosureRequests()
-                .stream()
-                .map(ClosureRequestDTO::new).collect(
-                Collectors.toSet());
+        if(permissionRequest.getClosureRequests() != null) {
+            this.closureRequestDTO = permissionRequest.getClosureRequests()
+                    .stream()
+                    .map(ClosureRequestDTO::new).collect(
+                            Collectors.toSet());
+        } else {
+            this.closureRequestDTO = null;
+        }
     }
 }

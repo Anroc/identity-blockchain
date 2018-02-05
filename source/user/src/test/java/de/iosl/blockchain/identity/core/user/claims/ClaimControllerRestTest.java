@@ -57,7 +57,7 @@ public class ClaimControllerRestTest extends RestTestSuite {
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<List<ClaimDTO>>() {});
 
-        assertThat(claimDTOS).isEqualTo(
+        assertThat(claimDTOS.getBody()).isEqualTo(
                 userClaimDB.findAllByEthID("asd")
                         .stream()
                         .map(ClaimDTO::new)
