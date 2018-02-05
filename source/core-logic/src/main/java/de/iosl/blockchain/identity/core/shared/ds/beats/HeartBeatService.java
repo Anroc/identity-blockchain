@@ -59,7 +59,7 @@ public class HeartBeatService {
 
     public Optional<RegistryEntryDTO> discover(@NonNull String ethID) {
         RequestDTO<RegistryEntryDTO> requestDTO = heartBeatAdapter.discover(ethID);
-        if(! signer.verifySignature(
+        if(signer.verifySignature(
                 requestDTO.getPayload(),
                 requestDTO.getSignature().toSignatureData(),
                 requestDTO.getPayload().getEthID())
