@@ -3,9 +3,19 @@ package de.iosl.blockchain.identity.core.shared.eba;
 import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
+import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequestPayload;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
+import de.iosl.blockchain.identity.crypt.CryptEngine;
+import de.iosl.blockchain.identity.crypt.KeyConverter;
+import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.web3j.crypto.Credentials;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,9 +33,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
 public class PermissionContractTest extends RestTestSuite{
 
+    private static final int MAX_NUMBER_OF_CLOSURES = 1;
 
     @Autowired
     private BlockchainAccess blockchainAccess;
+
+    @Autowired
+    private ClosureContentCryptEngine closureContentCryptEngine;
 
     private final String claimID_givenName = "GIVEN_NAME";
     private final String claimID_familyName = "FAMILY_NAME";
@@ -44,6 +59,12 @@ public class PermissionContractTest extends RestTestSuite{
     private Account userAccount;
     private Account providerAccount;
 
+    private static String PUBLIC_KEY;
+
+    @BeforeClass
+    public static void init() {
+        PUBLIC_KEY = new KeyConverter().from(CryptEngine.generate().string().rsa().getPublicKey()).toBase64();
+    }
 
     @Before
     public void setUp() throws Exception{
@@ -75,8 +96,25 @@ public class PermissionContractTest extends RestTestSuite{
                 RestTestSuite.loadFile(govWalletName),
                 govCred
         );
+        ClosureContent closureContent = buildClosureContent(providerCred);
 
-        this.permissionContractContent= new PermissionContractContent(requiredClaims, optionalClaims, providerAccount.getAddress());
+        this.permissionContractContent= new PermissionContractContent(requiredClaims, optionalClaims, providerAccount.getAddress(), closureContent);
+    }
+
+    private ClosureContent buildClosureContent(Credentials providerCred) {
+        EthereumSigner ethereumSigner = new EthereumSigner();
+        Set<ClosureContractRequest> set = new HashSet<>();
+        for(int i = 0; i < MAX_NUMBER_OF_CLOSURES; i++) {
+            ClosureContractRequestPayload payload1 = new ClosureContractRequestPayload("0x123", "GIVEN_NAME",
+                    ClaimOperation.EQ, new ValueHolder("Hans" + i));
+            ClosureContractRequest ccr = new ClosureContractRequest(
+                    payload1,
+                    ECSignature.fromSignatureData(ethereumSigner.sign(payload1, providerCred.getEcKeyPair()))
+            );
+            set.add(ccr);
+            log.info("Generating {}: {} ",i, ccr);
+        }
+        return closureContentCryptEngine.encrypt(PUBLIC_KEY, set);
     }
 
     @Test
