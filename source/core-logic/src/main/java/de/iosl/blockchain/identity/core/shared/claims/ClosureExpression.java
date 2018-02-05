@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import lombok.Getter;
@@ -9,16 +10,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 @Getter
-public class ClosureExpression<T> {
+public class ClosureExpression {
 
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
     private final Payload claim;
     private final ClaimOperation claimOperation;
-    private final T value;
+    private final Object value;
 
-    public ClosureExpression(Payload claim, ClaimOperation claimOperation, T value) {
+    public ClosureExpression(Payload claim, ClaimOperation claimOperation, Object value) {
+        if(value instanceof ValueHolder) {
+            value = ((ValueHolder) value).getUnifiedValue();
+        }
+
         if(! value.getClass().equals(claim.getPayloadType().getClazz())) {
             throw new IllegalArgumentException("Incompatible closure types.");
         }
