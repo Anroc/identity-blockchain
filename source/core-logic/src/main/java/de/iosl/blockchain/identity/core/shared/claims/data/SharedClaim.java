@@ -24,11 +24,9 @@ public abstract class SharedClaim {
     @Field
     private Date modificationDate;
 
-    @NotNull
     @Valid
     private Provider provider;
 
-    @NotNull
     @Valid
     private Payload claimValue;
 

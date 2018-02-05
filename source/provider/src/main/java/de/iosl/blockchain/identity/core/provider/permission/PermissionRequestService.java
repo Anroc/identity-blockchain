@@ -17,6 +17,7 @@ import de.iosl.blockchain.identity.core.shared.api.permission.data.Closure;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractResponse;
+import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
@@ -206,6 +207,16 @@ public class PermissionRequestService {
     }
 
     private User updateUserClosures(User user, List<SignedRequest<Closure>> signedClosures) {
+        Set<String> newClaimIds = signedClosures.stream()
+                .map(SignedRequest::getPayload)
+                .map(Closure::getClaimID)
+                .collect(Collectors.toSet());
+
+        Set<String> knownClaimIds = user.getClaims().stream().map(SharedClaim::getId).collect(Collectors.toSet());
+        newClaimIds.removeAll(knownClaimIds);
+
+        initClaimForClosure(user, newClaimIds);
+
         for(ProviderClaim providerClaim: user.getClaims()) {
             List<SignedRequest<Closure>> closures = signedClosures.stream()
                     .filter(signedClosure -> signedClosure.getPayload().getClaimID().equals(providerClaim.getId()))
@@ -219,6 +230,12 @@ public class PermissionRequestService {
         }
 
         return userService.updateUser(user);
+    }
+
+    private void initClaimForClosure(User user, Set<String> newClaimIds) {
+        newClaimIds.stream()
+                .map(claimId -> new ProviderClaim(claimId, new Date(), null, null))
+                .forEach(user::putClaim);
     }
 
     private User updateUserPermissionGrants(User user, String permissionContractAddress, List<ProviderClaim> claims, List<SignedRequest<Closure>> signedClosures) {
