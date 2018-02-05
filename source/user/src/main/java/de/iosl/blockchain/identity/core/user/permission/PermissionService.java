@@ -193,7 +193,8 @@ public class PermissionService {
                 );
 
         String publicKey = registryEntryDTO.getPublicKey();
-        String ethID = keyChain.getAccount().getAddress();
+        String ethID = keyChain.getAccount().getCredentials().getAddress();
+        log.info("Sending closure request from my address {}.", ethID);
 
         Set<ClosureContractRequest> closureContractRequests = permissionRequest.getClosureRequests().stream()
                 .filter(closureRequest -> closureRequest.isApproved())
