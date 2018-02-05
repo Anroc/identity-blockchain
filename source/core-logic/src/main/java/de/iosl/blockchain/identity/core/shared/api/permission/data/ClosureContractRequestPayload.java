@@ -15,6 +15,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class ClosureContractRequestPayload extends BasicEthereumDTO implements Serializable {
 
+    private static final long serialVersionUID = 137496492824225023L;
+
     @NotBlank
     private String claimID;
 

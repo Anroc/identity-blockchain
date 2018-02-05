@@ -6,10 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BasicEthereumDTO {
+public class BasicEthereumDTO implements Serializable {
+
+    private static final long serialVersionUID = 22749196824329013L;
 
     @NotBlank
     @Field
