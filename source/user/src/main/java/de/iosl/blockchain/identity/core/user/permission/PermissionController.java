@@ -55,7 +55,7 @@ public class PermissionController extends AbstractAuthenticator {
             return;
         } else if (closureRequests == null && permissionRequestDTO.getClosureRequestDTO() != null) {
             throw new ServiceException("Could not update PermissionRequest object without closures with DTO with closures.", HttpStatus.UNPROCESSABLE_ENTITY);
-        } else if (permissionRequest.getClosureRequests() == null) {
+        } else if (permissionRequestDTO.getClosureRequestDTO() == null) {
             // no approval
             return;
         }
