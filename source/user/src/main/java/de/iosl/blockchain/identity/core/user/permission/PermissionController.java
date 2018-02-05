@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -51,7 +52,8 @@ public class PermissionController extends AbstractAuthenticator {
 
     private void setApprovedFlagForClosures(PermissionRequest permissionRequest, PermissionRequestDTO permissionRequestDTO) {
         Set<ClosureRequest> closureRequests = permissionRequest.getClosureRequests();
-        Set<ClosureRequestDTO> closureRequestDTOs = permissionRequestDTO.getClosureRequestDTO();
+        Set<ClosureRequestDTO> closureRequestDTOs = (permissionRequestDTO.getClosureRequestDTO() != null) ?
+                permissionRequestDTO.getClosureRequestDTO() : new HashSet<>();
 
         for(ClosureRequestDTO searchEntity : closureRequestDTOs) {
             findMatchingClosureRequest(closureRequests, searchEntity)

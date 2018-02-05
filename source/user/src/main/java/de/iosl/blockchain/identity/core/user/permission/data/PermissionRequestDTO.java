@@ -61,10 +61,8 @@ public class PermissionRequestDTO {
 
     @ApiModelProperty(
             value = "List of closure objects. Set the n'approved flag' inside them.",
-            required = true,
-            notes = "If not present please send an empty list."
+            required = false
     )
-    @NotNull
     private Set<ClosureRequestDTO> closureRequestDTO;
 
 
