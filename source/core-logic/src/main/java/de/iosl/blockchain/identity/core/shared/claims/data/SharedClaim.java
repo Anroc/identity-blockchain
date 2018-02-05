@@ -32,6 +32,7 @@ public abstract class SharedClaim {
     @Valid
     private Payload claimValue;
 
+    @Valid
     private List<SignedRequest<Closure>> signedClosures;
 
     public abstract String getId();

@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.core.provider.permission;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.core.provider.api.client.APIProviderService;
+import de.iosl.blockchain.identity.core.provider.permission.data.ClosureRequest;
 import de.iosl.blockchain.identity.core.provider.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.provider.user.UserService;
 import de.iosl.blockchain.identity.core.provider.user.data.PermissionGrand;
@@ -138,7 +139,7 @@ public class PermissionRequestService {
 
         user = updateUserClosures(user, response.getSignedClosures());
 
-        updateUserPermissionGrants(user, pprAddress, claims);
+        updateUserPermissionGrants(user, pprAddress, claims, response.getSignedClosures());
         messageService.createMessage(MessageType.NEW_CLAIMS, user.getId(), null);
     }
 
@@ -210,13 +211,17 @@ public class PermissionRequestService {
                     .filter(signedClosure -> signedClosure.getPayload().getClaimID().equals(providerClaim.getId()))
                     .collect(Collectors.toList());
 
-            providerClaim.getSignedClosures().addAll(closures);
+            if(providerClaim.getSignedClosures() == null) {
+                providerClaim.setSignedClosures(closures);
+            } else {
+                providerClaim.getSignedClosures().addAll(closures);
+            }
         }
 
         return userService.updateUser(user);
     }
 
-    private User updateUserPermissionGrants(User user, String permissionContractAddress, List<ProviderClaim> claims) {
+    private User updateUserPermissionGrants(User user, String permissionContractAddress, List<ProviderClaim> claims, List<SignedRequest<Closure>> signedClosures) {
         PermissionGrand permissionGrand = user.findPermissionGrand(permissionContractAddress)
                 .orElseThrow(() -> new IllegalStateException(
                         String.format("User [%s] does not have matching permission grands (%s).", user.getId(), permissionContractAddress))
@@ -224,10 +229,28 @@ public class PermissionRequestService {
 
         permissionGrand.setRequiredClaimGrants(updatePermissionGrands(permissionGrand.getRequiredClaimGrants(), claims));
         permissionGrand.setOptionalClaimGrants(updatePermissionGrands(permissionGrand.getOptionalClaimGrants(), claims));
+        permissionGrand.setClosureRequests(updateClosureRequests(permissionGrand.getClosureRequests(), signedClosures));
 
         user.putPermissionGrant(permissionGrand);
 
         return userService.updateUser(user);
+    }
+
+    private List<ClosureRequest> updateClosureRequests(List<ClosureRequest> closureRequests, List<SignedRequest<Closure>> signedClosures) {
+        if(signedClosures.isEmpty()) {
+            return closureRequests;
+        }
+
+        for(ClosureRequest closureRequest : closureRequests) {
+            if(signedClosures.stream().anyMatch(signedClosure ->
+                    signedClosure.getPayload().getClaimID().equals(closureRequest.getClaimID())
+                            && signedClosure.getPayload().getClaimOperation() == closureRequest.getClaimOperation()
+                            && signedClosure.getPayload().getStaticValue().getUnifiedValue().equals(closureRequest.getStaticValue().getUnifiedValue()))) {
+                closureRequest.setApproved(true);
+            }
+        }
+
+        return closureRequests;
     }
 
     private Map<String, Boolean> updatePermissionGrands(Map<String, Boolean> grands, List<ProviderClaim> claims) {

@@ -211,7 +211,11 @@ public class ApiService {
                             .filter(closure -> closure.getPayload().getClaimID().equals(providerClaim.getId()))
                             .collect(Collectors.toList());
 
-                    providerClaim.getSignedClosures().addAll(closuresToAdd);
+                    if(providerClaim.getSignedClosures() == null) {
+                        providerClaim.setSignedClosures(closuresToAdd);
+                    } else {
+                        providerClaim.getSignedClosures().addAll(closuresToAdd);
+                    }
                 }
         );
 
