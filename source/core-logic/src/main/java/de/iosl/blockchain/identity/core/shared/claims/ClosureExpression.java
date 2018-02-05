@@ -56,7 +56,7 @@ public class ClosureExpression<T> {
     }
 
     public String describe(String claimId) {
-        Object printablePayload = getClaim().getPayload();
+        Object printablePayload = getClaim().getPayload().getUnifiedValue();
         Object printableValue = value;
         if(getClaim().getPayload().getUnifiedValue() instanceof LocalDateTime) {
             printablePayload = DATE_TIME_FORMATTER.format((LocalDateTime) getClaim().getPayload().getUnifiedValue());
