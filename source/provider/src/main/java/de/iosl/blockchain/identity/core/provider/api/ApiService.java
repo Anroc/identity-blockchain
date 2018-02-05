@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.provider.api;
 
+import com.google.common.collect.Lists;
 import de.iosl.blockchain.identity.core.provider.user.UserService;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
@@ -107,7 +108,8 @@ public class ApiService {
         if (users.size() > 1) {
             throw new ServiceException("It is not supported to request claims of more then 1 user. Requested was [{}]", HttpStatus.UNPROCESSABLE_ENTITY, users);
         } else if (requestedClaims.isEmpty()) {
-            throw new ServiceException("This claim request is not issued for the given provider!", HttpStatus.FORBIDDEN);
+            log.info("No claims issued.");
+            return Lists.newArrayList();
         } else if (users.isEmpty()) {
             throw new ServiceException("No user could be found from the given PPR.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
