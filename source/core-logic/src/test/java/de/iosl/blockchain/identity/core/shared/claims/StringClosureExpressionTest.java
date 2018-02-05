@@ -22,7 +22,7 @@ public class StringClosureExpressionTest {
     public void evaluateString_eq_true() {
         ClaimOperation claimOperation = ClaimOperation.EQ;
 
-        ClosureExpression<String> closureExpression = new ClosureExpression<>(payload, claimOperation, "value");
+        ClosureExpression closureExpression = new ClosureExpression(payload, claimOperation, "value");
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -31,7 +31,7 @@ public class StringClosureExpressionTest {
     public void evaluateString_neq_false() {
         ClaimOperation claimOperation = ClaimOperation.NEQ;
 
-        ClosureExpression<String> closureExpression = new ClosureExpression<>(payload, claimOperation, "asd");
+        ClosureExpression closureExpression = new ClosureExpression(payload, claimOperation, "asd");
 
         assertThat(closureExpression.evaluate()).isTrue();
     }

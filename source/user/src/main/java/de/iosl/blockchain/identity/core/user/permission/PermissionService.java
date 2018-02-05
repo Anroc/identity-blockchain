@@ -118,7 +118,7 @@ public class PermissionService {
                         () -> new ServiceException("Could not find claim with id [%s]. Need update.", HttpStatus.UNPROCESSABLE_ENTITY, closureContractRequest.getClosureContractRequestPayload().getClaimID())
                 );
 
-        ClosureExpression<?> closureExpression = new ClosureExpression<>(
+        ClosureExpression closureExpression = new ClosureExpression(
                 userClaim.getClaimValue(),
                 closureContractRequest.getClosureContractRequestPayload().getClaimOperation(),
                 closureContractRequest.getClosureContractRequestPayload().getStaticValue().getUnifiedValue()

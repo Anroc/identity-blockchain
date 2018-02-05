@@ -24,7 +24,7 @@ public class BooleanClosureExpressionTest {
     public void evaluateBoolean_true_eq_true() {
         ClaimOperation claimOperation = ClaimOperation.EQ;
 
-        ClosureExpression<Boolean> closureExpression = new ClosureExpression<>(payloadTrue, claimOperation, true);
+        ClosureExpression closureExpression = new ClosureExpression(payloadTrue, claimOperation, true);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -33,7 +33,7 @@ public class BooleanClosureExpressionTest {
     public void evaluateBoolean_true_neq_false() {
         ClaimOperation claimOperation = ClaimOperation.NEQ;
 
-        ClosureExpression<Boolean> closureExpression = new ClosureExpression<>(payloadTrue, claimOperation, true);
+        ClosureExpression closureExpression = new ClosureExpression(payloadTrue, claimOperation, true);
 
         assertThat(closureExpression.evaluate()).isFalse();
     }
@@ -42,7 +42,7 @@ public class BooleanClosureExpressionTest {
     public void evaluateBoolean_false_eq_true() {
         ClaimOperation claimOperation = ClaimOperation.EQ;
 
-        ClosureExpression<Boolean> closureExpression = new ClosureExpression<>(payloadFalse, claimOperation, true);
+        ClosureExpression closureExpression = new ClosureExpression(payloadFalse, claimOperation, true);
 
         assertThat(closureExpression.evaluate()).isFalse();
     }
@@ -51,7 +51,7 @@ public class BooleanClosureExpressionTest {
     public void evaluateBoolean_false_neq_false() {
         ClaimOperation claimOperation = ClaimOperation.NEQ;
 
-        ClosureExpression<Boolean> closureExpression = new ClosureExpression<>(payloadFalse, claimOperation, true);
+        ClosureExpression closureExpression = new ClosureExpression(payloadFalse, claimOperation, true);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }

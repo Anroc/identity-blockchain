@@ -28,7 +28,7 @@ public class DateClosureExpressionTest {
     public void evaluateDate_eq_true() {
         ClaimOperation claimOperation = ClaimOperation.EQ;
 
-        ClosureExpression<LocalDateTime> closureExpression = new ClosureExpression<>(payload, claimOperation, eq);
+        ClosureExpression closureExpression = new ClosureExpression(payload, claimOperation, eq);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -37,7 +37,7 @@ public class DateClosureExpressionTest {
     public void evaluateDate_neq_true() {
         ClaimOperation claimOperation = ClaimOperation.NEQ;
 
-        ClosureExpression<LocalDateTime> closureExpression = new ClosureExpression<>(payload, claimOperation, gt);
+        ClosureExpression closureExpression = new ClosureExpression(payload, claimOperation, gt);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -46,7 +46,7 @@ public class DateClosureExpressionTest {
     public void evaluateDate_gt_true() {
         ClaimOperation claimOperation = ClaimOperation.GT;
 
-        ClosureExpression<LocalDateTime> closureExpression = new ClosureExpression<>(payload, claimOperation, gt);
+        ClosureExpression closureExpression = new ClosureExpression(payload, claimOperation, gt);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -55,7 +55,7 @@ public class DateClosureExpressionTest {
     public void evaluateDate_gt_false() {
         ClaimOperation claimOperation = ClaimOperation.GT;
 
-        ClosureExpression<LocalDateTime> closureExpression = new ClosureExpression<>(payload, claimOperation, lt);
+        ClosureExpression closureExpression = new ClosureExpression(payload, claimOperation, lt);
 
         assertThat(closureExpression.evaluate()).isFalse();
     }
@@ -64,7 +64,7 @@ public class DateClosureExpressionTest {
     public void evaluateDate_lt_true() {
         ClaimOperation claimOperation = ClaimOperation.LT;
 
-        ClosureExpression<LocalDateTime> closureExpression = new ClosureExpression<>(payload, claimOperation, lt);
+        ClosureExpression closureExpression = new ClosureExpression(payload, claimOperation, lt);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -73,7 +73,7 @@ public class DateClosureExpressionTest {
     public void evaluateDate_lt_false() {
         ClaimOperation claimOperation = ClaimOperation.LT;
 
-        ClosureExpression<LocalDateTime> closureExpression = new ClosureExpression<>(payload, claimOperation, gt);
+        ClosureExpression closureExpression = new ClosureExpression(payload, claimOperation, gt);
 
         assertThat(closureExpression.evaluate()).isFalse();
     }

@@ -18,12 +18,12 @@ public class ClosureExpressionTest {
 
     @Test
     public void describe() {
-        ClosureExpression<Boolean> closureExpression1 = new ClosureExpression<>(
+        ClosureExpression closureExpression1 = new ClosureExpression(
                 new Payload(new ValueHolder(Boolean.TRUE), ClaimType.BOOLEAN),
                 ClaimOperation.EQ,
                 true);
 
-        ClosureExpression<LocalDateTime> closureExpression2 = new ClosureExpression<>(
+        ClosureExpression closureExpression2 = new ClosureExpression(
                 new Payload(new ValueHolder(LocalDateTime.of(1994, 4, 18, 0, 0)), ClaimType.DATE),
                 ClaimOperation.LT,
                 LocalDateTime.now().minus(18, ChronoUnit.YEARS));
@@ -38,7 +38,7 @@ public class ClosureExpressionTest {
     @Test
     public void invalidInput() {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
-                () -> new ClosureExpression<>(
+                () -> new ClosureExpression(
                         new Payload(new ValueHolder(3), ClaimType.NUMBER),
                         ClaimOperation.EQ,
                         true)
