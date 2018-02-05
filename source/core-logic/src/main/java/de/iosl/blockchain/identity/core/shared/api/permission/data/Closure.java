@@ -28,7 +28,7 @@ public class Closure extends BasicEthereumDTO {
     private ValueHolder staticValue;
     @NotBlank
     @Field
-    private String description;
+    private String userEthId;
     
     private boolean expressionResult;
 

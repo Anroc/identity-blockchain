@@ -192,7 +192,7 @@ public class ApiService {
                     );
 
             ClosureExpression closureExpression = new ClosureExpression(providerClaim.getClaimValue(), closure.getClaimOperation(), closure.getStaticValue());
-            closure.setDescription(closureExpression.describe(closure.getClaimID()));
+            closure.setUserEthId(user.getEthId());
             closure.setExpressionResult(closureExpression.evaluate());
             closure.setCreationDate(LocalDateTime.now());
         }
