@@ -13,6 +13,7 @@ import java.util.List;
 public interface HeartBeatAdapter {
 
     String HEARTBEAT_PATH = "/heartbeat";
+    String REGISTRY_PATH = "/provider";
 
     @RequestLine("GET " + HEARTBEAT_PATH + "/{ethID}?from={from}&to={to}")
     List<Beat> beat(@Param("ethID") String ethId, @Param("from") long from, @Param("to") long to);
@@ -21,6 +22,6 @@ public interface HeartBeatAdapter {
     @RequestLine("POST " + HEARTBEAT_PATH + "/{ethID}")
     Beat createBeat(@Param("ethID") String ethId, RequestDTO<HeartBeatRequest> heartBeatRequestRequestDTO);
 
-    @RequestLine("GET " + HEARTBEAT_PATH + "/{ethID}")
+    @RequestLine("GET " + REGISTRY_PATH + "/{ethID}")
     RequestDTO<RegistryEntryDTO> discover(@Param("ethID") String ethID);
 }

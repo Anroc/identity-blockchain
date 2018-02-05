@@ -43,7 +43,7 @@ public class ClosureRequest {
         ClosureContractRequestPayload payload = closureContractRequest.getClosureContractRequestPayload();
         this.claimID = payload.getClaimID();
         this.claimOperation = payload.getClaimOperation();
-        this.staticValue = new ValueHolder(payload.getStaticValue());
+        this.staticValue = payload.getStaticValue();
         this.description = description;
         this.expressionResult = expressionResult;
         this.approved = false;
