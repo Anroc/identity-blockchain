@@ -10,6 +10,7 @@ import Welcome from './User/Welcome';
 import DefaultClaims from './User/DefaultClaims';
 import MessageSection from './User/MessageSection';
 import PermissionsSection from './User/PermissionSection';
+import PermissionForm from './User/PermissionForm';
 
 class User extends Component {
   constructor() {
@@ -143,7 +144,7 @@ class User extends Component {
   }
 
   /**
-   * TODO
+   * TODO currently gives error
    */
   putPermissionAnswer() {
     const getUserInformationOptions = {
@@ -211,32 +212,7 @@ class User extends Component {
             test
           </p>
         </section>
-        <section>
-          <FormControl component="fieldset" required error>
-            <FormLabel component="legend">
-              Incoming Permission Request:
-              <br />
-              Bank wants to know: FAMILY_NAME
-            </FormLabel>
-            <RadioGroup
-              aria-label="Your answer:"
-              name="answer"
-              value={this.state.value}
-              onChange={this.handleChange}
-            >
-              <FormControlLabel value="APPROVE" control={<Radio />} label="APPROVE" />
-              <FormControlLabel value="DENY" control={<Radio />} label="DENY" />
-            </RadioGroup>
-            <FormHelperText>Please select an option.</FormHelperText>
-            <Button
-              raised
-              color="primary"
-              onClick={console.log('clicked to put approval or denial')}
-            >
-              send answer
-            </Button>
-          </FormControl>
-        </section>
+        <PermissionForm handleChange={this.handleChange} value={this.state.value} />
       </article>
     );
   }

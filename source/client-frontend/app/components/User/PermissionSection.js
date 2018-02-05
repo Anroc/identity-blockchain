@@ -13,9 +13,7 @@ class PermissionsSection extends React.Component {
         >
           Get Permissions mit id von message
         </Button>
-        <div>
-          a
-        </div>
+
       </section>
     );
   }
