@@ -2,6 +2,7 @@ package de.iosl.blockchain.identity.core.shared.claims.closure;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonPropertyOrder(alphabetic=true, value = {"value", "timeValue"})
 public class ValueHolder implements Serializable {
 
     private static final long serialVersionUID = -349128374L;
