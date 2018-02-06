@@ -14,6 +14,7 @@ import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
 import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
+import RefreshIcon from 'material-ui-icons/Refresh';
 import request from '../auth/request';
 
 class Bank extends Component{
@@ -39,6 +40,10 @@ class Bank extends Component{
         MAIN_RESIDENCE_ZIP_CODE: 'NUMBER',
         MAIN_RESIDENCE_CITY: 'STRING',
       },
+      messages: [],
+      grantedPermissions: [],
+      userIDs: [],
+      tableData: [],
     };
 
     let id = 0;
@@ -52,6 +57,7 @@ class Bank extends Component{
     this.handleSubmit = this.handleSubmit.bind(this);
     this.addClickRequiredAttributes = this.addClickRequiredAttributes.bind(this);
     this.addClickOptionalAttributes = this.addClickOptionalAttributes.bind(this);
+    this.getNewMessages = this.getNewMessages.bind(this);
   }
 
   componentDidMount(){
@@ -143,6 +149,77 @@ class Bank extends Component{
     const optionalAttributes = [...this.state.optionalAttributes];
     optionalAttributes.splice(i, 1);
     this.setState({ optionalAttributes });
+  }
+
+  // Get new information about granted requests etc.
+  getNewMessages(){
+    const getMessages = {
+      method: 'GET',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+      credentials: 'include',
+    };
+
+    request('http://srv01.snet.tu-berlin.de:8102/messages', getMessages)
+      .then((json) => {
+        // console.log(JSON.stringify(json));
+        const tmp = json.map((message) => message.userId);
+        // console.log('json:', json);
+        // console.log('tmp:', tmp);
+        this.setState({
+          messages: json,
+          userIDs: tmp,
+        });
+        // console.log(this.state.userIDs);
+      });
+    console.log(this.state.userIDs);
+    for (let user of this.state.userIDs) {
+      const getUser = {
+        method: 'GET',
+        headers: {
+          Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors',
+        credentials: 'include',
+      };
+      console.log(user);
+      request('http://srv01.snet.tu-berlin.de:8102/users/' + user, getUser)
+        .then((json) => {
+          console.log(JSON.stringify(json));
+          this.setState({
+            tableData: json,
+          });
+        });
+    }
+    this.putAllMessageSeen();
+  }
+
+  putAllMessageSeen() {
+    for (let message of this.state.messages) {
+      console.log('PUT MESSAGE TO SEEN:', message);
+      const getUserInformationOptions = {
+        method: 'PUT',
+        headers: {
+          Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: message,
+          updatedMessage: {
+            seen: true,
+          },
+        }),
+        credentials: 'include',
+      };
+      request(`http://srv01.snet.tu-berlin.de:8102/messages/${message}`, getUserInformationOptions);
+    }
   }
 
   // Submit all attributes
@@ -279,27 +356,37 @@ class Bank extends Component{
               <Typography>Granted Permissions</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ethID</TableCell>
-                    <TableCell>RequestedAttributes</TableCell>
-                    <TableCell>GrantedQuery</TableCell>
-                    <TableCell>Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {this.state.data.map((n) => (
-                    <TableRow key={n.ethID}>
-                      <TableCell>{n.ethID}</TableCell>
-                      <TableCell>{n.RequestedAttributes}</TableCell>
-                      <TableCell numeric>{n.GrantedQuery}</TableCell>
-                      <TableCell numeric>{n.Status}</TableCell>
+              <div>
+                <div>
+                  <IconButton
+                    aria-label="refresh"
+                    onClick={this.getNewMessages}
+                  >
+                    <RefreshIcon/>
+                  </IconButton>
+                </div>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>ethID</TableCell>
+                      <TableCell>RequestedAttributes</TableCell>
+                      <TableCell>GrantedQuery</TableCell>
+                      <TableCell>Status</TableCell>
                     </TableRow>
-                    )
-                  )}
-                </TableBody>
-              </Table>
+                  </TableHead>
+                  <TableBody>
+                    {this.state.data.map((n) => (
+                      <TableRow key={n.ethID}>
+                        <TableCell>{n.ethID}</TableCell>
+                        <TableCell>{n.RequestedAttributes}</TableCell>
+                        <TableCell numeric>{n.GrantedQuery}</TableCell>
+                        <TableCell numeric>{n.Status}</TableCell>
+                      </TableRow>
+                      )
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
         </section>
