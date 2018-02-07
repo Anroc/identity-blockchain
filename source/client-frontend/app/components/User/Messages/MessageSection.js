@@ -17,7 +17,9 @@ class MessageSection extends React.Component {
             Get Messages
           </Button>
         </div>
-        <MessagesTable messages={this.props.messages} />
+        <div>
+          <MessagesTable messages={this.props.messages} />
+        </div>
       </section>
     );
   }

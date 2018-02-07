@@ -12,9 +12,7 @@ class MessagesTable extends React.Component {
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell numeric>messageType</TableCell>
-              <TableCell numeric>userId</TableCell>
               <TableCell numeric>creationDate</TableCell>
-              <TableCell numeric>seen</TableCell>
               <TableCell numeric>subjectID</TableCell>
             </TableRow>
           </TableHead>
@@ -23,9 +21,7 @@ class MessagesTable extends React.Component {
               <TableRow key={n.id}>
                 <TableCell>{n.id}</TableCell>
                 <TableCell numeric>{n.messageType}</TableCell>
-                <TableCell numeric>{n.userId}</TableCell>
                 <TableCell numeric>{n.creationDate}</TableCell>
-                <TableCell>{n.seen}</TableCell>
                 <TableCell numeric>{n.subjectID}</TableCell>
               </TableRow>
             ))}

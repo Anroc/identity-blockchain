@@ -21,6 +21,7 @@ import DefaultClaims from './User/DefaultClaims';
 import MessageSection from './User/Messages/MessageSection';
 import PermissionsSection from './User/PermissionSection';
 import PermissionForm from './User/PermissionForm';
+import PermissionRequestTable from './User/Permissions/PermissionRequestTable';
 
 class User extends Component {
   constructor() {
@@ -210,6 +211,16 @@ class User extends Component {
         </section>
         <ExpansionPanel>
           <ExpansionPanelSummary>
+            <Typography>Anfragen</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <PermissionRequestTable permissions={this.state.permissions} />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+
+        <ExpansionPanel>
+          <ExpansionPanelSummary>
             <Typography>General information</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
@@ -219,7 +230,7 @@ class User extends Component {
 
         <ExpansionPanel>
           <ExpansionPanelSummary>
-            <Typography>Claims</Typography>
+            <Typography>My Claims</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <ClaimsTable claims={this.state.claims} />
@@ -239,9 +250,13 @@ class User extends Component {
                   PUT auf messages, sodass seen auf true gesetzt wird
                 </Button>
               </section>
+            </div>
+            <div>
               <PermissionForm handleChange={this.handleChange} value={this.state.value} />
             </div>
-            <MessageSection getMessages={this.getMessages} messages={this.state.messages} />
+            <div>
+              <MessageSection getMessages={this.getMessages} messages={this.state.messages} />
+            </div>
           </ExpansionPanelDetails>
         </ExpansionPanel>
 

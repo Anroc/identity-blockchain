@@ -7,10 +7,6 @@ class ClaimsTable extends Component {
   render() {
     return (
       <section>
-        <p>
-          Claims:
-        </p>
-
         <Paper className="">
           <Table className="">
             <TableHead>

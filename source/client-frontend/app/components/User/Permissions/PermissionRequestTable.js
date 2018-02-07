@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Paper from 'material-ui/Paper';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
-class PermissionTable extends React.Component {
+class PermissionRequestTable extends React.Component {
   render() {
     return (
       <Paper className="">
@@ -38,8 +38,8 @@ class PermissionTable extends React.Component {
   }
 }
 
-PermissionTable.propTypes = {
+PermissionRequestTable.propTypes = {
   permissions: PropTypes.array,
 };
 
-export default PermissionTable;
+export default PermissionRequestTable;
