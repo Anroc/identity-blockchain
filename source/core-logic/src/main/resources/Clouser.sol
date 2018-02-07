@@ -7,12 +7,14 @@ contract ClouserContract{
     string [] private clouserContents;
     bool private setAllClaims;
     uint private amountClousers;
+    string private encryptedKey;
 
-    function ClouserContract(address _user, uint _amountClousers) public{
+    function ClouserContract(address _user, uint _amountClousers, string _encryptedKey) public{
         owner=msg.sender;
         user=_user;
         setAllClaims=false;
         amountClousers=_amountClousers;
+        encryptedKey =_encryptedKey;
     }
 
     function getsetAllClaims() public constant returns(bool){
@@ -66,6 +68,5 @@ contract ClouserContract{
             _;
         }
     }
-
 
 }
