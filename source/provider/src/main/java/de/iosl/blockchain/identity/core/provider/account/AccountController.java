@@ -27,7 +27,7 @@ public class AccountController {
 
     @PostMapping("/register")
     @ApiOperation(
-            value = "Registeres a new wallet",
+            value = "Registers a new wallet",
             notes = "This endpoint is only acceptable for provider not for the government"
     )
     public LoginResponse register(@RequestBody @Valid LoginRequest loginRequest) throws IOException {
@@ -37,5 +37,11 @@ public class AccountController {
         }
         String password = loginRequest.getPassword();
         return new LoginResponse(accountService.register(password));
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest) throws IOException {
+        String password = loginRequest.getPassword();
+        return new LoginResponse(accountService.login(password));
     }
 }
