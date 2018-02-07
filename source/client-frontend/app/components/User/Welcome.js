@@ -6,13 +6,6 @@ class Welcome extends React.Component {
     return (
       <div>
         <h1>Dashboard</h1>
-        <p>
-          Welcome, you are logged in!
-        </p>
-        <p>
-          General:
-          {this.props.ethID}
-        </p>
       </div>
     );
   }

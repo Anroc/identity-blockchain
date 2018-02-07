@@ -11,17 +11,21 @@ class QRCode extends React.Component {
   render() {
     return (
       <div>
-        <Button raised color="primary" onClick={this.props.showQRCode}>
-          Show QR Code
-        </Button>
-        {this.props.showQR ?
+        <div>
           <p>
-            QR Code:
+            Please verify your account by scanning this QR Code
+          </p>
+          <Button raised color="primary" onClick={this.props.showQRCode}>
+            {this.props.showQR ? 'Hide QR Code' : 'Show QR Code'}
+          </Button>
+        </div>
+        <div>
+          {this.props.showQR ?
             <LazyImage
               src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
               alt="qr-code"
-            />
-          </p> : null}
+            /> : null}
+        </div>
       </div>
     );
   }

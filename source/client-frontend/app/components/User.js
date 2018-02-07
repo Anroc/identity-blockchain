@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
 import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
-import Radio, { RadioGroup } from 'material-ui/Radio';
-import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
+import ExpansionPanel, {
+  ExpansionPanelDetails,
+  ExpansionPanelSummary,
+} from 'material-ui/ExpansionPanel';
+import Typography from 'material-ui/Typography';
+import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
+
+import AddIcon from 'material-ui-icons/Add';
+import IconButton from 'material-ui/IconButton';
+import DeleteIcon from 'material-ui-icons/Delete';
+import RefreshIcon from 'material-ui-icons/Refresh';
+
 import QRCode from './User/QR_Code';
 import request from '../auth/request';
 import ClaimsTable from './User/ClaimsTable';
@@ -36,6 +46,7 @@ class User extends Component {
       permissionId: '',
       permission: null,
       permissions: [],
+      expanded: null,
     };
   }
 
@@ -136,10 +147,7 @@ class User extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id: this.state.messages[0].id,
-        updatedMessage: {
-          seen: true,
-        },
+        seen: true,
       }),
       credentials: 'include',
     };
@@ -167,14 +175,14 @@ class User extends Component {
       }),
       credentials: 'include',
     };
-    console.log(`Permission answer: ${getUserInformationOptions}`);
+    console.log(`Permission answer: ${JSON.stringify(getUserInformationOptions)}`);
     request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions);
   }
 
   showQRCode() {
     console.log('showing qr code');
     this.setState({
-      showQR: true,
+      showQR: !this.state.showQR,
     });
   }
 
@@ -188,37 +196,70 @@ class User extends Component {
     });
   }
 
+  handlePanel(event, expanded, panel) {
+    this.setState({
+      expanded: expanded ? panel : false,
+    });
+  }
+
   render() {
     return (
       <article>
         <section className="text-section">
           <Welcome ethID={this.props.ethID} />
-          <QRCode showQRCode={this.showQRCode} showQR={this.state.showQR} />
-          <ClaimsTable claims={this.state.claims} />
         </section>
-        <MessageSection getMessages={this.getMessages} messages={this.state.messages} />
-        <PermissionsSection
-          getPermissionRequest={this.getPermissionRequest}
-          permissions={this.state.permissions}
-        />
-        <section>
-          <Button
-            onClick={this.putMessageSeen}
-          >
-            PUT auf messages, sodass seen auf true gesetzt wird
-          </Button>
-        </section>
-        <section>
-          <Button
-            onClick={this.putPermissionAnswer}
-          >
-            PUT approval oder denial auf 1112/permissions/id
-          </Button>
-          <p>
-            test
-          </p>
-        </section>
-        <PermissionForm handleChange={this.handleChange} value={this.state.value} />
+        <ExpansionPanel expanded={true}>
+          <ExpansionPanelSummary>
+            <Typography>General information</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <QRCode showQRCode={this.showQRCode} showQR={this.state.showQR} />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+        <ExpansionPanel>
+          <ExpansionPanelSummary>
+            <Typography>Claims</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <ClaimsTable claims={this.state.claims} />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+        <ExpansionPanel>
+          <ExpansionPanelSummary>
+            <Typography>Messages</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <MessageSection getMessages={this.getMessages} messages={this.state.messages} />
+
+            <section>
+              <Button
+                onClick={this.putMessageSeen}
+              >
+                PUT auf messages, sodass seen auf true gesetzt wird
+              </Button>
+            </section>
+            <PermissionForm handleChange={this.handleChange} value={this.state.value} />
+
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+        <ExpansionPanel>
+          <ExpansionPanelSummary>
+            <Typography>Permissions</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <PermissionsSection
+              getPermissionRequest={this.getPermissionRequest}
+              permissions={this.state.permissions}
+            />
+            <section>
+              <Button
+                onClick={this.putPermissionAnswer}
+              >
+                PUT approval oder denial auf 1112/permissions/id
+              </Button>
+            </section>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
       </article>
     );
   }
