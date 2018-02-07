@@ -26,9 +26,9 @@ class PermissionTable extends React.Component {
                 <TableCell>{n.requestingProvider}</TableCell>
                 <TableCell>{n.issuedProvider}</TableCell>
                 <TableCell>{n.permissionContractAddress}</TableCell>
-                <TableCell>n.requieredClaims</TableCell>
-                <TableCell>n.optionalClaims</TableCell>
-                <TableCell>n.closureRequestDTO</TableCell>
+                <TableCell>{}</TableCell>
+                <TableCell>{}</TableCell>
+                <TableCell>{n.closureRequestDTO[0].description}</TableCell>
               </TableRow>
             ))}
           </TableBody>
