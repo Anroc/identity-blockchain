@@ -132,7 +132,7 @@ class User extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id: this.state.permissionId,
+        id: this.state.messages[0].id,
         updatedMessage: {
           seen: true,
         },
