@@ -2,6 +2,7 @@ package de.iosl.blockchain.identity.crypt.sign;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.iosl.blockchain.identity.crypt.ObjectMapperFactory;
 import de.iosl.blockchain.identity.crypt.asymmetic.StringAsymmetricCryptEngine;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.security.SignatureException;
 @NoArgsConstructor
 public class EthereumSigner {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = ObjectMapperFactory.create();
     private StringAsymmetricCryptEngine stringAsymmetricCryptEngine = new StringAsymmetricCryptEngine();
 
     public static String addressFromPublicKey(BigInteger publicKey) {

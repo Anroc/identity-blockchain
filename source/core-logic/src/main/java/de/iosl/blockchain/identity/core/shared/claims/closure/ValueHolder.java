@@ -34,7 +34,7 @@ public class ValueHolder implements Serializable {
     @ApiModelProperty(
             value = "For date related input/output.",
             notes = "Will return a list of the following values: [Year, Month, DayOfMonth, Hour, Minute, Second]",
-            dataType = "java.util.List"
+            dataType = "java.lang.String"
     )
     private LocalDateTime timeValue;
 
