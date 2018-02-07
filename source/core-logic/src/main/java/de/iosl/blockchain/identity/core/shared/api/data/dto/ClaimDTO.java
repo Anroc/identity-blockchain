@@ -9,7 +9,6 @@ import lombok.NonNull;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -23,19 +22,17 @@ public class ClaimDTO {
 
     private Date modificationDate;
     @Valid
-    @NotNull
     private ProviderDTO provider;
     @Valid
-    @NotNull
     private PayloadDTO claimValue;
-
+    @Valid
     private List<SignedRequest<Closure>> signedClosures;
 
     public ClaimDTO(@NonNull SharedClaim claim) {
         this.id = claim.getId();
         this.modificationDate = claim.getModificationDate();
-        this.provider = new ProviderDTO(claim.getProvider());
-        this.claimValue = new PayloadDTO(claim.getClaimValue());
+        this.provider = (claim.getProvider() != null)? new ProviderDTO(claim.getProvider()) : null;
+        this.claimValue = (claim.getClaimValue() != null)? new PayloadDTO(claim.getClaimValue()) : null;
         this.signedClosures = claim.getSignedClosures();
     }
 }
