@@ -9,32 +9,20 @@ const getUserOptions = {
   credentials: 'include',
 };
 
-const postUserOptions = {
+const postUserOptions = (password) => ({
   method: 'POST',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    password: '',
+    password,
   }),
   mode: 'cors',
   credentials: 'include',
-};
-
-const getUserClaimOptions = {
-  method: 'POST',
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({}),
-  mode: 'cors',
-  credentials: 'include',
-};
+});
 
 export {
   getUserOptions,
   postUserOptions,
-  getUserClaimOptions,
 };
