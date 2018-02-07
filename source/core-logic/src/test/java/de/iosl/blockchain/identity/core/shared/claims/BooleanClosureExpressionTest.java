@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
@@ -15,15 +16,15 @@ public class BooleanClosureExpressionTest {
 
     @Before
     public void setup() {
-        payloadTrue = new Payload(Boolean.TRUE, ClaimType.BOOLEAN);
-        payloadFalse = new Payload(Boolean.FALSE, ClaimType.BOOLEAN);
+        payloadTrue = new Payload(new ValueHolder(Boolean.TRUE), ClaimType.BOOLEAN);
+        payloadFalse = new Payload(new ValueHolder(Boolean.FALSE), ClaimType.BOOLEAN);
     }
 
     @Test
     public void evaluateBoolean_true_eq_true() {
         ClaimOperation claimOperation = ClaimOperation.EQ;
 
-        ClosureExpression<Boolean> closureExpression = new ClosureExpression<>(payloadTrue, claimOperation, true);
+        ClosureExpression closureExpression = new ClosureExpression(payloadTrue, claimOperation, true);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -32,7 +33,7 @@ public class BooleanClosureExpressionTest {
     public void evaluateBoolean_true_neq_false() {
         ClaimOperation claimOperation = ClaimOperation.NEQ;
 
-        ClosureExpression<Boolean> closureExpression = new ClosureExpression<>(payloadTrue, claimOperation, true);
+        ClosureExpression closureExpression = new ClosureExpression(payloadTrue, claimOperation, true);
 
         assertThat(closureExpression.evaluate()).isFalse();
     }
@@ -41,7 +42,7 @@ public class BooleanClosureExpressionTest {
     public void evaluateBoolean_false_eq_true() {
         ClaimOperation claimOperation = ClaimOperation.EQ;
 
-        ClosureExpression<Boolean> closureExpression = new ClosureExpression<>(payloadFalse, claimOperation, true);
+        ClosureExpression closureExpression = new ClosureExpression(payloadFalse, claimOperation, true);
 
         assertThat(closureExpression.evaluate()).isFalse();
     }
@@ -50,7 +51,7 @@ public class BooleanClosureExpressionTest {
     public void evaluateBoolean_false_neq_false() {
         ClaimOperation claimOperation = ClaimOperation.NEQ;
 
-        ClosureExpression<Boolean> closureExpression = new ClosureExpression<>(payloadFalse, claimOperation, true);
+        ClosureExpression closureExpression = new ClosureExpression(payloadFalse, claimOperation, true);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }

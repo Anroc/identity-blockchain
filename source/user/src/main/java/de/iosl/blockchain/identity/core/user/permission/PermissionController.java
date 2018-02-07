@@ -1,6 +1,8 @@
 package de.iosl.blockchain.identity.core.user.permission;
 
 import de.iosl.blockchain.identity.core.shared.account.AbstractAuthenticator;
+import de.iosl.blockchain.identity.core.user.permission.data.ClosureRequest;
+import de.iosl.blockchain.identity.core.user.permission.data.ClosureRequestDTO;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequestDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/permissions")
@@ -34,14 +38,43 @@ public class PermissionController extends AbstractAuthenticator {
 
         PermissionRequest permissionRequest = getPermissionRequest(id);
 
-        permissionRequest.setOptionalClaims(permissionRequestDTO.getOptionalClaims());
-        permissionRequest.setRequiredClaims(permissionRequestDTO.getRequiredClaims());
+        if(permissionRequestDTO.getOptionalClaims() != null && permissionRequest.getOptionalClaims() != null) {
+            permissionRequest.getOptionalClaims().putAll(permissionRequestDTO.getOptionalClaims());
+        }
+        if(permissionRequestDTO.getRequiredClaims() != null && permissionRequest.getRequiredClaims() != null) {
+            permissionRequest.getRequiredClaims().putAll(permissionRequestDTO.getRequiredClaims());
+        }
+        if(permissionRequestDTO.getClosureRequestDTO() != null && permissionRequest.getClosureRequests() != null) {
+            setApprovedFlagForClosures(permissionRequest, permissionRequestDTO);
+        }
 
-        if( permissionRequestDTO.getRequiredClaims().containsValue(true) && permissionRequestDTO.getRequiredClaims().containsValue(false)) {
-            throw new ServiceException("Either accept no claims or all required claims.", HttpStatus.BAD_REQUEST);
+        if(permissionRequest.getRequiredClaims() != null && permissionRequest.getOptionalClaims() != null) {
+            if (permissionRequest.getOptionalClaims().containsValue(true) && permissionRequest.getRequiredClaims().containsValue(false)) {
+                throw new ServiceException("Either accept no claims or all required claims.", HttpStatus.BAD_REQUEST);
+            }
         }
 
         return new PermissionRequestDTO(permissionService.updatePermissionRequest(permissionRequest));
+    }
+
+    private void setApprovedFlagForClosures(PermissionRequest permissionRequest, PermissionRequestDTO permissionRequestDTO) {
+        Set<ClosureRequest> closureRequests = permissionRequest.getClosureRequests();
+        Set<ClosureRequestDTO> closureRequestDTOs = permissionRequestDTO.getClosureRequestDTO();
+
+        for(ClosureRequestDTO searchEntity : closureRequestDTOs) {
+            findMatchingClosureRequest(closureRequests, searchEntity)
+                    .ifPresent(closureRequest -> closureRequest.setApproved(searchEntity.isApproved()));
+        }
+    }
+
+    private Optional<ClosureRequest> findMatchingClosureRequest(Set<ClosureRequest> searchSet, ClosureRequestDTO searchEntity) {
+        return searchSet.stream()
+                .filter(
+                        closureRequest -> closureRequest.getClaimID().equals(searchEntity.getClaimID()) &&
+                                closureRequest.getClaimOperation() == searchEntity.getClaimOperation() &&
+                                closureRequest.getStaticValue().equals(searchEntity.getStaticValue())
+
+                ).findAny();
     }
 
     private PermissionRequest getPermissionRequest(@NonNull String id) {

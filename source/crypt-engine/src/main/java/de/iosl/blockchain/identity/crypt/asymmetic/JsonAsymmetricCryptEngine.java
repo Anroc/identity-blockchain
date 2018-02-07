@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.crypt.asymmetic;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
+import de.iosl.blockchain.identity.crypt.ObjectMapperFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -18,7 +19,7 @@ public class JsonAsymmetricCryptEngine extends AsymmetricCryptEngine<Object> {
 
     public JsonAsymmetricCryptEngine(int bitSecurity) {
         super(bitSecurity);
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = ObjectMapperFactory.create();
         this.stringCryptEngine = CryptEngine.from(getAsymmetricCipherKeyPair())
                 .with(bitSecurity)
                 .string()

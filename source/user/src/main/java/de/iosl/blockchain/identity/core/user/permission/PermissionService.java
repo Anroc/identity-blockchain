@@ -4,12 +4,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequestPayload;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.claims.ClosureExpression;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
+import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
+import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.message.MessageService;
 import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
+import de.iosl.blockchain.identity.core.user.claims.ClaimService;
+import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
+import de.iosl.blockchain.identity.core.user.permission.data.ClosureRequest;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.user.permission.db.PermissionRequestDB;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
@@ -24,9 +33,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.UncheckedIOException;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,6 +50,10 @@ public class PermissionService {
     private PermissionRequestDB permissionRequestDB;
     @Autowired
     private HeartBeatService heartBeatService;
+    @Autowired
+    private ClaimService claimService;
+    @Autowired
+    private ClosureContentCryptEngine closureContentCryptEngine;
 
     private final EthereumSigner ethereumSigner;
     private final ObjectMapper objectMapper;
@@ -62,21 +73,64 @@ public class PermissionService {
 
         // 1. Request PermissionContract from EBA.
         PermissionContractContent permissionContractContent = ebaInterface.getPermissionContractContent(keyChain.getAccount(), pprAddress);
+
+        // 2. Extract Closure Content
+        Set<ClosureRequest> closureRequests = extractClosureRequests(permissionContractContent.getClosureContent());
+
         PermissionRequest permissionRequest = new PermissionRequest(
                 UUID.randomUUID().toString(),
                 permissionContractContent.getRequesterAddress(),
                 ethID,
                 pprAddress,
                 convertToDataModel(permissionContractContent.getRequiredClaims()),
-                convertToDataModel(permissionContractContent.getOptionalClaims())
+                convertToDataModel(permissionContractContent.getOptionalClaims()),
+                closureRequests
         );
 
         permissionRequest = insertPermissionRequest(permissionRequest);
 
         log.info("Creating new message.");
 
-        // 2. create message for frontend
+        // 3. create message for frontend
         messageService.createMessage(MessageType.PERMISSION_REQUEST, permissionRequest.getId());
+    }
+
+    private Set<ClosureRequest> extractClosureRequests(ClosureContent closureContent) {
+        Set<ClosureContractRequest> closureContractRequests =
+                closureContentCryptEngine.decrypt(closureContent, keyChain.getRsaKeyPair().getPrivate());
+
+        log.info("Requesting current user claims.");
+        List<UserClaim> userClaims = claimService.getClaims();
+
+        return closureContractRequests.stream().map(
+                ccr -> evaluateClosureExpression(ccr, userClaims)
+        ).collect(Collectors.toSet());
+    }
+
+    private ClosureRequest evaluateClosureExpression(
+            ClosureContractRequest closureContractRequest,
+            List<UserClaim> userClaims) {
+
+        UserClaim userClaim = userClaims.stream()
+                .filter(uc -> uc.getId().equals(closureContractRequest.getClosureContractRequestPayload().getClaimID()))
+                .findFirst()
+                .orElseThrow(
+                        () -> new ServiceException("Could not find claim with id [%s]. Need update.", HttpStatus.UNPROCESSABLE_ENTITY, closureContractRequest.getClosureContractRequestPayload().getClaimID())
+                );
+
+        ClosureExpression closureExpression = new ClosureExpression(
+                userClaim.getClaimValue(),
+                closureContractRequest.getClosureContractRequestPayload().getClaimOperation(),
+                closureContractRequest.getClosureContractRequestPayload().getStaticValue().getUnifiedValue()
+        );
+
+        String description = closureExpression.describe(userClaim.getId());
+        log.info("Evaluating: {}", description);
+        return new ClosureRequest(
+                closureContractRequest,
+                description,
+                closureExpression.evaluate()
+        );
     }
 
     private Map<String, Boolean> convertToDataModel(@NonNull Map<String, String> map) {
@@ -85,17 +139,6 @@ public class PermissionService {
 
     public PermissionRequest updatePermissionRequest(@NonNull PermissionRequest permissionRequest) {
         log.info("Start updating permission Request...");
-        PermissionRequest permissionRequestOld = permissionRequestDB.findEntity(permissionRequest.getId())
-                .orElseThrow(() -> new IllegalStateException("Could not find old object Permission object"));
-
-        if(! verifyPermissionClaims(permissionRequestOld.getRequiredClaims(), permissionRequest.getRequiredClaims())) {
-            throw new ServiceException("Updated required claim set contained more/less keys then the old one.", HttpStatus.BAD_REQUEST);
-        }
-
-        if(! verifyPermissionClaims(permissionRequestOld.getOptionalClaims(), permissionRequest.getOptionalClaims())) {
-            throw new ServiceException("Updated optional claim set contained more/less keys then the old one.", HttpStatus.BAD_REQUEST);
-        }
-
         permissionRequest = permissionRequestDB.update(permissionRequest);
 
         updatePermissionContract(permissionRequest);
@@ -112,18 +155,61 @@ public class PermissionService {
 
     private void updatePermissionContract(@NonNull PermissionRequest permissionRequest) {
         log.info("Generating signed objects...");
-        Map<String, String> requiredSignedClaims = generateSignatures(permissionRequest.getRequiredClaims(), permissionRequest.getRequestingProvider());
-        Map<String, String> optionalSignedClaims = generateSignatures(permissionRequest.getOptionalClaims(), permissionRequest.getRequestingProvider());
+        Map<String, String> requiredSignedClaims;
+        if(permissionRequest.getRequiredClaims() != null) {
+            requiredSignedClaims = generateSignatures(permissionRequest.getRequiredClaims(), permissionRequest.getRequestingProvider());
+        } else {
+            requiredSignedClaims = new HashMap<>();
+        }
+
+        Map<String, String> optionalSignedClaims;
+        if(permissionRequest.getOptionalClaims() != null) {
+            optionalSignedClaims = generateSignatures(permissionRequest.getOptionalClaims(), permissionRequest.getRequestingProvider());
+        } else {
+            optionalSignedClaims = new HashMap<>();
+        }
+
+        ClosureContent closureContent = buildClosureContent(permissionRequest);
 
         PermissionContractContent permissionContractContent = new PermissionContractContent(
                 requiredSignedClaims,
                 optionalSignedClaims,
                 permissionRequest.getRequestingProvider(),
-                null // TODO @Marvin adapt to closure workflow -- see Issue #91
+                closureContent
         );
 
         log.info("Updating PPR in ethereum");
         ebaInterface.approvePermissionContract(keyChain.getAccount(), permissionRequest.getPermissionContractAddress(), permissionContractContent);
+    }
+
+    private ClosureContent buildClosureContent(PermissionRequest permissionRequest) {
+        if(permissionRequest.getClosureRequests() == null || permissionRequest.getClosureRequests().isEmpty()) {
+            return null;
+        }
+
+        RegistryEntryDTO registryEntryDTO = heartBeatService.discover(permissionRequest.getRequestingProvider())
+                .orElseThrow(
+                        () -> new ServiceException("Could not retrieve/validate registry entry from Discovery Service.", HttpStatus.UNPROCESSABLE_ENTITY)
+                );
+
+        String publicKey = registryEntryDTO.getPublicKey();
+        String ethID = keyChain.getAccount().getCredentials().getAddress();
+        log.info("Sending closure request from my address {}.", ethID);
+
+        Set<ClosureContractRequest> closureContractRequests = permissionRequest.getClosureRequests().stream()
+                .filter(closureRequest -> closureRequest.isApproved())
+                .map(closureRequest -> {
+                    ClosureContractRequestPayload payload = closureRequest.toClosureContentRequestPayload(ethID);
+                    return new ClosureContractRequest(
+                            payload,
+                            ECSignature.fromSignatureData(
+                                    ethereumSigner.sign(payload, keyChain.getAccount().getECKeyPair())
+                            )
+                    );
+                })
+                .collect(Collectors.toSet());
+
+        return closureContentCryptEngine.encrypt(publicKey, closureContractRequests);
     }
 
     private Map<String, String> generateSignatures(@NonNull Map<String, Boolean> requestedClaims, @NonNull String providerEthId) {

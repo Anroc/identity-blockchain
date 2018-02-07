@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.api.data.dto;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import javax.validation.constraints.NotNull;
 public class PayloadDTO {
 
     @NotNull
-    private Object payload;
+    private ValueHolder payload;
     @NotNull
     private ClaimType payloadType;
 

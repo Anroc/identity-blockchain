@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import lombok.Getter;
@@ -9,16 +10,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 @Getter
-public class ClosureExpression<T> {
+public class ClosureExpression {
 
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
     private final Payload claim;
     private final ClaimOperation claimOperation;
-    private final T value;
+    private final Object value;
 
-    public ClosureExpression(Payload claim, ClaimOperation claimOperation, T value) {
+    public ClosureExpression(Payload claim, ClaimOperation claimOperation, Object value) {
+        if(value instanceof ValueHolder) {
+            value = ((ValueHolder) value).getUnifiedValue();
+        }
+
         if(! value.getClass().equals(claim.getPayloadType().getClazz())) {
             throw new IllegalArgumentException("Incompatible closure types.");
         }
@@ -56,14 +61,14 @@ public class ClosureExpression<T> {
     }
 
     public String describe(String claimId) {
-        Object printablePayload = getClaim().getPayload();
+        Object printablePayload = getClaim().getPayload().getUnifiedValue();
         Object printableValue = value;
-        if(getClaim().getPayload() instanceof LocalDateTime) {
-            printablePayload = DATE_TIME_FORMATTER.format((LocalDateTime) getClaim().getPayload());
+        if(getClaim().getPayload().getUnifiedValue() instanceof LocalDateTime) {
+            printablePayload = DATE_TIME_FORMATTER.format((LocalDateTime) getClaim().getPayload().getUnifiedValue());
             printableValue = DATE_TIME_FORMATTER.format((LocalDateTime) value);
         }
         String parsedClaimId = claimId.toLowerCase().replaceAll("_", " ");
-        return String.format("Is the claim \"%s\" (your value is \"%s\") %s %s?", parsedClaimId, printablePayload, claimOperation.getDescription(), printableValue);
+        return String.format("Is the claim \"%s\" (your value is \"%s\") %s \"%s\"?", parsedClaimId, printablePayload, claimOperation.getDescription(), printableValue);
     }
 
     private boolean evaluateDate() {
@@ -81,7 +86,7 @@ public class ClosureExpression<T> {
             case LT:
                 return localDateTime.isBefore(localDateTimeValue);
             case LE:
-                return localDateTime.isAfter(localDateTimeValue) || localDateTime.isEqual(localDateTimeValue);
+                return localDateTime.isBefore(localDateTimeValue) || localDateTime.isEqual(localDateTimeValue);
             default:
                 throw new UnsupportedOperationException("Operations on this type are not supported");
         }

@@ -12,9 +12,9 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.InfoDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
-import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.Closure;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.*;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances.*;
@@ -74,22 +75,30 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
         if (! ecSignatureValidator.isRequestValid(permissionContractCreationDTO)) {
             throw new ServiceException("Sender signature was invalid", HttpStatus.FORBIDDEN);
         }
-
         User user = getUser(ethID);
+
+        validateClosureExpression(user, permissionContractCreationDTO.getPayload().getClosureContractRequestDTOs());
 
         String permissionContract = apiService.createPermissionContract(
                 permissionContractCreationDTO.getEthID(),
                 user,
                 permissionContractCreationDTO.getPayload().getRequiredClaims(),
-                permissionContractCreationDTO.getPayload().getOptionalClaims());
+                permissionContractCreationDTO.getPayload().getOptionalClaims(),
+                permissionContractCreationDTO.getPayload().getClosureContractRequestDTOs());
 
         return new BasicEthereumDTO(permissionContract);
 
     }
 
+    private void validateClosureExpression(User user, Set<ClosureContractRequestDTO> closureContractRequestDTOs) {
+        closureContractRequestDTOs.forEach(
+                (closureContractRequestDTO) -> apiService.validateClosureExpression(user, closureContractRequestDTO)
+        );
+    }
+
     @Override
     @PutMapping(ABSOLUTE_PPR_PATH)
-    public List<ClaimDTO> retrieveClaimsByPPR(
+    public PermissionContractResponse retrieveClaimsByPPR(
             @PathVariable(ETH_ID_PARAM) String ethID,
             @RequestBody @Valid @NotNull SignedRequest<SignedClaimRequestDTO> signedClaimsRequest) {
         checkAuthentication();
@@ -97,28 +106,68 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
             throw new ServiceException("Senders signature was invalid!", HttpStatus.FORBIDDEN);
         }
 
-        log.info("Received new Claim retrival by PPR contract");
+        User user = getUser(ethID);
 
-        validateSingedRequestList(signedClaimsRequest.getPayload().getSingedClaims());
+        log.info("Received {} Claims retrival by PPR contract", signedClaimsRequest.getPayload().getSingedClaims().size());
+
+        validateSingedRequestList(ethID, signedClaimsRequest.getPayload().getSingedClaims());
 
         List<ProviderClaim> claims = apiService.getClaimsForPermissionContract(
                 signedClaimsRequest.getEthID(),
                 extractApprovedClaims(signedClaimsRequest.getPayload().getSingedClaims())
         );
 
+        log.info("Received {} Closures requests by PPR contract.", signedClaimsRequest.getPayload().getClosureContractRequests().size());
+
+        validateSingedClosureContractSet(ethID, signedClaimsRequest.getPayload().getClosureContractRequests());
+
+        List<SignedRequest<Closure>> closures = apiService.evaluateAndSignClosures(
+                user,
+                extractClosures(signedClaimsRequest.getPayload().getClosureContractRequests())
+        );
+
+
         log.info("Returning {} to provider", claims);
-        return claims.stream().map(ClaimDTO::new).collect(Collectors.toList());
+        List<ClaimDTO> claimDTOs = claims.stream()
+                .map(ClaimDTO::new)
+                .map(claimDTO -> {
+                    claimDTO.setSignedClosures(null);
+                    return claimDTO;
+                })
+                .collect(Collectors.toList());
+        return new PermissionContractResponse(claimDTOs, closures);
+    }
+
+    private List<Closure> extractClosures(@NonNull Set<ClosureContractRequest> closureContractRequests) {
+        return closureContractRequests.stream()
+                .map(ClosureContractRequest::getClosureContractRequestPayload)
+                .map(Closure::init)
+                .collect(Collectors.toList());
     }
 
     private List<ApprovedClaim> extractApprovedClaims(List<SignedRequest<ApprovedClaim>> list) {
         return list.stream().map(SignedRequest::getPayload).collect(Collectors.toList());
     }
 
-    private void validateSingedRequestList(@NonNull  List<SignedRequest<ApprovedClaim>> list) {
+    private void validateSingedRequestList(@NonNull String ethID, @NonNull List<SignedRequest<ApprovedClaim>> list) {
         list.forEach(
                 elem -> {
-                    if ( ! ecSignatureValidator.isValid(elem, elem.getEthID())) {
-                        throw new ServiceException("Users signature was invalid!", HttpStatus.FORBIDDEN);
+                    if ( ! ecSignatureValidator.isValid(elem, elem.getEthID()) || ! elem.getEthID().equals(ethID)) {
+                        throw new ServiceException("Users signature was invalid for claim request.", HttpStatus.FORBIDDEN);
+                    }
+                }
+        );
+    }
+
+    private void validateSingedClosureContractSet(@NonNull String ethID, @NonNull Set<ClosureContractRequest> set) {
+        set.forEach(
+                elem -> {
+                    if( ! ecSignatureValidator.isSignatureValid(
+                            elem.getClosureContractRequestPayload(),
+                            elem.getEcSignature(),
+                            elem.getClosureContractRequestPayload().getEthID())
+                            || ! elem.getClosureContractRequestPayload().getEthID().equals(ethID)) {
+                        throw new ServiceException("User signature was invalid for closure request.", HttpStatus.FORBIDDEN);
                     }
                 }
         );

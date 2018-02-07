@@ -10,6 +10,7 @@ import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import de.iosl.blockchain.identity.core.user.claims.db.UserClaimDB;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.beats.SubjectType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,10 @@ public class APIClientService {
                 (event, eventType) -> {
                     switch (eventType) {
                         case NEW_CLAIMS:
-                            apiClientRegistry.register(event.getSubject());
-                            getAndSaveClaims(event.getSubject());
+                            if(event.getSubjectType() == SubjectType.URL) {
+                                apiClientRegistry.register(event.getSubject());
+                                getAndSaveClaims(event.getSubject());
+                            }
                             break;
                     }
                 }

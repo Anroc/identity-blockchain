@@ -4,6 +4,7 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.JsonLongDocument;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
+import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.lib.dto.beats.HeartBeatRequest;
@@ -54,6 +55,22 @@ public class HeartBeatService {
     public HeartBeatService() {
         this.signer = new EthereumSigner();
         this.eventListeners = new ConcurrentLinkedQueue<>();
+    }
+
+    public Optional<RegistryEntryDTO> discover(@NonNull String ethID) {
+        RequestDTO<RegistryEntryDTO> requestDTO = heartBeatAdapter.discover(ethID);
+        if(signer.verifySignature(
+                requestDTO.getPayload(),
+                requestDTO.getSignature().toSignatureData(),
+                requestDTO.getPayload().getEthID())
+                && requestDTO.getPayload().getEthID().equals(ethID)) {
+
+            log.info("Trusted register entry at {}.", ethID);
+            return Optional.of(requestDTO.getPayload());
+        } else {
+            log.warn("Untrusted register entry at {}.", ethID);
+            return Optional.empty();
+        }
     }
 
     public void subscribe(@NonNull EventListener eventListener) {
