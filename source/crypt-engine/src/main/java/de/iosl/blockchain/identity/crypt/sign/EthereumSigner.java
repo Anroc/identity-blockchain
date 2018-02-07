@@ -26,8 +26,11 @@ public class EthereumSigner {
 
     private byte[] hash(Object object) {
         try {
+            String objectString = objectMapper.writeValueAsString(object);
+            log.info("Hashing object: {}", objectString);
+
             return stringAsymmetricCryptEngine.getSHA256Hash(
-                    objectMapper.writeValueAsString(object)
+                    objectString
             ).getBytes();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
