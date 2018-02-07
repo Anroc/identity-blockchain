@@ -15,12 +15,7 @@ class MessageSection extends React.Component {
         >
           Get Messages
         </Button>
-        <div>
-          {this.props.messages && JSON.stringify(this.props.messages)}
-        </div>
-        { this.props.messages && (
-          <MessagesTable messages={this.props.messages} />
-        )}
+        <MessagesTable messages={this.props.messages} />
       </section>
     );
   }

@@ -32,9 +32,10 @@ class User extends Component {
       user: [],
       claims: DefaultClaims,
       value: '',
-      messages: null,
+      messages: [],
       permissionId: '',
       permission: null,
+      permissions: [],
     };
   }
 
@@ -89,10 +90,13 @@ class User extends Component {
 
     request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions)
       .then((json) => {
-        console.log('GOT RESULT');
+        console.log('GOT RESULT TO PERMISSION');
         console.log(JSON.stringify(json));
+        const newPermissions = this.state.permissions;
+        newPermissions.push(json);
         this.setState({
           permission: json,
+          permissions: newPermissions,
         });
       });
   }
@@ -140,7 +144,7 @@ class User extends Component {
       credentials: 'include',
     };
 
-    request(`http://srv01.snet.tu-berlin.de:1112/messages/${this.state.permissionId}`, getUserInformationOptions);
+    request(`http://srv01.snet.tu-berlin.de:1112/messages/${this.state.messages[0].id}`, getUserInformationOptions);
   }
 
   /**
@@ -163,7 +167,7 @@ class User extends Component {
       }),
       credentials: 'include',
     };
-
+    console.log(`Permission answer: ${getUserInformationOptions}`);
     request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions);
   }
 
@@ -184,7 +188,6 @@ class User extends Component {
     });
   }
 
-  // TODO proposal: you are registered but not approved yet, please scan the QR code
   render() {
     return (
       <article>
@@ -194,7 +197,10 @@ class User extends Component {
           <ClaimsTable claims={this.state.claims} />
         </section>
         <MessageSection getMessages={this.getMessages} messages={this.state.messages} />
-        <PermissionsSection getPermissionRequest={this.getPermissionRequest} />
+        <PermissionsSection
+          getPermissionRequest={this.getPermissionRequest}
+          permissions={this.state.permissions}
+        />
         <section>
           <Button
             onClick={this.putMessageSeen}

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
+import PermissionTable from './PermissionTable';
 
 class PermissionsSection extends React.Component {
   componentDidMount() {
@@ -13,7 +14,7 @@ class PermissionsSection extends React.Component {
         >
           Get Permissions mit id von message
         </Button>
-
+        <PermissionTable permissions={this.props.permissions} />
       </section>
     );
   }
@@ -21,6 +22,7 @@ class PermissionsSection extends React.Component {
 
 PermissionsSection.propTypes = {
   getPermissionRequest: PropTypes.func,
+  permissions: PropTypes.array,
 };
 
 export default PermissionsSection;
