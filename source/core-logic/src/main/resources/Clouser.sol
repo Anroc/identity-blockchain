@@ -1,6 +1,6 @@
 pragma solidity ^0.4.11;
 
-contract ClouseContract{
+contract ClouserContract{
 
     address private owner;
     address private user;
@@ -8,7 +8,7 @@ contract ClouseContract{
     bool private setAllClaims;
     uint private amountClousers;
 
-    function ClouseContract(address _user, uint _amountClousers) public{
+    function ClouserContract(address _user, uint _amountClousers) public{
         owner=msg.sender;
         user=_user;
         setAllClaims=false;
