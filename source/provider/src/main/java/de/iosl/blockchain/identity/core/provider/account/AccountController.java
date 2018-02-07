@@ -41,6 +41,10 @@ public class AccountController {
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest) throws IOException {
+        if(config.getType() == ClientType.GOVERNMENT) {
+            throw new ServiceException("Government can not login. Need to be a provider.",
+                    HttpStatus.BAD_REQUEST);
+        }
         String password = loginRequest.getPassword();
         return new LoginResponse(accountService.login(password));
     }
