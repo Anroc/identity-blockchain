@@ -9,11 +9,13 @@ class PermissionsSection extends React.Component {
   render() {
     return (
       <section>
-        <Button
-          onClick={this.props.getPermissionRequest}
-        >
-          Get Permissions mit id von message
-        </Button>
+        <div>
+          <Button
+            onClick={this.props.getPermissionRequest}
+          >
+            Get Permissions mit id von message
+          </Button>
+        </div>
         <PermissionTable permissions={this.props.permissions} />
       </section>
     );

@@ -10,11 +10,13 @@ class MessageSection extends React.Component {
   render() {
     return (
       <section>
-        <Button
-          onClick={this.props.getMessages}
-        >
-          Get Messages
-        </Button>
+        <div>
+          <Button
+            onClick={this.props.getMessages}
+          >
+            Get Messages
+          </Button>
+        </div>
         <MessagesTable messages={this.props.messages} />
       </section>
     );

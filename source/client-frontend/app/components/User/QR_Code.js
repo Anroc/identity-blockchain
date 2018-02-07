@@ -12,9 +12,11 @@ class QRCode extends React.Component {
     return (
       <div>
         <div>
+          {this.props.showQR && (
           <p>
             Please verify your account by scanning this QR Code
           </p>
+          )}
           <Button raised color="primary" onClick={this.props.showQRCode}>
             {this.props.showQR ? 'Hide QR Code' : 'Show QR Code'}
           </Button>

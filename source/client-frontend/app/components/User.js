@@ -18,7 +18,7 @@ import request from '../auth/request';
 import ClaimsTable from './User/ClaimsTable';
 import Welcome from './User/Welcome';
 import DefaultClaims from './User/DefaultClaims';
-import MessageSection from './User/MessageSection';
+import MessageSection from './User/Messages/MessageSection';
 import PermissionsSection from './User/PermissionSection';
 import PermissionForm from './User/PermissionForm';
 
@@ -208,7 +208,7 @@ class User extends Component {
         <section className="text-section">
           <Welcome ethID={this.props.ethID} />
         </section>
-        <ExpansionPanel expanded={true}>
+        <ExpansionPanel>
           <ExpansionPanelSummary>
             <Typography>General information</Typography>
           </ExpansionPanelSummary>
@@ -216,6 +216,7 @@ class User extends Component {
             <QRCode showQRCode={this.showQRCode} showQR={this.state.showQR} />
           </ExpansionPanelDetails>
         </ExpansionPanel>
+
         <ExpansionPanel>
           <ExpansionPanelSummary>
             <Typography>Claims</Typography>
@@ -224,33 +225,31 @@ class User extends Component {
             <ClaimsTable claims={this.state.claims} />
           </ExpansionPanelDetails>
         </ExpansionPanel>
+
         <ExpansionPanel>
           <ExpansionPanelSummary>
             <Typography>Messages</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
+            <div>
+              <section>
+                <Button
+                  onClick={this.putMessageSeen}
+                >
+                  PUT auf messages, sodass seen auf true gesetzt wird
+                </Button>
+              </section>
+              <PermissionForm handleChange={this.handleChange} value={this.state.value} />
+            </div>
             <MessageSection getMessages={this.getMessages} messages={this.state.messages} />
-
-            <section>
-              <Button
-                onClick={this.putMessageSeen}
-              >
-                PUT auf messages, sodass seen auf true gesetzt wird
-              </Button>
-            </section>
-            <PermissionForm handleChange={this.handleChange} value={this.state.value} />
-
           </ExpansionPanelDetails>
         </ExpansionPanel>
+
         <ExpansionPanel>
           <ExpansionPanelSummary>
             <Typography>Permissions</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <PermissionsSection
-              getPermissionRequest={this.getPermissionRequest}
-              permissions={this.state.permissions}
-            />
             <section>
               <Button
                 onClick={this.putPermissionAnswer}
@@ -258,6 +257,10 @@ class User extends Component {
                 PUT approval oder denial auf 1112/permissions/id
               </Button>
             </section>
+            <PermissionsSection
+              getPermissionRequest={this.getPermissionRequest}
+              permissions={this.state.permissions}
+            />
           </ExpansionPanelDetails>
         </ExpansionPanel>
       </article>
