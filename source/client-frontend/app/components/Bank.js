@@ -70,13 +70,13 @@ class Bank extends Component{
   // Required Attributes Block
   createUIRequiredAttributes(){
     return this.state.requiredAttributes.map((el, i) => (
-      <div>
+      <div key={i}>
         <FormControl>
           <InputLabel htmlFor={`requiredAttribute-${i}-helper`}>Required attribute</InputLabel>
           <Input
             id={`requiredAttribute-${i}`}
             value={el || ''}
-            onChange={() => this.handleChangeRequiredAttributes(i)}
+            onChange={this.handleChangeRequiredAttributes.bind(this, i)}
           />
         </FormControl>
         <IconButton
@@ -109,7 +109,7 @@ class Bank extends Component{
   createUIOptionalAttributes(){
     return this.state.optionalAttributes.map((el, i) =>
       (
-        <div>
+        <div key={i}>
           <FormControl>
             <InputLabel
               htmlFor={`optionalAttribute-${i}-helper`}
@@ -119,7 +119,7 @@ class Bank extends Component{
             <Input
               id={`optionalAttribute-${i}`}
               value={el || ''}
-              onChange={() => this.handleChangeOptionalAttributes(i)}
+              onChange={this.handleChangeOptionalAttributes.bind(this, i)}
             />
           </FormControl>
           <IconButton
@@ -164,40 +164,47 @@ class Bank extends Component{
       credentials: 'include',
     };
 
-    request('http://srv01.snet.tu-berlin.de:8102/messages', getMessages)
+    request('http://srv01.snet.tu-berlin.de:8102/messages?includeSeen=true', getMessages)
       .then((json) => {
         // console.log(JSON.stringify(json));
         const tmp = json.map((message) => message.userId);
         // console.log('json:', json);
-        // console.log('tmp:', tmp);
+        // console.log('UserIDs: ', tmp);
         this.setState({
           messages: json,
           userIDs: tmp,
         });
+        console.log('userIDs from messages: ', this.state.userIDs);
+      }).then(() => {
+        const arr = this.state.userIDs;
         // console.log(this.state.userIDs);
-      });
-    console.log(this.state.userIDs);
-    for (let user of this.state.userIDs) {
-      const getUser = {
-        method: 'GET',
-        headers: {
-          Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        mode: 'cors',
-        credentials: 'include',
-      };
-      console.log(user);
-      request('http://srv01.snet.tu-berlin.de:8102/users/' + user, getUser)
-        .then((json) => {
-          console.log(JSON.stringify(json));
-          this.setState({
-            tableData: json,
-          });
-        });
-    }
-    this.putAllMessageSeen();
+        for (let user of this.state.userIDs) {
+          const getUser = {
+            method: 'GET',
+            headers: {
+              Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            mode: 'cors',
+            credentials: 'include',
+          };
+          console.log('Requesting user through GET: ', user);
+          request('http://srv01.snet.tu-berlin.de:8102/users/' + user, getUser)
+            .then((json) => {
+              // console.log(JSON.stringify(json));
+              const newTableData = this.state.tableData;
+              if (!newTableData.includes(json)) {
+                newTableData.push(json);
+              }
+              this.setState({
+                tableData: newTableData,
+              });
+              console.log('tableData is now: ', this.state.tableData);
+            });
+        }
+        // this.putAllMessageSeen();
+    });
   }
 
   putAllMessageSeen() {
@@ -211,14 +218,12 @@ class Bank extends Component{
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id: message,
-          updatedMessage: {
-            seen: true,
-          },
+          seen: true
         }),
         credentials: 'include',
       };
-      request(`http://srv01.snet.tu-berlin.de:8102/messages/${message}`, getUserInformationOptions);
+      console.log(`http://srv01.snet.tu-berlin.de:8102/messages/${message.id}`);
+      request(`http://srv01.snet.tu-berlin.de:8102/messages/${message.id}`, getUserInformationOptions);
     }
   }
 
@@ -233,7 +238,7 @@ class Bank extends Component{
       requiredClaims: this.state.requiredAttributes,
       userEthID: this.state.ethAddress,
     };
-
+    console.log('Preparing following body for POST: ', JSON.stringify(postRequest));
     const getUserInformationOptions = {
       method: 'POST',
       headers: {
@@ -245,15 +250,14 @@ class Bank extends Component{
       credentials: 'include',
     };
     // console.log(JSON.stringify(getUserInformationOptions));
-    request('http://srv01.snet.tu-berlin.de:8102/permissions', getUserInformationOptions)
-      .then((json) => {
-        // console.log(JSON.stringify(json));
-        this.setState({
-          claims: json,
-        });
-      }).catch((error) => {
-        console.log(error);
-      });
+    request('http://srv01.snet.tu-berlin.de:8102/permissions', getUserInformationOptions);
+      // .then((json) => {
+      //  this.setState({
+      //    claims: json,
+      //  });
+      // }).catch((error) => {
+      //  console.log(error);
+      // });
 
     this.cleanForm();
   }
@@ -319,7 +323,7 @@ class Bank extends Component{
                           fab
                           mini
                           color="primary"
-                          onClick={this.addClickRequiredAttributes}
+                          onClick={this.addClickRequiredAttributes.bind(this)}
                         ><AddIcon/></Button>
                       </form>
                     </ExpansionPanelDetails>
@@ -335,7 +339,7 @@ class Bank extends Component{
                           fab
                           mini
                           color="primary"
-                          onClick={this.addClickOptionalAttributes}
+                          onClick={this.addClickOptionalAttributes.bind(this)}
                         ><AddIcon/></Button>
                       </form>
                     </ExpansionPanelDetails>
@@ -369,18 +373,14 @@ class Bank extends Component{
                   <TableHead>
                     <TableRow>
                       <TableCell>ethID</TableCell>
-                      <TableCell>RequestedAttributes</TableCell>
-                      <TableCell>GrantedQuery</TableCell>
-                      <TableCell>Status</TableCell>
+                      <TableCell>Claims</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {this.state.data.map((n) => (
-                      <TableRow key={n.ethID}>
-                        <TableCell>{n.ethID}</TableCell>
-                        <TableCell>{n.RequestedAttributes}</TableCell>
-                        <TableCell numeric>{n.GrantedQuery}</TableCell>
-                        <TableCell numeric>{n.Status}</TableCell>
+                    {this.state.tableData.map((n) => (
+                      <TableRow key={n.ethId}>
+                        <TableCell>{n.ethId}</TableCell>
+                        <TableCell>{n.claims[0].id}</TableCell>
                       </TableRow>
                       )
                     )}
