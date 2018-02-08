@@ -3,7 +3,9 @@ package de.iosl.blockchain.identity.core.user.permission;
 import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
@@ -17,11 +19,9 @@ import de.iosl.blockchain.identity.core.user.Application;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import de.iosl.blockchain.identity.core.user.permission.data.ClosureRequest;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequest;
-import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.asymmetic.AsymmetricCryptEngine;
-import de.iosl.blockchain.identity.crypt.symmetric.ObjectSymmetricCryptEngine;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,10 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import java.io.IOException;
-import java.security.InvalidKeyException;
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -70,6 +67,8 @@ public class PermissionServiceRestTest extends RestTestSuite {
 
     @Autowired
     private PermissionService permissionService;
+
+    private final ClosureContentCryptEngine closureContentCryptEngine = new ClosureContentCryptEngine();
 
     @BeforeClass
     public static void init() throws IOException, CipherException {
@@ -114,12 +113,15 @@ public class PermissionServiceRestTest extends RestTestSuite {
     }
 
     @Test
-    public void handleNewClosureRequest() throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
-        ClosureContractRequest closureContractRequest1 = ClosureContractRequest.init(claimID_givenName, ClaimOperation.EQ, "Hans");
+    public void handleNewClosureRequest() {
+        final String staticValue1 = "Hans";
+        final LocalDateTime staticValue2 = LocalDateTime.of(2015, 4, 1, 12, 12).minus(18L, ChronoUnit.YEARS);
+
+        ClosureContractRequest closureContractRequest1 = ClosureContractRequest.init(claimID_givenName, ClaimOperation.EQ, staticValue1);
         ClosureContractRequest closureContractRequest2 = ClosureContractRequest.init(
                 claimID_age,
                 ClaimOperation.LE,
-                LocalDateTime.of(2015, 4, 1, 12, 12).minus(18L, ChronoUnit.YEARS)
+                staticValue2
         );
 
         PermissionContractContent contractContent = new PermissionContractContent(
@@ -168,33 +170,15 @@ public class PermissionServiceRestTest extends RestTestSuite {
                 .map(ClosureRequest::getStaticValue)
                 .map(ValueHolder::getUnifiedValue)
                 .collect(Collectors.toSet());
-        assertThat(staticValues).containsExactlyInAnyOrder(
-                closureContractRequest1.getClosureContractRequestPayload().getStaticValue().getUnifiedValue(),
-                closureContractRequest2.getClosureContractRequestPayload().getStaticValue().getUnifiedValue());
+        assertThat(staticValues).containsExactlyInAnyOrder(staticValue1, staticValue2);
     }
 
-    private ClosureContent generateEncryptedClosureContentRequest(Set<ClosureContractRequest> closureContractRequest) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        ObjectSymmetricCryptEngine symmetricCryptEngine = new ObjectSymmetricCryptEngine();
+    private ClosureContent generateEncryptedClosureContentRequest(Set<ClosureContractRequest> closureContractRequest) {
         AsymmetricCryptEngine<String> asymmetricCryptEngine = CryptEngine.from(keyChain.getRsaKeyPair()).string().rsa();
 
-        KeyConverter keyConverter = new KeyConverter();
-
-        Key symmetricKey = symmetricCryptEngine.getSymmetricCipherKey();
-        String base64Key = new KeyConverter().from(symmetricKey).toBase64();
-        base64Key = asymmetricCryptEngine.encrypt(base64Key, keyConverter.from(asymmetricCryptEngine.getPublicKey()).toPublicKey());
-
-        Set<String> closures = closureContractRequest
-                .stream()
-                .map(ccr -> {
-                    try {
-                        return symmetricCryptEngine.encrypt(ccr, symmetricKey);
-                    } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .collect(Collectors.toSet());
-
-        return new ClosureContent(closures, base64Key);
+        Key publicKey = asymmetricCryptEngine.getPublicKey();
+        String base64Key = new KeyConverter().from(publicKey).toBase64();
+        return closureContentCryptEngine.encrypt(base64Key, closureContractRequest);
 
     }
 
