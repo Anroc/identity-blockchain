@@ -50,4 +50,9 @@ public class ValueHolder implements Serializable {
     public Object getUnifiedValue() {
         return value != null? value : timeValue;
     }
+
+    @JsonIgnore
+    public <T> T getUnifiedValueAs(Class<T> clazz) {
+        return (T) getUnifiedValue();
+    }
 }
