@@ -25,6 +25,10 @@ public class ClosureContractRequestPayload extends BasicEthereumDTO implements S
     @NotNull
     private ClaimOperation claimOperation;
 
+    /**
+     * On transmitting this value though the blockchain will become encrypted.
+     * <code>new ValueHolder(encryptedValueHolder)</code> where encryptedValueHolder is itself a string.
+     */
     @NotNull
     private ValueHolder staticValue;
 

@@ -1,6 +1,8 @@
 package de.iosl.blockchain.identity.core.shared.api.permission;
 
 import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequestPayload;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
@@ -33,6 +35,18 @@ public class ClosureContentCryptEngine {
         this.keyConverter = new KeyConverter();
     }
 
+    /**
+     * Will encrypt the {@link ClosureContractRequestPayload#getStaticValue()} of the given closureContractRequests
+     * with a symmetric generated secret that will then be encrypted with the given base64 public key.
+     *
+     * <b>Note:</b>
+     * Will method has a side effect on {@link ClosureContractRequestPayload#getStaticValue()} and will replace
+     * the value with the representative encrypted base64 string of this value. Keep this in mind while post processing.
+     *
+     * @param publicKey the base64 encoded public key
+     * @param closureContractRequests the closure contract requests that shell be processed
+     * @return the generated (partially encrypted) closure content object
+     */
     public ClosureContent encrypt(@NonNull String publicKey, @NonNull Set<ClosureContractRequest> closureContractRequests) {
         if(closureContractRequests.isEmpty()) {
             return null;
@@ -57,7 +71,7 @@ public class ClosureContentCryptEngine {
                 .map(ccr -> {
                     try {
                         log.info("Encrypting {}", ccr);
-                        return objectSymmetricCryptEngine.encrypt(ccr, symmetricKey);
+                        return doEncrypt(ccr, symmetricKey, objectSymmetricCryptEngine);
                     } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
                         throw new ServiceException(e, HttpStatus.INTERNAL_SERVER_ERROR);
                     }
@@ -67,6 +81,21 @@ public class ClosureContentCryptEngine {
         return new ClosureContent(closures, base64Key);
     }
 
+    /**
+     * Will decrypt the given (partially) encrypted {@link ClosureContent}. Specifically the value stored in
+     * {@link ClosureContractRequestPayload#getStaticValue()}. To do so the encrypted shared secret will be
+     * decrypted with the given private key and use this shared secret again to decrypt the value in
+     * {@link ClosureContractRequestPayload#getStaticValue()}.
+     *
+     * <b>Note:</b>
+     * The ClosureContentRequest you will get in return is already post processed. The raw object is base64 encoded
+     * but the value in {@link ClosureContractRequestPayload#getStaticValue()} is encrypted. This method will automatically
+     * replace the encrypted value with its decrypted representation.
+     *
+     * @param closureContent the closure content as it is in the blockchain
+     * @param privateKey the private key
+     * @return the decrypted ClosureContractRequest set.
+     */
     public Set<ClosureContractRequest> decrypt(ClosureContent closureContent, @NonNull PrivateKey privateKey) {
         if(closureContent == null) {
             return new HashSet<>();
@@ -94,12 +123,9 @@ public class ClosureContentCryptEngine {
                 .map(encryptedRequest -> {
                     try {
                         log.info("Decrypting content...");
-                        ClosureContractRequest closureContractRequestDTO = symmetricObjectCryptEngine.decryptAndCast(
-                                encryptedRequest,
-                                sharedSecret,
-                                ClosureContractRequest.class);
-                        log.info("Decrypted: {}", closureContractRequestDTO);
-                        return closureContractRequestDTO;
+                        ClosureContractRequest closureContractRequest = doDecrypt(encryptedRequest, sharedSecret, symmetricObjectCryptEngine);
+                        log.info("Decrypted: {}", closureContractRequest);
+                        return closureContractRequest;
                     } catch (IllegalBlockSizeException  | BadPaddingException e) {
                         throw new ServiceException("Could not decrypt shared secret.", e);
                     } catch (InvalidKeyException e) {
@@ -107,5 +133,30 @@ public class ClosureContentCryptEngine {
                     }
                 })
                 .collect(Collectors.toSet());
+    }
+
+    private String doEncrypt(ClosureContractRequest ccr, Key symmetricKey, ObjectSymmetricCryptEngine objectSymmetricCryptEngine)
+            throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
+
+        // encrypt value holder
+        ValueHolder valueHolder = ccr.getClosureContractRequestPayload().getStaticValue();
+        String encryptedValueHolder = objectSymmetricCryptEngine.encrypt(valueHolder, symmetricKey);
+        ccr.getClosureContractRequestPayload().setStaticValue(new ValueHolder(encryptedValueHolder));
+
+        // convert object to string
+        return objectSymmetricCryptEngine.serializeToBase64String(ccr);
+    }
+
+    private ClosureContractRequest doDecrypt(String base64, Key symmetricKey, ObjectSymmetricCryptEngine objectSymmetricCryptEngine)
+            throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException {
+        // convert to object
+        ClosureContractRequest closureContractRequest = objectSymmetricCryptEngine.deserializeFromBase64String(base64, ClosureContractRequest.class);
+
+        // decrypt value holder and restore old layout
+        String encrypted = closureContractRequest.getClosureContractRequestPayload().getStaticValue().getUnifiedValueAs(String.class);
+        ValueHolder valueHolder = objectSymmetricCryptEngine.decryptAndCast(encrypted, symmetricKey, ValueHolder.class);
+        closureContractRequest.getClosureContractRequestPayload().setStaticValue(valueHolder);
+
+        return closureContractRequest;
     }
 }
