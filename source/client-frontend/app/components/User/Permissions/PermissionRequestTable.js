@@ -10,25 +10,19 @@ class PermissionRequestTable extends React.Component {
         <Table className="">
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>requestingProvider</TableCell>
-              <TableCell>issuedProvider</TableCell>
-              <TableCell>permissionContractAddress</TableCell>
               <TableCell>requiredClaims</TableCell>
               <TableCell>optionalClaims</TableCell>
               <TableCell>closureRequestDTO</TableCell>
+              <TableCell>requestingProvider</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {this.props.permissions.map((n) => (
               <TableRow key={n.id}>
-                <TableCell>{n.id}</TableCell>
-                <TableCell>{n.requestingProvider}</TableCell>
-                <TableCell>{n.issuedProvider}</TableCell>
-                <TableCell>{n.permissionContractAddress}</TableCell>
                 <TableCell>{JSON.stringify(n.requiredClaims)}</TableCell>
                 <TableCell>{JSON.stringify(n.optionalClaims)}</TableCell>
                 <TableCell>{n.closureRequestDTO.length > 0 ? n.closureRequestDTO[0].description : null}</TableCell>
+                <TableCell>{n.requestingProvider}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -55,6 +55,7 @@ class User extends Component {
 
   componentDidMount() {
     console.log('user mounted');
+    this.getMessages();
   }
 
   componentDidUpdate() {
