@@ -93,7 +93,7 @@ public class PermissionServiceRestTest extends RestTestSuite {
 
         permissionService.handleNewPermissionRequest(issuedProviderEthID, permissionContractAddress);
 
-        List<Message> messages = messageDB.findMessagesBySeen(false);
+        List<Message> messages = messageDB.findAll();
         assertThat(messages).hasSize(1);
         Message message = messages.get(0);
         assertThat(message.getMessageType()).isEqualTo(MessageType.PERMISSION_REQUEST);
@@ -135,7 +135,7 @@ public class PermissionServiceRestTest extends RestTestSuite {
 
         permissionService.handleNewPermissionRequest(issuedProviderEthID, permissionContractAddress);
 
-        List<Message> messages = messageDB.findMessagesBySeen(false);
+        List<Message> messages = messageDB.findAll();
         assertThat(messages).hasSize(1);
         Message message = messages.get(0);
         assertThat(message.getMessageType()).isEqualTo(MessageType.PERMISSION_REQUEST);

@@ -40,7 +40,7 @@ public abstract class AccountService {
         keyChain.setRsaKeyPair(keyPair);
 
         if(deployContract) {
-            String contractAddress = ebaInterface.deployRegistrarContract(account);;
+            String contractAddress = ebaInterface.deployRegistrarContract(account);
             keyChain.setRegisterSmartContractAddress(contractAddress);
         }
 
