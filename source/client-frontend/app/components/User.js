@@ -22,6 +22,7 @@ import MessageSection from './User/Messages/MessageSection';
 import PermissionsSection from './User/PermissionSection';
 import PermissionForm from './User/PermissionForm';
 import PermissionRequestTable from './User/Permissions/PermissionRequestTable';
+import Anfragen from './User/Permissions/Anfragen';
 
 class User extends Component {
   constructor() {
@@ -56,6 +57,10 @@ class User extends Component {
     console.log('user mounted');
   }
 
+  componentDidUpdate() {
+    console.log('component did update');
+  }
+
   // todo change password
   // todo error labelling
   // todo claims erst spaeter requesten
@@ -86,8 +91,8 @@ class User extends Component {
       });
   }
 
-  getPermissionRequest() {
-    const getUserInformationOptions = {
+  getPermissionRequest(message) {
+    const options = {
       method: 'GET',
       headers: {
         Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
@@ -98,12 +103,12 @@ class User extends Component {
       credentials: 'include',
     };
     console.log('GET PERMISSION REQUEST');
-    console.log('current permissions id is:', this.state.permissionId);
+    console.log('current´s message permission id is:', message.subjectID);
 
-    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions)
+    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${message.subjectID}`, options)
       .then((json) => {
         console.log('GOT RESULT TO PERMISSION');
-        console.log(JSON.stringify(json));
+        console.log(json);
         const newPermissions = this.state.permissions;
         newPermissions.push(json);
         this.setState({
@@ -127,11 +132,21 @@ class User extends Component {
     console.log('GET MESSAGES');
     request('http://srv01.snet.tu-berlin.de:1112/messages', getUserInformationOptions)
       .then((json) => {
-        console.log(JSON.stringify(json));
-        this.setState({
-          messages: json,
-          permissionId: json[0].subjectID,
-        });
+        console.log('get messages json: ', json);
+        if (json !== this.state.messages) {
+          console.log('json not equal to old messages');
+          if (json.length > 0) {
+            console.log('messages not empty anymore');
+            json.forEach((message) => {
+              console.log('getting request for message:', message);
+              this.getPermissionRequest(message);
+            });
+          }
+          this.setState({
+            messages: json,
+            permissionId: json[0].subjectID,
+          });
+        }
       });
   }
 
@@ -214,6 +229,7 @@ class User extends Component {
             <Typography>Anfragen</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
+
             <PermissionRequestTable permissions={this.state.permissions} />
           </ExpansionPanelDetails>
         </ExpansionPanel>
