@@ -351,6 +351,10 @@ class Bank extends Component{
     }
   };
 
+  prepareClosureClaimOperationOutput(k, claimId){
+
+  };
+
   render(){
     return (
       <article>
@@ -446,9 +450,9 @@ class Bank extends Component{
                         <em>None</em>
                       </MenuItem>
                       {Object.entries(this.state.closureTypes).map(([key, value]) => (
-                        // if () {
-                        <MenuItem value={value.toString()}>{value.toString()}</MenuItem>
-                      // };
+                        key ? this.state.handleChangeClosureCreationClaimId : (value.map((v) => (
+                          <MenuItem value={v.toString()}>{v.toString()}</MenuItem>
+                        )))
                       ))};
                     </Select>
                   </FormControl>
