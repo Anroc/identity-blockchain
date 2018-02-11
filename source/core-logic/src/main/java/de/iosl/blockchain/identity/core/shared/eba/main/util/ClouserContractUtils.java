@@ -3,17 +3,14 @@ package de.iosl.blockchain.identity.core.shared.eba.main.util;
 import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.eba.contracts.Clouser_sol_ClouserContract;
-import de.iosl.blockchain.identity.core.shared.eba.contracts.Permission_sol_PermissionContract;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.eba.main.exception.EBAException;
 import de.iosl.blockchain.identity.core.shared.eba.main.exception.NoClouserCouldBeAddedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.math.BigInteger;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,7 +32,7 @@ public class ClouserContractUtils {
                     permissionContractContent.getClosureContent().getEncryptedKey()
             ).send();
             if (contract == null)
-                throw new NullPointerException("Contract is null. Contract could not be created");
+                throw new NullPointerException("Permission Contract is null. Clouser Contract could not be created");
 
             log.info("ClouserContract Address: {}", contract.getContractAddress());
             log.info("wallet balance after deployment: {}", Web3jUtils.getBalanceWei(web3j, sender.getAddress()));
@@ -57,9 +54,9 @@ public class ClouserContractUtils {
         }
     }
 
-    public PermissionContractContent getClouserContractContent(Account account, String smartContractAddress, Web3j web3j){
+    public ClosureContent getClouserContractContent(Account account, String smartContractAddress, Web3j web3j){
         try {
-            log.info("get clouser for user");
+            log.info("get clouser contract");
             Clouser_sol_ClouserContract contract = Clouser_sol_ClouserContract.load(
                     smartContractAddress,
                     web3j,
@@ -69,26 +66,25 @@ public class ClouserContractUtils {
             );
 
             if (contract == null)
-                throw new NullPointerException("Contract is null. Contract does not exists");
+                throw new NullPointerException("Clouser Contract is null. Clouser Contract does not exists");
             log.info("ClouserContract Address: {}", contract.getContractAddress());
 
 
             String owner =contract.getOwner().send();
             String user = contract.getUser().send();
-            if(account.equals(owner)){
-                return getClouserContractContentProvider(contract, web3j);
-            }else{
+            if(account.equals(user)){
+                log.info("");
                 return getClouserContractContentAsUser(contract, web3j);
+            }else{
+                return getClouserContractContentProvider(contract, web3j);
             }
         } catch (Exception e) {
             throw new EBAException(e);
         }
     }
 
-    private PermissionContractContent getClouserContractContentProvider(Clouser_sol_ClouserContract contract, Web3j web3j) {
-
+    private ClosureContent getClouserContractContentProvider(Clouser_sol_ClouserContract contract, Web3j web3j) {
         try {
-
             String temp = contract.getApprovedClouserAmount().send()+"";
             int amount = Integer.parseInt(temp);
             Set<String> encryptedRequests = new HashSet<>();
@@ -111,17 +107,14 @@ public class ClouserContractUtils {
             String requestingProvider = contract.getRequestingProvider().send();
 
             ClosureContent closureContent = new ClosureContent(encryptedRequests, encryptedKey);
-            Set<String>te = new HashSet<>();
-            Set<String>temp2 = new HashSet<>();
-            PermissionContractContent permissionContractContent = new PermissionContractContent(te, temp2,requestingProvider, closureContent);
-            return permissionContractContent;
+            return closureContent;
 
         } catch (Exception e) {
             throw new EBAException(e);
         }
     }
 
-    private PermissionContractContent getClouserContractContentAsUser(Clouser_sol_ClouserContract contract, Web3j web3j) {
+    private ClosureContent getClouserContractContentAsUser(Clouser_sol_ClouserContract contract, Web3j web3j) {
 
         try {
 
@@ -147,17 +140,14 @@ public class ClouserContractUtils {
             String requestingProvider = contract.getRequestingProvider().send();
 
             ClosureContent closureContent = new ClosureContent(encryptedRequests, encryptedKey);
-            Set<String>te = new HashSet<>();
-            Set<String>temp2 = new HashSet<>();
-            PermissionContractContent permissionContractContent = new PermissionContractContent(te, temp2,requestingProvider, closureContent);
-            return permissionContractContent;
+            return closureContent;
 
         } catch (Exception e) {
             throw new EBAException(e);
         }
     }
 
-    public void setApprovedClaims(Account account, String smartContractAddress, PermissionContractContent permissionContractContent, Web3j web3j) {
+    public void setApprovedClaims(Account account, String smartContractAddress, ClosureContent clouserContent, Web3j web3j) {
 
         try {
             log.info("get clouser for user");
@@ -173,7 +163,7 @@ public class ClouserContractUtils {
             log.info("ClouserContract Address: {}", contract.getContractAddress());
 
             log.info("set approved clousers");
-            for (String clouser:permissionContractContent.getClosureContent().getEncryptedRequests()) {
+            for (String clouser:clouserContent.getEncryptedRequests()) {
                 try {
                     contract.addToApprovedClouserAsUser(clouser).send();
                 } catch (Exception e) {
@@ -184,7 +174,7 @@ public class ClouserContractUtils {
             log.info("approved clousers are in contract");
             log.info("set amount variable of approved clousers");
 
-            contract.setApprovedClouserAmount(BigInteger.valueOf(permissionContractContent.getClosureContent().getEncryptedRequests().size()));
+            contract.setApprovedClouserAmount(BigInteger.valueOf(clouserContent.getEncryptedRequests().size()));
 
             log.info("approved clousers are in contract");
 

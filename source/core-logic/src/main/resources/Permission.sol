@@ -4,12 +4,18 @@ contract PermissionContract{
 
     address private owner;
     address private user;
+    address private clouserContract;
     string private claims;
 
-    function PermissionContract(address _user, string _claims) public{
+    function PermissionContract(address _user, string _claims, address _clouserContract) public{
         owner=msg.sender;
         user=_user;
         claims=_claims;
+        clouserContract=_clouserContract;
+    }
+
+    function getClouserContractAddress() public constant returns (address){
+        return clouserContract;
     }
 
     function getClaims() public constant returns (string) {
