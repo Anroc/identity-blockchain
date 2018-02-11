@@ -95,7 +95,7 @@ public class BlockchainAccess implements EBAInterface {
     }
 
     public PermissionContractContent getClouserContractContent(Account account, String smartContractAddress) {
-        return clouserContractUtils.getPermissionContractContent(account, smartContractAddress, web3j);
+        return clouserContractUtils.getClouserContractContent(account, smartContractAddress, web3j);
     }
 
     public void approveClouserContract(Account account, String smartContractAddress, PermissionContractContent permissionContractContent) {

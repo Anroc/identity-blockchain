@@ -4,46 +4,77 @@ contract ClouserContract{
 
     address private owner;
     address private user;
-    string [] private clouserContents;
+    address private provider;
+    string [] private requestedClouser;
+    string [] private approvedClouser;
     bool private setAllClaims;
-    uint private amountClousers;
+    uint private amountApprovedClousers;
+    uint private amountRequestedClousers;
     string private encryptedKey;
 
-    function ClouserContract(address _user, uint _amountClousers, string _encryptedKey) public{
+    function ClouserContract(address _user,address _requestingProvider, uint _amountRequestedClousers, string _encryptedKey) public{
         owner=msg.sender;
         user=_user;
         setAllClaims=false;
-        amountClousers=_amountClousers;
+        amountRequestedClousers=_amountRequestedClousers;
         encryptedKey =_encryptedKey;
+        provider=_requestingProvider;
     }
 
-    function getsetAllClaims() public constant returns(bool){
+    function getOwner() public constant returns(address){
+        return owner;
+    }
+
+    function getUser() public constant returns(address){
+        return user;
+    }
+
+    function getRequestingProvider() public constant returns(address){
+        return provider;
+    }
+
+    function getEncryptedKey() public constant returns(string){
+        return encryptedKey;
+    }
+     function getsetAllClaims() public constant returns(bool){
         return setAllClaims;
     }
 
-     function getClouserById(uint index) public constant returns(string){
-        return clouserContents[index];
+
+    //requestedClouser
+
+    function getRequestedClouserAmount() public constant returns(uint){
+        return amountRequestedClousers;
     }
 
-    function getRequestedClouserAsUserAndDeleteIndex(uint index) ifUser public returns(string) {
-        string storage requestedClouser = clouserContents[index];
-        if (index >= clouserContents.length) return;
-
-        for (uint i = index; i<clouserContents.length-1; i++){
-            clouserContents[i] = clouserContents[i+1];
-        }
-        delete clouserContents[clouserContents.length-1];
-        clouserContents.length--;
-        return requestedClouser;
+     function getRequestedClouserByIndex(uint index) public constant returns(string){
+        return requestedClouser[index];
     }
 
-    function addClouserAsUser(string clouserContent) public ifUser (){
-        clouserContents.push(clouserContent);
+      function addClouserAsRequestingProvider(string clouserContent) public ifOwner (){
+        requestedClouser.push(clouserContent);
     }
 
-    function addClouserAsRequestingProvider(string clouserContent) public ifOwner (){
-        clouserContents.push(clouserContent);
+    //approvedcLousers
+
+    function getApprovedClouserAmount() public constant returns(uint){
+        return amountApprovedClousers;
     }
+
+    function getApprovedClouserByIndex(uint index) public constant returns(string){
+        return approvedClouser[index];
+    }
+
+    function addToApprovedClouserAsUser(string clouserContent) public ifUser (){
+        approvedClouser.push(clouserContent);
+    }
+
+    function setApprovedClouserAmount(uint amount) public ifUser (){
+        amountApprovedClousers= amount;
+    }
+
+
+    //--suicide
 
     function kill() public ifOwner{
         selfdestruct(owner);
