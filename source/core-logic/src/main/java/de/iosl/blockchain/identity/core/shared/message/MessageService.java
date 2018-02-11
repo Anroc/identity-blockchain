@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
@@ -18,7 +19,10 @@ public class MessageService {
     private MessageDB messageDB;
 
     public List<Message> getMessages(boolean includeSeen) {
-        return messageDB.findMessagesBySeen(includeSeen);
+        return messageDB.findAll()
+                .stream()
+                .filter(message -> includeSeen || message.isSeen() == false)
+                .collect(Collectors.toList());
     }
 
     public Message createMessage(@NonNull MessageType messageType, String subjectID) {
