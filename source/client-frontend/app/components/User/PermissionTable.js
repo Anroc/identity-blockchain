@@ -28,7 +28,7 @@ class PermissionTable extends React.Component {
                 <TableCell>{n.permissionContractAddress}</TableCell>
                 <TableCell>{}</TableCell>
                 <TableCell>{}</TableCell>
-                <TableCell>{n.closureRequestDTO[0].description}</TableCell>
+                <TableCell>{n.closureRequestDTO.length > 0 ? n.closureRequestDTO[0].description : null}</TableCell>
               </TableRow>
             ))}
           </TableBody>

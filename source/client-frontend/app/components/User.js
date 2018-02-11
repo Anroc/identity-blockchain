@@ -6,12 +6,6 @@ import ExpansionPanel, {
   ExpansionPanelSummary,
 } from 'material-ui/ExpansionPanel';
 import Typography from 'material-ui/Typography';
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
-
-import AddIcon from 'material-ui-icons/Add';
-import IconButton from 'material-ui/IconButton';
-import DeleteIcon from 'material-ui-icons/Delete';
-import RefreshIcon from 'material-ui-icons/Refresh';
 
 import QRCode from './User/QR_Code';
 import request from '../auth/request';
@@ -54,6 +48,11 @@ class User extends Component {
 
   componentDidMount() {
     console.log('user mounted');
+    this.getMessages();
+  }
+
+  componentDidUpdate() {
+    console.log('component did update');
   }
 
   // todo change password
@@ -86,8 +85,8 @@ class User extends Component {
       });
   }
 
-  getPermissionRequest() {
-    const getUserInformationOptions = {
+  getPermissionRequest(message) {
+    const options = {
       method: 'GET',
       headers: {
         Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
@@ -98,12 +97,12 @@ class User extends Component {
       credentials: 'include',
     };
     console.log('GET PERMISSION REQUEST');
-    console.log('current permissions id is:', this.state.permissionId);
+    console.log('current´s message permission id is:', message.subjectID);
 
-    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions)
+    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${message.subjectID}`, options)
       .then((json) => {
         console.log('GOT RESULT TO PERMISSION');
-        console.log(JSON.stringify(json));
+        console.log(json);
         const newPermissions = this.state.permissions;
         newPermissions.push(json);
         this.setState({
@@ -127,17 +126,24 @@ class User extends Component {
     console.log('GET MESSAGES');
     request('http://srv01.snet.tu-berlin.de:1112/messages', getUserInformationOptions)
       .then((json) => {
-        console.log(JSON.stringify(json));
-        this.setState({
-          messages: json,
-          permissionId: json[0].subjectID,
-        });
+        console.log('get messages json: ', json);
+        if (json !== this.state.messages) {
+          console.log('json not equal to old messages');
+          if (json.length > 0) {
+            console.log('messages not empty anymore');
+            json.forEach((message) => {
+              console.log('getting request for message:', message);
+              this.getPermissionRequest(message);
+            });
+          }
+          this.setState({
+            messages: json,
+            permissionId: json[0].subjectID,
+          });
+        }
       });
   }
 
-  /**
-   * TODO
-   */
   putMessageSeen() {
     console.log('PUT MESSAGE TO SEEN:', this.state.permissionId);
     const getUserInformationOptions = {
@@ -159,7 +165,7 @@ class User extends Component {
   /**
    * TODO currently gives error
    */
-  putPermissionAnswer() {
+  putPermissionAnswer(requiredClaims, optionalClaims, closureRequestDTO) {
     const getUserInformationOptions = {
       method: 'PUT',
       headers: {
@@ -170,8 +176,9 @@ class User extends Component {
       body: JSON.stringify({
         id: this.state.permissionId,
         permissionRequestDTO: {
-          requiredClaims: {},
-          optionalClaims: {},
+          requiredClaims,
+          optionalClaims,
+          closureRequestDTO,
         },
       }),
       credentials: 'include',
@@ -214,6 +221,7 @@ class User extends Component {
             <Typography>Anfragen</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
+
             <PermissionRequestTable permissions={this.state.permissions} />
           </ExpansionPanelDetails>
         </ExpansionPanel>
