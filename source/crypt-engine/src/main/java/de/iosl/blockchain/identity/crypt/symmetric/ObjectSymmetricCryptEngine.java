@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.crypt.symmetric;
 
+import lombok.NonNull;
 import org.bouncycastle.util.encoders.Base64;
 
 import javax.crypto.BadPaddingException;
@@ -28,7 +29,7 @@ public class ObjectSymmetricCryptEngine extends SymmetricCryptEngine<Object> {
         return (T) decrypt(data, key);
     }
 
-    public byte[] serialize(Object obj) {
+    private byte[] serialize(Object obj) {
         try {
             try(ByteArrayOutputStream b = new ByteArrayOutputStream()){
                 try(ObjectOutputStream o = new ObjectOutputStream(b)){
@@ -41,7 +42,7 @@ public class ObjectSymmetricCryptEngine extends SymmetricCryptEngine<Object> {
         }
     }
 
-    public Object deserialize(byte[] bytes) {
+    private Object deserialize(byte[] bytes) {
         try {
             try(ByteArrayInputStream b = new ByteArrayInputStream(bytes)){
                 try(ObjectInputStream o = new ObjectInputStream(b)){
@@ -63,5 +64,13 @@ public class ObjectSymmetricCryptEngine extends SymmetricCryptEngine<Object> {
 
     private byte[] fromBase64String(String base64) {
         return Base64.decode(base64.getBytes(Charset.forName(CHAR_ENCODING)));
+    }
+
+    public String serializeToBase64String(@NonNull Object object) {
+        return toBase64String(serialize(object));
+    }
+
+    public <T> T deserializeFromBase64String(@NonNull String base64, Class<T> clazz) {
+        return (T) deserialize(fromBase64String(base64));
     }
 }
