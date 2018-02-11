@@ -6,12 +6,6 @@ import ExpansionPanel, {
   ExpansionPanelSummary,
 } from 'material-ui/ExpansionPanel';
 import Typography from 'material-ui/Typography';
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
-
-import AddIcon from 'material-ui-icons/Add';
-import IconButton from 'material-ui/IconButton';
-import DeleteIcon from 'material-ui-icons/Delete';
-import RefreshIcon from 'material-ui-icons/Refresh';
 
 import QRCode from './User/QR_Code';
 import request from '../auth/request';
@@ -22,7 +16,6 @@ import MessageSection from './User/Messages/MessageSection';
 import PermissionsSection from './User/PermissionSection';
 import PermissionForm from './User/PermissionForm';
 import PermissionRequestTable from './User/Permissions/PermissionRequestTable';
-import Anfragen from './User/Permissions/Anfragen';
 
 class User extends Component {
   constructor() {
@@ -151,9 +144,6 @@ class User extends Component {
       });
   }
 
-  /**
-   * TODO
-   */
   putMessageSeen() {
     console.log('PUT MESSAGE TO SEEN:', this.state.permissionId);
     const getUserInformationOptions = {
@@ -175,7 +165,7 @@ class User extends Component {
   /**
    * TODO currently gives error
    */
-  putPermissionAnswer() {
+  putPermissionAnswer(requiredClaims, optionalClaims, closureRequestDTO) {
     const getUserInformationOptions = {
       method: 'PUT',
       headers: {
@@ -186,8 +176,9 @@ class User extends Component {
       body: JSON.stringify({
         id: this.state.permissionId,
         permissionRequestDTO: {
-          requiredClaims: {},
-          optionalClaims: {},
+          requiredClaims,
+          optionalClaims,
+          closureRequestDTO,
         },
       }),
       credentials: 'include',
