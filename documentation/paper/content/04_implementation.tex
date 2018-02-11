@@ -61,4 +61,48 @@ A Public-Key-Infrastructure (PKI) is an infrastructure to bound identities to pu
 Since each entity stores also his RSA public key into the discovery service and sign this entry with his EC private key, the trust of the given RSA public key is tightly bound this EC key pair. If the RSA key gets stolen it can be simply replaced in the Discovery Service. If the EC key gets stolen both key pairs need to be regenerated. How we establish trust in the EC key pair is explained in the next section.
 
 \subsection{Register Contract}
-On registration the user is untrusted. 
+\begin{figure}
+\includegraphics[width=\textwidth]{impl/RegisterContractImpl.png}
+\centering
+\caption{Implementation of the Register Contract flow. Since it was not possible (time limitations) to include the eID verification mechanism, we implemented the in-person verification. Here the newly register user has to go the citizen office to how his ID card to gets his ethereum address, RSA public key and smart contract address verified.}
+\label{fig:registerContractImpl}
+\end{figure}
+
+To start the register process the user services exposes the unsecured resources "Account" which provides action endpoints for login, logout, register and QR-code retrieval (later more on that). The user service application is planned to run locally on the users host machine. This would secure it from outside access and make the distribution easier. Since we, because of time limitations, didn’t manage to implement a key recovery mechanism there might be an Denial-of-Service attack vector possible where a malicious application running also locally on the users host machine, call periodically the register-endpoint, preventing the user from accessing his information because his keys gets reshuffled every time. Some could think about disabling this register endpoint after successful creating a key pair, but since this is a prototype under developing this endpoint needs to be open and accessible. 
+
+To register a user in our system he first needs to generate a RSA key-pair and create a new wallet. We need the RSA key-pair to later encrypt sensitive data that is send via the blockchain since the blockchain itself is a public ledger and for everyone readable. The key-pair created by web3j does not provide any confidentiality since the ECDSA (Elliptic Curve Digital Signature Algorithm) can only be used to generate and verify signatures. So the users creates a 4096-bit security strong RSA key pair. So ensure that this key indeed belongs to the EC key-pair we generate a signature, as mentioned previously, over the RSA public key with the EC private key. 
+
+The ethereum address itself is a just a representation of the EC public key. To now register the user that is bound to his ethereum address we setup a register contract. This register contract is just a public representation of the unverified user and contains no more information then the users ethereum address and a flag if the user is approved. This flag can only be set by the trusted government. 
+
+As shown in figure \ref{fig:registerContractImpl} the user then creates a QR-Code (step 3) to encode his ethereum address, address of the smart contract and his public key into it.\footnote{It is not necessary to encode the public key into the QR-code at all since the Discovery Service also stores this information, but we can save an additional request from the government side to discover it by providing it in the register flow directly.} The QR-code generation is done with the help of the Xzing library and exposed via an rest endpoint /account/qr-code. The idea to generate a QR-code is simply that ethereum addresses are quite hard to type and since the user has to go to the citizen office in person he might as well just show is representative QR-code. 
+
+The android application build for the purpose of scanning the QR-code, generating a signature over the retrieved information and sending it to the government service, needs further know which user is currently trying to be verified to the system. To do so the citizen office types in the user information found on the ID card, for example given name, family name, etc. to then send a authorized requests to the government which then queries its database for a user with the same information and returns his UUID. 
+
+This requests (to the provider services) is backed by a basic authentication mechanism which is not optimal because the password and user name is transmitted in plain text if no transport layer encryption is used. The plan was to change this mechanism since to a more secure scheme like Json-Web-Token (JWT) authentication, but that would require changes in other components and was also out of scope of the core focus of this project. 
+
+With the retrieved UUID the application can then make an POST request to the user resource that tries to get verified and updates the user for his public key, ethereum address and register contract address. This requests needs to be signed by the EC-key of the government to ensure the validity of this request. To do so we implemented a SignedRequest object that can hold a generic payload and the EC Digital-Signature over this payload. This payload but needs to hold the ethereum address of the sender (similar to ethereum transactions). A signature is then build in the following way: 
+
+\begin{enumerate}
+\item The payload gets converted to a JSON with the help of object mapper. It is imported to denote the order of serialization so that this objects gets serialized in the same way on other systems. 
+\item A SHA-256 hash is build over the given JSON
+\item This hash will then be signed by the ECDSA provided by web3j
+\item The resulting signature gets appended in the signed request for validation
+\end{enumerate}
+
+The validator on the other then can then:
+
+\begin{enumerate}
+\item Convert the payload to a JSON with the same object mapper configuration as used for serialization.
+\item Create a SHA-256 hash itself over the generated JSON
+\item Validate the provided signature against the computed hash. Interesting to know is that his validation does not yield a boolean flag but a computed ethereum address the algorithm "thinks" that signed the request. 
+\item We take this generated ethereum address to check it against the included ethereum address in the payload. If they are equal yield true, else false. 
+\end{enumerate}
+
+If we would not have include the ethereum address of the sender inside the signed payload an malicious attacker may have exchanged it against a valid signature address. 
+
+The government then uses the information about the user to update the register contract to set the approval flag to true. So that every party in the system observing the blockchain can verify that the user holding the private key for the ethereum address is indeed verified by the government. 
+
+It also creates a new signed Beat with the information "NEW\_CLAIMS" addressed at the users ethereum address to notify the user to request its provider API to retrieve the user claims. 
+
+The provider API is a unified interface which each provider is offering. Clients can implement it to request them under defined URLs and provider can implement it to offer these endpoints. Notably is that each request needs to be authenticated via a SignedRequest to ensure that only authenticated entities request this API. 
+
