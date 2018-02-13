@@ -35,6 +35,8 @@ public class Web3jConstants {
 	public static final String DEFAULT_START_AMOUNT = "0.0";
 	public static final String GOV_MONEY_FROM_COAINBASE = "0.0";
 
+	public static final String NO_CLOSURE_ADDRESS ="0x0000000000000000000000000000000000000000";
+
 
 	public static BigInteger amountToEther(String amount) {
 		return Convert.toWei(amount, Convert.Unit.ETHER).toBigInteger();

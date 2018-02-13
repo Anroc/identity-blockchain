@@ -23,7 +23,7 @@ public class PermissionContractUtils {
 
     public String deployPermissionContract(Account sender, String recipient, PermissionContractContent permissionContractContent, Web3j web3j){
 
-        String clouserContractAddress=null;
+        String clouserContractAddress=Web3jConstants.NO_CLOSURE_ADDRESS;
         if(permissionContractContent.getClosureContent()!=null){
             clouserContractAddress=clouserContractUtils.deployClouserContract(sender, recipient, permissionContractContent, web3j);
             permissionContractContent.setClosureContent(null);
@@ -69,11 +69,11 @@ public class PermissionContractUtils {
             PermissionContractContent permissionContractContent = (PermissionContractContent) ObjectToString.fromString(contract.getClaims().send());
 
             String clouserAddress = contract.getClouserContractAddress().send();
-            if(clouserAddress!=null){
+            if(!clouserAddress.equals(Web3jConstants.NO_CLOSURE_ADDRESS)){
                 log.info("clouser address != null ( {} ), so access the contract to get clousers", clouserAddress);
                 permissionContractContent.setClosureContent(clouserContractUtils.getClouserContractContent(account,clouserAddress,web3j));
             }else{
-                log.info("clouser address is null, no clousers");
+                log.info("clouser address is not used, no clousers");
             }
 
             log.info("PermissionContract Address: {}, Amount NecessaryClaims: {}, Amount OptionalClaims: {} , RequesterAdress {}, ClouserAddress: {}", contract.getContractAddress(), permissionContractContent.getRequiredClaims().size(), permissionContractContent.getOptionalClaims(), permissionContractContent.getRequesterAddress(), clouserAddress);
@@ -100,12 +100,12 @@ public class PermissionContractUtils {
 
 
             String clouserAddress = contract.getClouserContractAddress().send();
-            if(clouserAddress!=null){
-                log.info("clouser address != null, so approved clousers have to be added");
+            if(!clouserAddress.equals(Web3jConstants.NO_CLOSURE_ADDRESS)){
+                log.info("clouser address is set, so approved clousers have to be added");
                 clouserContractUtils.setApprovedClosure(account, clouserAddress,permissionContractContent.getClosureContent(),web3j);
                 permissionContractContent.setClosureContent(null);
             }else{
-                log.info("clouser address == null, no clousers have to be approved");
+                log.info("clouser address is not set, no clousers have to be approved");
 
             }
 
