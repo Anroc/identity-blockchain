@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends CrudRepository<Message, String> {
 
-    @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter} AND seen = $1 ORDER BY creationDate")
-    List<Message> findAllBySeen(boolean seen);
+    @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter} ORDER BY creationDate")
+    List<Message> findAll();
 }

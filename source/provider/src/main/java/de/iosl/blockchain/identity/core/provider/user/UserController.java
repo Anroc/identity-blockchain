@@ -151,6 +151,7 @@ public class UserController {
 
         return user.getClaims()
                 .stream()
+                .filter(sharedClaims -> sharedClaims.getId() != null)
                 .map(sharedClaim -> new ClaimInformationResponse(
                         sharedClaim.getId(),
                         sharedClaim.getClaimValue().getPayloadType(),
