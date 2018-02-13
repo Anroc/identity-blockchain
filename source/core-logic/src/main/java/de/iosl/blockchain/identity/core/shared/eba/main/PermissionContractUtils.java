@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.eba.main;
 
+import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.eba.contracts.Permission_sol_PermissionContract;
 import de.iosl.blockchain.identity.core.shared.eba.main.exception.EBAException;
@@ -66,13 +67,16 @@ public class PermissionContractUtils {
                 throw new NullPointerException("Contract is null. Contract does not exists");
 
             PermissionContractContent permissionContractContent = (PermissionContractContent) ObjectToString.fromString(contract.getClaims().send());
-            log.info("PermissionContract Address: {}, Amount NecessaryClaims: {}, Amount OptionalClaims: {} , RequesterAdress {}", contract.getContractAddress(), permissionContractContent.getRequiredClaims().size(), permissionContractContent.getOptionalClaims(), permissionContractContent.getRequesterAddress());
 
             String clouserAddress = contract.getClouserContractAddress().send();
             if(clouserAddress!=null){
-                log.info("clouser address != null, so access the contract to get clousers");
+                log.info("clouser address != null ( {} ), so access the contract to get clousers", clouserAddress);
                 permissionContractContent.setClosureContent(clouserContractUtils.getClouserContractContent(account,clouserAddress,web3j));
+            }else{
+                log.info("clouser address is null, no clousers");
             }
+
+            log.info("PermissionContract Address: {}, Amount NecessaryClaims: {}, Amount OptionalClaims: {} , RequesterAdress {}, ClouserAddress: {}", contract.getContractAddress(), permissionContractContent.getRequiredClaims().size(), permissionContractContent.getOptionalClaims(), permissionContractContent.getRequesterAddress(), clouserAddress);
 
             return permissionContractContent;
         } catch (Exception e) {
@@ -94,15 +98,20 @@ public class PermissionContractUtils {
             if (contract == null)
                 throw new NullPointerException("Permission Contract is null. Permission Contract does not exists");
 
-            TransactionReceipt transactionReceipt = contract.setAndApproveClaims(ObjectToString.toString(permissionContractContent)).send();
-            PermissionContractContent permissionContractContentFromContract = (PermissionContractContent) ObjectToString.fromString(contract.getClaims().send());
-            log.info("PermissionContract Contract Address: {}, claims approved by user with transactionReceipt status: {} , with required claims: {} and optional claims {}", contract.getContractAddress(),transactionReceipt.getStatus(),permissionContractContentFromContract.getRequiredClaims().size(), permissionContractContentFromContract.getOptionalClaims());
 
             String clouserAddress = contract.getClouserContractAddress().send();
             if(clouserAddress!=null){
                 log.info("clouser address != null, so approved clousers have to be added");
-                clouserContractUtils.setApprovedClaims(account, clouserAddress,permissionContractContent.getClosureContent(),web3j);
+                clouserContractUtils.setApprovedClosure(account, clouserAddress,permissionContractContent.getClosureContent(),web3j);
+                permissionContractContent.setClosureContent(null);
+            }else{
+                log.info("clouser address == null, no clousers have to be approved");
+
             }
+
+            TransactionReceipt transactionReceipt = contract.setAndApproveClaims(ObjectToString.toString(permissionContractContent)).send();
+            PermissionContractContent permissionContractContentFromContract = (PermissionContractContent) ObjectToString.fromString(contract.getClaims().send());
+            log.info("PermissionContract Contract Address: {}, claims approved by user with transactionReceipt status: {} , with required claims: {} and optional claims {}", contract.getContractAddress(),transactionReceipt.getStatus(),permissionContractContentFromContract.getRequiredClaims().size(), permissionContractContentFromContract.getOptionalClaims());
 
 
         } catch (Exception e) {
