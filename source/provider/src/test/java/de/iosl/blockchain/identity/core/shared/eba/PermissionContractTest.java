@@ -214,11 +214,57 @@ public class PermissionContractTest extends RestTestSuite{
             assertThat(permissionContractContentCompare.getOptionalClaims().get(entry.getKey()).equals(entry.getValue()));
         });
 
-        permissionContractContent.getClosureContent().getEncryptedRequests().stream().forEach(encryptedClosure->{
-            log.info("closure: "+encryptedClosure);
-            assertThat(permissionContractContent.getClosureContent().getEncryptedRequests().contains(encryptedClosure));
-        });
+        if(permissionContractContent.getClosureContent()!=null) {
+            permissionContractContent.getClosureContent().getEncryptedRequests().stream().forEach(encryptedClosure -> {
+                log.info("closure: " + encryptedClosure);
+                assertThat(permissionContractContent.getClosureContent().getEncryptedRequests().contains(encryptedClosure));
+            });
+        }
     }
+
+    @Test
+    public void setClaimsWithoutClosureAsUserInContractAndGetAsProviderTest() throws Exception{
+        PermissionContractContent usedPermissionContractContent = this.permissionContractContent;
+        usedPermissionContractContent.setClosureContent(null);
+
+        String permissionContractAddress= blockchainAccess.deployPermissionContract(governmentAccount, userAccount.getAddress(), usedPermissionContractContent);
+        PermissionContractContent permissionContractContent= blockchainAccess.getPermissionContractContent(userAccount, permissionContractAddress);
+
+        String name = "Isol";
+        String familyName="MiTiMaOs";
+        String age = "25";
+        permissionContractContent.getRequiredClaims().put(claimID_givenName, name);
+        permissionContractContent.getRequiredClaims().put(claimID_familyName, familyName);
+        permissionContractContent.getOptionalClaims().put(claimID_age, age);
+
+
+        PermissionContractContent approvePermissionContractContentCompare = new PermissionContractContent(permissionContractContent.getRequiredClaims(), permissionContractContent.getOptionalClaims(), providerAccount.getAddress(),permissionContractContent.getClosureContent());
+        blockchainAccess.approvePermissionContract(userAccount,permissionContractAddress, approvePermissionContractContentCompare);
+
+        //provider gets approved once from contract
+        log.info("provider gets approved once from contract");
+        PermissionContractContent permissionContractContentCompare =blockchainAccess.getPermissionContractContent(providerAccount, permissionContractAddress);
+        log.info("Provider get appr");
+
+
+        permissionContractContent.getRequiredClaims().entrySet().stream().forEach(entry -> {
+            log.info("Claim: "+entry.getKey());
+            log.info("Claim value: "+entry.getValue());
+            assertThat(requiredClaims.contains(entry.getKey()));
+            assertThat(permissionContractContentCompare.getRequiredClaims().get(entry.getKey()).equals(entry.getValue()));
+        });
+
+        permissionContractContent.getOptionalClaims().entrySet().stream().forEach(entry -> {
+            log.info("Claim: "+entry.getKey());
+            log.info("Claim value: "+entry.getValue());
+            assertThat(optionalClaims.contains(entry.getKey()));
+            assertThat(permissionContractContentCompare.getOptionalClaims().get(entry.getKey()).equals(entry.getValue()));
+        });
+
+        log.info("closure is: {}", permissionContractContentCompare.getClosureContent());
+        assertThat(permissionContractContentCompare.getClosureContent()==null);
+    }
+
 
 
 }
