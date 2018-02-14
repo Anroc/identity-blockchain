@@ -177,7 +177,7 @@ public class ClouserContractUtils {
             }
 
             log.info("set encrypted key for approved clouser: {}", clouserContent.getEncryptedKey());
-            contract.setEncryptedKeyForApprovedClosure(clouserContent.getEncryptedKey());
+            contract.setEncryptedKeyForApprovedClosure(clouserContent.getEncryptedKey()).send();
             log.info("encrypted key for approved clouser is now in contract with key: {}",contract.getEncryptedKeyForApprovedClosure().send());
 
             log.info("amount variable of approved clousers will be set with amount: {}", BigInteger.valueOf(clouserContent.getEncryptedRequests().size()));
