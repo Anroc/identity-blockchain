@@ -1,9 +1,9 @@
 package de.iosl.blockchain.identity.core.shared.ds.beats;
 
-import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
+import de.iosl.blockchain.identity.lib.dto.RegistryEntryDTO;
+import de.iosl.blockchain.identity.lib.dto.RequestDTO;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
 import de.iosl.blockchain.identity.lib.dto.beats.HeartBeatRequest;
-import de.iosl.blockchain.identity.lib.dto.RequestDTO;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;

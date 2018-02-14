@@ -9,7 +9,6 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.tx.Contract;
 
 import java.math.BigInteger;
 import java.util.concurrent.ExecutionException;

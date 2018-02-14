@@ -19,7 +19,8 @@ import javax.crypto.IllegalBlockSizeException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.PrivateKey;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -94,11 +95,11 @@ public class ClosureContentCryptEngine {
      *
      * @param closureContent the closure content as it is in the blockchain
      * @param privateKey the private key
-     * @return the decrypted ClosureContractRequest set.
+     * @return the decrypted ClosureContractRequest list.
      */
-    public Set<ClosureContractRequest> decrypt(ClosureContent closureContent, @NonNull PrivateKey privateKey) {
+    public List<ClosureContractRequest> decrypt(ClosureContent closureContent, @NonNull PrivateKey privateKey) {
         if(closureContent == null) {
-            return new HashSet<>();
+            return new ArrayList<>();
         }
 
         ObjectSymmetricCryptEngine symmetricObjectCryptEngine = new ObjectSymmetricCryptEngine();
@@ -132,7 +133,7 @@ public class ClosureContentCryptEngine {
                         throw new ServiceException("Private key is malformed.", e);
                     }
                 })
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     private String doEncrypt(ClosureContractRequest ccr, Key symmetricKey, ObjectSymmetricCryptEngine objectSymmetricCryptEngine)

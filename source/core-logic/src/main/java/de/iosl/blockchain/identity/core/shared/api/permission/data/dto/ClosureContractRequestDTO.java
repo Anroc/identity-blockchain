@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.api.permission.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonPropertyOrder(alphabetic = true, value = {"claimID", "claimOperation", "staticValue"})
 public class ClosureContractRequestDTO {
 
     @NotBlank

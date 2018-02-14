@@ -1,7 +1,6 @@
 package de.iosl.blockchain.identity.core.provider.api;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
@@ -39,7 +38,6 @@ import org.web3j.crypto.Credentials;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import static de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -124,7 +122,7 @@ public class ApiControllerRestTest extends RestTestSuite {
         user.putClaim(providerClaim);
         userDB.update(user);
 
-        Set<String> requiredClaim = Sets.newHashSet(claimID);
+        List<String> requiredClaim = Lists.newArrayList(claimID);
 
         doReturn(pprEthID).when(ebaInterface).deployPermissionContract(
                 any(Account.class),
@@ -137,8 +135,8 @@ public class ApiControllerRestTest extends RestTestSuite {
         PermissionContractCreationDTO permissionContractCreationDTO = new PermissionContractCreationDTO(
                 REQUESTING_PROVIDER_CREDENTIALS.getAddress(),
                 requiredClaim,
-                Sets.newHashSet(),
-                Sets.newHashSet()
+                Lists.newArrayList(),
+                Lists.newArrayList()
         );
 
         SignedRequest<PermissionContractCreationDTO> signedRequest = new SignedRequest<>(
@@ -175,8 +173,6 @@ public class ApiControllerRestTest extends RestTestSuite {
         user.setPublicKey(userPublicKey);
         userDB.update(user);
 
-        Set<String> requiredClaim = Sets.newHashSet(claimID);
-
         doReturn(pprEthID).when(ebaInterface).deployPermissionContract(
                 any(Account.class),
                 eq(user.getEthId()),
@@ -187,9 +183,9 @@ public class ApiControllerRestTest extends RestTestSuite {
 
         PermissionContractCreationDTO permissionContractCreationDTO = new PermissionContractCreationDTO(
                 REQUESTING_PROVIDER_CREDENTIALS.getAddress(),
-                Sets.newHashSet(),
-                Sets.newHashSet(),
-                Sets.newHashSet(
+                Lists.newArrayList(),
+                Lists.newArrayList(),
+                Lists.newArrayList(
                         new ClosureContractRequestDTO(
                                 claimID,
                                 ClaimOperation.EQ,
@@ -233,7 +229,7 @@ public class ApiControllerRestTest extends RestTestSuite {
                 REQUESTING_PROVIDER_CREDENTIALS.getAddress(),
                 pprEthID,
                 Lists.newArrayList(signedClaimsRequest),
-                Sets.newHashSet()
+                Lists.newArrayList()
         );
 
         SignedRequest<SignedClaimRequestDTO> signedRequest = new SignedRequest<>(

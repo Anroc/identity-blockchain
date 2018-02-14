@@ -5,6 +5,7 @@ import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.eba.main.AccountAccess;
 import de.iosl.blockchain.identity.core.shared.eba.main.PermissionContractUtils;
 import de.iosl.blockchain.identity.core.shared.eba.main.RegistrarContractUtils;
+import de.iosl.blockchain.identity.core.shared.eba.main.util.ClouserContractUtils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,9 @@ public class BlockchainAccess implements EBAInterface {
     private PermissionContractUtils permissionContractUtils;
 
     @Autowired
+    private ClouserContractUtils clouserContractUtils;
+
+    @Autowired
     private Web3j web3j;
 
     @Bean
@@ -41,6 +45,7 @@ public class BlockchainAccess implements EBAInterface {
         return Web3j.build(new HttpService(url));
     }
 
+    //------ AccounCreation
     @Override
     public Account createWallet(@NonNull String password, Path path) {
         return accountAccess.createAccount(password, path, web3j);
@@ -51,6 +56,8 @@ public class BlockchainAccess implements EBAInterface {
         return accountAccess.accessWallet(password, file);
     }
 
+
+    //------ REGISTRAR
     @Override
     public String deployRegistrarContract(Account account){
         return registrarContractUtils.deployRegistrarContract(account, web3j);
@@ -66,6 +73,7 @@ public class BlockchainAccess implements EBAInterface {
         return this.registrarContractUtils.getApprovalByContractAdress(account, contractAddress, web3j);
     }
 
+    //------ PERMISSION
     @Override
     public String deployPermissionContract(Account sender, String recipient, PermissionContractContent permissionContractContent) {
         return permissionContractUtils.deployPermissionContract(sender, recipient, permissionContractContent, web3j);
@@ -76,8 +84,9 @@ public class BlockchainAccess implements EBAInterface {
         return permissionContractUtils.getPermissionContractContent(account, smartContractAddress, web3j);
     }
 
-
+    @Override
     public void approvePermissionContract(Account account, String smartContractAddress, PermissionContractContent permissionContractContent) {
         permissionContractUtils.setApprovedClaims(account, smartContractAddress, permissionContractContent, web3j);
     }
+
 }

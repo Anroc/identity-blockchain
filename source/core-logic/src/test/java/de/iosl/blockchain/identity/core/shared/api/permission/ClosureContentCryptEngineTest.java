@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.security.PrivateKey;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,7 +75,7 @@ public class ClosureContentCryptEngineTest extends BasicMockSuite {
 
         //decrypt
         PrivateKey privateKey = cryptEngine.getPrivateKey();
-        Set<ClosureContractRequest> ccrsExtracted = closureContentCryptEngine.decrypt(closureContent, privateKey);
+        List<ClosureContractRequest> ccrsExtracted = closureContentCryptEngine.decrypt(closureContent, privateKey);
 
         // values got replaces.. restore them
         ccr1.getClosureContractRequestPayload().setStaticValue(new ValueHolder(staticValue1));

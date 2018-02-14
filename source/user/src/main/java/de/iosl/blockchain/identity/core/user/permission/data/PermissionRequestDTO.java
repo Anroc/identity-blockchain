@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -60,7 +60,7 @@ public class PermissionRequestDTO {
             value = "List of closure objects. Set the n'approved flag' inside them.",
             required = false
     )
-    private Set<ClosureRequestDTO> closureRequestDTO;
+    private List<ClosureRequestDTO> closureRequestDTO;
 
 
     public PermissionRequestDTO(@NonNull PermissionRequest permissionRequest) {
@@ -76,7 +76,7 @@ public class PermissionRequestDTO {
             this.closureRequestDTO = permissionRequest.getClosureRequests()
                     .stream()
                     .map(ClosureRequestDTO::new).collect(
-                            Collectors.toSet());
+                            Collectors.toList());
         } else {
             this.closureRequestDTO = null;
         }

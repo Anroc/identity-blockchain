@@ -1,8 +1,8 @@
 package de.iosl.blockchain.identity.core.shared.api.data.dto;
 
 import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
-import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
+import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

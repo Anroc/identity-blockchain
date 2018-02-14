@@ -1,8 +1,8 @@
 package de.iosl.blockchain.identity.core.shared.eba;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -26,7 +26,7 @@ import java.util.Set;
  * see https://stackoverflow.com/a/40887477/6190424 for information how to do so
  */
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class PermissionContractContent implements Serializable{
 
     /**
@@ -53,7 +53,7 @@ public class PermissionContractContent implements Serializable{
      * Null of not present.
      */
     @Valid
-    private final ClosureContent closureContent;
+    private ClosureContent closureContent;
 
     public PermissionContractContent(@NonNull Set<String> requiredClaims, @NonNull Set<String> optionalClaims, @NonNull String requesterAddress) {
         this(requiredClaims, optionalClaims, requesterAddress, null);

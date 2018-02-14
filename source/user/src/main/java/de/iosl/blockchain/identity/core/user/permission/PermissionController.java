@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/permissions")
@@ -58,8 +58,8 @@ public class PermissionController extends AbstractAuthenticator {
     }
 
     private void setApprovedFlagForClosures(PermissionRequest permissionRequest, PermissionRequestDTO permissionRequestDTO) {
-        Set<ClosureRequest> closureRequests = permissionRequest.getClosureRequests();
-        Set<ClosureRequestDTO> closureRequestDTOs = permissionRequestDTO.getClosureRequestDTO();
+        List<ClosureRequest> closureRequests = permissionRequest.getClosureRequests();
+        List<ClosureRequestDTO> closureRequestDTOs = permissionRequestDTO.getClosureRequestDTO();
 
         for(ClosureRequestDTO searchEntity : closureRequestDTOs) {
             findMatchingClosureRequest(closureRequests, searchEntity)
@@ -67,7 +67,7 @@ public class PermissionController extends AbstractAuthenticator {
         }
     }
 
-    private Optional<ClosureRequest> findMatchingClosureRequest(Set<ClosureRequest> searchSet, ClosureRequestDTO searchEntity) {
+    private Optional<ClosureRequest> findMatchingClosureRequest(List<ClosureRequest> searchSet, ClosureRequestDTO searchEntity) {
         return searchSet.stream()
                 .filter(
                         closureRequest -> closureRequest.getClaimID().equals(searchEntity.getClaimID()) &&

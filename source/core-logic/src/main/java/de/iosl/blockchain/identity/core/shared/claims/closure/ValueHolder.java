@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder(alphabetic=true, value = {"value", "timeValue"})
+@JsonPropertyOrder(alphabetic = true, value = {"value", "timeValue"})
 public class ValueHolder implements Serializable {
 
     private static final long serialVersionUID = -349128374L;

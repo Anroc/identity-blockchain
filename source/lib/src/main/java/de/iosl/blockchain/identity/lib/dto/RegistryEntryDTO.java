@@ -1,6 +1,6 @@
-package de.iosl.blockchain.identity.core.shared.ds.registry.data;
+package de.iosl.blockchain.identity.lib.dto;
 
-import de.iosl.blockchain.identity.lib.dto.Payload;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +13,7 @@ import javax.validation.constraints.Min;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@JsonPropertyOrder(alphabetic = true, value = {"ethID", "publicKey", "domainName", "port"})
 public class RegistryEntryDTO extends Payload {
 
     @NotBlank
@@ -21,5 +22,13 @@ public class RegistryEntryDTO extends Payload {
     private String domainName;
     @Min(0)
     private int port;
+
+    public RegistryEntryDTO(String ethID, String publicKey,
+            String domainName, int port) {
+        super(ethID);
+        this.publicKey = publicKey;
+        this.domainName = domainName;
+        this.port = port;
+    }
 
 }

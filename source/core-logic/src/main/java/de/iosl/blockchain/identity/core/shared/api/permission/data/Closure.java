@@ -1,6 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.api.permission.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@JsonPropertyOrder(alphabetic = true, value = {"ethID", "claimID", "claimOperation", "staticValue", "userEthId", "expressionResult", "creationDate"})
 public class Closure extends BasicEthereumDTO {
 
     @NotBlank

@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -24,12 +24,12 @@ public class PermissionRequestDTO {
     private String providerURL;
 
     @ApiModelProperty()
-    private Set<String> requiredClaims = new HashSet<>();
+    private List<String> requiredClaims = new ArrayList<>();
 
     @ApiModelProperty()
-    private Set<String> optionalClaims = new HashSet<>();
+    private List<String> optionalClaims = new ArrayList<>();
 
     @Valid
     @ApiModelProperty()
-    private Set<ClosureRequestDTO> closureRequests = new HashSet<>();
+    private List<ClosureRequestDTO> closureRequests = new ArrayList<>();
 }

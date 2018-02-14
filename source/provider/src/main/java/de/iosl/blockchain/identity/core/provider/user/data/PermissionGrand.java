@@ -35,18 +35,17 @@ public class PermissionGrand {
 
     public static PermissionGrand init(
             @NonNull String permissionContractAddress,
-            @NonNull Set<String> requiredClaims,
-            @NonNull Set<String> optionalClaims,
-            @NonNull Set<ClosureRequest> closureRequests) {
+            @NonNull Collection<String> requiredClaims,
+            @NonNull Collection<String> optionalClaims,
+            @NonNull List<ClosureRequest> closureRequests) {
 
-        List<ClosureRequest> closureRequestsList = new ArrayList<>(closureRequests);
-        closureRequestsList.forEach(closureRequest -> closureRequest.setApproved(false));
+        closureRequests.forEach(closureRequest -> closureRequest.setApproved(false));
 
         return  new PermissionGrand(
                 permissionContractAddress,
-                requiredClaims.stream().collect(Collectors.toMap(s -> s, s -> Boolean.FALSE)),
-                optionalClaims.stream().collect(Collectors.toMap(s -> s, s -> Boolean.FALSE)),
-                closureRequestsList
+                requiredClaims.stream().distinct().collect(Collectors.toMap(s -> s, s -> Boolean.FALSE)),
+                optionalClaims.stream().distinct().collect(Collectors.toMap(s -> s, s -> Boolean.FALSE)),
+                closureRequests
         );
     }
 }

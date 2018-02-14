@@ -10,7 +10,6 @@ import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContra
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
 import de.iosl.blockchain.identity.core.shared.claims.ClosureExpression;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
-import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
@@ -23,6 +22,7 @@ import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.user.permission.db.PermissionRequestDB;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
@@ -75,7 +75,7 @@ public class PermissionService {
         PermissionContractContent permissionContractContent = ebaInterface.getPermissionContractContent(keyChain.getAccount(), pprAddress);
 
         // 2. Extract Closure Content
-        Set<ClosureRequest> closureRequests = extractClosureRequests(permissionContractContent.getClosureContent());
+        List<ClosureRequest> closureRequests = extractClosureRequests(permissionContractContent.getClosureContent());
 
         PermissionRequest permissionRequest = new PermissionRequest(
                 UUID.randomUUID().toString(),
@@ -95,8 +95,8 @@ public class PermissionService {
         messageService.createMessage(MessageType.PERMISSION_REQUEST, permissionRequest.getId());
     }
 
-    private Set<ClosureRequest> extractClosureRequests(ClosureContent closureContent) {
-        Set<ClosureContractRequest> closureContractRequests =
+    private List<ClosureRequest> extractClosureRequests(ClosureContent closureContent) {
+        List<ClosureContractRequest> closureContractRequests =
                 closureContentCryptEngine.decrypt(closureContent, keyChain.getRsaKeyPair().getPrivate());
 
         log.info("Requesting current user claims.");
@@ -104,7 +104,7 @@ public class PermissionService {
 
         return closureContractRequests.stream().map(
                 ccr -> evaluateClosureExpression(ccr, userClaims)
-        ).collect(Collectors.toSet());
+        ).collect(Collectors.toList());
     }
 
     private ClosureRequest evaluateClosureExpression(
@@ -232,10 +232,6 @@ public class PermissionService {
         } catch (JsonProcessingException e) {
             throw new UncheckedIOException(e);
         }
-    }
-
-    private boolean verifyPermissionClaims(Map<String, Boolean> oldPermissionClaims, Map<String, Boolean> newPermissionClaims) {
-        return oldPermissionClaims.keySet().containsAll(newPermissionClaims.keySet()) && newPermissionClaims.keySet().containsAll(oldPermissionClaims.keySet());
     }
 
     public PermissionRequest insertPermissionRequest(@NonNull PermissionRequest permissionRequest) {
