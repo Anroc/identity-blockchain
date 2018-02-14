@@ -75,7 +75,7 @@ public class PermissionService {
         PermissionContractContent permissionContractContent = ebaInterface.getPermissionContractContent(keyChain.getAccount(), pprAddress);
 
         // 2. Extract Closure Content
-        Set<ClosureRequest> closureRequests = extractClosureRequests(permissionContractContent.getClosureContent());
+        List<ClosureRequest> closureRequests = extractClosureRequests(permissionContractContent.getClosureContent());
 
         PermissionRequest permissionRequest = new PermissionRequest(
                 UUID.randomUUID().toString(),
@@ -95,8 +95,8 @@ public class PermissionService {
         messageService.createMessage(MessageType.PERMISSION_REQUEST, permissionRequest.getId());
     }
 
-    private Set<ClosureRequest> extractClosureRequests(ClosureContent closureContent) {
-        Set<ClosureContractRequest> closureContractRequests =
+    private List<ClosureRequest> extractClosureRequests(ClosureContent closureContent) {
+        List<ClosureContractRequest> closureContractRequests =
                 closureContentCryptEngine.decrypt(closureContent, keyChain.getRsaKeyPair().getPrivate());
 
         log.info("Requesting current user claims.");
@@ -104,7 +104,7 @@ public class PermissionService {
 
         return closureContractRequests.stream().map(
                 ccr -> evaluateClosureExpression(ccr, userClaims)
-        ).collect(Collectors.toSet());
+        ).collect(Collectors.toList());
     }
 
     private ClosureRequest evaluateClosureExpression(

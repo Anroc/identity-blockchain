@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.iosl.blockchain.identity.core.shared.api.ProviderAPIConstances.*;
@@ -90,7 +89,7 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
 
     }
 
-    private void validateClosureExpression(User user, Set<ClosureContractRequestDTO> closureContractRequestDTOs) {
+    private void validateClosureExpression(User user, List<ClosureContractRequestDTO> closureContractRequestDTOs) {
         closureContractRequestDTOs.forEach(
                 (closureContractRequestDTO) -> apiService.validateClosureExpression(user, closureContractRequestDTO)
         );
@@ -119,7 +118,7 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
 
         log.info("Received {} Closures requests by PPR contract.", signedClaimsRequest.getPayload().getClosureContractRequests().size());
 
-        validateSingedClosureContractSet(ethID, signedClaimsRequest.getPayload().getClosureContractRequests());
+        validateSingedClosureContracts(ethID, signedClaimsRequest.getPayload().getClosureContractRequests());
 
         List<SignedRequest<Closure>> closures = apiService.evaluateAndSignClosures(
                 user,
@@ -138,7 +137,7 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
         return new PermissionContractResponse(claimDTOs, closures);
     }
 
-    private List<Closure> extractClosures(@NonNull Set<ClosureContractRequest> closureContractRequests) {
+    private List<Closure> extractClosures(@NonNull List<ClosureContractRequest> closureContractRequests) {
         return closureContractRequests.stream()
                 .map(ClosureContractRequest::getClosureContractRequestPayload)
                 .map(Closure::init)
@@ -159,7 +158,7 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
         );
     }
 
-    private void validateSingedClosureContractSet(@NonNull String ethID, @NonNull Set<ClosureContractRequest> set) {
+    private void validateSingedClosureContracts(@NonNull String ethID, @NonNull List<ClosureContractRequest> set) {
         set.forEach(
                 elem -> {
                     if( ! ecSignatureValidator.isSignatureValid(

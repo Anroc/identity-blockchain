@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -57,9 +58,9 @@ public class ApiService {
     public String createPermissionContract(
             @NonNull String requestingProvider,
             @NonNull User user,
-            @NonNull Set<String> requiredClaims,
-            @NonNull Set<String> optionalClaims,
-            @NonNull Set<ClosureContractRequestDTO> closureContractRequestDTOs) {
+            @NonNull List<String> requiredClaims,
+            @NonNull List<String> optionalClaims,
+            @NonNull List<ClosureContractRequestDTO> closureContractRequestDTOs) {
 
         if(user.getEthId() == null) {
             throw new ServiceException(
@@ -77,8 +78,8 @@ public class ApiService {
         ClosureContent closure = closureContentCryptEngine.encrypt(user.getPublicKey(), closureContractRequests);
 
         PermissionContractContent permissionContractContent = new PermissionContractContent(
-                requiredClaims,
-                optionalClaims,
+                new HashSet(requiredClaims),
+                new HashSet(optionalClaims),
                 requestingProvider,
                 closure
         );

@@ -121,7 +121,7 @@ public class PermissionRequestService {
         validateApprovedClaims(approvedClaims);
         log.info("Successful validated {} approvedClaims for user [{}]", approvedClaims, ethID);
 
-        Set<ClosureContractRequest> closureContractRequests;
+        List<ClosureContractRequest> closureContractRequests;
         if(contractContent.getClosureContent() != null) {
             closureContractRequests = closureContentCryptEngine.decrypt(contractContent.getClosureContent(), keyChain.getRsaKeyPair().getPrivate());
             log.info("Successful decrypted {} approved closure requests.", closureContractRequests.size());
@@ -129,7 +129,7 @@ public class PermissionRequestService {
             log.info("Successful validated {} approved closure requests {}", closureContractRequests);
         } else {
             log.info("No closures found.");
-            closureContractRequests = new HashSet<>();
+            closureContractRequests = new ArrayList<>();
         }
 
         PermissionContractResponse response = apiProviderService.requestClaimsForPPR(url, ethID, pprAddress, approvedClaims, closureContractRequests);
@@ -162,7 +162,7 @@ public class PermissionRequestService {
                 }).collect(Collectors.toList());
     }
 
-    private void validateClosures(Set<ClosureContractRequest> closureContractRequests) {
+    private void validateClosures(List<ClosureContractRequest> closureContractRequests) {
         closureContractRequests.forEach(
                 closureContractRequest -> {
                     if(! getEcSignatureValidator().isSignatureValid(

@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.lib.dto;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonPropertyOrder(alphabetic=true, value = {"r", "s", "v"})
 public class ECSignature implements Serializable {
 
     private static final long serialVersionUID = 9223372026394422605L;

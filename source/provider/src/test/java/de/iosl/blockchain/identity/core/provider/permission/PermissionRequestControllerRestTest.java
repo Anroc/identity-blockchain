@@ -1,6 +1,5 @@
 package de.iosl.blockchain.identity.core.provider.permission;
 
-import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.api.client.APIProviderService;
@@ -12,6 +11,7 @@ import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
+import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,8 +27,8 @@ import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -47,8 +47,8 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
     private final String claimID_givenName = "GIVEN_NAME";
     private final String claimID_familyName = "FAMILY_NAME";
     private final String claimID_age = "BIRTHDAY";
-    private final Set<String> requiredClaims = Sets.newHashSet(claimID_givenName, claimID_familyName);
-    private final Set<String> optionalClaims = Sets.newHashSet(claimID_age);
+    private final List<String> requiredClaims = Lists.newArrayList(claimID_givenName, claimID_familyName);
+    private final List<String> optionalClaims = Lists.newArrayList(claimID_age);
     private final String permissionContractAddress = "0xabc";
 
     private User user;
@@ -140,7 +140,7 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
                 url,
                 null,
                 null,
-                Sets.newHashSet(
+                Lists.newArrayList(
                         new ClosureRequestDTO(claimID_familyName, ClaimOperation.EQ, new ValueHolder("Hans"))
                 ));
 

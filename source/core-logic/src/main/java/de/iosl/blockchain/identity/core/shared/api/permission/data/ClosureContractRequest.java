@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.api.permission.data;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ClosureContractRequestDTO;
 import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonPropertyOrder(alphabetic=true, value = {"closureContractRequestPayload", "ecSignature"})
 public class ClosureContractRequest implements Serializable {
 
     private static final long serialVersionUID = -487991492884225033L;

@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -87,7 +86,7 @@ public class APIProviderService {
             @NonNull String ethID,
             @NonNull String pprAddress,
             @NonNull List<SignedRequest<ApprovedClaim>> approvedClaims,
-            @NonNull Set<ClosureContractRequest> closureContractRequests) {
+            @NonNull List<ClosureContractRequest> closureContractRequests) {
 
         // create request
         SignedClaimRequestDTO signedClaimRequestDTO = new SignedClaimRequestDTO(

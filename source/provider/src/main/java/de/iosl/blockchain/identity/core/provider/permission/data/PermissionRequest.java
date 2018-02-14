@@ -8,8 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
@@ -19,10 +19,10 @@ public class PermissionRequest {
 
     private String ethID;
     private String url;
-    private Set<String> requiredClaims;
-    private Set<String> optionalClaims;
+    private List<String> requiredClaims;
+    private List<String> optionalClaims;
 
-    private Set<ClosureRequest> closuresRequests;
+    private List<ClosureRequest> closuresRequests;
 
     public PermissionRequest(@NonNull PermissionRequestDTO permissionRequestDTO) {
         this.ethID = permissionRequestDTO.getUserEthID();
@@ -31,11 +31,11 @@ public class PermissionRequest {
         if(permissionRequestDTO.getRequiredClaims() != null) {
             this.requiredClaims = permissionRequestDTO.getRequiredClaims();
         } else {
-            this.requiredClaims = new HashSet<>();
+            this.requiredClaims = new ArrayList<>();
         }
 
         if (permissionRequestDTO.getOptionalClaims() == null) {
-            this.optionalClaims = new HashSet<>();
+            this.optionalClaims = new ArrayList<>();
         } else {
             this.optionalClaims = permissionRequestDTO.getOptionalClaims();
         }
@@ -44,20 +44,20 @@ public class PermissionRequest {
             this.closuresRequests = permissionRequestDTO.getClosureRequests()
                     .stream()
                     .map(ClosureRequest::new)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
         } else {
-            this.closuresRequests = new HashSet<>();
+            this.closuresRequests = new ArrayList<>();
         }
     }
 
     @JsonIgnore
-    public Set<ClosureContractRequestDTO> getClosreRequestsAsClosureContractRequestDTOs() {
+    public List<ClosureContractRequestDTO> getClosreRequestsAsClosureContractRequestDTOs() {
         return closuresRequests.stream().map(
                 closure -> new ClosureContractRequestDTO(
                         closure.getClaimID(),
                         closure.getClaimOperation(),
                         closure.getStaticValue()
                 )
-        ).collect(Collectors.toSet());
+        ).collect(Collectors.toList());
     }
 }

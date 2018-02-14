@@ -23,6 +23,7 @@ import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
+import org.assertj.core.util.Lists;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -92,7 +93,7 @@ public class PermissionControllerRestTest extends RestTestSuite {
                 permissionContractAddress,
                 requiredClaims.stream().collect(Collectors.toMap(s -> s, s -> false)),
                 optionalClaims.stream().collect(Collectors.toMap(s -> s, s -> false)),
-                Sets.newHashSet()
+                Lists.newArrayList()
         );
 
         permissionRequestDB.insert(permissionRequest);
@@ -242,7 +243,7 @@ public class PermissionControllerRestTest extends RestTestSuite {
         );
 
         permissionRequest.setClosureRequests(
-            Sets.newHashSet(closureRequest1, closureRequest2)
+            Lists.newArrayList(closureRequest1, closureRequest2)
         );
 
         permissionRequest.setRequiredClaims(new HashMap<>());
