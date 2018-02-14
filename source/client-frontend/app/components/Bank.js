@@ -54,8 +54,11 @@ class Bank extends Component{
         DATE: ['EQ', 'NEQ', 'GT', 'GE', 'LT', 'LE'],
         BOOLEAN: ['EQ', 'NEQ'],
       },
+      closureCreationEthAddress: '',
       closureCreationClaimId: '',
       closureCreationClaimOperation: '',
+      closureCreationClaimValue: '',
+      closureCreationClaimOperationOptions: [],
       closureCreationStaticValue: {
         timeValue: '',
         value: '',
@@ -78,6 +81,9 @@ class Bank extends Component{
     this.handleChangeClosureCreationClaimId = this.handleChangeClosureCreationClaimId.bind(this);
     this.handleChangeClosureCreationClaimOperation = this.handleChangeClosureCreationClaimOperation.bind(this);
     this.handleChangeClosureCreationStaticValue = this.handleChangeClosureCreationStaticValue.bind(this);
+    this.handleChangeClosureCreationClaimValue = this.handleChangeClosureCreationClaimValue.bind(this);
+    this.handleChangeClosureCreationEthAddress = this.handleChangeClosureCreationEthAddress.bind(this);
+    this.handleSubmitClosure = this.handleSubmitClosure.bind(this);
   }
 
   componentDidMount(){
@@ -87,12 +93,48 @@ class Bank extends Component{
     this.setState({ ethAddress: event.target.value });
   }
 
+  handleChangeClosureCreationEthAddress(event){
+    this.setState({ closureCreationEthAddress: event.target.value});
+  }
+
+  handleChangeClosureCreationClaimValue(event){
+    this.setState({ closureCreationClaimValue: event.target.value });
+  }
+
   handleChangeClosureCreationClaimId(event){
-    this.setState({ closureCreationClaimId: event.target.value });
+    console.log('ClaimID to request: ', event.target.value);
+    let closureOperations = [];
+    switch (event.target.value){
+      case 'NUMBER':
+        closureOperations = ['EQ', 'NEQ', 'GT', 'GE', 'LT', 'LE'];
+        console.log('Setting ClaimOperationsChoices to: ', closureOperations);
+        break;
+      case 'STRING':
+        closureOperations = ['EQ', 'NEQ'];
+        console.log('Setting ClaimOperationsChoices to: ', closureOperations);
+        break;
+      case 'OBJECT':
+        closureOperations = [];
+        console.log('Setting ClaimOperationsChoices to: ', closureOperations);
+        break;
+      case 'DATE':
+        closureOperations = ['EQ', 'NEQ', 'GT', 'GE', 'LT', 'LE'];
+        console.log('Setting ClaimOperationsChoices to: ', closureOperations);
+        break;
+      case 'BOOLEAN':
+        closureOperations = ['EQ', 'NEQ'];
+        console.log('Setting ClaimOperationsChoices to: ', closureOperations);
+        break;
+    }
+    this.setState({
+      closureCreationClaimId: event.target.value,
+      closureCreationClaimOperationOptions: closureOperations,
+    });
   };
 
   handleChangeClosureCreationClaimOperation(event){
-    this.setState({closureCreationClaimId: event.target.value});
+    console.log('Setting ClaimOperation to: ', event.target.value);
+    this.setState({closureCreationClaimOperation: event.target.value});
   };
 
   handleChangeClosureCreationStaticValue(event){
@@ -313,6 +355,48 @@ class Bank extends Component{
     this.cleanForm();
   }
 
+  handleSubmitClosure(event){
+    // alert('A name was submitted: ' + this.state.requiredAttributes.join(', '));
+    event.preventDefault();
+    this.setState({
+      closureRequests: [
+        {
+          claimID: this.state.closureCreationClaimId,
+          claimOperation: this.state.closureCreationClaimOperation,
+          staticValue: this.state.closureCreationStaticValue,
+        }
+      ],
+    });
+
+    const postRequest = {
+      closureRequests: this.state.closureRequests,
+      optionalClaims: this.state.optionalAttributes,
+      providerURL: 'http://srv01.snet.tu-berlin.de:8100',
+      requiredClaims: this.state.requiredAttributes,
+      userEthID: this.state.ethAddress,
+    };
+    console.log('Preparing following body for POST: ', JSON.stringify(postRequest));
+    const getUserInformationOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(postRequest),
+      mode: 'cors',
+      credentials: 'include',
+    };
+    // console.log(JSON.stringify(getUserInformationOptions));
+    request('http://srv01.snet.tu-berlin.de:8102/permissions', getUserInformationOptions);
+    // .then((json) => {
+    //  this.setState({
+    //    claims: json,
+    //  });
+    // }).catch((error) => {
+    //  console.log(error);
+    // });
+  }
+
   cleanForm(){
     // console.log('test', this.state);
     console.log(this.state.requiredAttributes, this.state.optionalAttributes);
@@ -375,9 +459,8 @@ class Bank extends Component{
                         <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
                         <Input id="ethAddress" value={this.state.ethAddress} onChange={this.handleChange}/>
                       </FormControl>
-                      <Divider/>
                     </div>
-                    <ExpansionPanel style={{flex: 1}}>
+                    <ExpansionPanel>
                       <ExpansionPanelSummary>
                         <Typography>Required Attributes</Typography>
                       </ExpansionPanelSummary>
@@ -393,7 +476,7 @@ class Bank extends Component{
                         </form>
                       </ExpansionPanelDetails>
                     </ExpansionPanel>
-                    <ExpansionPanel style={{flex: 1}}>
+                    <ExpansionPanel>
                       <ExpansionPanelSummary>
                         <Typography>Optional Attributes</Typography>
                       </ExpansionPanelSummary>
@@ -426,7 +509,16 @@ class Bank extends Component{
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 <form autoComplete="off">
-                  <FormControl>
+                  <div>
+                    <FormControl
+                      aria-describedby="closureCreationEthAddress-text"
+                      style={{ marginBottom: '15px' }}
+                    >
+                      <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
+                      <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
+                    </FormControl>
+                  </div>
+                  <FormControl style={{marginRight: '50px'}}>
                     <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
                     <Select
                       value={this.state.closureCreationClaimId}
@@ -440,7 +532,7 @@ class Bank extends Component{
                       ))};
                     </Select>
                   </FormControl>
-                  <FormControl>
+                  <FormControl style={{marginRight: '50px'}}>
                     <InputLabel htmlFor="claimOperation">Claim-Operation</InputLabel>
                     <Select
                       value={this.state.closureCreationClaimOperation}
@@ -449,14 +541,25 @@ class Bank extends Component{
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
-                      {Object.entries(this.state.closureTypes).map(([key, value]) => (
-                        key ? this.state.handleChangeClosureCreationClaimId : (value.map((v) => (
-                          <MenuItem value={v.toString()}>{v.toString()}</MenuItem>
-                        )))
-                      ))};
+                      {this.state.closureCreationClaimOperationOptions.map((o) => (
+                        <MenuItem value={o}>
+                          {o}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
+                  <FormControl
+                    aria-describedby="closureCreationClaimValue-text"
+                  >
+                    <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
+                    <Input id="closureCreationClaimValue" value={this.state.closureCreationClaimValue} onChange={this.handleChangeClosureCreationClaimValue}/>
+                  </FormControl>
                 </form>
+                <Button
+                  raised
+                  onClick={this.handleSubmitClosure}
+                  style={{ marginTop: '15px', marginLeft: '25%' }}
+                >Submit</Button>
               </ExpansionPanelDetails>
             </ExpansionPanel>
           </section>
