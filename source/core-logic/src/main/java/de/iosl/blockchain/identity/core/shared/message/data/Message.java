@@ -3,7 +3,6 @@ package de.iosl.blockchain.identity.core.shared.message.data;
 import com.couchbase.client.java.repository.annotation.Field;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 

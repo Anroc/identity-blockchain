@@ -2,12 +2,12 @@ package de.iosl.blockchain.identity.core.shared.ds.beats;
 
 import de.iosl.blockchain.identity.core.shared.BasicMockSuite;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.eba.main.Account;
+import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.lib.dto.beats.HeartBeatRequest;
-import de.iosl.blockchain.identity.lib.dto.ECSignature;
-import de.iosl.blockchain.identity.core.shared.eba.main.Account;
-import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.dto.beats.SubjectType;
 import org.assertj.core.util.Lists;
 import org.junit.Test;

@@ -9,7 +9,6 @@ import de.iosl.blockchain.identity.core.shared.eba.main.exception.NoClouserCould
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.math.BigInteger;
 import java.util.HashSet;

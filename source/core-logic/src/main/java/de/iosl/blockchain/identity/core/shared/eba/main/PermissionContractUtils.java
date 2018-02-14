@@ -1,6 +1,5 @@
 package de.iosl.blockchain.identity.core.shared.eba.main;
 
-import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.eba.contracts.Permission_sol_PermissionContract;
 import de.iosl.blockchain.identity.core.shared.eba.main.exception.EBAException;

@@ -3,7 +3,6 @@ package de.iosl.blockchain.identity.core.shared.eba;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;

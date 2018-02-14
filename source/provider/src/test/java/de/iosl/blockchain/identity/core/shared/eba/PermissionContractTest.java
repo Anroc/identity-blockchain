@@ -1,7 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.eba;
 
 import com.google.common.collect.Sets;
-import com.sun.org.apache.regexp.internal.RE;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
