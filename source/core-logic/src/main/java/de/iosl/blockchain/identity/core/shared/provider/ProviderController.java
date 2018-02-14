@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.core.shared.provider;
 
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
-import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
+import de.iosl.blockchain.identity.lib.dto.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;

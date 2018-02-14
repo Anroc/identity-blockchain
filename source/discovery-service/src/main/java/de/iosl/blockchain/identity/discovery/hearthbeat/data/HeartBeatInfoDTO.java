@@ -1,7 +1,7 @@
 package de.iosl.blockchain.identity.discovery.hearthbeat.data;
 
-import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.dto.RequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;

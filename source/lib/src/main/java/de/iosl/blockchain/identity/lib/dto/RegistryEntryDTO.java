@@ -1,7 +1,6 @@
-package de.iosl.blockchain.identity.discovery.registry.data;
+package de.iosl.blockchain.identity.lib.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.iosl.blockchain.identity.lib.dto.Payload;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,4 +30,5 @@ public class RegistryEntryDTO extends Payload {
         this.domainName = domainName;
         this.port = port;
     }
+
 }
