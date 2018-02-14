@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder(alphabetic=true, value = {"r", "s", "v"})
+@JsonPropertyOrder(alphabetic = true, value = {"r", "s", "v"})
 public class ECSignature implements Serializable {
 
     private static final long serialVersionUID = 9223372026394422605L;

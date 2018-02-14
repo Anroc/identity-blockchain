@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonPropertyOrder(alphabetic=true, value = {"ethID", "claimID", "claimOperation", "staticValue", "userEthId", "expressionResult", "creationDate"})
+@JsonPropertyOrder(alphabetic = true, value = {"ethID", "claimID", "claimOperation", "staticValue", "userEthId", "expressionResult", "creationDate"})
 public class Closure extends BasicEthereumDTO {
 
     @NotBlank

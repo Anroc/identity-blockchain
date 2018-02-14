@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder(alphabetic=true, value = {"closureContractRequestPayload", "ecSignature"})
+@JsonPropertyOrder(alphabetic = true, value = {"closureContractRequestPayload", "ecSignature"})
 public class ClosureContractRequest implements Serializable {
 
     private static final long serialVersionUID = -487991492884225033L;

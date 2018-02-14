@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonPropertyOrder(alphabetic=true, value = {"ethID", "claimId", "providerEthId"})
+@JsonPropertyOrder(alphabetic = true, value = {"ethID", "claimId", "providerEthId"})
 public class ApprovedClaim extends BasicEthereumDTO {
 
     @NotBlank

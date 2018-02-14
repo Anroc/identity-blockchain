@@ -14,7 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonPropertyOrder(alphabetic=true, value = {"ethID", "claimID", "claimOperation", "staticValue"})
+@JsonPropertyOrder(alphabetic = true, value = {"ethID", "claimID", "claimOperation", "staticValue"})
 public class ClosureContractRequestPayload extends BasicEthereumDTO implements Serializable {
 
     private static final long serialVersionUID = 137496492824225023L;

@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder(alphabetic=true, value = {"claimID", "claimOperation", "staticValue"})
+@JsonPropertyOrder(alphabetic = true, value = {"claimID", "claimOperation", "staticValue"})
 public class ClosureContractRequestDTO {
 
     @NotBlank

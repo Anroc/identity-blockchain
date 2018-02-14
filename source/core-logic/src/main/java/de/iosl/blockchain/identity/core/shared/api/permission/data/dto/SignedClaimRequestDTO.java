@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonPropertyOrder(alphabetic=true, value = {"ethID", "permissionContractAddress", "singedClaims", "closureContractRequests"})
+@JsonPropertyOrder(alphabetic = true, value = {"ethID", "permissionContractAddress", "singedClaims", "closureContractRequests"})
 public class SignedClaimRequestDTO extends BasicEthereumDTO {
 
     @NotBlank
