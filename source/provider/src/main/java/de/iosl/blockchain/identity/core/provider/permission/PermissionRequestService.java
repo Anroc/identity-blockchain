@@ -197,7 +197,11 @@ public class PermissionRequestService {
                     Optional<ProviderClaim> providerClaim = user.findClaim(claim.getId());
                     if(providerClaim.isPresent()) {
                         List<SignedRequest<Closure>> closures = providerClaim.get().getSignedClosures();
-                        claim.getSignedClosures().addAll(closures);
+                        if(claim.getSignedClosures() == null) {
+                            claim.setSignedClosures(closures);
+                        } else {
+                            claim.getSignedClosures().addAll(closures);
+                        }
                     }
                     user.putClaim(claim);
                 }
