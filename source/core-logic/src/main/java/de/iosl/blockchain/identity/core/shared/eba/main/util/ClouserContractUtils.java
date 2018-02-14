@@ -2,7 +2,7 @@ package de.iosl.blockchain.identity.core.shared.eba.main.util;
 
 import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
-import de.iosl.blockchain.identity.core.shared.eba.contracts.Clouser_sol_ClouserContract;
+import de.iosl.blockchain.identity.core.shared.eba.contracts.Closure_sol_ClosureContract;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.eba.main.exception.EBAException;
 import de.iosl.blockchain.identity.core.shared.eba.main.exception.NoClouserCouldBeAddedException;
@@ -24,7 +24,7 @@ public class ClouserContractUtils {
             log.info("wallet balance before deployment: {}", Web3jUtils.getBalanceWei(web3j, sender.getAddress()));
             log.info("Amount of clousers to set in contract: {} with assigend user: {} and requesting provider: {}", permissionContractContent.getClosureContent().getEncryptedRequests().size(), recipient, permissionContractContent.getRequesterAddress());
 
-            Clouser_sol_ClouserContract contract = Clouser_sol_ClouserContract.deploy(
+            Closure_sol_ClosureContract contract = Closure_sol_ClosureContract.deploy(
                     web3j,
                     sender.getCredentials(),
                     Web3jConstants.GAS_PRICE,
@@ -43,14 +43,14 @@ public class ClouserContractUtils {
             log.info("set requested clousers");
             for (String clouserRequest:permissionContractContent.getClosureContent().getEncryptedRequests()) {
                 try {
-                    contract.addClouserAsRequestingProvider(clouserRequest).send();
+                    contract.addClosureAsRequestingProvider(clouserRequest).send();
                 } catch (Exception e) {
                     contract.kill().send();
-                    throw new NoClouserCouldBeAddedException("One clouserRequest could not be added into the ClouserContract", contract);
+                    throw new NoClouserCouldBeAddedException("One clouserRequest could not be added into the ClosureContract", contract);
                 }
             }
 
-            log.info("All clousers requested are in the contract with amount: {} ", contract.getRequestedClouserAmount().send());
+            log.info("All clousers requested are in the contract with amount: {} ", contract.getRequestedClosureAmount().send());
             return contract.getContractAddress();
         } catch (Exception e) {
             throw new EBAException(e);
@@ -60,7 +60,7 @@ public class ClouserContractUtils {
     public ClosureContent getClouserContractContent(Account account, String smartContractAddress, Web3j web3j){
         try {
             log.info("get clouser contract");
-            Clouser_sol_ClouserContract contract = Clouser_sol_ClouserContract.load(
+            Closure_sol_ClosureContract contract = Closure_sol_ClosureContract.load(
                     smartContractAddress,
                     web3j,
                     account.getCredentials(),
@@ -84,19 +84,19 @@ public class ClouserContractUtils {
 
             if(account.getAddress().equals(user)){
                 log.info("user wants requested clousers");
-                return getClouserContractContentAsUser(contract, web3j);
+                return getClouserContractContentAsUser(contract);
             }else{
                 log.info("provider wants approved clousers");
-                return getClouserContractContentProvider(contract, web3j);
+                return getClouserContractContentProvider(contract);
             }
         } catch (Exception e) {
             throw new EBAException(e);
         }
     }
 
-    private ClosureContent getClouserContractContentProvider(Clouser_sol_ClouserContract contract, Web3j web3j) {
+    private ClosureContent getClouserContractContentProvider(Closure_sol_ClosureContract contract) {
         try {
-            String temp = contract.getApprovedClouserAmount().send()+"";
+            String temp = contract.getApprovedClosureAmount().send()+"";
             int amount = Integer.parseInt(temp);
             Set<String> encryptedRequests = new HashSet<>();
             String encryptedKey = "";
@@ -104,14 +104,14 @@ public class ClouserContractUtils {
             log.info("Amount of ApprovedClouser as provider in contract is: {} . Now get all clousers form blockchain", amount);
             for (int i = 0; i < amount; i++) {
                 //TransactionReceipt transactionReceipt = contract.getRequestedClouserAsUserAndDeleteIndex(BigInteger.valueOf(amount)).send();
-                String approvedClouser = contract.getApprovedClouserByIndex(BigInteger.valueOf(i)).send();
+                String approvedClouser = contract.getApprovedClosureByIndex(BigInteger.valueOf(i)).send();
                 log.info("got one");
                 encryptedRequests.add(approvedClouser);
             }
 
             log.info("Got all clousers");
             log.info("get encrypted key");
-            encryptedKey = contract.getEncryptedKey().send();
+            encryptedKey = contract.getEncryptedKeyForApprovedClosure().send();
             log.info("Got all encyptedKey: {}",encryptedKey);
 
             ClosureContent closureContent = new ClosureContent(encryptedRequests, encryptedKey);
@@ -122,26 +122,26 @@ public class ClouserContractUtils {
         }
     }
 
-    private ClosureContent getClouserContractContentAsUser(Clouser_sol_ClouserContract contract, Web3j web3j) {
+    private ClosureContent getClouserContractContentAsUser(Closure_sol_ClosureContract contract) {
 
         try {
 
-            String temp = contract.getRequestedClouserAmount().send()+"";
+            String temp = contract.getRequestedClosureAmount().send()+"";
             int amount = Integer.parseInt(temp);
             Set<String> encryptedRequests = new HashSet<>();
             String encryptedKey = "";
 
-            log.info("Amount of approvedClousers in contract is: {} . Now get all clousers form blockchain", amount);
+            log.info("Amount of requested clousers in contract is: {} . Now get all clousers form blockchain", amount);
             for (int i = 0; i < amount; i++) {
                 //TransactionReceipt transactionReceipt = contract.getRequestedClouserAsUserAndDeleteIndex(BigInteger.valueOf(amount)).send();
                 log.info("try to get index {} of the requestedClouserSet in Contract", i);
-                String requestedClouser = contract.getRequestedClouserByIndex(BigInteger.valueOf(i)).send();
+                String requestedClouser = contract.getRequestedClosureByIndex(BigInteger.valueOf(i)).send();
                 encryptedRequests.add(requestedClouser);
             }
 
             log.info("Got all clousers");
             log.info("get encrypted key");
-            encryptedKey = contract.getEncryptedKey().send();
+            encryptedKey = contract.getEncryptedKeyForRequestedClosure().send();
             log.info("Got all encyptedKey: {}",encryptedKey);
 
             ClosureContent closureContent = new ClosureContent(encryptedRequests, encryptedKey);
@@ -155,8 +155,8 @@ public class ClouserContractUtils {
     public void setApprovedClosure(Account account, String smartContractAddress, ClosureContent clouserContent, Web3j web3j) {
 
         try {
-            log.info("get clouser for user becaus he has to approve");
-            Clouser_sol_ClouserContract contract = Clouser_sol_ClouserContract.load(
+            log.info("get clouser for user because he has to approve");
+            Closure_sol_ClosureContract contract = Closure_sol_ClosureContract.load(
                     smartContractAddress,
                     web3j,
                     account.getCredentials(),
@@ -170,16 +170,22 @@ public class ClouserContractUtils {
             log.info("set approved clousers with amount: {}", clouserContent.getEncryptedRequests().size());
             for (String clouser:clouserContent.getEncryptedRequests()) {
                 try {
-                    contract.addToApprovedClouserAsUser(clouser).send();
+                    contract.addToApprovedClosureAsUser(clouser).send();
                     log.info("one clouser sended");
                 } catch (Exception e) {
                     throw new NoClouserCouldBeAddedException("One clouserRequest could not be added into the ClouserContract", contract);
                 }
             }
 
+            log.info("set encrypted key for approved clouser");
+            contract.setEncryptedKeyForApprovedClosure(clouserContent.getEncryptedKey());
+            log.info("encrypted key for approved clouser is now in contract with key: {}",contract.getEncryptedKeyForApprovedClosure().send());
+
             log.info("amount variable of approved clousers will be set with amount: {}", BigInteger.valueOf(clouserContent.getEncryptedRequests().size()));
-            contract.setApprovedClouserAmount(BigInteger.valueOf(clouserContent.getEncryptedRequests().size())).send();
-            log.info("approved clousers and their amount are in contract with amount {}", contract.getApprovedClouserAmount().send());
+            contract.setApprovedClosureAmount(BigInteger.valueOf(clouserContent.getEncryptedRequests().size())).send();
+            log.info("approved clousers and their amount are in contract with amount {}", contract.getApprovedClosureAmount().send());
+
+
 
 
         } catch (Exception e) {

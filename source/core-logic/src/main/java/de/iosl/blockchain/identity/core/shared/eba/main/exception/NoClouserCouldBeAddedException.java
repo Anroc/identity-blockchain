@@ -1,17 +1,16 @@
 package de.iosl.blockchain.identity.core.shared.eba.main.exception;
 
-import de.iosl.blockchain.identity.core.shared.eba.contracts.Clouser_sol_ClouserContract;
-import org.web3j.tx.Contract;
+import de.iosl.blockchain.identity.core.shared.eba.contracts.Closure_sol_ClosureContract;
 
 public class NoClouserCouldBeAddedException extends Exception {
 
-    Clouser_sol_ClouserContract contract;
-    public NoClouserCouldBeAddedException(String message, Clouser_sol_ClouserContract contract) {
+    Closure_sol_ClosureContract contract;
+    public NoClouserCouldBeAddedException(String message, Closure_sol_ClosureContract contract) {
         super(message);
         this.contract=contract;
     }
 
-    public Clouser_sol_ClouserContract getContract(){
+    public Closure_sol_ClosureContract getContract(){
         return contract;
     }
 }
