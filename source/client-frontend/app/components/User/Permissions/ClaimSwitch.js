@@ -7,7 +7,9 @@ class ClaimSwitch extends React.Component {
 
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      showClaim: false,
+    };
   }
 
   componentDidMount() {
@@ -17,24 +19,37 @@ class ClaimSwitch extends React.Component {
       });
       console.log(`setting state for: ${key} to ${value}`);
     });
+    this.isClaimEmpty();
+  }
+
+  isClaimEmpty() {
+    if (this.props.claims !== {}) {
+      this.setState({
+        showClaim: true,
+      });
+    }
   }
 
   render() {
     return (
       <div key={this.props.claims}>
-        {this.props.claimType}
-        <br />
-        {Object.entries(this.props.claims).map(([key, value]) => (
-          <FormControlLabel
-            control={
-              <Switch
-                checked={this.state[key]}
-                onChange={() => this.setState({ [key]: !this.state[key] })}
+        { this.state.showClaim ? (
+          <div>
+            {this.props.claimType}
+            <br />
+            {Object.entries(this.props.claims).map(([key, value]) => (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={this.state[key]}
+                    onChange={() => this.setState({ [key]: !this.state[key] })}
+                  />
+                }
+                label={key}
               />
-            }
-            label={key}
-          />
-        ))}
+          ))}
+          </div>
+      ) : null}
       </div>
     );
   }

@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Paper from 'material-ui/Paper';
+import Button from 'material-ui/Button';
 import { FormGroup } from 'material-ui/Form';
 import ClaimSwitch from './ClaimSwitch';
+import ClosureSwitch from './ClosureSwitch';
 
 class PermissionRequestTable extends React.Component {
 
@@ -17,19 +19,18 @@ class PermissionRequestTable extends React.Component {
       <Paper className="">
         <FormGroup>
           {this.props.permissions.map((n) => (
-            <div key={n.id}>
+            <Paper key={n.id} style={{ marginBottom: '20' }}>
               <div>
                 <p>NEW PERMISSION</p>
               </div>
               {n.requiredClaims && (<ClaimSwitch claims={n.requiredClaims} claimType="Required" />)}
               {n.optionalClaims && (<ClaimSwitch claims={n.optionalClaims} claimType="Optional" />)}
+              {n.closureRequestDTO && (<ClosureSwitch closures={n.closureRequestDTO} />)}
               <div>
-                {n.closureRequestDTO && n.closureRequestDTO.length > 0 && n.closureRequestDTO.map((item) => (
-                  <p>Closure: {item.description}</p>
-                ), 0)}
+                <br />
+                Requesting Provider: {n.requestingProvider}
               </div>
-              <div>Requesting Provider: {n.requestingProvider}</div>
-            </div>
+            </Paper>
           ), 0)}
         </FormGroup>
       </Paper>
