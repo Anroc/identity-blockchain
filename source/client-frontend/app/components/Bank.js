@@ -4,7 +4,6 @@ import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
-import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import Input, { InputLabel } from 'material-ui/Input';
@@ -15,6 +14,9 @@ import AddIcon from 'material-ui-icons/Add';
 import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import RefreshIcon from 'material-ui-icons/Refresh';
+import Paper from 'material-ui/Paper';
+import { MenuItem } from 'material-ui/Menu';
+import Select from 'material-ui/Select';
 import request from '../auth/request';
 
 class Bank extends Component{
@@ -22,6 +24,7 @@ class Bank extends Component{
     super();
     this.state = {
       name: '',
+      closureRequests: [],
       requiredAttributes: [],
       optionalAttributes: [],
       ethAddress: '',
@@ -44,6 +47,22 @@ class Bank extends Component{
       grantedPermissions: [],
       userIDs: [],
       tableData: [],
+      closureTypes: {
+        NUMBER: ['EQ', 'NEQ', 'GT', 'GE', 'LT', 'LE'],
+        STRING: ['EQ', 'NEQ'],
+        OBJECT: [],
+        DATE: ['EQ', 'NEQ', 'GT', 'GE', 'LT', 'LE'],
+        BOOLEAN: ['EQ', 'NEQ'],
+      },
+      closureCreationEthAddress: '',
+      closureCreationClaimId: '',
+      closureCreationClaimOperation: '',
+      closureCreationClaimValue: '',
+      closureCreationClaimOperationOptions: [],
+      closureCreationStaticValue: {
+        timeValue: '',
+        value: '',
+      },
     };
 
     let id = 0;
@@ -58,6 +77,13 @@ class Bank extends Component{
     this.addClickRequiredAttributes = this.addClickRequiredAttributes.bind(this);
     this.addClickOptionalAttributes = this.addClickOptionalAttributes.bind(this);
     this.getNewMessages = this.getNewMessages.bind(this);
+    this.prepareClaimOutput = this.prepareClaimOutput.bind(this);
+    this.handleChangeClosureCreationClaimId = this.handleChangeClosureCreationClaimId.bind(this);
+    this.handleChangeClosureCreationClaimOperation = this.handleChangeClosureCreationClaimOperation.bind(this);
+    this.handleChangeClosureCreationStaticValue = this.handleChangeClosureCreationStaticValue.bind(this);
+    this.handleChangeClosureCreationClaimValue = this.handleChangeClosureCreationClaimValue.bind(this);
+    this.handleChangeClosureCreationEthAddress = this.handleChangeClosureCreationEthAddress.bind(this);
+    this.handleSubmitClosure = this.handleSubmitClosure.bind(this);
   }
 
   componentDidMount(){
@@ -66,6 +92,68 @@ class Bank extends Component{
   handleChange(event){
     this.setState({ ethAddress: event.target.value });
   }
+
+  handleChangeClosureCreationEthAddress(event){
+    this.setState({ closureCreationEthAddress: event.target.value});
+  }
+
+  handleChangeClosureCreationClaimValue(event){
+    this.setState({ closureCreationClaimValue: event.target.value });
+  }
+
+  handleChangeClosureCreationClaimId(event){
+    console.log('ClaimID to request: ', event.target.value);
+    let closureOperations = [];
+    switch (event.target.value){
+      case 'NUMBER':
+        closureOperations = ['EQ', 'NEQ', 'GT', 'GE', 'LT', 'LE'];
+        console.log('Setting ClaimOperationsChoices to: ', closureOperations);
+        break;
+      case 'STRING':
+        closureOperations = ['EQ', 'NEQ'];
+        console.log('Setting ClaimOperationsChoices to: ', closureOperations);
+        break;
+      case 'OBJECT':
+        closureOperations = [];
+        console.log('Setting ClaimOperationsChoices to: ', closureOperations);
+        break;
+      case 'DATE':
+        closureOperations = ['EQ', 'NEQ', 'GT', 'GE', 'LT', 'LE'];
+        console.log('Setting ClaimOperationsChoices to: ', closureOperations);
+        break;
+      case 'BOOLEAN':
+        closureOperations = ['EQ', 'NEQ'];
+        console.log('Setting ClaimOperationsChoices to: ', closureOperations);
+        break;
+    }
+    this.setState({
+      closureCreationClaimId: event.target.value,
+      closureCreationClaimOperationOptions: closureOperations,
+    });
+  };
+
+  handleChangeClosureCreationClaimOperation(event){
+    console.log('Setting ClaimOperation to: ', event.target.value);
+    this.setState({closureCreationClaimOperation: event.target.value});
+  };
+
+  handleChangeClosureCreationStaticValue(event){
+    if (Object.prototype.toString.call(event.target.value) === '[object Date]'){
+      this.setState({
+        closureCreationStaticValue: {
+          timeValue: event.target.value,
+          value: '',
+        },
+      });
+    } else {
+      this.setState({
+        closureCreationStaticValue: {
+          timeValue: '',
+          value: event.target.value,
+        },
+      });
+    }
+  };
 
   // Required Attributes Block
   createUIRequiredAttributes(){
@@ -164,7 +252,7 @@ class Bank extends Component{
       credentials: 'include',
     };
 
-    request('http://srv01.snet.tu-berlin.de:8102/messages?includeSeen=true', getMessages)
+    request('http://srv01.snet.tu-berlin.de:8102/messages?includeSeen=false', getMessages)
       .then((json) => {
         // console.log(JSON.stringify(json));
         const tmp = json.map((message) => message.userId);
@@ -176,8 +264,11 @@ class Bank extends Component{
         });
         console.log('userIDs from messages: ', this.state.userIDs);
       }).then(() => {
-        const arr = this.state.userIDs;
         // console.log(this.state.userIDs);
+        console.log('Preparing filtered userID array: ', Array.from(new Set(this.state.userIDs)));
+        this.setState({
+          userIDs: Array.from(new Set(this.state.userIDs)),
+        });
         for (let user of this.state.userIDs) {
           const getUser = {
             method: 'GET',
@@ -195,6 +286,7 @@ class Bank extends Component{
               // console.log(JSON.stringify(json));
               const newTableData = this.state.tableData;
               if (!newTableData.includes(json)) {
+                console.log('Adding new data to tableData: ', json);
                 newTableData.push(json);
               }
               this.setState({
@@ -204,7 +296,7 @@ class Bank extends Component{
             });
         }
         // this.putAllMessageSeen();
-    });
+      });
   }
 
   putAllMessageSeen() {
@@ -233,6 +325,7 @@ class Bank extends Component{
     event.preventDefault();
 
     const postRequest = {
+      closureRequests: this.state.closureRequests,
       optionalClaims: this.state.optionalAttributes,
       providerURL: 'http://srv01.snet.tu-berlin.de:8100',
       requiredClaims: this.state.requiredAttributes,
@@ -262,8 +355,50 @@ class Bank extends Component{
     this.cleanForm();
   }
 
+  handleSubmitClosure(event){
+    // alert('A name was submitted: ' + this.state.requiredAttributes.join(', '));
+    event.preventDefault();
+    this.setState({
+      closureRequests: [
+        {
+          claimID: this.state.closureCreationClaimId,
+          claimOperation: this.state.closureCreationClaimOperation,
+          staticValue: this.state.closureCreationStaticValue,
+        }
+      ],
+    });
+
+    const postRequest = {
+      closureRequests: this.state.closureRequests,
+      optionalClaims: this.state.optionalAttributes,
+      providerURL: 'http://srv01.snet.tu-berlin.de:8100',
+      requiredClaims: this.state.requiredAttributes,
+      userEthID: this.state.ethAddress,
+    };
+    console.log('Preparing following body for POST: ', JSON.stringify(postRequest));
+    const getUserInformationOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(postRequest),
+      mode: 'cors',
+      credentials: 'include',
+    };
+    // console.log(JSON.stringify(getUserInformationOptions));
+    request('http://srv01.snet.tu-berlin.de:8102/permissions', getUserInformationOptions);
+    // .then((json) => {
+    //  this.setState({
+    //    claims: json,
+    //  });
+    // }).catch((error) => {
+    //  console.log(error);
+    // });
+  }
+
   cleanForm(){
-    console.log('test', this.state);
+    // console.log('test', this.state);
     console.log(this.state.requiredAttributes, this.state.optionalAttributes);
     for (let i = 0; i < this.state.requiredAttributes.length; i += 1) {
       console.log(`required attribute: ${i}`);
@@ -278,118 +413,197 @@ class Bank extends Component{
     });
   }
 
+  prepareClaimOutput(c){
+    console.log('Preparing claim for returnString: ', c);
+    let returnString = '';
+    if (c.claimValue != null && c.id != null){
+      if (c.claimValue.payload.value != null) {
+        returnString += c.id + '(' + c.claimValue.payload.value + ')' + '; ';
+      } else {
+        returnString += c.id + '(' + c.claimValue.payload.timeValue + ')' + '; ';
+      }
+    } else {
+      returnString += c.id + '(NULL)' + '; ';
+    }
+    return returnString;
+  };
+
+  prepareClosureOutput(c){
+    let returnString = this.prepareClaimOutput(c);
+    if(!c.signedClosures.isEmpty()){
+
+    }
+  };
+
+  prepareClosureClaimOperationOutput(k, claimId){
+
+  };
+
   render(){
     return (
       <article>
-        <section className='text-section'>
-          <h1>Bank</h1>
-          <p>
-            Hello, bank!
-          </p>
-          <p>
-            Permission request form e.g.
-            GET isOver18 from timo
-          </p>
-          <p>
-            If clicked, show result
-          </p>
-        </section>
-        <section>
-          <div align='center'>
+        <Paper>
+          <section>
+            <div align='center'>
+              <ExpansionPanel>
+                <ExpansionPanelSummary>
+                  <Typography>Create new permission request</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <div>
+                    <div>
+                      <FormControl
+                        aria-describedby="ethAddress-text"
+                        style={{ marginBottom: '15px' }}
+                      >
+                        <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
+                        <Input id="ethAddress" value={this.state.ethAddress} onChange={this.handleChange}/>
+                      </FormControl>
+                    </div>
+                    <ExpansionPanel>
+                      <ExpansionPanelSummary>
+                        <Typography>Required Attributes</Typography>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails>
+                        <form>
+                          {this.createUIRequiredAttributes()}
+                          <Button
+                            fab
+                            mini
+                            color="primary"
+                            onClick={this.addClickRequiredAttributes.bind(this)}
+                          ><AddIcon/></Button>
+                        </form>
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                    <ExpansionPanel>
+                      <ExpansionPanelSummary>
+                        <Typography>Optional Attributes</Typography>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails>
+                        <form>
+                          {this.createUIOptionalAttributes()}
+                          <Button
+                            fab
+                            mini
+                            color="primary"
+                            onClick={this.addClickOptionalAttributes.bind(this)}
+                          ><AddIcon/></Button>
+                        </form>
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                    <Button
+                      raised
+                      onClick={this.handleSubmit}
+                      style={{ marginTop: '15px', marginLeft: '25%' }}
+                    >Submit</Button>
+                  </div>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            </div>
+          </section>
+          <section>
             <ExpansionPanel>
               <ExpansionPanelSummary>
-                <Typography>Create new permission request</Typography>
+                <Typography>Create a new Closure request</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <form autoComplete="off">
+                  <div>
+                    <FormControl
+                      aria-describedby="closureCreationEthAddress-text"
+                      style={{ marginBottom: '15px' }}
+                    >
+                      <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
+                      <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
+                    </FormControl>
+                  </div>
+                  <FormControl style={{marginRight: '50px'}}>
+                    <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
+                    <Select
+                      value={this.state.closureCreationClaimId}
+                      onChange={this.handleChangeClosureCreationClaimId}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      {Object.entries(this.state.closureTypes).map(([key, value]) => (
+                        <MenuItem value={key.toString()}>{key.toString()}</MenuItem>
+                      ))};
+                    </Select>
+                  </FormControl>
+                  <FormControl style={{marginRight: '50px'}}>
+                    <InputLabel htmlFor="claimOperation">Claim-Operation</InputLabel>
+                    <Select
+                      value={this.state.closureCreationClaimOperation}
+                      onChange={this.handleChangeClosureCreationClaimOperation}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      {this.state.closureCreationClaimOperationOptions.map((o) => (
+                        <MenuItem value={o}>
+                          {o}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl
+                    aria-describedby="closureCreationClaimValue-text"
+                  >
+                    <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
+                    <Input id="closureCreationClaimValue" value={this.state.closureCreationClaimValue} onChange={this.handleChangeClosureCreationClaimValue}/>
+                  </FormControl>
+                </form>
+                <Button
+                  raised
+                  onClick={this.handleSubmitClosure}
+                  style={{ marginTop: '15px', marginLeft: '25%' }}
+                >Submit</Button>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          </section>
+          <section>
+            <ExpansionPanel>
+              <ExpansionPanelSummary>
+                <Typography>Granted Permissions/Closures</Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 <div>
                   <div>
-                    <FormControl
-                      aria-describedby="ethAddress-text"
-                      style={{ marginBottom: '15px' }}
+                    <IconButton
+                      aria-label="refresh"
+                      onClick={this.getNewMessages}
                     >
-                      <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
-                      <Input id="ethAddress" value={this.state.ethAddress} onChange={this.handleChange}/>
-                    </FormControl>
-                    <Divider/>
+                      <RefreshIcon/>
+                    </IconButton>
                   </div>
-                  <ExpansionPanel>
-                    <ExpansionPanelSummary>
-                      <Typography>Required Attributes</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
-                      <form>
-                        {this.createUIRequiredAttributes()}
-                        <Button
-                          fab
-                          mini
-                          color="primary"
-                          onClick={this.addClickRequiredAttributes.bind(this)}
-                        ><AddIcon/></Button>
-                      </form>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                  <ExpansionPanel>
-                    <ExpansionPanelSummary>
-                      <Typography>Optional Attributes</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
-                      <form>
-                        {this.createUIOptionalAttributes()}
-                        <Button
-                          fab
-                          mini
-                          color="primary"
-                          onClick={this.addClickOptionalAttributes.bind(this)}
-                        ><AddIcon/></Button>
-                      </form>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                  <Button
-                    raised
-                    onClick={this.handleSubmit}
-                    style={{ marginTop: '15px', marginLeft: '25%' }}
-                  >Submit</Button>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>ethID</TableCell>
+                        <TableCell>Claims</TableCell>
+                        <TableCell>Closures</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {this.state.tableData.map((n) => (
+                        <TableRow key={n.ethId}>
+                          <TableCell>{n.ethId}</TableCell>
+                          <TableCell>{n.claims.map((c) => (
+                            this.prepareClaimOutput(c)
+                            )
+                          )}</TableCell>
+                        </TableRow>
+                        )
+                      )}
+                    </TableBody>
+                  </Table>
                 </div>
               </ExpansionPanelDetails>
             </ExpansionPanel>
-          </div>
-        </section>
-        <section>
-          <ExpansionPanel>
-            <ExpansionPanelSummary>
-              <Typography>Granted Permissions</Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <div>
-                <div>
-                  <IconButton
-                    aria-label="refresh"
-                    onClick={this.getNewMessages}
-                  >
-                    <RefreshIcon/>
-                  </IconButton>
-                </div>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>ethID</TableCell>
-                      <TableCell>Claims</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {this.state.tableData.map((n) => (
-                      <TableRow key={n.ethId}>
-                        <TableCell>{n.ethId}</TableCell>
-                        <TableCell>{n.claims[0].id}</TableCell>
-                      </TableRow>
-                      )
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
-        </section>
+          </section>
+        </Paper>
       </article>
     );
   }
