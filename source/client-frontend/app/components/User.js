@@ -104,17 +104,9 @@ class User extends Component {
       .then((json) => {
         console.log('GOT RESULT TO PERMISSION');
         console.log(json);
-        // this.state.permissions.push(json);
-
         this.setState((prevState) => ({
           permissions: [...prevState.permissions, json],
         }));
-        /*
-        this.setState({
-          permission: json,
-          permissions: [[...this.state.permissions], json],
-        });
-        */
       });
   }
 
@@ -254,9 +246,6 @@ class User extends Component {
           <ExpansionPanelDetails>
             <PermissionRequestTable
               permissions={this.state.permissions}
-              value={this.state.value}
-              handleChange={this.handleChange}
-              sendPermissionAnswer={this.sendPermissionAnswer}
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>

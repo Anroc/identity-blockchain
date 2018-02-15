@@ -23,6 +23,15 @@ class PermissionForm extends React.Component {
   }
 
   componentDidMount() {
+    this.updateState();
+  }
+
+  updateState() {
+    this.setState({
+      requiredClaims: this.props.permission.requiredClaims,
+      optionalClaims: this.props.permission.optionalClaims,
+      closureRequestDTO: this.props.permission.closureRequestDTO,
+    });
   }
 
   handleLocalChange(event, value) {
@@ -51,10 +60,15 @@ class PermissionForm extends React.Component {
   }
 
   sendPermissionAnswer(messageId, requiredClaims, optionalClaims, closureRequest) {
+    console.log('params: ', messageId, requiredClaims, optionalClaims, closureRequest);
+
+    console.log('in state:', this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
+    /*
     // put message seen
     this.putMessageSeen(messageId);
     // send approval with all the data to endpoint
     this.putPermissionAnswer(requiredClaims, optionalClaims, closureRequest);
+    */
   }
 
   /**
@@ -89,14 +103,14 @@ class PermissionForm extends React.Component {
           <div>
             <p>NEW PERMISSION</p>
           </div>
-          {this.props.permission.requiredClaims && (
-            <ClaimSwitch claims={this.props.permission.requiredClaims} claimType="Required" />
+          {this.state.requiredClaims && (
+            <ClaimSwitch claims={this.state.requiredClaims} claimType="Required" />
           )}
-          {this.props.permission.optionalClaims && (
-            <ClaimSwitch claims={this.props.permission.optionalClaims} claimType="Optional" />
+          {this.state.optionalClaims && (
+            <ClaimSwitch claims={this.state.optionalClaims} claimType="Optional" />
           )}
-          {this.props.permission.closureRequestDTO && (
-            <ClosureSwitch closures={this.props.permission.closureRequestDTO} />
+          {this.state.closureRequestDTO && (
+            <ClosureSwitch closures={this.state.closureRequestDTO} />
           )}
           <div>
             <br />

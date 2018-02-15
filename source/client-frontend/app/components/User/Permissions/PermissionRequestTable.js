@@ -12,19 +12,15 @@ class PermissionRequestTable extends React.Component {
     this.state = {
       checkedA: false,
     };
-
   }
+
   render() {
     return (
       <Paper className="">
         <FormGroup>
           {this.props.permissions.map((permission) => (
             <Paper key={permission.id}>
-
               <PermissionForm
-                handleChange={this.props.handleChange}
-                value={this.props.value}
-                sendPermissionAnswer={this.props.sendPermissionAnswer}
                 permission={permission}
               />
             </Paper>
@@ -37,9 +33,6 @@ class PermissionRequestTable extends React.Component {
 
 PermissionRequestTable.propTypes = {
   permissions: PropTypes.array,
-  handleChange: PropTypes.func,
-  value: PropTypes.string,
-  sendPermissionAnswer: PropTypes.func,
 };
 
 export default PermissionRequestTable;
