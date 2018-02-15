@@ -33,7 +33,11 @@ class PermissionRequestTable extends React.Component {
                 Requesting Provider: {n.requestingProvider}
                 <br />
               </div>
-              <PermissionForm handleChange={this.props.handleChange} value={this.props.value} />
+              <PermissionForm
+                handleChange={this.props.handleChange}
+                value={this.props.value}
+                sendPermissionAnswer={this.props.sendPermissionAnswer}
+              />
             </Paper>
           ), 0)}
         </FormGroup>
@@ -46,6 +50,7 @@ PermissionRequestTable.propTypes = {
   permissions: PropTypes.array,
   handleChange: PropTypes.func,
   value: PropTypes.string,
+  sendPermissionAnswer: PropTypes.func,
 };
 
 export default PermissionRequestTable;

@@ -28,7 +28,7 @@ class PermissionForm extends React.Component {
           <Button
             raised
             color="primary"
-            onClick={() => console.log('clicked to put approval or denial')}
+            onClick={() => this.props.sendPermissionAnswer}
           >
             send answer
           </Button>
@@ -41,6 +41,7 @@ class PermissionForm extends React.Component {
 PermissionForm.propTypes = {
   value: PropTypes.string,
   handleChange: PropTypes.func,
+  sendPermissionAnswer: PropTypes.func,
 };
 
 export default PermissionForm;

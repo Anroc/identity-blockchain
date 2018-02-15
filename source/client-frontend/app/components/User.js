@@ -26,6 +26,7 @@ class User extends Component {
     this.getPermissionRequest = this.getPermissionRequest.bind(this);
     this.putMessageSeen = this.putMessageSeen.bind(this);
     this.putPermissionAnswer = this.putPermissionAnswer.bind(this);
+    this.sendPermissionAnswer = this.sendPermissionAnswer.bind(this);
     this.state = {
       swaggerData: '',
       ethID: '',
@@ -149,9 +150,9 @@ class User extends Component {
       });
   }
 
-  putMessageSeen() {
-    console.log('PUT MESSAGE TO SEEN:', this.state.permissionId);
-    const getUserInformationOptions = {
+  putMessageSeen(messageId) {
+    console.log('PUT MESSAGE TO SEEN:', messageId);
+    const messageSeenOptions = {
       method: 'PUT',
       headers: {
         Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
@@ -164,7 +165,14 @@ class User extends Component {
       credentials: 'include',
     };
 
-    request(`http://srv01.snet.tu-berlin.de:1112/messages/${this.state.messages[0].id}`, getUserInformationOptions);
+    request(`http://srv01.snet.tu-berlin.de:1112/messages/${messageId}`, messageSeenOptions);
+  }
+
+  sendPermissionAnswer(messageId, requiredClaims, optionalClaims, closureRequest) {
+    // put message seen
+    this.putMessageSeen(messageId);
+    // send approval with all the data to endpoint
+    this.putPermissionAnswer(requiredClaims, optionalClaims, closureRequest);
   }
 
   /**
@@ -248,6 +256,7 @@ class User extends Component {
               permissions={this.state.permissions}
               value={this.state.value}
               handleChange={this.handleChange}
+              sendPermissionAnswer={this.sendPermissionAnswer}
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>
