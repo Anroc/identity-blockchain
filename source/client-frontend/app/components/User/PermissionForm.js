@@ -13,6 +13,7 @@ class PermissionForm extends React.Component {
     this.handleLocalChange = this.handleLocalChange.bind(this);
     this.sendPermissionAnswer = this.sendPermissionAnswer.bind(this);
     this.putMessageSeen = this.putMessageSeen.bind(this);
+    this.changeClaim = this.changeClaim.bind(this);
     // all variables important for sending answer to endpoint
     this.state = {
       localValue: '', // approved or deny
@@ -96,6 +97,25 @@ class PermissionForm extends React.Component {
     request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions);
   }
 
+  changeClaim(claimType, key) {
+    console.log('changing claim in props: ', claimType);
+    console.log(key);
+    if (claimType === 'Optional') {
+      this.setState({
+        optionalClaims: {
+          [key]: !this.state.optionalClaims[key],
+        },
+      });
+    } else {
+      this.setState({
+        requiredClaims: {
+          [key]: !this.state.requiredClaims[key],
+        },
+      });
+    }
+    console.log('to ');
+  }
+
   render() {
     return (
       <section>
@@ -104,10 +124,18 @@ class PermissionForm extends React.Component {
             <p>NEW PERMISSION</p>
           </div>
           {this.state.requiredClaims && (
-            <ClaimSwitch claims={this.state.requiredClaims} claimType="Required" />
+            <ClaimSwitch
+              claims={this.state.requiredClaims}
+              claimType="Required"
+              changeClaim={this.changeClaim}
+            />
           )}
           {this.state.optionalClaims && (
-            <ClaimSwitch claims={this.state.optionalClaims} claimType="Optional" />
+            <ClaimSwitch
+              claims={this.state.optionalClaims}
+              claimType="Optional"
+              changeClaim={this.changeClaim}
+            />
           )}
           {this.state.closureRequestDTO && (
             <ClosureSwitch closures={this.state.closureRequestDTO} />

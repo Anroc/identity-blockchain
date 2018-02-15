@@ -13,12 +13,15 @@ class ClaimSwitch extends React.Component {
   }
 
   componentDidMount() {
+
+    /*
     Object.entries(this.props.claims).forEach(([key, value]) => {
       this.setState({
         [key]: value,
       });
       console.log(`setting state for: ${key} to ${value}`);
     });
+    */
     this.isClaimEmpty();
   }
 
@@ -41,8 +44,8 @@ class ClaimSwitch extends React.Component {
               <FormControlLabel
                 control={
                   <Switch
-                    checked={this.state[key]}
-                    onChange={() => this.setState({ [key]: !this.state[key] })}
+                    checked={this.props.claims[key]}
+                    onChange={() => this.props.changeClaim(this.props.claimType, key)}
                   />
                 }
                 label={key}
@@ -58,6 +61,7 @@ class ClaimSwitch extends React.Component {
 ClaimSwitch.propTypes = {
   claimType: PropTypes.string,
   claims: PropTypes.object,
+  changeClaim: PropTypes.func,
 };
 
 export default ClaimSwitch;
