@@ -17,12 +17,11 @@ This following sections descriptes the different provider/client applications an
 \subsection{Motivation}
 Since we are dealing with provider which are providing user information data we decided to implement a normal client-server architecture. Here we can use all the advantages TCP is providing us like transport layer encryption with SSL/TLS and the reliability/inorder-delivery TCP comes with. Where we would have to deal with our own encrypt-scheme if we would use UDP with peer-to-peer communication and port discovery, even if peer-to-peer communication seems like the more fitting solution since we are already in the domain of blockchain and decentralized applications. 
 
-Choosing a client-server architecture comes with the drawback that the government service can not notify the client about incoming messages. The communication via the blockchain is not possible since the provider have not permission to write to it. To overcome this challenge we implemented a discovery service where each components registers to on bootstrap. (See section \ref{seciton:discoveryService}).
+Choosing a client-server architecture comes with the drawback that the government service can not notify the client about incoming messages. The communication via the blockchain is not possible since the provider have not permission to write to it. To overcome this challenge we implemented a discovery service where each components registers to on bootstrap. (See section \ref{sec:discoveryService}).
 
 We further decided to design our services RESTful (Representational state transfer). This in mind spring boot\footnote{\url{https://projects.spring.io/spring-boot/}} is a good choice in the Java domain for rapid prototyping. Spring boot also offers good integration for database adapters and spring security\footnote{\url{https://projects.spring.io/spring-security/}} a authentication and authorization framework. 
 
 \subsubsection{Tools and Technologies}
-
 Besides Sprint Boot and Spring Security we further committed us to the following technology stack: 
 
 \begin{itemize}
@@ -41,55 +40,70 @@ Further the following technologies are used for testing:
 \item Mockito\footnote{\url{http://site.mockito.org/}}: Mocking library to make unit and rest test more modular and encapsulated from outstanding components. 
 \end{itemize}
 
-\subsection{Discovery Service}
-\label{sec:discoveryService}
-As mentioned in the previous section the Discovery Service is the result of a client-server architecture in a peer-to-peer environment. But it further serves additional purpose for holding and distributing RSA public keys, discovering domain names, where to find the exposed API and if the requested service is online. 
-
-While all the stored information is public visible no sensitive data is exposed in the Discovery Service. It just provides connection information and serves as a message broker. Each stored entry needs to be signed by the author with the private key bound to his ethereum address. All unauthorized requests are rejected by the service. By ensuring the authenticity of each entry creation or update it is ensured that no service spoofing can happen. Only the holder of the private key bound to his ethereum address can update his connection information.
-
-\subsubsection{Beats}
-Beats are the messages that are routed by the Discovery Service. A \textit{beat} a small package containing an event type describing that kind of message it is and a subject field referencing the location where the new information is to find. Each beat is uniquely identified by the combination of recipient ethereum address and the current beat number (incrementing per beat). 
-
-There are two types of subjects: The URL references a API endpoint where new or updates information are now present. The recipient is requested to request this API endpoint to update his information state. The other kind of subject is a ethereum address: The recipient is requested to query the blockchain for the given address to process the information stored at this address. 
-
-On registration entities start to periodically (each 10 seconds) ping the Discovery Service to wait for new incoming beats. Since the discovery service itself is not a trusted entity, each beat gets verified before processing and it is checked that the signature matches the senders ethereum address.
-
-\subsubsection{PKI}
-
-A Public-Key-Infrastructure (PKI) is an infrastructure to bound identities to public keys. This usually relay on trust in either a Certificate Authority or on other users trusting this public key. 
-
-Since each entity stores also his RSA public key into the discovery service and sign this entry with his EC private key, the trust of the given RSA public key is tightly bound this EC key pair. If the RSA key gets stolen it can be simply replaced in the Discovery Service. If the EC key gets stolen both key pairs need to be regenerated. How we establish trust in the EC key pair is explained in the next section.
-
-\subsection{Register Contract}
+\subsection{Components}
 \begin{figure}
-\includegraphics[width=\textwidth]{impl/RegisterContractImpl.png}
+\includegraphics[width=0.7\textwidth]{impl/ComponentDiagram.png}
 \centering
-\caption{Implementation of the Register Contract flow. Since it was not possible (time limitations) to include the eID verification mechanism, we implemented the in-person verification. Here the newly register user has to go the citizen office to how his ID card to gets his ethereum address, RSA public key and smart contract address verified.}
-\label{fig:registerContractImpl}
+\caption{Overview about the components of an individual service and their exposed endpoints. Left is the provider service providing also a provider API and provider API client. Right the user service implementing the client API client.}
+\label{fig:componentDiagram}
 \end{figure}
 
-To start the register process the user services exposes the unsecured resources "Account" which provides action endpoints for login, logout, register and QR-code retrieval (later more on that). The user service application is planned to run locally on the users host machine. This would secure it from outside access and make the distribution easier. Since we, because of time limitations, didn’t manage to implement a key recovery mechanism there might be an Denial-of-Service attack vector possible where a malicious application running also locally on the users host machine, call periodically the register-endpoint, preventing the user from accessing his information because his keys gets reshuffled every time. Some could think about disabling this register endpoint after successful creating a key pair, but since this is a prototype under developing this endpoint needs to be open and accessible. 
+In figure \ref{fig:componentDiagram} you can see an overview about the components in the provider and user service. All boxes that are drown over the border are representations of exposed endpoints or clients and inside the box are the core components listed.
 
-To register a user in our system he first needs to generate a RSA key-pair and create a new wallet. We need the RSA key-pair to later encrypt sensitive data that is send via the blockchain since the blockchain itself is a public ledger and for everyone readable. The key-pair created by web3j does not provide any confidentiality since the ECDSA (Elliptic Curve Digital Signature Algorithm) can only be used to generate and verify signatures. So the users creates a 4096-bit security strong RSA key pair. So ensure that this key indeed belongs to the EC key-pair we generate a signature, as mentioned previously, over the RSA public key with the EC private key. 
+\subsubsection{Internal components}
+The crypt engine is the main framework for encrypting, decrypting, signing, validating signatures and generating hashes. It provides methods for symmetric and asymmetric encryption. It uses bouncy castles as security provider to generate keys and handle cryptography. To generate elliptic curve signatures it uses the framework provided by web3j. 
 
-The ethereum address itself is a just a representation of the EC public key. To now register the user that is bound to his ethereum address we setup a register contract. This register contract is just a public representation of the unverified user and contains no more information then the users ethereum address and a flag if the user is approved. This flag can only be set by the trusted government. 
+We are using spring data to provide a very easy interface to couchbase, our database storage (section \ref{sec:database}). The keychain is the current session object holding the RSA key-pair, EC key-pair and some other meta information about the current state of the service. This objects gets cleared if the services logs out and restored if the service logs in (section \ref{sec:registerContract}). 
 
-As shown in figure \ref{fig:registerContractImpl} the user then creates a QR-Code (step 3) to encode his ethereum address, address of the smart contract and his public key into it.\footnote{It is not necessary to encode the public key into the QR-code at all since the Discovery Service also stores this information, but we can save an additional request from the government side to discover it by providing it in the register flow directly.} The QR-code generation is done with the help of the Xzing library and exposed via an rest endpoint /account/qr-code. The idea to generate a QR-code is simply that ethereum addresses are quite hard to type and since the user has to go to the citizen office in person he might as well just show is representative QR-code. 
+\subsubsection{User API}
+\label{sec:userAPI}
+The user api provided by a provider service and requested by the user service defines the central entry point of client requests to a provider. The user and the provider API (section \ref{sec:providerAPI} is implemented as a normal Java interface. The provider service is implementing this interface and mapping the defined methods to REST endpoints which then are bounded to a predefined paths. The user service on the other hand, extends this interface in a new interface which then serves as a Feign adapter bound to the same predefined paths. This is really convenient because Feign needs an annotated interface to build an REST client out if it. We only have to bind Feign to the same resources paths the provider is exposing so that they can communicate to each other. 
 
-The android application build for the purpose of scanning the QR-code, generating a signature over the retrieved information and sending it to the government service, needs further know which user is currently trying to be verified to the system. To do so the citizen office types in the user information found on the ID card, for example given name, family name, etc. to then send a authorized requests to the government which then queries its database for a user with the same information and returns his UUID. 
+\subsubsection{Provider API}
+\label{sec:providerAPI}
+The provider API is a unified interface which each provider is offering in form of REST endpoints. Each provider builds also a Feign client (see section \ref{sec:userAPI}) to talk to other providers.  Via this API provider an interact with each other to exchange requests or offering services. Notably is that each request needs to be authenticated via a SignedRequest (see section \ref{sec:ecdsa}) to ensure that only authenticated entities request this API. 
 
-This requests (to the provider services) is backed by a basic authentication mechanism which is not optimal because the password and user name is transmitted in plain text if no transport layer encryption is used. The plan was to change this mechanism since to a more secure scheme like Json-Web-Token (JWT) authentication, but that would require changes in other components and was also out of scope of the core focus of this project. 
+\subsubsection{REST API}
+The rest API is the connection to the frontend. Here the frontend can ask for user resources and claims to display them a web admin or the end user. This requests are backed by a basic authentication mechanism which is not optimal because the password and user name is transmitted in plain text if no transport layer encryption is used. The plan was to change this mechanism since to a more secure scheme like Json-Web-Token (JWT) authentication, but that would require changes in other components and was also out of scope of the core focus of this project. 
 
-With the retrieved UUID the application can then make an POST request to the user resource that tries to get verified and updates the user for his public key, ethereum address and register contract address. This requests needs to be signed by the EC-key of the government to ensure the validity of this request. To do so we implemented a SignedRequest object that can hold a generic payload and the EC Digital-Signature over this payload. This payload but needs to hold the ethereum address of the sender (similar to ethereum transactions). A signature is then build in the following way: 
+\subsubsection{HeartBeatAdapter and EBA}
+Ethereum Blockchain Adapter (EBA) is the entry point to communicate with the blockchain. We defined an interface (EBAInterface) between the blockchain component and the core-logic to develop in a parallel fashion. Relate to the section \ref{sec:eba} where everything related to the blockchain is explained.
+
+The HeartBeatAdapter is the connection to the Discovery Service (section \ref{sec:discoveryService}). A service can register itself to the discovery service, create or subscribe to new beats.
+
+\subsection{Notable methods}
+The follow sections describe problem and challenges that occurred during development.
+
+\subsubsection{Serializing and deserialization of arbitrary objects}
+\label{sec:serialobject}
+
+Serialization of arbitrary objects is a challenge in systems where the order of serialization is imported (e.g. building a signature via hashing over the serialization outcome). A common serialization method is the JSON-String serialization, where an arbitrary object state gets converted into a JSON representation. This can be done by (for example) the Jackson object mapper\footnote{\url{https://github.com/FasterXML/jackson}}. We need, however, define the order  in which each field of the object gets serialized. Serializing all objects into JSON representation allows us to serialize the objects in the same way all the time, no matter if it is a signed request against the blockchain or a response to the frontend. 
+
+The other approach is to use Javas serialization API. Classes that implement "Serializable" will then be converted to a stream which then can be collected to a byte array. Since Java serialization will take care of the serialization order by itself we don’t have to bother with that. 
+
+However, we need to find a unique way to serialize objects since building a hash-based signature via objects must be done always in the same way, no matter on which system the signing or verification of the signature is happening. We decided to use JSON serialization approach (with explicitly defining the order in which properties shell be serialized) since it is language independent, easier to implement and to debug, even if it is not as efficient as raw byte representation. How signatures are build and verified is described in the next section \ref{sec:ecdsa}. 
+
+The implementation of sets in the Java Virtual Machine needed also consideration. Sets are of nature unordered and it depends on the order of object initialization on the heap to define the real order the elements returned in. If you want the same order of object each time, you need to use lists. Building a hash over an object holding sets is obviously a bad idea since the order of attributes may be different from machine to machine, so the hash will be a different.  
+
+Another problem related to serialization was that variables of type "Object" will be converted into a string representation and on deseralization this string will not be converted back in the original type since "String" itself extends "Object". This became a problem on serialization of LocalDateTime values, which were not parsed back into a LocalDateTime. 
+
+To temporary handle the different conversions we implemented a "ValueHolder", a simple class separating LocalDateTime values from generic Object values. By converting explicit into a LocalDateTime the Jackson converter recognizes the string representation and deserialize it into the correct object representation. Future improvements can be made by including the target class of the serialized value as meta information, so that in deseralization the value can be parsed back to its original class. Further the object mapper need to be adapted adequately. 
+
+\subsubsection{ECDSA and SignedRequests}
+\label{sec:ecdsa}
+
+Elliptic Curve Digital Signature Algorithm (ECDSA) in the SECP256k1 configuration is used by Bitcoin and Ethereum to sign transaction to the blockchain. \cite{mayer2016ecdsa} This ensures integrity and authenticity to the sender and the content of the transaction. 
+
+To populate this security properties also between services we use ECDSA also for inter service communication. This is done by generating a so called "signedRequest". This object can hold a generic payload and the EC Digital-Signature over this payload. This payload but needs to include the ethereum address of the sender (similar to ethereum transactions). A signature is then build in the following way: 
 
 \begin{enumerate}
-\item The payload gets converted to a JSON with the help of object mapper. It is imported to denote the order of serialization so that this objects gets serialized in the same way on other systems. 
+\item The payload (holding also the ethereum address of the signer) gets converted to a JSON as defined in section \ref{sec:serialobject}
 \item A SHA-256 hash is build over the given JSON
-\item This hash will then be signed by the ECDSA provided by web3j
+\item This hash will then be signed by the ECDSA and the private key (EC) of the signer
 \item The resulting signature gets appended in the signed request for validation
 \end{enumerate}
 
-The validator on the other then can then:
+\noindent The validator on the other hand can validate the signature by applying the following steps:
 
 \begin{enumerate}
 \item Convert the payload to a JSON with the same object mapper configuration as used for serialization.
@@ -99,10 +113,68 @@ The validator on the other then can then:
 \end{enumerate}
 
 If we would not have include the ethereum address of the sender inside the signed payload an malicious attacker may have exchanged it against a valid signature address. 
+To validate and build signatures over Java objects we are using the Jackson object mapper module \lstinline{jackson-datatype-jsr310} in version \lstinline{2.8.10}. This module is further configuration to write time values as a time stamp in the ISO-8601 format. 
 
-The government then uses the information about the user to update the register contract to set the approval flag to true. So that every party in the system observing the blockchain can verify that the user holding the private key for the ethereum address is indeed verified by the government. 
+\subsection{Discovery Service}
+\label{sec:discoveryService}
+As mentioned in the previous section the Discovery Service is the result of a client-server architecture in a peer-to-peer environment. But it further serves additional purpose for holding and distributing RSA public keys, discovering domain names, where to find the exposed API and if the requested service is online. 
 
-It also creates a new signed Beat with the information "NEW\_CLAIMS" addressed at the users ethereum address to notify the user to request its provider API to retrieve the user claims. 
+While all the stored information is public visible no sensitive data is exposed in the Discovery Service. It just provides connection information and serves as a message broker. Each stored entry needs to be signed by the author with the private key bound to his ethereum address. All unauthorized requests are rejected by the service. By ensuring the authenticity of each entry creation or update it is ensured that no service spoofing can happen. Only the holder of the private key bound to his ethereum address can update his connection information.
 
-The provider API is a unified interface which each provider is offering. Clients can implement it to request them under defined URLs and provider can implement it to offer these endpoints. Notably is that each request needs to be authenticated via a SignedRequest to ensure that only authenticated entities request this API. 
+\subsubsection{Beats}
+\label{sec:beats}
+Beats are the messages that are routed by the Discovery Service. A \textit{beat} a small package containing an event type describing that kind of message it is and a subject field referencing the location where the new information is to find. Each beat is uniquely identified by the combination of recipient ethereum address and the current beat number (incrementing per beat). 
 
+There are two types of subjects: The URL references a API endpoint where new or updates information are now present. The recipient is requested to request this API endpoint to update his information state. The other kind of subject is a ethereum address: The recipient is requested to query the blockchain for the given address to process the information stored at this address. 
+
+On registration entities start to periodically (each 10 seconds) ping the Discovery Service to wait for new incoming beats. Since the discovery service itself is not a trusted entity, each beat gets verified before processing and it is checked that the signature matches the senders ethereum address.
+
+\subsubsection{PKI}
+\label{sec:pki}
+
+A Public-Key-Infrastructure (PKI) is an infrastructure to bound identities to public keys. This usually relay on trust in either a Certificate Authority or on other users trusting this public key. 
+
+Since each entity stores also his RSA public key into the discovery service and sign this entry with his EC private key, the trust of the given RSA public key is tightly bound this EC key pair. If the RSA key gets stolen it can be simply replaced in the Discovery Service. If the EC key gets stolen both key pairs need to be regenerated. How we establish trust in the EC key pair is explained in the next section.
+
+\subsection{Register Contract}
+\label{sec:registerContract}
+\begin{figure}
+\includegraphics[width=\textwidth]{impl/RegisterContractImpl.png}
+\centering
+\caption{Implementation of the Register Contract flow. Since it was not possible (time limitations) to include the eID verification mechanism, we implemented the in-person verification. Here the newly register user has to go the citizen office to how his ID card to gets his ethereum address, RSA public key and smart contract address verified.}
+\label{fig:registerContractImpl}
+\end{figure}
+
+To start the register process the user services exposes the unsecured resources "Account" which provides action endpoints for login, logout, register and QR-code retrieval (later more on that), where the web client can make a HTTP-POST call to "account/register" with a newly set password.
+This call will trigger three main actions:
+
+\begin{enumerate}
+\item Creating a 4096-bit security RSA key pair
+\item Creating a new wallet containing EC-Key Pair 
+\item Setting up the register contract 
+\end{enumerate}
+
+\subsubsection{Creating RSA and EC key pairs}
+We need the RSA key-pair to later encrypt sensitive data that is send via the blockchain since the blockchain itself is a public ledger and for everyone readable. The key-pair created by web3j does not provide any confidentiality since the ECDSA (Elliptic Curve Digital Signature Algorithm) can only be used to generate and verify signatures (see section \ref{sec:ecdsa}). So the users creates a 4096-bit strong RSA key pair (step 1.1). So ensure that this key indeed belongs to the newly generated EC key-pair (step 1.2) we generate a signature, as mentioned previously (section \ref{sec:pki}), over the RSA public key with the EC private key and publish this information to the discovery service.
+
+We further also save our keys, password based symmetric encrypted, to our data directory under \lstinline|{$USER.HOME}./ethereum/blockchain-identity/|\footnote{The "./ethereum" directory is the default directory to save all ethereum related files.}. If the user later logs out, we can simply remove the current RSA and EC keys from memory and if the user logs in again, providing his password, we can decrypt the wallet files and read the RSA and EC keys back in memory. 
+
+The user service application is planned to run locally on the users host machine. This would secure it from outside access. Since we, because of time limitations, didn’t manage to implement a key recovery mechanism there might be an Denial-of-Service attack vector possible where a malicious application running also locally on the users host machine, call periodically the register-endpoint, preventing the user from accessing his information because his keys gets reshuffled every time. Some could think about disabling this register endpoint after successful creating a key pair, but since this is a prototype under developing this endpoint needs to be open and accessible. 
+
+\subsubsection{Deploying the register contract}
+The ethereum address itself is a just a representation of the EC public key. To now register the user that is bound to his ethereum address we setup a register contract (step 2.). This register contract is just a public representation of the unverified user and contains no more information then the users ethereum address and a flag if the user is approved. This flag can only be set by the trusted government. 
+
+\subsubsection{Verifying the user}
+As shown in figure \ref{fig:registerContractImpl} the user then creates a QR-Code (step 3.) to encode his ethereum address, address of the smart contract and his public key into it.\footnote{It is not necessary to encode the public key into the QR-code at all since the Discovery Service also stores this information, but we can save an additional request from the government side to discover it by providing it in the register flow directly.} The QR-code generation is done with the help of the Xzing library and exposed via an rest endpoint "/account/qr-code". The idea to generate a QR-code is simply that ethereum addresses are quite hard to type and since the user has to go to the citizen office in person he might as well just show is representative QR-code. 
+
+The citizen office verifies that the user is indeed who he claims to be with the use of the provided ID card. The android application build for the purpose of scanning the QR-code, generating a signature over the retrieved information and sending it to the government service, needs further know which user is currently trying to be verified to the system. To do so the citizen office types in the user information found on the ID card, for example given name, family name, etc. to then send a authorized requests to the government which then queries its database for a user with the same information and returns his UUID (step 4.). 
+
+With the retrieved UUID the application can then make a signed POST request to the user resource that tries to get verified and updates the user for his public key, ethereum address and register contract address (step 5.).
+
+\subsubsection{Finalize user registration}
+The government then uses the information about the user to update the register contract to set the approval flag to true (step 6.). So that every party in the system observing the blockchain can verify that the user holding the private key for the ethereum address is indeed verified by the government. If each provider checks that he is only communicating with verified users we are preventing sibyl attacks in the most effective way possible. There would be no need to use CAPTURES since only verified users are able to interact with the system. 
+
+It also creates a new signed beat (section \ref{sec:beats}, step 7.1 and 7.2) with the information "NEW\_CLAIMS" addressed at the users ethereum address to notify the user to request its provider API (section \ref{sec:providerAPI} to retrieve the claims stored at the government about him (step 8.). 
+
+Since a new user is now verified in the system other provider shell also send the user their claims about him. That point was really difficult to implement and was left open for further work since there are open unanswered questions: How do provider assign the new ethereum address of the newly registered user to any user of their system (you can not broadcast any user claims over the network because of privacy reasons)? How to ensure that provider send all their claims (since they are not trusted they might be malicious)? 
+In the end we said that the user has to manually notify provider about his presents in the system.
