@@ -5,10 +5,83 @@ import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
 import ClaimSwitch from './Permissions/ClaimSwitch';
 import ClosureSwitch from './Permissions/ClosureSwitch';
+import request from '../../auth/request';
 
 class PermissionForm extends React.Component {
+  constructor() {
+    super();
+    this.handleLocalChange = this.handleLocalChange.bind(this);
+    this.sendPermissionAnswer = this.sendPermissionAnswer.bind(this);
+    this.putMessageSeen = this.putMessageSeen.bind(this);
+    // all variables important for sending answer to endpoint
+    this.state = {
+      localValue: '', // approved or deny
+      requiredClaims: {},
+      optionalClaims: {},
+      closureRequestDTO: [],
+    };
+  }
+
   componentDidMount() {
   }
+
+  handleLocalChange(event, value) {
+    this.setState({
+      localValue: value,
+    });
+    console.log('changing state of localValue to ', value);
+  }
+
+  putMessageSeen(messageId) {
+    console.log('PUT MESSAGE TO SEEN:', messageId);
+    const messageSeenOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        seen: true,
+      }),
+      credentials: 'include',
+    };
+
+    request(`http://srv01.snet.tu-berlin.de:1112/messages/${messageId}`, messageSeenOptions);
+  }
+
+  sendPermissionAnswer(messageId, requiredClaims, optionalClaims, closureRequest) {
+    // put message seen
+    this.putMessageSeen(messageId);
+    // send approval with all the data to endpoint
+    this.putPermissionAnswer(requiredClaims, optionalClaims, closureRequest);
+  }
+
+  /**
+   * TODO currently gives error
+   */
+  putPermissionAnswer(requiredClaims, optionalClaims, closureRequestDTO) {
+    const getUserInformationOptions = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: this.state.permissionId,
+        permissionRequestDTO: {
+          requiredClaims,
+          optionalClaims,
+          closureRequestDTO,
+        },
+      }),
+      credentials: 'include',
+    };
+    console.log(`Permission answer: ${JSON.stringify(getUserInformationOptions)}`);
+    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions);
+  }
+
   render() {
     return (
       <section>
@@ -36,8 +109,8 @@ class PermissionForm extends React.Component {
           <RadioGroup
             aria-label="Your answer:"
             name="answer"
-            value={this.props.value}
-            onChange={this.props.handleChange}
+            value={this.state.localValue}
+            onChange={this.handleLocalChange}
           >
             <FormControlLabel value="APPROVE" control={<Radio />} label="APPROVE" />
             <FormControlLabel value="DENY" control={<Radio />} label="DENY" />
@@ -46,7 +119,7 @@ class PermissionForm extends React.Component {
           <Button
             raised
             color="primary"
-            onClick={() => this.props.sendPermissionAnswer}
+            onClick={this.sendPermissionAnswer}
           >
             send answer
           </Button>
@@ -57,9 +130,6 @@ class PermissionForm extends React.Component {
 }
 
 PermissionForm.propTypes = {
-  value: PropTypes.string,
-  handleChange: PropTypes.func,
-  sendPermissionAnswer: PropTypes.func,
   permission: PropTypes.object,
 };
 
