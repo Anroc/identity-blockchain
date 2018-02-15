@@ -430,7 +430,7 @@ class Bank extends Component{
 
   prepareClosureOutput(c){
     let returnString = this.prepareClaimOutput(c);
-    if(!c.signedClosures.isEmpty()){
+    if (!c.signedClosures.isEmpty()){
 
     }
   };
@@ -444,63 +444,58 @@ class Bank extends Component{
       <article>
         <Paper>
           <section>
-            <div align='center'>
-              <ExpansionPanel>
-                <ExpansionPanelSummary>
-                  <Typography>Create new permission request</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <div>
-                    <div>
-                      <FormControl
-                        aria-describedby="ethAddress-text"
-                        style={{ marginBottom: '15px' }}
-                      >
-                        <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
-                        <Input id="ethAddress" value={this.state.ethAddress} onChange={this.handleChange}/>
-                      </FormControl>
-                    </div>
-                    <ExpansionPanel>
-                      <ExpansionPanelSummary>
-                        <Typography>Required Attributes</Typography>
-                      </ExpansionPanelSummary>
-                      <ExpansionPanelDetails>
-                        <form>
-                          {this.createUIRequiredAttributes()}
-                          <Button
-                            fab
-                            mini
-                            color="primary"
-                            onClick={this.addClickRequiredAttributes.bind(this)}
-                          ><AddIcon/></Button>
-                        </form>
-                      </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                    <ExpansionPanel>
-                      <ExpansionPanelSummary>
-                        <Typography>Optional Attributes</Typography>
-                      </ExpansionPanelSummary>
-                      <ExpansionPanelDetails>
-                        <form>
-                          {this.createUIOptionalAttributes()}
-                          <Button
-                            fab
-                            mini
-                            color="primary"
-                            onClick={this.addClickOptionalAttributes.bind(this)}
-                          ><AddIcon/></Button>
-                        </form>
-                      </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                    <Button
-                      raised
-                      onClick={this.handleSubmit}
-                      style={{ marginTop: '15px', marginLeft: '25%' }}
-                    >Submit</Button>
-                  </div>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            </div>
+            <ExpansionPanel>
+              <ExpansionPanelSummary>
+                <Typography>Create new permission request</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails
+                style={{ display: 'flex', flexWrap: 'wrap'}}>
+                <FormControl
+                  aria-describedby="ethAddress-text"
+                  style={{ marginBottom: '15px', minWidth: '80%' }}
+                >
+                  <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
+                  <Input id="ethAddress" value={this.state.ethAddress} onChange={this.handleChange}/>
+                </FormControl>
+                <ExpansionPanel>
+                  <ExpansionPanelSummary>
+                    <Typography>Required Attributes</Typography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <form>
+                      {this.createUIRequiredAttributes()}
+                      <Button
+                        fab
+                        mini
+                        color="primary"
+                        onClick={this.addClickRequiredAttributes.bind(this)}
+                      ><AddIcon/></Button>
+                    </form>
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+                <ExpansionPanel>
+                  <ExpansionPanelSummary>
+                    <Typography>Optional Attributes</Typography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <form>
+                      {this.createUIOptionalAttributes()}
+                      <Button
+                        fab
+                        mini
+                        color="primary"
+                        onClick={this.addClickOptionalAttributes.bind(this)}
+                      ><AddIcon/></Button>
+                    </form>
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+                <Button
+                  raised
+                  onClick={this.handleSubmit}
+                  style={{ marginTop: '15px', marginLeft: '25%' }}
+                >Submit</Button>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
           </section>
           <section>
             <ExpansionPanel>
