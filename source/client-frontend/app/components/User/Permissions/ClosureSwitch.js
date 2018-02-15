@@ -13,11 +13,6 @@ class ClosureSwitch extends React.Component {
   }
 
   componentDidMount() {
-    this.props.closures.forEach((item) => {
-      this.setState({
-        [item.claimID]: item.approved,
-      });
-    });
     this.isClaimEmpty();
   }
 
@@ -40,11 +35,11 @@ class ClosureSwitch extends React.Component {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={this.state[item.claimID]}
-                      onChange={() => this.setState({ [item.claimID]: !this.state[item.claimID] })}
+                      checked={item.approved}
+                      onChange={() => this.props.changeClosure(item)}
                     />
                   }
-                  label={this.state[item.claimID] ? 'Yes' : 'No'}
+                  label={item.approved ? 'Yes' : 'No'}
                 />
               </div>
             ), 0)}
@@ -57,6 +52,7 @@ class ClosureSwitch extends React.Component {
 
 ClosureSwitch.propTypes = {
   closures: PropTypes.array,
+  changeClosure: PropTypes.func,
 };
 
 export default ClosureSwitch;

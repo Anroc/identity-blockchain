@@ -1,4 +1,5 @@
 import React from 'react';
+import update from 'react-addons-update';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import Radio, { RadioGroup } from 'material-ui/Radio';
@@ -14,6 +15,7 @@ class PermissionForm extends React.Component {
     this.sendPermissionAnswer = this.sendPermissionAnswer.bind(this);
     this.putMessageSeen = this.putMessageSeen.bind(this);
     this.changeClaim = this.changeClaim.bind(this);
+    this.changeClosure = this.changeClosure.bind(this);
     // all variables important for sending answer to endpoint
     this.state = {
       localValue: '', // approved or deny
@@ -116,6 +118,24 @@ class PermissionForm extends React.Component {
     console.log('to ');
   }
 
+  changeClosure(closureItem) {
+    console.log('changing closure value', closureItem);
+    const newApproved = !closureItem.approved;
+    console.log('new approved: ', newApproved);
+    update(this.state.closureRequestDto, {
+      [closureItem]: {
+        approved: {
+          newApproved,
+        },
+      },
+    });
+    /*
+    this.setState({
+      closureRequestDTO: update(this.state.closureRequestDTO, { closureItem }),
+    });
+    */
+  }
+
   render() {
     return (
       <section>
@@ -138,7 +158,10 @@ class PermissionForm extends React.Component {
             />
           )}
           {this.state.closureRequestDTO && (
-            <ClosureSwitch closures={this.state.closureRequestDTO} />
+            <ClosureSwitch
+              closures={this.state.closureRequestDTO}
+              changeClosure={this.changeClosure}
+            />
           )}
           <div>
             <br />
