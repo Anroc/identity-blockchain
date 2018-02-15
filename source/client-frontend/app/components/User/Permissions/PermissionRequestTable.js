@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Paper from 'material-ui/Paper';
-import Button from 'material-ui/Button';
 import { FormGroup } from 'material-ui/Form';
 import ClaimSwitch from './ClaimSwitch';
 import ClosureSwitch from './ClosureSwitch';
+
+import PermissionForm from '../PermissionForm';
 
 class PermissionRequestTable extends React.Component {
 
@@ -13,6 +14,7 @@ class PermissionRequestTable extends React.Component {
     this.state = {
       checkedA: false,
     };
+
   }
   render() {
     return (
@@ -29,7 +31,9 @@ class PermissionRequestTable extends React.Component {
               <div>
                 <br />
                 Requesting Provider: {n.requestingProvider}
+                <br />
               </div>
+              <PermissionForm handleChange={this.props.handleChange} value={this.props.value} />
             </Paper>
           ), 0)}
         </FormGroup>
@@ -40,6 +44,8 @@ class PermissionRequestTable extends React.Component {
 
 PermissionRequestTable.propTypes = {
   permissions: PropTypes.array,
+  handleChange: PropTypes.func,
+  value: PropTypes.string,
 };
 
 export default PermissionRequestTable;

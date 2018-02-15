@@ -223,15 +223,6 @@ class User extends Component {
         </section>
         <ExpansionPanel>
           <ExpansionPanelSummary>
-            <Typography>Anfragen</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <PermissionRequestTable permissions={this.state.permissions} />
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
-
-        <ExpansionPanel>
-          <ExpansionPanelSummary>
             <Typography>General information</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
@@ -250,45 +241,61 @@ class User extends Component {
 
         <ExpansionPanel>
           <ExpansionPanelSummary>
-            <Typography>Messages</Typography>
+            <Typography>Permission Requests</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <div>
-              <section>
-                <Button
-                  onClick={this.putMessageSeen}
-                >
-                  PUT auf messages, sodass seen auf true gesetzt wird
-                </Button>
-              </section>
-            </div>
-            <div>
-              <PermissionForm handleChange={this.handleChange} value={this.state.value} />
-            </div>
-            <div>
-              <MessageSection getMessages={this.getMessages} messages={this.state.messages} />
-            </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
-
-        <ExpansionPanel>
-          <ExpansionPanelSummary>
-            <Typography>Permissions</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <section>
-              <Button
-                onClick={this.putPermissionAnswer}
-              >
-                PUT approval oder denial auf 1112/permissions/id
-              </Button>
-            </section>
-            <PermissionsSection
-              getPermissionRequest={this.getPermissionRequest}
+            <PermissionRequestTable
               permissions={this.state.permissions}
+              value={this.state.value}
+              handleChange={this.handleChange}
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>
+
+        {false && (
+          <div>
+            <ExpansionPanel>
+              <ExpansionPanelSummary>
+                <Typography>Messages</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <div>
+                  <section>
+                    <Button
+                      onClick={this.putMessageSeen}
+                    >
+                      PUT auf messages, sodass seen auf true gesetzt wird
+                    </Button>
+                  </section>
+                </div>
+                <div>
+                  <PermissionForm handleChange={this.handleChange} value={this.state.value} />
+                </div>
+                <div>
+                  <MessageSection getMessages={this.getMessages} messages={this.state.messages} />
+                </div>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+
+            <ExpansionPanel>
+              <ExpansionPanelSummary>
+                <Typography>Permissions</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <section>
+                  <Button
+                    onClick={this.putPermissionAnswer}
+                  >
+                    PUT approval oder denial auf 1112/permissions/id
+                  </Button>
+                </section>
+                <PermissionsSection
+                  getPermissionRequest={this.getPermissionRequest}
+                  permissions={this.state.permissions}
+                />
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          </div>)}
       </article>
     );
   }

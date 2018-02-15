@@ -12,9 +12,8 @@ class PermissionForm extends React.Component {
       <section>
         <FormControl component="fieldset" required error>
           <FormLabel component="legend">
-            Incoming Permission Request:
+            Send answer:
             <br />
-            Bank wants to know: FAMILY_NAME
           </FormLabel>
           <RadioGroup
             aria-label="Your answer:"
