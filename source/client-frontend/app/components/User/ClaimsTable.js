@@ -10,6 +10,13 @@ class ClaimsTable extends Component {
     super();
   }
 
+  getPayload(payload) {
+    const tv = payload.timeValue;
+    if (payload.value === undefined)
+      return `${tv[0]}.${tv[1]}.${tv[2]} ${tv[3]}:${tv[4]}:${tv[5]}`;
+    return payload.value;
+  }
+
   render() {
     return (
       <section>
@@ -28,12 +35,13 @@ class ClaimsTable extends Component {
             <TableBody>
               {this.props.claims.map((n) => (
                 <TableRow key={n.id}>
-                  <TableCell>{n.id}</TableCell>
-                  <TableCell numeric>{n.claimValue.payload}</TableCell>
-                  <TableCell numeric>{n.provider.name}</TableCell>
-                  <TableCell numeric>{n.claimValue.payloadType}</TableCell>
-                  <TableCell>{new Date(n.modificationDate).toDateString()}</TableCell>
-                  <TableCell numeric>{n.provider.ethID}</TableCell>
+                  <TableCell><div>{n.id}</div></TableCell>
+                  <TableCell numeric><div>{n.claimValue.payload.value !== undefined? n.claimValue.payload.value :
+                    n.claimType.payload.timeValue[0]}</div></TableCell>
+                  <TableCell numeric><div>{n.provider.name}</div></TableCell>
+                  <TableCell numeric><div>{n.claimValue.payloadType}</div></TableCell>
+                  <TableCell><div>{new Date(n.modificationDate).toDateString()}</div></TableCell>
+                  <TableCell numeric><div>{n.provider.ethID}</div></TableCell>
                 </TableRow>
               ))}
             </TableBody>
