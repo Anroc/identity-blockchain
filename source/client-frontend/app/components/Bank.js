@@ -63,6 +63,7 @@ class Bank extends Component{
         timeValue: '',
         value: '',
       },
+      availableClaimsForEthAddress: [],
     };
 
     let id = 0;
@@ -84,6 +85,7 @@ class Bank extends Component{
     this.handleChangeClosureCreationClaimValue = this.handleChangeClosureCreationClaimValue.bind(this);
     this.handleChangeClosureCreationEthAddress = this.handleChangeClosureCreationEthAddress.bind(this);
     this.handleSubmitClosure = this.handleSubmitClosure.bind(this);
+    this.handleGetClaimsForEthAddress = this.handleGetClaimsForEthAddress.bind(this);
   }
 
   componentDidMount(){
@@ -397,6 +399,29 @@ class Bank extends Component{
     // });
   }
 
+  handleGetClaimsForEthAddress(event){
+    const ethAddress = this.state.ethAddress;
+    const getMessages = {
+      method: 'GET',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+      credentials: 'include',
+    };
+
+    request(`http://srv01.snet.tu-berlin.de:8100/users/ethID/${this.state.closureCreationEthAddress}/claimIDs`, getMessages)
+      .then((json) => {
+        // console.log(JSON.stringify(json));
+        this.setState({
+          availableClaimsForEthAddress: json,
+        });
+        console.log('Available claims for given eth address: ', this.state.availableClaimsForEthAddress);
+      })
+  }
+
   cleanForm(){
     // console.log('test', this.state);
     console.log(this.state.requiredAttributes, this.state.optionalAttributes);
@@ -452,7 +477,7 @@ class Bank extends Component{
                 style={{ display: 'flex', flexWrap: 'wrap'}}>
                 <FormControl
                   aria-describedby="ethAddress-text"
-                  style={{ marginBottom: '15px', minWidth: '80%' }}
+                  style={{ marginBottom: '15px', minWidth: '60%' }}
                 >
                   <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
                   <Input id="ethAddress" value={this.state.ethAddress} onChange={this.handleChange}/>
@@ -512,6 +537,12 @@ class Bank extends Component{
                       <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
                       <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
                     </FormControl>
+                    <Button
+                      raised
+                      size="small"
+                      onClick={this.handleGetClaimsForEthAddress}
+                      style={{ marginLeft: '15px' }}
+                    >Get Claims</Button>
                   </div>
                   <FormControl style={{marginRight: '50px'}}>
                     <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
@@ -522,9 +553,9 @@ class Bank extends Component{
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
-                      {Object.entries(this.state.closureTypes).map(([key, value]) => (
-                        <MenuItem value={key.toString()}>{key.toString()}</MenuItem>
-                      ))};
+                      {this.state.availableClaimsForEthAddress.map((c) => (
+                        <MenuItem value={c.claimID}>{c.claimID}</MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                   <FormControl style={{marginRight: '50px'}}>
@@ -536,10 +567,11 @@ class Bank extends Component{
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
-                      {this.state.closureCreationClaimOperationOptions.map((o) => (
-                        <MenuItem value={o}>
-                          {o}
-                        </MenuItem>
+                      {this.state.availableClaimsForEthAddress.map((c) => (
+                        c.claimID === this.state.closureCreationClaimId ?
+                        c.claimOperations.map((o) => (
+                          <MenuItem value={o}>{o}</MenuItem>
+                        )) : null
                       ))}
                     </Select>
                   </FormControl>
