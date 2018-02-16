@@ -40,6 +40,31 @@ Further the following technologies are used for testing:
 \item Mockito\footnote{\url{http://site.mockito.org/}}: Mocking library to make unit and rest test more modular and encapsulated from outstanding components. 
 \end{itemize}
 
+\subsection{Claims}
+The Blockchain-Identity is centralized around user claims. Claims are bits of personal information, that can be made about a person. It shell describe the an atomic unit of information you receive if you continue to cut bigger personal information chunks into smaller onces. We introduce 5 different claim types: 
+
+\begin{itemize}
+\item \textbf{Boolean}: Boolean-claims are claims that can be answered with a simple yes or no answer.
+Example: "Has HVI?" 
+\item \textbf{String}: String-claims are the most common onces. They shell not be longer then one word or name. 
+Example: "Which street lives Bob in?"
+\item \textbf{Number}: Number-claims hold numbers (in double representation) as values. 
+Example: "What is Bobs ZIP code?"
+\item \textbf{Date}: Date-claims relate to claims that referee to a specific time or date. They are saved as LocalDateTime objects.
+Example: "When was Bob born?"  
+\item \textbf{Object}: All other claims that are not representable with the above definitions needs to be saved as generic objects. This may be lists of claims, or even more complex representations like whole documents. Since we decided that in our prototype you can break down every claim in a subset of the above definition, this claim is lacking support in a closure related context. 
+Example: "What is Bobs whole medical record?"
+\end{itemize}
+
+The claim are structured all over the system in the save way. In their core they consist of ID, type and value. The ID defines a unique string that is well defined and is strictly bound to a claim type. 
+An overview about all current defined claim IDs can be found in appendix \ref{appendix:claimID}. Claim IDs are explicitly choose as strings and not an enums since they shell be expendable and each provider shell be able to include their own claim IDs if they are not yet present. If an wrong type is defined for a claim an exception will raise. 
+
+The claim type is bound to claim operations. Claim operations are logical operations that can be interpreted by the closure expression engine. We will introduce in detail how that work in section \ref{sec:closure}. 
+
+The claim value is simply from type object. Some could had imagine that it shell be a generic, but they are hard to serialize and deserialize. Since generic’s type are defined on compile time and claims are often read from and to the database and send via the network, the overhead of type determination would be larger then just parsing it into an object and checking the type manual. 
+
+Claims also hold some meta information about who is the issuer (reference to the provider, original issuing this claim), and a modification date which gets updated each time a claim is changed. The modification date enables us to see if a claim is outdated and needs to be updated again. Claims are of nature unsigned, but can be signed by on request. 
+
 \subsection{Components}
 \begin{figure}
 \includegraphics[width=0.7\textwidth]{impl/ComponentDiagram.png}
@@ -178,3 +203,22 @@ It also creates a new signed beat (section \ref{sec:beats}, step 7.1 and 7.2) wi
 
 Since a new user is now verified in the system other provider shell also send the user their claims about him. That point was really difficult to implement and was left open for further work since there are open unanswered questions: How do provider assign the new ethereum address of the newly registered user to any user of their system (you can not broadcast any user claims over the network because of privacy reasons)? How to ensure that provider send all their claims (since they are not trusted they might be malicious)? 
 In the end we said that the user has to manually notify provider about his presents in the system.
+
+\subsection{Permission Contract}
+\label{sec:ppr}
+
+\begin{figure}
+\includegraphics[width=\textwidth]{impl/PPR_closure_1.png}
+\includegraphics[width=\textwidth]{impl/PPR_closure_2.png}
+\centering
+\caption{Flow to request permission about GIVEN\_NAME (optional) and FAMILY\_NAME (required) and a closure over the age of the user.}
+\label{fig:ppr}
+\end{figure}
+
+Located in the core of our project stand the Provider Permission Request (PPR). Its goal is to ensure that every request about personal information es routed to the user, which can approve or disapprove the information population. With PPR-Contracts it is further possible to see which provider holds which data about which (pseudonymous) user. To implement a the PPR flow we need all of the previous introduced technologies since all service need to play together to implement the PPR. 
+
+We start by the provider requesting the user information. The frontend receiving the users ethereum address, that was populated to the network in the register contract (section \ref{sec:registerContract}), and a URL referencing the provider holding the claims that shell be shared. The last bit of information are the claim IDs that shell be requested. The application differences between required and optional claims \ref{sec:claims}. Required claims needs either approval by the user or the whole PPR will be discard. Optional claims can be partially accepted or rejected by the user, the PPR will still be executed. So the provider sets the claim IDs appropriately and signs this PPR objects and sends it to the provider holding the claims about the requested user.
+
+The information what claims are are known about a user of a provider is exposed through an unsecured endpoint. This endpoint is not providing the values to the claims, rather it only exposes the claim IDs, types and operations. We consider this information not critical to protect, since this are the same information anyone can read from the blockchain. Further work can think about a mechanism to protect this information since they might enable attackers to locate valuable targets. 
+
+This provider is in our case the government service and so a trusted service that can also write to the blockchain. We government service will proceed to process the request, by first verifying the signature and second checking if the requested claims match the claims the targeted user hold. 
