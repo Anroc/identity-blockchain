@@ -139,7 +139,8 @@ class User extends Component {
                 console.log('getting permission request');
                 this.getPermissionRequest(message);
               } else {
-                console.log('getting claim... TODO');
+                console.log('getting claims');
+                this.getUserClaims();
               }
             });
             this.setState({
