@@ -63,6 +63,7 @@ class Bank extends Component{
         timeValue: '',
         value: '',
       },
+      availableClaimsForClosuresForEthAddress: [],
       availableClaimsForEthAddress: [],
     };
 
@@ -85,6 +86,7 @@ class Bank extends Component{
     this.handleChangeClosureCreationClaimValue = this.handleChangeClosureCreationClaimValue.bind(this);
     this.handleChangeClosureCreationEthAddress = this.handleChangeClosureCreationEthAddress.bind(this);
     this.handleSubmitClosure = this.handleSubmitClosure.bind(this);
+    this.handleGetClosuresForClaimsForEthAddress = this.handleGetClosuresForClaimsForEthAddress.bind(this);
     this.handleGetClaimsForEthAddress = this.handleGetClaimsForEthAddress.bind(this);
   }
 
@@ -399,8 +401,7 @@ class Bank extends Component{
     // });
   }
 
-  handleGetClaimsForEthAddress(event){
-    const ethAddress = this.state.ethAddress;
+  handleGetClosuresForClaimsForEthAddress(event){
     const getMessages = {
       method: 'GET',
       headers: {
@@ -413,6 +414,28 @@ class Bank extends Component{
     };
 
     request(`http://srv01.snet.tu-berlin.de:8100/users/ethID/${this.state.closureCreationEthAddress}/claimIDs`, getMessages)
+      .then((json) => {
+        // console.log(JSON.stringify(json));
+        this.setState({
+          availableClaimsForClosuresForEthAddress: json,
+        });
+        console.log('Available closures for claims for given eth address: ', this.state.availableClaimsForClosuresForEthAddress);
+      })
+  }
+
+  handleGetClaimsForEthAddress(event){
+    const getMessages = {
+      method: 'GET',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+      credentials: 'include',
+    };
+
+    request(`http://srv01.snet.tu-berlin.de:8100/users/ethID/${this.state.ethAddress}/claimIDs`, getMessages)
       .then((json) => {
         // console.log(JSON.stringify(json));
         this.setState({
@@ -482,6 +505,12 @@ class Bank extends Component{
                   <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
                   <Input id="ethAddress" value={this.state.ethAddress} onChange={this.handleChange}/>
                 </FormControl>
+                <Button
+                  raised
+                  mini
+                  onClick={this.handleGetClaimsForEthAddress}
+                  style={{ marginLeft: '15px' }}
+                >Get Claims</Button>
                 <ExpansionPanel>
                   <ExpansionPanelSummary>
                     <Typography>Required Attributes</Typography>
@@ -540,7 +569,7 @@ class Bank extends Component{
                     <Button
                       raised
                       size="small"
-                      onClick={this.handleGetClaimsForEthAddress}
+                      onClick={this.handleGetClosuresForClaimsForEthAddress}
                       style={{ marginLeft: '15px' }}
                     >Get Claims</Button>
                   </div>
@@ -553,7 +582,7 @@ class Bank extends Component{
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
-                      {this.state.availableClaimsForEthAddress.map((c) => (
+                      {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
                         <MenuItem value={c.claimID}>{c.claimID}</MenuItem>
                       ))}
                     </Select>
@@ -567,10 +596,10 @@ class Bank extends Component{
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
-                      {this.state.availableClaimsForEthAddress.map((c) => (
-                        c.claimID === this.state.closureCreationClaimId ?
-                        c.claimOperations.map((o) => (
-                          <MenuItem value={o}>{o}</MenuItem>
+                      {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
+                        c.claimID === this.state.closureCreationClaimId
+                          ? c.claimOperations.map((o) => (
+                            <MenuItem value={o}>{o}</MenuItem>
                         )) : null
                       ))}
                     </Select>
