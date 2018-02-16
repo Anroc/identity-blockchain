@@ -36,8 +36,10 @@ class ClaimsTable extends Component {
               {this.props.claims.map((n) => (
                 <TableRow key={n.id}>
                   <TableCell><div>{n.id}</div></TableCell>
-                  <TableCell numeric><div>{n.claimValue.payload.value !== undefined? n.claimValue.payload.value :
-                    n.claimType.payload.timeValue[0]}</div></TableCell>
+                  <TableCell numeric><div>
+                    {n.claimValue.payload.value !== undefined && n.claimValue.payload.value}
+                    {n.claimValue.payload.value === null && (`${n.claimValue.payload.timeValue[0]}.${n.claimValue.payload.timeValue[1]}.${n.claimValue.payload.timeValue[2]} ${n.claimValue.payload.timeValue[3]}:${n.claimValue.payload.timeValue[4]}:${n.claimValue.payload.timeValue[5]}`)}
+                  </div></TableCell>
                   <TableCell numeric><div>{n.provider.name}</div></TableCell>
                   <TableCell numeric><div>{n.claimValue.payloadType}</div></TableCell>
                   <TableCell><div>{new Date(n.modificationDate).toDateString()}</div></TableCell>
