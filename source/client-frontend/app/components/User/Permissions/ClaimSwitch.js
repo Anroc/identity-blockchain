@@ -13,15 +13,6 @@ class ClaimSwitch extends React.Component {
   }
 
   componentDidMount() {
-
-    /*
-    Object.entries(this.props.claims).forEach(([key, value]) => {
-      this.setState({
-        [key]: value,
-      });
-      console.log(`setting state for: ${key} to ${value}`);
-    });
-    */
     this.isClaimEmpty();
   }
 
@@ -48,7 +39,8 @@ class ClaimSwitch extends React.Component {
                     onChange={() => this.props.changeClaim(this.props.claimType, key)}
                   />
                 }
-                label={`Allow sharing information of ${key}`}
+                label={this.props.claims[key] ? `Allow sharing information of ${key}` :
+                  `Allow sharing information of ${key}`}
               />
           ))}
           </div>

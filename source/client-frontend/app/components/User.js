@@ -134,17 +134,21 @@ class User extends Component {
               console.log('getting request for message:', message);
               this.getPermissionRequest(message);
             });
+            this.setState({
+              messages: json,
+              permissionId: json[0].subjectID,
+            });
           }
-          this.setState({
-            messages: json,
-            permissionId: json[0].subjectID,
-          });
         }
       });
   }
 
-  putMessageSeen(messageId) {
-    console.log('PUT MESSAGE TO SEEN:', messageId);
+  putMessageSeen(permissionId) {
+    console.log('only got permissionId');
+    const currentMessage = this.state.messages
+      .find((message) => (message.subjectID === permissionId));
+
+    console.log('found current message', currentMessage);
     const messageSeenOptions = {
       method: 'PUT',
       headers: {
@@ -158,7 +162,7 @@ class User extends Component {
       credentials: 'include',
     };
 
-    request(`http://srv01.snet.tu-berlin.de:1112/messages/${messageId}`, messageSeenOptions);
+    request(`http://srv01.snet.tu-berlin.de:1112/messages/${currentMessage.id}`, messageSeenOptions);
   }
 
   sendPermissionAnswer(messageId, requiredClaims, optionalClaims, closureRequest) {
@@ -243,6 +247,7 @@ class User extends Component {
           <ExpansionPanelDetails>
             <PermissionRequestTable
               permissions={this.state.permissions}
+              putMessageSeen={this.putMessageSeen}
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>

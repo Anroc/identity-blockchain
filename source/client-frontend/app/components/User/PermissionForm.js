@@ -60,20 +60,13 @@ class PermissionForm extends React.Component {
     request(`http://srv01.snet.tu-berlin.de:1112/messages/${messageId}`, messageSeenOptions);
   }
 
-  sendPermissionAnswer(messageId, requiredClaims, optionalClaims, closureRequest) {
-    console.log('params: ', messageId, requiredClaims, optionalClaims, closureRequest);
-    console.log('messageId: ', messageId);
-    console.log('required: ', requiredClaims);
-    console.log('optional: ', optionalClaims);
-    console.log('closure: ', closureRequest);
-
-
-    console.log('in state:', this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
-    /*
+  sendPermissionAnswer() {
+    console.log('in state:', this.props.permission.id, this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
     // put message seen
-    this.putMessageSeen(messageId);
+    this.props.putMessageSeen(this.props.permission.id);
     // send approval with all the data to endpoint
-    this.putPermissionAnswer(requiredClaims, optionalClaims, closureRequest);
+    this.putPermissionAnswer(this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
+    /*
     */
   }
 
@@ -89,17 +82,14 @@ class PermissionForm extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id: this.state.permissionId,
-        permissionRequestDTO: {
-          requiredClaims,
-          optionalClaims,
-          closureRequestDTO,
-        },
+        requiredClaims,
+        optionalClaims,
+        closureRequestDTO,
       }),
       credentials: 'include',
     };
     console.log(`Permission answer: ${JSON.stringify(getUserInformationOptions)}`);
-    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions);
+    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.props.permission.id}`, getUserInformationOptions);
   }
 
   changeClaim(claimType, key) {
@@ -182,6 +172,7 @@ class PermissionForm extends React.Component {
 
 PermissionForm.propTypes = {
   permission: PropTypes.object,
+  putMessageSeen: PropTypes.func,
 };
 
 export default PermissionForm;
