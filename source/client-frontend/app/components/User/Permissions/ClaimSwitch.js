@@ -48,7 +48,7 @@ class ClaimSwitch extends React.Component {
                     onChange={() => this.props.changeClaim(this.props.claimType, key)}
                   />
                 }
-                label={key}
+                label={`Allow sharing information of ${key}`}
               />
           ))}
           </div>

@@ -118,31 +118,26 @@ class PermissionForm extends React.Component {
     console.log('to ');
   }
 
-  changeClosure(closureItem) {
+  changeClosure(closureItem, index) {
     console.log('changing closure value', closureItem);
-    const newApproved = !closureItem.approved;
-    console.log('new approved: ', newApproved);
-    update(this.state.closureRequestDto, {
-      [closureItem]: {
-        approved: {
-          newApproved,
-        },
-      },
-    });
-    /*
+    const newClosureRequestDTO = this.state.closureRequestDTO;
+    newClosureRequestDTO[index].approved = !this.state.closureRequestDTO[index].approved;
+    console.log('old closure: ', this.state.closureRequestDTO);
+    console.log('specific closure: ', this.state.closureRequestDTO[index]);
+    console.log('approved is: ', this.state.closureRequestDTO[index].approved);
+    console.log('new closure: ', newClosureRequestDTO);
     this.setState({
-      closureRequestDTO: update(this.state.closureRequestDTO, { closureItem }),
+      closureRequestDTO: newClosureRequestDTO,
     });
-    */
   }
 
   render() {
     return (
       <section>
         <FormControl component="fieldset" required error>
-          <div>
-            <p>NEW PERMISSION</p>
-          </div>
+          <FormLabel component="legend">
+            New permission request:
+          </FormLabel>
           {this.state.requiredClaims && (
             <ClaimSwitch
               claims={this.state.requiredClaims}
@@ -168,18 +163,6 @@ class PermissionForm extends React.Component {
             Requesting Provider: {this.props.permission.requestingProvider}
             <br />
           </div>
-          <FormLabel component="legend">
-            Approve or deny:
-          </FormLabel>
-          <RadioGroup
-            aria-label="Your answer:"
-            name="answer"
-            value={this.state.localValue}
-            onChange={this.handleLocalChange}
-          >
-            <FormControlLabel value="APPROVE" control={<Radio />} label="APPROVE" />
-            <FormControlLabel value="DENY" control={<Radio />} label="DENY" />
-          </RadioGroup>
           <FormHelperText>Please select an option.</FormHelperText>
           <Button
             raised
