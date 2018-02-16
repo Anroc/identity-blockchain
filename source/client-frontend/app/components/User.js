@@ -27,6 +27,7 @@ class User extends Component {
     this.putMessageSeen = this.putMessageSeen.bind(this);
     this.putPermissionAnswer = this.putPermissionAnswer.bind(this);
     this.sendPermissionAnswer = this.sendPermissionAnswer.bind(this);
+    this.getUserClaims = this.getUserClaims.bind(this);
     this.state = {
       swaggerData: '',
       ethID: '',
@@ -65,8 +66,8 @@ class User extends Component {
   /**
    * get user claims
    */
-  getUserInformation() {
-    const getUserInformationOptions = {
+  getUserClaims() {
+    const getUserClaimOptions = {
       method: 'GET',
       headers: {
         Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
@@ -77,7 +78,7 @@ class User extends Component {
       credentials: 'include',
     };
 
-    request('http://srv01.snet.tu-berlin.de:1112/claims', getUserInformationOptions)
+    request('http://srv01.snet.tu-berlin.de:1112/claims', getUserClaimOptions)
       .then((json) => {
         console.log(JSON.stringify(json));
         this.setState({
@@ -168,7 +169,6 @@ class User extends Component {
   }
 
   /**
-   * TODO currently gives error
    */
   putPermissionAnswer(requiredClaims, optionalClaims, closureRequestDTO) {
     const getUserInformationOptions = {
@@ -179,12 +179,9 @@ class User extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id: this.state.permissionId,
-        permissionRequestDTO: {
-          requiredClaims,
-          optionalClaims,
-          closureRequestDTO,
-        },
+        requiredClaims,
+        optionalClaims,
+        closureRequestDTO,
       }),
       credentials: 'include',
     };
@@ -200,7 +197,7 @@ class User extends Component {
   }
 
   showClaims() {
-    this.getUserInformation();
+    this.getUserClaims();
   }
 
   handleChange(event, value) {
@@ -235,7 +232,7 @@ class User extends Component {
             <Typography>My Claims</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <ClaimsTable claims={this.state.claims} />
+            <ClaimsTable claims={this.state.claims} getUserClaims={this.getUserClaims} />
           </ExpansionPanelDetails>
         </ExpansionPanel>
 

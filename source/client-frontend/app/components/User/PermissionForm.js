@@ -1,9 +1,7 @@
 import React from 'react';
-import update from 'react-addons-update';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
-import Radio, { RadioGroup } from 'material-ui/Radio';
-import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
+import { FormLabel, FormControl, FormHelperText } from 'material-ui/Form';
 import ClaimSwitch from './Permissions/ClaimSwitch';
 import ClosureSwitch from './Permissions/ClosureSwitch';
 import request from '../../auth/request';
@@ -64,6 +62,11 @@ class PermissionForm extends React.Component {
 
   sendPermissionAnswer(messageId, requiredClaims, optionalClaims, closureRequest) {
     console.log('params: ', messageId, requiredClaims, optionalClaims, closureRequest);
+    console.log('messageId: ', messageId);
+    console.log('required: ', requiredClaims);
+    console.log('optional: ', optionalClaims);
+    console.log('closure: ', closureRequest);
+
 
     console.log('in state:', this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
     /*
@@ -167,7 +170,7 @@ class PermissionForm extends React.Component {
           <Button
             raised
             color="primary"
-            onClick={this.sendPermissionAnswer}
+            onClick={() => this.sendPermissionAnswer()}
           >
             send answer
           </Button>

@@ -80,7 +80,7 @@ const userConnector = {
         });
       })
       .then(() => {
-        this.getUserInformation();
+        this.getUserClaims();
       });
      */
   },

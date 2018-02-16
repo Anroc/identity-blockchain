@@ -2,8 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
+import Button from 'material-ui/Button';
 
 class ClaimsTable extends Component {
+
+  constructor() {
+    super();
+  }
+
   render() {
     return (
       <section>
@@ -32,6 +38,13 @@ class ClaimsTable extends Component {
               ))}
             </TableBody>
           </Table>
+          <Button
+            raised
+            color="primary"
+            onClick={this.props.getUserClaims}
+          >
+            Refresh claims table
+          </Button>
         </Paper>
       </section>
     );
@@ -40,6 +53,7 @@ class ClaimsTable extends Component {
 
 ClaimsTable.propTypes = {
   claims: PropTypes.array,
+  getUserClaims: PropTypes.func,
 };
 
 export default ClaimsTable;
