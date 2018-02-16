@@ -29,14 +29,14 @@ class ClosureSwitch extends React.Component {
       <div>
         { this.state.showClosure ? (
           <div>
-            {this.props.closures.length > 0 && this.props.closures.map((item) => (
+            {this.props.closures.length > 0 && this.props.closures.map((item, index) => (
               <div>
                 <p>{item.description}</p>
                 <FormControlLabel
                   control={
                     <Switch
                       checked={item.approved}
-                      onChange={() => this.props.changeClosure(item)}
+                      onChange={() => this.props.changeClosure(item, index)}
                     />
                   }
                   label={item.approved ? 'Yes' : 'No'}

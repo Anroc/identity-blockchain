@@ -1,9 +1,7 @@
 import React from 'react';
-import update from 'react-addons-update';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
-import Radio, { RadioGroup } from 'material-ui/Radio';
-import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
+import { FormLabel, FormControl, FormHelperText } from 'material-ui/Form';
 import ClaimSwitch from './Permissions/ClaimSwitch';
 import ClosureSwitch from './Permissions/ClosureSwitch';
 import request from '../../auth/request';
@@ -62,15 +60,13 @@ class PermissionForm extends React.Component {
     request(`http://srv01.snet.tu-berlin.de:1112/messages/${messageId}`, messageSeenOptions);
   }
 
-  sendPermissionAnswer(messageId, requiredClaims, optionalClaims, closureRequest) {
-    console.log('params: ', messageId, requiredClaims, optionalClaims, closureRequest);
-
-    console.log('in state:', this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
-    /*
+  sendPermissionAnswer() {
+    console.log('in state:', this.props.permission.id, this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
     // put message seen
-    this.putMessageSeen(messageId);
+    this.props.putMessageSeen(this.props.permission.id);
     // send approval with all the data to endpoint
-    this.putPermissionAnswer(requiredClaims, optionalClaims, closureRequest);
+    this.putPermissionAnswer(this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
+    /*
     */
   }
 
@@ -86,17 +82,14 @@ class PermissionForm extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id: this.state.permissionId,
-        permissionRequestDTO: {
-          requiredClaims,
-          optionalClaims,
-          closureRequestDTO,
-        },
+        requiredClaims,
+        optionalClaims,
+        closureRequestDTO,
       }),
       credentials: 'include',
     };
     console.log(`Permission answer: ${JSON.stringify(getUserInformationOptions)}`);
-    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions);
+    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.props.permission.id}`, getUserInformationOptions);
   }
 
   changeClaim(claimType, key) {
@@ -118,31 +111,26 @@ class PermissionForm extends React.Component {
     console.log('to ');
   }
 
-  changeClosure(closureItem) {
+  changeClosure(closureItem, index) {
     console.log('changing closure value', closureItem);
-    const newApproved = !closureItem.approved;
-    console.log('new approved: ', newApproved);
-    update(this.state.closureRequestDto, {
-      [closureItem]: {
-        approved: {
-          newApproved,
-        },
-      },
-    });
-    /*
+    const newClosureRequestDTO = this.state.closureRequestDTO;
+    newClosureRequestDTO[index].approved = !this.state.closureRequestDTO[index].approved;
+    console.log('old closure: ', this.state.closureRequestDTO);
+    console.log('specific closure: ', this.state.closureRequestDTO[index]);
+    console.log('approved is: ', this.state.closureRequestDTO[index].approved);
+    console.log('new closure: ', newClosureRequestDTO);
     this.setState({
-      closureRequestDTO: update(this.state.closureRequestDTO, { closureItem }),
+      closureRequestDTO: newClosureRequestDTO,
     });
-    */
   }
 
   render() {
     return (
       <section>
         <FormControl component="fieldset" required error>
-          <div>
-            <p>NEW PERMISSION</p>
-          </div>
+          <FormLabel component="legend">
+            New permission request:
+          </FormLabel>
           {this.state.requiredClaims && (
             <ClaimSwitch
               claims={this.state.requiredClaims}
@@ -168,23 +156,11 @@ class PermissionForm extends React.Component {
             Requesting Provider: {this.props.permission.requestingProvider}
             <br />
           </div>
-          <FormLabel component="legend">
-            Approve or deny:
-          </FormLabel>
-          <RadioGroup
-            aria-label="Your answer:"
-            name="answer"
-            value={this.state.localValue}
-            onChange={this.handleLocalChange}
-          >
-            <FormControlLabel value="APPROVE" control={<Radio />} label="APPROVE" />
-            <FormControlLabel value="DENY" control={<Radio />} label="DENY" />
-          </RadioGroup>
           <FormHelperText>Please select an option.</FormHelperText>
           <Button
             raised
             color="primary"
-            onClick={this.sendPermissionAnswer}
+            onClick={() => this.sendPermissionAnswer()}
           >
             send answer
           </Button>
@@ -196,6 +172,7 @@ class PermissionForm extends React.Component {
 
 PermissionForm.propTypes = {
   permission: PropTypes.object,
+  putMessageSeen: PropTypes.func,
 };
 
 export default PermissionForm;
