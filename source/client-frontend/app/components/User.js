@@ -51,6 +51,9 @@ class User extends Component {
   componentDidMount() {
     console.log('user mounted');
     this.getMessages();
+    setInterval(() => {
+      this.getMessages();
+    }, 10000);
   }
 
   componentDidUpdate() {
@@ -131,8 +134,13 @@ class User extends Component {
           if (json.length > 0) {
             console.log('messages not empty anymore');
             json.forEach((message) => {
-              console.log('getting request for message:', message);
-              this.getPermissionRequest(message);
+              console.log('requesting message: ', message);
+              if (message.messageType === 'PERMISSION_REQUEST') {
+                console.log('getting permission request');
+                this.getPermissionRequest(message);
+              } else {
+                console.log('getting claim... TODO');
+              }
             });
             this.setState({
               messages: json,
