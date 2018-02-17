@@ -17,6 +17,7 @@ import RefreshIcon from 'material-ui-icons/Refresh';
 import Paper from 'material-ui/Paper';
 import { MenuItem } from 'material-ui/Menu';
 import Select from 'material-ui/Select';
+import { ListItemText } from 'material-ui/List';
 import request from '../auth/request';
 
 class Bank extends Component{
@@ -88,6 +89,8 @@ class Bank extends Component{
     this.handleSubmitClosure = this.handleSubmitClosure.bind(this);
     this.handleGetClosuresForClaimsForEthAddress = this.handleGetClosuresForClaimsForEthAddress.bind(this);
     this.handleGetClaimsForEthAddress = this.handleGetClaimsForEthAddress.bind(this);
+    this.handleChangeRequiredAttributeSelection = this.handleChangeRequiredAttributeSelection.bind(this);
+    this.handleChangeOptionalAttributeSelection = this.handleChangeOptionalAttributeSelection.bind(this);
   }
 
   componentDidMount(){
@@ -185,6 +188,14 @@ class Bank extends Component{
     const requiredAttributes = [...this.state.requiredAttributes];
     requiredAttributes[i] = event.target.value;
     this.setState({ requiredAttributes });
+  }
+
+  handleChangeRequiredAttributeSelection(event){
+    this.setState({ requiredAttributes: event.target.value });
+  }
+
+  handleChangeOptionalAttributeSelection(event){
+    this.setState({ optionalAttributes: event.target.value });
   }
 
   addClickRequiredAttributes(){
@@ -489,177 +500,184 @@ class Bank extends Component{
 
   render(){
     return (
-      <article>
-        <Paper>
-          <section>
-            <ExpansionPanel>
-              <ExpansionPanelSummary>
-                <Typography>Create new permission request</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails
-                style={{ display: 'flex', flexWrap: 'wrap'}}>
-                <FormControl
-                  aria-describedby="ethAddress-text"
-                  style={{ marginBottom: '15px', minWidth: '60%' }}
+      <article style={{
+        max: '100%',
+        width: '100%',
+      }}>
+        <section>
+          <ExpansionPanel>
+            <ExpansionPanelSummary>
+              <Typography>Create new permission request</Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails
+              style={{ display: 'flex', flexWrap: 'wrap'}}>
+              <FormControl
+                aria-describedby="ethAddress-text"
+                style={{ marginBottom: '15px', minWidth: '75%' }}
+              >
+                <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
+                <Input id="ethAddress" value={this.state.ethAddress} onChange={this.handleChange}/>
+              </FormControl>
+              <Button
+                raised
+                mini
+                onClick={this.handleGetClaimsForEthAddress}
+                style={{ marginLeft: '15px' }}
+              >Get Claims</Button>
+              <FormControl
+                style={{ marginBottom: '15px', minWidth: '40%' }}>
+                <InputLabel htmlFor="select-multiple-required-claims">Required Claims</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.requiredAttributes}
+                  onChange={this.handleChangeRequiredAttributeSelection}
+                  input={<Input id="select-multiple" />}
                 >
-                  <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
-                  <Input id="ethAddress" value={this.state.ethAddress} onChange={this.handleChange}/>
-                </FormControl>
-                <Button
-                  raised
-                  mini
-                  onClick={this.handleGetClaimsForEthAddress}
-                  style={{ marginLeft: '15px' }}
-                >Get Claims</Button>
-                <ExpansionPanel>
-                  <ExpansionPanelSummary>
-                    <Typography>Required Attributes</Typography>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
-                    <form>
-                      {this.createUIRequiredAttributes()}
-                      <Button
-                        fab
-                        mini
-                        color="primary"
-                        onClick={this.addClickRequiredAttributes.bind(this)}
-                      ><AddIcon/></Button>
-                    </form>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-                <ExpansionPanel>
-                  <ExpansionPanelSummary>
-                    <Typography>Optional Attributes</Typography>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
-                    <form>
-                      {this.createUIOptionalAttributes()}
-                      <Button
-                        fab
-                        mini
-                        color="primary"
-                        onClick={this.addClickOptionalAttributes.bind(this)}
-                      ><AddIcon/></Button>
-                    </form>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-                <Button
-                  raised
-                  onClick={this.handleSubmit}
-                  style={{ marginTop: '15px', marginLeft: '25%' }}
-                >Submit</Button>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-          </section>
-          <section>
-            <ExpansionPanel>
-              <ExpansionPanelSummary>
-                <Typography>Create a new Closure request</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                <form autoComplete="off">
-                  <div>
-                    <FormControl
-                      aria-describedby="closureCreationEthAddress-text"
-                      style={{ marginBottom: '15px' }}
+                  { this.state.availableClaimsForEthAddress.map((c) => (
+                    <MenuItem
+                      key={c.claimID}
+                      value={c.claimID}
                     >
-                      <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
-                      <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
-                    </FormControl>
-                    <Button
-                      raised
-                      size="small"
-                      onClick={this.handleGetClosuresForClaimsForEthAddress}
-                      style={{ marginLeft: '15px' }}
-                    >Get Claims</Button>
-                  </div>
-                  <FormControl style={{marginRight: '50px'}}>
-                    <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
-                    <Select
-                      value={this.state.closureCreationClaimId}
-                      onChange={this.handleChangeClosureCreationClaimId}
+                      {c.claimID}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl
+                style={{ marginBottom: '15px', minWidth: '40%' }}>
+                <InputLabel htmlFor="select-multiple-optional-claims">Optional Claims</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.optionalAttributes}
+                  onChange={this.handleChangeRequiredAttributeSelection}
+                  input={<Input id="select-multiple" />}
+                >
+                  { this.state.availableClaimsForEthAddress.map((c) => (
+                    <MenuItem
+                      key={c.claimID}
+                      value={c.claimID}
                     >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
-                        <MenuItem value={c.claimID}>{c.claimID}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl style={{marginRight: '50px'}}>
-                    <InputLabel htmlFor="claimOperation">Claim-Operation</InputLabel>
-                    <Select
-                      value={this.state.closureCreationClaimOperation}
-                      onChange={this.handleChangeClosureCreationClaimOperation}
-                    >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
-                        c.claimID === this.state.closureCreationClaimId
-                          ? c.claimOperations.map((o) => (
-                            <MenuItem value={o}>{o}</MenuItem>
-                        )) : null
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl
-                    aria-describedby="closureCreationClaimValue-text"
-                  >
-                    <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
-                    <Input id="closureCreationClaimValue" value={this.state.closureCreationClaimValue} onChange={this.handleChangeClosureCreationClaimValue}/>
-                  </FormControl>
-                </form>
-                <Button
-                  raised
-                  onClick={this.handleSubmitClosure}
-                  style={{ marginTop: '15px', marginLeft: '25%' }}
-                >Submit</Button>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-          </section>
-          <section>
-            <ExpansionPanel>
-              <ExpansionPanelSummary>
-                <Typography>Granted Permissions/Closures</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
+                      {c.claimID}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Button
+                raised
+                onClick={this.handleSubmit}
+                style={{ marginTop: '15px', marginLeft: '25%' }}
+              >Submit</Button>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+        </section>
+        <section>
+          <ExpansionPanel>
+            <ExpansionPanelSummary>
+              <Typography>Create a new Closure request</Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <form autoComplete="off">
                 <div>
-                  <div>
-                    <IconButton
-                      aria-label="refresh"
-                      onClick={this.getNewMessages}
-                    >
-                      <RefreshIcon/>
-                    </IconButton>
-                  </div>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>ethID</TableCell>
-                        <TableCell>Claims</TableCell>
-                        <TableCell>Closures</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {this.state.tableData.map((n) => (
-                        <TableRow key={n.ethId}>
-                          <TableCell>{n.ethId}</TableCell>
-                          <TableCell>{n.claims.map((c) => (
-                            this.prepareClaimOutput(c)
-                            )
-                          )}</TableCell>
-                        </TableRow>
-                        )
-                      )}
-                    </TableBody>
-                  </Table>
+                  <FormControl
+                    aria-describedby="closureCreationEthAddress-text"
+                    style={{ marginBottom: '15px' }}
+                  >
+                    <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
+                    <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
+                  </FormControl>
+                  <Button
+                    raised
+                    size="small"
+                    onClick={this.handleGetClosuresForClaimsForEthAddress}
+                    style={{ marginLeft: '15px' }}
+                  >Get Claims</Button>
                 </div>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-          </section>
-        </Paper>
+                <FormControl style={{marginRight: '50px'}}>
+                  <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
+                  <Select
+                    value={this.state.closureCreationClaimId}
+                    onChange={this.handleChangeClosureCreationClaimId}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
+                      <MenuItem value={c.claimID}>{c.claimID}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl style={{marginRight: '50px'}}>
+                  <InputLabel htmlFor="claimOperation">Claim-Operation</InputLabel>
+                  <Select
+                    value={this.state.closureCreationClaimOperation}
+                    onChange={this.handleChangeClosureCreationClaimOperation}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
+                      c.claimID === this.state.closureCreationClaimId
+                        ? c.claimOperations.map((o) => (
+                          <MenuItem value={o}>{o}</MenuItem>
+                      )) : null
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl
+                  aria-describedby="closureCreationClaimValue-text"
+                >
+                  <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
+                  <Input id="closureCreationClaimValue" value={this.state.closureCreationClaimValue} onChange={this.handleChangeClosureCreationClaimValue}/>
+                </FormControl>
+              </form>
+              <Button
+                raised
+                onClick={this.handleSubmitClosure}
+                style={{ marginTop: '15px', marginLeft: '25%' }}
+              >Submit</Button>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+        </section>
+        <section>
+          <ExpansionPanel>
+            <ExpansionPanelSummary>
+              <Typography>Granted Permissions/Closures</Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <div>
+                <div>
+                  <IconButton
+                    aria-label="refresh"
+                    onClick={this.getNewMessages}
+                  >
+                    <RefreshIcon/>
+                  </IconButton>
+                </div>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>ethID</TableCell>
+                      <TableCell>Claims</TableCell>
+                      <TableCell>Closures</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {this.state.tableData.map((n) => (
+                      <TableRow key={n.ethId}>
+                        <TableCell>{n.ethId}</TableCell>
+                        <TableCell>{n.claims.map((c) => (
+                          this.prepareClaimOutput(c)
+                          )
+                        )}</TableCell>
+                      </TableRow>
+                      )
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+        </section>
       </article>
     );
   }
