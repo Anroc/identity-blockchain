@@ -88,6 +88,7 @@ class Bank extends Component{
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getNewMessages = this.getNewMessages.bind(this);
+    this.getAllMessages = this.getAllMessages.bind(this);
     this.prepareClaimOutput = this.prepareClaimOutput.bind(this);
     this.handleChangeClosureCreationClaimId = this.handleChangeClosureCreationClaimId.bind(this);
     this.handleChangeClosureCreationClaimOperation = this.handleChangeClosureCreationClaimOperation.bind(this);
@@ -293,11 +294,69 @@ class Bank extends Component{
               console.log('tableData is now: ', this.state.tableData);
             });
         }
-        // this.putAllMessageSeen();
+        // this.putAllMessage();
       });
   }
 
-  putAllMessageSeen() {
+  getAllMessages(){
+    const getMessages = {
+      method: 'GET',
+      headers: {
+        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+      credentials: 'include',
+    };
+    request('http://srv01.snet.tu-berlin.de:8102/messages?includeSeen=true', getMessages)
+      .then((json) => {
+        // console.log(JSON.stringify(json));
+        const tmp = json.map((message) => message.userId);
+        // console.log('json:', json);
+        // console.log('UserIDs: ', tmp);
+        this.setState({
+          messages: json,
+          userIDs: tmp,
+        });
+        console.log('userIDs from messages: ', this.state.userIDs);
+      }).then(() => {
+      // console.log(this.state.userIDs);
+        console.log('Preparing filtered userID array: ', Array.from(new Set(this.state.userIDs)));
+        this.setState({
+          userIDs: Array.from(new Set(this.state.userIDs)),
+        });
+        for (let user of this.state.userIDs) {
+          const getUser = {
+            method: 'GET',
+            headers: {
+              Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            mode: 'cors',
+            credentials: 'include',
+          };
+          console.log('Requesting user through GET: ', user);
+          request('http://srv01.snet.tu-berlin.de:8102/users/' + user, getUser)
+            .then((json) => {
+              // console.log(JSON.stringify(json));
+              const newTableData = this.state.tableData;
+              if (!newTableData.includes(json)) {
+                console.log('Adding new data to tableData: ', json);
+                newTableData.push(json);
+              }
+              this.setState({
+                tableData: newTableData,
+              });
+              console.log('tableData is now: ', this.state.tableData);
+            });
+        }
+      // this.putAllMessage();
+      });
+  };
+
+  putAllMessage(seen) {
     for (let message of this.state.messages) {
       console.log('PUT MESSAGE TO SEEN:', message);
       const getUserInformationOptions = {
@@ -308,7 +367,7 @@ class Bank extends Component{
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          seen: true
+          seen: seen
         }),
         credentials: 'include',
       };
@@ -670,12 +729,27 @@ class Bank extends Component{
             <ExpansionPanelDetails>
               <div>
                 <div>
-                  <IconButton
-                    aria-label="refresh"
+                  <Button
+                    raised
+                    style={{ marginTop: '15px', marginBottom: '5%' }}
                     onClick={this.getNewMessages}
                   >
-                    <RefreshIcon/>
-                  </IconButton>
+                    Request unseen Messages
+                  </Button>
+                  <Button
+                    raised
+                    style={{ marginTop: '15px', marginBottom: '5%' }}
+                    onClick={this.getAllMessages}
+                  >
+                    Request seen Messages
+                  </Button>
+                  <Button
+                    raised
+                    style={{ marginTop: '15px', marginBottom: '5%' }}
+                    onClick={this.putAllMessage(true)}
+                  >
+                    Mark all seen
+                  </Button>
                 </div>
                 <Table>
                   <TableHead>
