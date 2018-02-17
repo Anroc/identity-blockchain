@@ -100,6 +100,7 @@ class Bank extends Component{
     this.handleChangeRequiredAttributeSelection = this.handleChangeRequiredAttributeSelection.bind(this);
     this.handleChangeOptionalAttributeSelection = this.handleChangeOptionalAttributeSelection.bind(this);
     this.switchClosureOperationLinguisticValueAndProgrammaticValue = this.switchClosureOperationLinguisticValueAndProgrammaticValue.bind(this);
+    this.clearStaticValueOfNullForTable = this.clearStaticValueOfNullForTable.bind(this);
   }
 
   componentDidMount(){
@@ -470,24 +471,42 @@ class Bank extends Component{
     let returnString = '';
     if (c.claimValue != null && c.id != null){
       if (c.claimValue.payload.value != null) {
-        returnString += c.id + '(' + c.claimValue.payload.value + ')' + '; ';
+        returnString += '[' + c.id + '(' + c.claimValue.payload.value + ')' + ']; ';
       } else {
-        returnString += c.id + '(' + c.claimValue.payload.timeValue + ')' + '; ';
+        returnString += '[' + c.id + '(' + c.claimValue.payload.timeValue + ')' + ']; ';
       }
     } else {
-      returnString += c.id + '(NULL)' + '; ';
+      returnString += '[' + c.id + '(NULL)' + ']; ';
     }
     return returnString;
   };
 
   prepareClosureOutput(c){
-    let returnString = this.prepareClaimOutput(c);
-    if (!c.signedClosures.isEmpty()){
+    console.log('Preparing closure for returnString: ', c);
+    let returnString = '';
+    if (c.length > 0){
+      for (let entry of c) {
+        // console.log('Current closure entry is: ', entry);
+        returnString = returnString +
+          '[' + entry.payload.claimID + ' ' +
+          this.switchClosureOperationLinguisticValueAndProgrammaticValue(entry.payload.claimOperation) +
+          ' ' + this.clearStaticValueOfNullForTable(entry.payload.staticValue) + ']; ';
+      }
+    } else {
+      returnString = '';
+    }
+    return returnString
+  };
 
+  clearStaticValueOfNullForTable(staticValue){
+    if (!staticValue.value){
+      return staticValue.timeValue;
+    } else {
+      return staticValue.value;
     }
   };
 
-  prepareClosureClaimOperationOutput(k, claimId){
+  handleMarkMessageAsSeen(c){
 
   };
 
@@ -664,6 +683,7 @@ class Bank extends Component{
                       <TableCell>ethID</TableCell>
                       <TableCell>Claims</TableCell>
                       <TableCell>Closures</TableCell>
+                      <TableCell>Mark as seen</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -674,6 +694,19 @@ class Bank extends Component{
                           this.prepareClaimOutput(c)
                           )
                         )}</TableCell>
+                        <TableCell>
+                          { n.claims.map((c) => (
+                            this.prepareClosureOutput(c.signedClosures)
+                          ))}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            raised
+                            size="small"
+                          >
+                            Seen
+                          </Button>
+                        </TableCell>
                       </TableRow>
                       )
                     )}
