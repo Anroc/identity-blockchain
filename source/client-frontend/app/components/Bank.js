@@ -55,6 +55,14 @@ class Bank extends Component{
         DATE: ['EQ', 'NEQ', 'GT', 'GE', 'LT', 'LE'],
         BOOLEAN: ['EQ', 'NEQ'],
       },
+      closureOperationDescriptions: {
+        EQ: 'gleich',
+        NEQ: 'ungleich',
+        GT: 'größer als',
+        GE: 'größer gleich',
+        LT: 'kleiner als',
+        LE: 'kleiner gleich'
+      },
       closureCreationEthAddress: '',
       closureCreationClaimId: '',
       closureCreationClaimOperation: '',
@@ -77,8 +85,6 @@ class Bank extends Component{
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.addClickRequiredAttributes = this.addClickRequiredAttributes.bind(this);
-    this.addClickOptionalAttributes = this.addClickOptionalAttributes.bind(this);
     this.getNewMessages = this.getNewMessages.bind(this);
     this.prepareClaimOutput = this.prepareClaimOutput.bind(this);
     this.handleChangeClosureCreationClaimId = this.handleChangeClosureCreationClaimId.bind(this);
@@ -145,8 +151,10 @@ class Bank extends Component{
   };
 
   handleChangeClosureCreationStaticValue(event){
+    console.log('Preparing to set new closureValue to: ', event.target.value);
     if (Object.prototype.toString.call(event.target.value) === '[object Date]'){
       this.setState({
+        closureCreationClaimValue: event.target.value,
         closureCreationStaticValue: {
           timeValue: event.target.value,
           value: '',
@@ -154,6 +162,7 @@ class Bank extends Component{
       });
     } else {
       this.setState({
+        closureCreationClaimValue: event.target.value,
         closureCreationStaticValue: {
           timeValue: '',
           value: event.target.value,
@@ -161,34 +170,6 @@ class Bank extends Component{
       });
     }
   };
-
-  // Required Attributes Block
-  createUIRequiredAttributes(){
-    return this.state.requiredAttributes.map((el, i) => (
-      <div key={i}>
-        <FormControl>
-          <InputLabel htmlFor={`requiredAttribute-${i}-helper`}>Required attribute</InputLabel>
-          <Input
-            id={`requiredAttribute-${i}`}
-            value={el || ''}
-            onChange={this.handleChangeRequiredAttributes.bind(this, i)}
-          />
-        </FormControl>
-        <IconButton
-          aria-label="delete"
-          onClick={() => this.removeClickRequiredAttributes(i)}
-          style={{ marginLeft: '15px' }}
-        ><DeleteIcon/></IconButton>
-        <Divider/>
-      </div>
-    ));
-  }
-
-  handleChangeRequiredAttributes(i, event){
-    const requiredAttributes = [...this.state.requiredAttributes];
-    requiredAttributes[i] = event.target.value;
-    this.setState({ requiredAttributes });
-  }
 
   handleChangeRequiredAttributeSelection(event){
     this.setState({ requiredAttributes: event.target.value });
@@ -206,42 +187,6 @@ class Bank extends Component{
     const requiredAttributes = [...this.state.requiredAttributes];
     requiredAttributes.splice(i, 1);
     this.setState({ requiredAttributes });
-  }
-
-  // Optional Attributes Block
-  createUIOptionalAttributes(){
-    return this.state.optionalAttributes.map((el, i) =>
-      (
-        <div key={i}>
-          <FormControl>
-            <InputLabel
-              htmlFor={`optionalAttribute-${i}-helper`}
-            >
-              Optional attribute
-            </InputLabel>
-            <Input
-              id={`optionalAttribute-${i}`}
-              value={el || ''}
-              onChange={this.handleChangeOptionalAttributes.bind(this, i)}
-            />
-          </FormControl>
-          <IconButton
-            aria-label="delete"
-            onClick={() => this.removeClickOptionalAttributes(i)}
-            style={{ marginLeft: '15px' }}
-          >
-            <DeleteIcon/>
-          </IconButton>
-          <Divider/>
-        </div>
-      )
-    );
-  }
-
-  handleChangeOptionalAttributes(i, event){
-    const optionalAttributes = [...this.state.optionalAttributes];
-    optionalAttributes[i] = event.target.value;
-    this.setState({ optionalAttributes });
   }
 
   addClickOptionalAttributes(){
@@ -383,12 +328,21 @@ class Bank extends Component{
       ],
     });
 
+    console.log('Closure request: claim-id' + this.state.closureCreationClaimId + ', claimOperation ' + this.state.closureCreationClaimOperation + ', value ' + this.state.closureCreationStaticValue);
+    const closureRequests = [
+      {
+        claimID: this.state.closureCreationClaimId,
+        claimOperation: this.state.closureCreationClaimOperation,
+        staticValue: this.state.closureCreationStaticValue,
+      }
+    ];
+    console.log('Closure request is: ', closureRequests);
     const postRequest = {
-      closureRequests: this.state.closureRequests,
+      closureRequests: closureRequests,
       optionalClaims: this.state.optionalAttributes,
       providerURL: 'http://srv01.snet.tu-berlin.de:8100',
       requiredClaims: this.state.requiredAttributes,
-      userEthID: this.state.ethAddress,
+      userEthID: this.state.closureCreationEthAddress,
     };
     console.log('Preparing following body for POST: ', JSON.stringify(postRequest));
     const getUserInformationOptions = {
@@ -520,12 +474,11 @@ class Bank extends Component{
               </FormControl>
               <Button
                 raised
-                mini
                 onClick={this.handleGetClaimsForEthAddress}
                 style={{ marginLeft: '15px' }}
               >Get Claims</Button>
               <FormControl
-                style={{ marginBottom: '15px', minWidth: '40%' }}>
+                style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
                 <InputLabel htmlFor="select-multiple-required-claims">Required Claims</InputLabel>
                 <Select
                   multiple
@@ -544,7 +497,7 @@ class Bank extends Component{
                 </Select>
               </FormControl>
               <FormControl
-                style={{ marginBottom: '15px', minWidth: '40%' }}>
+                style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
                 <InputLabel htmlFor="select-multiple-optional-claims">Optional Claims</InputLabel>
                 <Select
                   multiple
@@ -580,7 +533,7 @@ class Bank extends Component{
                 <div>
                   <FormControl
                     aria-describedby="closureCreationEthAddress-text"
-                    style={{ marginBottom: '15px' }}
+                    style={{ marginBottom: '15px', minWidth: '75%' }}
                   >
                     <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
                     <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
@@ -592,7 +545,8 @@ class Bank extends Component{
                     style={{ marginLeft: '15px' }}
                   >Get Claims</Button>
                 </div>
-                <FormControl style={{marginRight: '50px'}}>
+                <FormControl
+                  style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
                   <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
                   <Select
                     value={this.state.closureCreationClaimId}
@@ -606,7 +560,8 @@ class Bank extends Component{
                     ))}
                   </Select>
                 </FormControl>
-                <FormControl style={{marginRight: '50px'}}>
+                <FormControl
+                  style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
                   <InputLabel htmlFor="claimOperation">Claim-Operation</InputLabel>
                   <Select
                     value={this.state.closureCreationClaimOperation}
@@ -625,16 +580,19 @@ class Bank extends Component{
                 </FormControl>
                 <FormControl
                   aria-describedby="closureCreationClaimValue-text"
+                  style={{ marginBottom: '15px', max: '100%', width: '100%' }}
                 >
                   <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
-                  <Input id="closureCreationClaimValue" value={this.state.closureCreationClaimValue} onChange={this.handleChangeClosureCreationClaimValue}/>
+                  <Input id="closureCreationClaimValue"
+                    value={this.state.closureCreationClaimValue}
+                    onChange={this.handleChangeClosureCreationStaticValue}/>
                 </FormControl>
+                <Button
+                  raised
+                  onClick={this.handleSubmitClosure}
+                  style={{ marginTop: '15px' }}
+                >Submit</Button>
               </form>
-              <Button
-                raised
-                onClick={this.handleSubmitClosure}
-                style={{ marginTop: '15px', marginLeft: '25%' }}
-              >Submit</Button>
             </ExpansionPanelDetails>
           </ExpansionPanel>
         </section>
