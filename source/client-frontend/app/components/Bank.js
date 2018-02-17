@@ -17,6 +17,8 @@ import RefreshIcon from 'material-ui-icons/Refresh';
 import Paper from 'material-ui/Paper';
 import { MenuItem } from 'material-ui/Menu';
 import Select from 'material-ui/Select';
+import TextField from 'material-ui/TextField';
+import moment from 'moment'
 import { ListItemText } from 'material-ui/List';
 import request from '../auth/request';
 
@@ -61,7 +63,7 @@ class Bank extends Component{
         GT: 'größer als',
         GE: 'größer gleich',
         LT: 'kleiner als',
-        LE: 'kleiner gleich'
+        LE: 'kleiner gleich',
       },
       closureCreationEthAddress: '',
       closureCreationClaimId: '',
@@ -97,9 +99,26 @@ class Bank extends Component{
     this.handleGetClaimsForEthAddress = this.handleGetClaimsForEthAddress.bind(this);
     this.handleChangeRequiredAttributeSelection = this.handleChangeRequiredAttributeSelection.bind(this);
     this.handleChangeOptionalAttributeSelection = this.handleChangeOptionalAttributeSelection.bind(this);
+    this.switchClosureOperationLinguisticValueAndProgrammaticValue = this.switchClosureOperationLinguisticValueAndProgrammaticValue.bind(this);
   }
 
   componentDidMount(){
+    const postRequest = {
+      password: 'string',
+    };
+    console.log('Logging in with password: ', JSON.stringify(postRequest));
+    const getUserInformationOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(postRequest),
+      mode: 'cors',
+      credentials: 'include',
+    };
+    // console.log(JSON.stringify(getUserInformationOptions));
+    request('http://srv01.snet.tu-berlin.de:8102/account/login', getUserInformationOptions);
   }
 
   handleChange(event){
@@ -107,11 +126,29 @@ class Bank extends Component{
   }
 
   handleChangeClosureCreationEthAddress(event){
-    this.setState({ closureCreationEthAddress: event.target.value});
+    this.setState({ closureCreationEthAddress: event.target.value });
   }
 
   handleChangeClosureCreationClaimValue(event){
     this.setState({ closureCreationClaimValue: event.target.value });
+  }
+
+  switchClosureOperationLinguisticValueAndProgrammaticValue(val){
+    console.log('Morphing ' + val + ' back.');
+    switch (val){
+      case 'EQ': return 'gleich';
+      case 'NEQ': return 'ungleich';
+      case 'GT': return 'größer als';
+      case 'LT': return 'kleiner als';
+      case 'LE': return 'kleiner gleich';
+      case 'gleich': return 'EQ';
+      case 'ungleich': return 'NEQ';
+      case 'größer als': return 'GT';
+      case 'größer gleich': return 'GE';
+      case 'kleiner als': return 'LT';
+      case 'kleiner gleich': return 'LE';
+
+    }
   }
 
   handleChangeClosureCreationClaimId(event){
@@ -152,19 +189,19 @@ class Bank extends Component{
 
   handleChangeClosureCreationStaticValue(event){
     console.log('Preparing to set new closureValue to: ', event.target.value);
-    if (Object.prototype.toString.call(event.target.value) === '[object Date]'){
+    let date = moment(event.target.value);
+    if (date.isValid()){
+      const splitDate = event.target.value.split('-');
       this.setState({
         closureCreationClaimValue: event.target.value,
         closureCreationStaticValue: {
-          timeValue: event.target.value,
-          value: '',
+          timeValue: [Number(splitDate[0]), Number(splitDate[1]), Number(splitDate[2]), 0, 0, 0],
         },
       });
     } else {
       this.setState({
         closureCreationClaimValue: event.target.value,
         closureCreationStaticValue: {
-          timeValue: '',
           value: event.target.value,
         },
       });
@@ -318,21 +355,23 @@ class Bank extends Component{
   handleSubmitClosure(event){
     // alert('A name was submitted: ' + this.state.requiredAttributes.join(', '));
     event.preventDefault();
+    const claimOperationMorphed = this.switchClosureOperationLinguisticValueAndProgrammaticValue(this.state.closureCreationClaimOperation);
+    console.log('Claim operator was morphed back to: ', claimOperationMorphed);
     this.setState({
       closureRequests: [
         {
           claimID: this.state.closureCreationClaimId,
-          claimOperation: this.state.closureCreationClaimOperation,
+          claimOperation: claimOperationMorphed,
           staticValue: this.state.closureCreationStaticValue,
         }
       ],
     });
 
-    console.log('Closure request: claim-id' + this.state.closureCreationClaimId + ', claimOperation ' + this.state.closureCreationClaimOperation + ', value ' + this.state.closureCreationStaticValue);
+    console.log('Closure request: claim-id' + this.state.closureCreationClaimId + ', claimOperation ' + claimOperationMorphed + ', value ' + this.state.closureCreationStaticValue);
     const closureRequests = [
       {
         claimID: this.state.closureCreationClaimId,
-        claimOperation: this.state.closureCreationClaimOperation,
+        claimOperation: claimOperationMorphed,
         staticValue: this.state.closureCreationStaticValue,
       }
     ];
@@ -464,7 +503,7 @@ class Bank extends Component{
               <Typography>Create new permission request</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails
-              style={{ display: 'flex', flexWrap: 'wrap'}}>
+              style={{ display: 'flex', flexWrap: 'wrap' }}>
               <FormControl
                 aria-describedby="ethAddress-text"
                 style={{ marginBottom: '15px', minWidth: '75%' }}
@@ -475,7 +514,7 @@ class Bank extends Component{
               <Button
                 raised
                 onClick={this.handleGetClaimsForEthAddress}
-                style={{ marginLeft: '15px' }}
+                style={{ marginLeft: '15px', marginBottom: '100px' }}
               >Get Claims</Button>
               <FormControl
                 style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
@@ -530,21 +569,19 @@ class Bank extends Component{
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <form autoComplete="off">
-                <div>
-                  <FormControl
-                    aria-describedby="closureCreationEthAddress-text"
-                    style={{ marginBottom: '15px', minWidth: '75%' }}
-                  >
-                    <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
-                    <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
-                  </FormControl>
-                  <Button
-                    raised
-                    size="small"
-                    onClick={this.handleGetClosuresForClaimsForEthAddress}
-                    style={{ marginLeft: '15px' }}
-                  >Get Claims</Button>
-                </div>
+                <FormControl
+                  aria-describedby="closureCreationEthAddress-text"
+                  style={{ marginBottom: '15px', minWidth: '75%' }}
+                >
+                  <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
+                  <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
+                </FormControl>
+                <Button
+                  raised
+                  size="small"
+                  onClick={this.handleGetClosuresForClaimsForEthAddress}
+                  style={{ marginLeft: '15px' }}
+                >Get Claims</Button>
                 <FormControl
                   style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
                   <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
@@ -552,9 +589,6 @@ class Bank extends Component{
                     value={this.state.closureCreationClaimId}
                     onChange={this.handleChangeClosureCreationClaimId}
                   >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
                     {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
                       <MenuItem value={c.claimID}>{c.claimID}</MenuItem>
                     ))}
@@ -567,26 +601,40 @@ class Bank extends Component{
                     value={this.state.closureCreationClaimOperation}
                     onChange={this.handleChangeClosureCreationClaimOperation}
                   >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
                     {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
                       c.claimID === this.state.closureCreationClaimId
                         ? c.claimOperations.map((o) => (
-                          <MenuItem value={o}>{o}</MenuItem>
+                          <MenuItem value={this.state.closureOperationDescriptions[o]}>{this.state.closureOperationDescriptions[o]}</MenuItem>
                       )) : null
                     ))}
                   </Select>
                 </FormControl>
-                <FormControl
-                  aria-describedby="closureCreationClaimValue-text"
-                  style={{ marginBottom: '15px', max: '100%', width: '100%' }}
-                >
-                  <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
-                  <Input id="closureCreationClaimValue"
-                    value={this.state.closureCreationClaimValue}
-                    onChange={this.handleChangeClosureCreationStaticValue}/>
-                </FormControl>
+                { this.state.availableClaimsForClosuresForEthAddress.map((c) => (
+                  c.claimID === this.state.closureCreationClaimId
+                  ? c.claimType === 'DATE'
+                    ? <FormControl>
+                      <TextField
+                        id="date"
+                        type="date"
+                        label="date"
+                        value={this.state.closureCreationClaimValue}
+                        onChange={this.handleChangeClosureCreationStaticValue}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                    </FormControl>
+                    : <FormControl
+                      aria-describedby="closureCreationClaimValue-text"
+                      style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+                    >
+                      <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
+                      <Input id="closureCreationClaimValue"
+                        value={this.state.closureCreationClaimValue}
+                        onChange={this.handleChangeClosureCreationStaticValue}/>
+                    </FormControl>
+                  : null
+                ))}
                 <Button
                   raised
                   onClick={this.handleSubmitClosure}
