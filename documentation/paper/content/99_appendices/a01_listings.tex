@@ -9,7 +9,7 @@ for($i=1; $i<123; $i++)
 }
 \end{lstlisting}
 
-\chapter{Appendix 2}
+\section{Claim IDs}
 \label{appendix:claimID}
 \begin{tabular}{l l p{7cm}}
  Type & ID & Describtion \\
@@ -22,4 +22,27 @@ for($i=1; $i<123; $i++)
  STRING & MAIN\_RESIDENCE\_STREET\_NUMBER & The street number the user has its main residence in. \\
  NUMBER & MAIN\_RESIDENCE\_ZIP\_CODE & The zip code of the main residence. \\
  STRING & MAIN\_RESIDENCE\_CITY & The name of the city the user has its main residence in. \\
+\end{tabular}
+
+\section{Claim operations}
+\label{appendix:claimOperation}
+\begin{tabular}{l l}
+ Type & Suppoerted operations \\
+ \hline
+ STRING & EQ, NEQ \\
+ DATE & EQ, NEQ, LT, LE, GT, GE \\
+ NUMBER &  EQ, NEQ, LT, LE, GT, GE \\
+ BOOLEAN & EQ, NEQ \\
+ OBJECT & None. \\
+\end{tabular}
+
+\noindent\begin{tabular}{l l l}
+ Claim Operations & Descriptor & Lingual expression \\
+ \hline
+ EQ & equals & same as \\
+ NEQ & not equals & not same as \\ 
+ LT &  less then & less then \\
+ LE & less equals & less or equals \\
+ GT & greater then & greater then \\
+ GE & greater equals & greater or equals \\
 \end{tabular}
