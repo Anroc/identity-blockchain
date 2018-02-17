@@ -567,80 +567,79 @@ class Bank extends Component{
             <ExpansionPanelSummary>
               <Typography>Create a new Closure request</Typography>
             </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <form autoComplete="off">
-                <FormControl
-                  aria-describedby="closureCreationEthAddress-text"
-                  style={{ marginBottom: '15px', minWidth: '75%' }}
+            <ExpansionPanelDetails
+              style={{ display: 'flex', flexWrap: 'wrap' }}>
+              <FormControl
+                aria-describedby="closureCreationEthAddress-text"
+                style={{ marginBottom: '15px', minWidth: '75%' }}
+              >
+                <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
+                <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
+              </FormControl>
+              <Button
+                raised
+                size="small"
+                onClick={this.handleGetClosuresForClaimsForEthAddress}
+                style={{ marginLeft: '15px' }}
+              >Get Claims</Button>
+              <FormControl
+                style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
+                <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
+                <Select
+                  value={this.state.closureCreationClaimId}
+                  onChange={this.handleChangeClosureCreationClaimId}
                 >
-                  <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
-                  <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
-                </FormControl>
-                <Button
-                  raised
-                  size="small"
-                  onClick={this.handleGetClosuresForClaimsForEthAddress}
-                  style={{ marginLeft: '15px' }}
-                >Get Claims</Button>
-                <FormControl
-                  style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
-                  <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
-                  <Select
-                    value={this.state.closureCreationClaimId}
-                    onChange={this.handleChangeClosureCreationClaimId}
+                  {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
+                    <MenuItem value={c.claimID}>{c.claimID}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl
+                style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
+                <InputLabel htmlFor="claimOperation">Claim-Operation</InputLabel>
+                <Select
+                  value={this.state.closureCreationClaimOperation}
+                  onChange={this.handleChangeClosureCreationClaimOperation}
+                >
+                  {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
+                    c.claimID === this.state.closureCreationClaimId
+                      ? c.claimOperations.map((o) => (
+                        <MenuItem value={this.state.closureOperationDescriptions[o]}>{this.state.closureOperationDescriptions[o]}</MenuItem>
+                    )) : null
+                  ))}
+                </Select>
+              </FormControl>
+              { this.state.availableClaimsForClosuresForEthAddress.map((c) => (
+                c.claimID === this.state.closureCreationClaimId
+                ? c.claimType === 'DATE'
+                  ? <FormControl>
+                    <TextField
+                      id="date"
+                      type="date"
+                      label="date"
+                      value={this.state.closureCreationClaimValue}
+                      onChange={this.handleChangeClosureCreationStaticValue}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </FormControl>
+                  : <FormControl
+                    aria-describedby="closureCreationClaimValue-text"
+                    style={{ marginBottom: '15px', max: '100%', width: '100%' }}
                   >
-                    {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
-                      <MenuItem value={c.claimID}>{c.claimID}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl
-                  style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
-                  <InputLabel htmlFor="claimOperation">Claim-Operation</InputLabel>
-                  <Select
-                    value={this.state.closureCreationClaimOperation}
-                    onChange={this.handleChangeClosureCreationClaimOperation}
-                  >
-                    {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
-                      c.claimID === this.state.closureCreationClaimId
-                        ? c.claimOperations.map((o) => (
-                          <MenuItem value={this.state.closureOperationDescriptions[o]}>{this.state.closureOperationDescriptions[o]}</MenuItem>
-                      )) : null
-                    ))}
-                  </Select>
-                </FormControl>
-                { this.state.availableClaimsForClosuresForEthAddress.map((c) => (
-                  c.claimID === this.state.closureCreationClaimId
-                  ? c.claimType === 'DATE'
-                    ? <FormControl>
-                      <TextField
-                        id="date"
-                        type="date"
-                        label="date"
-                        value={this.state.closureCreationClaimValue}
-                        onChange={this.handleChangeClosureCreationStaticValue}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                      />
-                    </FormControl>
-                    : <FormControl
-                      aria-describedby="closureCreationClaimValue-text"
-                      style={{ marginBottom: '15px', max: '100%', width: '100%' }}
-                    >
-                      <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
-                      <Input id="closureCreationClaimValue"
-                        value={this.state.closureCreationClaimValue}
-                        onChange={this.handleChangeClosureCreationStaticValue}/>
-                    </FormControl>
-                  : null
-                ))}
-                <Button
-                  raised
-                  onClick={this.handleSubmitClosure}
-                  style={{ marginTop: '15px' }}
-                >Submit</Button>
-              </form>
+                    <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
+                    <Input id="closureCreationClaimValue"
+                      value={this.state.closureCreationClaimValue}
+                      onChange={this.handleChangeClosureCreationStaticValue}/>
+                  </FormControl>
+                : null
+              ))}
+              <Button
+                raised
+                onClick={this.handleSubmitClosure}
+                style={{ marginTop: '15px' }}
+              >Submit</Button>
             </ExpansionPanelDetails>
           </ExpansionPanel>
         </section>
