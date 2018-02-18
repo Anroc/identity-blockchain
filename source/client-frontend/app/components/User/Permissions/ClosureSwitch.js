@@ -39,7 +39,7 @@ class ClosureSwitch extends React.Component {
                       onChange={() => this.props.changeClosure(item, index)}
                     />
                   }
-                  label={item.approved ? 'Yes' : 'No'}
+                  label={item.approved ? 'Approve' : 'Deny'}
                 />
               </div>
             ), 0)}

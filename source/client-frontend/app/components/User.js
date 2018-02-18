@@ -138,6 +138,7 @@ class User extends Component {
               if (message.messageType === 'PERMISSION_REQUEST') {
                 console.log('getting permission request');
                 this.getPermissionRequest(message);
+                this.putMessageSeen(message.subjectID);
               } else {
                 console.log('getting claims');
                 this.getUserClaims();
