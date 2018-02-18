@@ -36,6 +36,8 @@ class ClaimsTable extends Component {
               ))}
             </TableBody>
           </Table>
+        </Paper>
+        <div style={{ margin: '20px 0' }}>
           <Button
             raised
             color="primary"
@@ -43,7 +45,8 @@ class ClaimsTable extends Component {
           >
             Refresh claims table
           </Button>
-        </Paper>
+
+        </div>
       </section>
     );
   }

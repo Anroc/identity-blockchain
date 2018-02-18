@@ -138,7 +138,9 @@ class User extends Component {
               if (message.messageType === 'PERMISSION_REQUEST') {
                 console.log('getting permission request');
                 this.getPermissionRequest(message);
-                this.putMessageSeen(message.subjectID);
+                if (message.subjectID !== undefined) {
+                  this.putMessageSeen(message.subjectID);
+                }
               } else {
                 console.log('getting claims');
                 this.getUserClaims();
@@ -154,7 +156,11 @@ class User extends Component {
   }
 
   putMessageSeen(permissionId) {
+    if (permissionId === undefined || this.state.messages.length === 0) {
+      return;
+    }
     console.log('only got permissionId');
+
     const currentMessage = this.state.messages
       .find((message) => (message.subjectID === permissionId));
 

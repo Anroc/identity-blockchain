@@ -157,13 +157,16 @@ class PermissionForm extends React.Component {
             <br />
           </div>
           <FormHelperText>Please select an option.</FormHelperText>
-          <Button
-            raised
-            color="primary"
-            onClick={() => this.sendPermissionAnswer()}
-          >
-            send answer
-          </Button>
+          <div>
+            <Button
+              raised
+              style={{ margin: '20px 0' }}
+              color="primary"
+              onClick={() => this.sendPermissionAnswer()}
+            >
+              send answer
+            </Button>
+          </div>
         </FormControl>
       </section>
     );
