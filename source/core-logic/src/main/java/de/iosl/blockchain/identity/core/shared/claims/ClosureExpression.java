@@ -1,9 +1,11 @@
 package de.iosl.blockchain.identity.core.shared.claims;
 
+import de.iosl.blockchain.identity.core.shared.api.permission.data.Closure;
 import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -61,14 +63,19 @@ public class ClosureExpression {
     }
 
     public String describe(String claimId) {
-        Object printablePayload = getClaim().getPayload().getUnifiedValue();
-        Object printableValue = value;
-        if(getClaim().getPayload().getUnifiedValue() instanceof LocalDateTime) {
-            printablePayload = DATE_TIME_FORMATTER.format((LocalDateTime) getClaim().getPayload().getUnifiedValue());
-            printableValue = DATE_TIME_FORMATTER.format((LocalDateTime) value);
-        }
+        String printablePayload = valueToString(getClaim().getPayload().getUnifiedValue());
+        String printableValue = valueToString(value);
+
         String parsedClaimId = claimId.toLowerCase().replaceAll("_", " ");
         return String.format("Is the claim \"%s\" (your value is \"%s\") %s \"%s\"?", parsedClaimId, printablePayload, claimOperation.getDescription(), printableValue);
+    }
+
+    private static String valueToString(@NonNull Object staticValue) {
+        if(staticValue instanceof LocalDateTime) {
+            return DATE_TIME_FORMATTER.format((LocalDateTime) staticValue);
+        } else {
+            return staticValue.toString();
+        }
     }
 
     private boolean evaluateDate() {
@@ -137,5 +144,12 @@ public class ClosureExpression {
             default:
                 throw new UnsupportedOperationException("Operations on this type are not supported");
         }
+    }
+
+    public static String buildBlindedClosureDescription(Closure closure) {
+        return String.format("Is the claim with ID \"%s\" %s \"%s\"?",
+                closure.getClaimID(),
+                closure.getClaimOperation().getDescription(),
+                valueToString(closure.getStaticValue().getUnifiedValue()));
     }
 }
