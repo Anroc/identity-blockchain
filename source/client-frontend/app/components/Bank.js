@@ -102,6 +102,7 @@ class Bank extends Component{
     this.handleChangeOptionalAttributeSelection = this.handleChangeOptionalAttributeSelection.bind(this);
     this.switchClosureOperationLinguisticValueAndProgrammaticValue = this.switchClosureOperationLinguisticValueAndProgrammaticValue.bind(this);
     this.clearStaticValueOfNullForTable = this.clearStaticValueOfNullForTable.bind(this);
+    this.prepareClosureCreationDateOutput = this.prepareClosureCreationDateOutput.bind(this);
   }
 
   componentDidMount(){
@@ -556,9 +557,34 @@ class Bank extends Component{
     return returnString
   };
 
+  prepareClosureCreationDateOutput(c){
+    console.log('Preparing closure creation date for returnString: ', c);
+    let returnString = '';
+    if (c.length > 0){
+      for (let entry of c) {
+        // console.log('Current closure entry is: ', entry);
+        returnString = returnString +
+          '[(' + entry.payload.creationDate[3] + ':' +
+          entry.payload.creationDate[4] + ':' +
+          entry.payload.creationDate[5] + ') (' +
+          entry.payload.creationDate[2] + '.' +
+          entry.payload.creationDate[1] + '.' +
+          entry.payload.creationDate[0] +
+        ')]; ';
+      }
+    } else {
+      returnString = '';
+    }
+    return returnString
+  };
+
   clearStaticValueOfNullForTable(staticValue){
     if (!staticValue.value){
-      return staticValue.timeValue;
+      return '[(' + staticValue.timeValue[3] + ':' +
+        staticValue.timeValue[4] + ') (' +
+        staticValue.timeValue[2] + '.' +
+        staticValue.timeValue[1] + '.' +
+        staticValue.timeValue[0] + ')]';
     } else {
       return staticValue.value;
     }
@@ -649,7 +675,7 @@ class Bank extends Component{
               <Button
                 raised
                 onClick={this.handleSubmit}
-                style={{ marginTop: '15px', marginLeft: '25%' }}
+                style={{ marginTop: '15px', marginLeft: '15px', marginBottom: '15px' }}
               >Submit</Button>
             </ExpansionPanelDetails>
           </ExpansionPanel>
@@ -670,9 +696,8 @@ class Bank extends Component{
               </FormControl>
               <Button
                 raised
-                size="small"
                 onClick={this.handleGetClosuresForClaimsForEthAddress}
-                style={{ marginLeft: '15px' }}
+                style={{ marginLeft: '15px', marginBottom: '100px' }}
               >Get Claims</Button>
               <FormControl
                 style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
@@ -730,7 +755,7 @@ class Bank extends Component{
               <Button
                 raised
                 onClick={this.handleSubmitClosure}
-                style={{ marginTop: '15px' }}
+                style={{ marginTop: '15px', marginLeft: '15px', marginBottom: '15px' }}
               >Submit</Button>
             </ExpansionPanelDetails>
           </ExpansionPanel>
@@ -771,6 +796,7 @@ class Bank extends Component{
                       <TableCell>ethID</TableCell>
                       <TableCell>Claims</TableCell>
                       <TableCell>Closures</TableCell>
+                      <TableCell>Closure creation Date</TableCell>
                       <TableCell>Mark as seen</TableCell>
                     </TableRow>
                   </TableHead>
@@ -785,6 +811,11 @@ class Bank extends Component{
                         <TableCell>
                           { n.claims.map((c) => (
                             this.prepareClosureOutput(c.signedClosures)
+                          ))}
+                        </TableCell>
+                        <TableCell>
+                          { n.claims.map((c) => (
+                            this.prepareClosureCreationDateOutput(c.signedClosures)
                           ))}
                         </TableCell>
                         <TableCell>
