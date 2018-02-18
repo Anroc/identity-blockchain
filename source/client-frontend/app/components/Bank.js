@@ -603,10 +603,21 @@ class Bank extends Component{
                   input={<Input id="select-multiple" />}
                 >
                   { this.state.availableClaimsForEthAddress.map((c) => (
-                    <MenuItem
+                    this.state.optionalAttributes.length > 0
+                    ? this.state.optionalAttributes.map((oa) => (
+                      c.claimID === oa
+                      ? null
+                      : <MenuItem
+                        key={c.claimID}
+                        value={c.claimID}
+                        >
+                        {c.claimID}
+                      </MenuItem>
+                    ))
+                    : <MenuItem
                       key={c.claimID}
                       value={c.claimID}
-                    >
+                      >
                       {c.claimID}
                     </MenuItem>
                   ))}
