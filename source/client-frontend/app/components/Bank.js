@@ -149,7 +149,6 @@ class Bank extends Component{
       case 'größer gleich': return 'GE';
       case 'kleiner als': return 'LT';
       case 'kleiner gleich': return 'LE';
-
     }
   }
 
@@ -619,16 +618,20 @@ class Bank extends Component{
                 <Select
                   multiple
                   value={this.state.optionalAttributes}
-                  onChange={this.handleChangeRequiredAttributeSelection}
+                  onChange={this.handleChangeOptionalAttributeSelection}
                   input={<Input id="select-multiple" />}
                 >
                   { this.state.availableClaimsForEthAddress.map((c) => (
-                    <MenuItem
-                      key={c.claimID}
-                      value={c.claimID}
-                    >
-                      {c.claimID}
-                    </MenuItem>
+                    this.state.requiredAttributes.map((ra) => (
+                      c.claimID === ra
+                      ? null
+                      : <MenuItem
+                        key={c.claimID}
+                        value={c.claimID}
+                        >
+                        {c.claimID}
+                      </MenuItem>
+                    ))
                   ))}
                 </Select>
               </FormControl>
