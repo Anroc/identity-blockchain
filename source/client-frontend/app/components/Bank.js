@@ -5,21 +5,17 @@ import ExpansionPanel, {
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
 import Typography from 'material-ui/Typography';
-import Divider from 'material-ui/Divider';
 import Input, { InputLabel } from 'material-ui/Input';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import Button from 'material-ui/Button';
-import AddIcon from 'material-ui-icons/Add';
-import IconButton from 'material-ui/IconButton';
-import DeleteIcon from 'material-ui-icons/Delete';
-import RefreshIcon from 'material-ui-icons/Refresh';
-import Paper from 'material-ui/Paper';
 import { MenuItem } from 'material-ui/Menu';
 import Select from 'material-ui/Select';
 import TextField from 'material-ui/TextField';
 import moment from 'moment'
-import { ListItemText } from 'material-ui/List';
+import Snackbar from 'material-ui/Snackbar';
+import IconButton from 'material-ui/IconButton';
+import CloseIcon from 'material-ui-icons/Close';
 import request from '../auth/request';
 
 class Bank extends Component{
@@ -72,6 +68,8 @@ class Bank extends Component{
       },
       availableClaimsForClosuresForEthAddress: [],
       availableClaimsForEthAddress: [],
+      snackOpen: false,
+      snackMessage: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -93,6 +91,8 @@ class Bank extends Component{
     this.clearStaticValueOfNullForTable = this.clearStaticValueOfNullForTable.bind(this);
     this.prepareClosureCreationDateOutput = this.prepareClosureCreationDateOutput.bind(this);
     this.cleanFormClosures = this.cleanFormClosures.bind(this);
+    this.handleClickSnack = this.handleClickSnack.bind(this);
+    this.handleCloseSnack = this.handleCloseSnack.bind(this);
   }
 
   componentDidMount(){
@@ -113,6 +113,20 @@ class Bank extends Component{
     // console.log(JSON.stringify(getUserInformationOptions));
     request('http://srv01.snet.tu-berlin.de:8102/account/login', getUserInformationOptions);
   }
+
+  handleClickSnack(open, message){
+    this.setState({
+      snackOpen: open,
+      snackMessage: message,
+    });
+  };
+
+  handleCloseSnack(){
+    this.setState({
+      snackOpen: false,
+      snackMessage: '',
+    });
+  };
 
   handleChange(event){
     this.setState({ ethAddress: event.target.value });
@@ -270,6 +284,7 @@ class Bank extends Component{
   }
 
   getAllMessages(){
+    this.handleClickSnack(true, 'Users have been requested');
     this.setState({
       messages: [],
       userIDs: [],
@@ -354,6 +369,7 @@ class Bank extends Component{
 
   // Submit all attributes
   handleSubmit(event){
+    this.handleClickSnack(true, 'Permission has been requested');
     // alert('A name was submitted: ' + this.state.requiredAttributes.join(', '));
     event.preventDefault();
 
@@ -389,6 +405,7 @@ class Bank extends Component{
   }
 
   handleSubmitClosure(event){
+    this.handleClickSnack(true, 'Closure has been requested');
     // alert('A name was submitted: ' + this.state.requiredAttributes.join(', '));
     event.preventDefault();
     const claimOperationMorphed = this.switchClosureOperationLinguisticValueAndProgrammaticValue(this.state.closureCreationClaimOperation);
@@ -443,6 +460,7 @@ class Bank extends Component{
   }
 
   handleGetClosuresForClaimsForEthAddress(event){
+    this.handleClickSnack(true, 'All available claims have been requested');
     const getMessages = {
       method: 'GET',
       headers: {
@@ -465,6 +483,7 @@ class Bank extends Component{
   }
 
   handleGetClaimsForEthAddress(event){
+    this.handleClickSnack(true, 'All available claims have been requested');
     const getMessages = {
       method: 'GET',
       headers: {
@@ -588,16 +607,32 @@ class Bank extends Component{
     }
   };
 
-  handleMarkMessageAsSeen(c){
-
-  };
-
   render(){
     return (
       <article style={{
         max: '100%',
         width: '100%',
       }}>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          open={this.state.snackOpen}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnack}
+          message={<span id="message-id">{this.state.snackMessage}</span>}
+          action={[
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={this.handleCloseSnack}
+            >
+              <CloseIcon />
+            </IconButton>,
+          ]}
+        />
         <section>
           <ExpansionPanel>
             <ExpansionPanelSummary>
@@ -708,7 +743,11 @@ class Bank extends Component{
                   onChange={this.handleChangeClosureCreationClaimId}
                 >
                   {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
-                    <MenuItem value={c.claimID}>{c.claimID}</MenuItem>
+                    <MenuItem
+                      value={c.claimID}
+                      key={c.claimID}
+                    >{c.claimID}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -722,7 +761,11 @@ class Bank extends Component{
                   {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
                     c.claimID === this.state.closureCreationClaimId
                       ? c.claimOperations.map((o) => (
-                        <MenuItem value={this.state.closureOperationDescriptions[o]}>{this.state.closureOperationDescriptions[o]}</MenuItem>
+                        <MenuItem
+                          key={this.state.closureOperationDescriptions[o]}
+                          value={this.state.closureOperationDescriptions[o]}>
+                          {this.state.closureOperationDescriptions[o]}
+                        </MenuItem>
                     )) : null
                   ))}
                 </Select>
@@ -735,6 +778,7 @@ class Bank extends Component{
                       id="date"
                       type="date"
                       label="date"
+                      key={'closureDateValueInput'}
                       value={this.state.closureCreationClaimValue}
                       onChange={this.handleChangeClosureCreationStaticValue}
                       InputLabelProps={{
