@@ -5,18 +5,6 @@ import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 
 class ClaimsTable extends Component {
-
-  constructor() {
-    super();
-  }
-
-  getPayload(payload) {
-    const tv = payload.timeValue;
-    if (payload.value === undefined)
-      return `${tv[0]}.${tv[1]}.${tv[2]} ${tv[3]}:${tv[4]}:${tv[5]}`;
-    return payload.value;
-  }
-
   render() {
     return (
       <section>
