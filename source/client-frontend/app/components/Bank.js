@@ -562,14 +562,23 @@ class Bank extends Component{
     let returnString = '';
     if (c.length > 0){
       for (let entry of c) {
+        let creationDateNoSingleChar = [];
+        for (let number of entry.payload.creationDate) {
+          // console.log('Iterating over: ' + number + ' is smaller than 10: ' + (Number(number) < 10) );
+          if (Number(number) < 10) {
+            creationDateNoSingleChar.push(('0' + number));
+          } else {
+            creationDateNoSingleChar.push(number);
+          }
+        }
         // console.log('Current closure entry is: ', entry);
         returnString = returnString +
-          '[(' + entry.payload.creationDate[3] + ':' +
-          entry.payload.creationDate[4] + ':' +
-          entry.payload.creationDate[5] + ') (' +
-          entry.payload.creationDate[2] + '.' +
-          entry.payload.creationDate[1] + '.' +
-          entry.payload.creationDate[0] +
+          '[(' + creationDateNoSingleChar[3] + ':' +
+          creationDateNoSingleChar[4] + ':' +
+          creationDateNoSingleChar[5] + ' Uhr) (' +
+          creationDateNoSingleChar[2] + '.' +
+          creationDateNoSingleChar[1] + '.' +
+          creationDateNoSingleChar[0] +
         ')]; ';
       }
     } else {
@@ -580,11 +589,20 @@ class Bank extends Component{
 
   clearStaticValueOfNullForTable(staticValue){
     if (!staticValue.value){
-      return '[(' + staticValue.timeValue[3] + ':' +
-        staticValue.timeValue[4] + ') (' +
-        staticValue.timeValue[2] + '.' +
-        staticValue.timeValue[1] + '.' +
-        staticValue.timeValue[0] + ')]';
+      let staticValueTimeValueNoSingleChar = [];
+      for (let number of staticValue.timeValue) {
+        console.log('Iterating over: ' + number + ' is smaller than 10: ' + (Number(number) < 10));
+        if (Number(number) < 10) {
+          staticValueTimeValueNoSingleChar.push(('0' + number));
+        } else {
+          staticValueTimeValueNoSingleChar.push(number);
+        }
+      }
+      return '[(' + staticValueTimeValueNoSingleChar[3] + ':' +
+        staticValueTimeValueNoSingleChar[4] + ' Uhr) (' +
+        staticValueTimeValueNoSingleChar[2] + '.' +
+        staticValueTimeValueNoSingleChar[1] + '.' +
+        staticValueTimeValueNoSingleChar[0] + ')';
     } else {
       return staticValue.value;
     }
