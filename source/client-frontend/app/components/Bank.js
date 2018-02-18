@@ -299,6 +299,11 @@ class Bank extends Component{
   }
 
   getAllMessages(){
+    this.setState({
+      messages: [],
+      userIDs: [],
+      tableData: [],
+    });
     const getMessages = {
       method: 'GET',
       headers: {
