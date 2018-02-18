@@ -32,10 +32,6 @@ class Bank extends Component{
       optionalAttributes: [],
       ethAddress: '',
       selected: [1],
-      data: [
-        createData('eth_id', 'GIVEN_NAME', 'SELECT GIVEN_NAME FROM USERS', 'PENDING'),
-        createData('eth_id_two', 'FAMILY_NAME', 'SELECT FAMILY_NAME FROM USERS', 'PENDING'),
-      ],
       claimChoices: {
         GIVEN_NAME: 'STRING',
         FAMILY_NAME: 'STRING',
@@ -58,12 +54,12 @@ class Bank extends Component{
         BOOLEAN: ['EQ', 'NEQ'],
       },
       closureOperationDescriptions: {
-        EQ: 'gleich',
-        NEQ: 'ungleich',
-        GT: 'größer als',
-        GE: 'größer gleich',
-        LT: 'kleiner als',
-        LE: 'kleiner gleich',
+        EQ: 'equals',
+        NEQ: 'does not equal',
+        GT: 'greater than',
+        GE: 'greater or equals',
+        LT: 'less than',
+        LE: 'less or equals',
       },
       closureCreationEthAddress: '',
       closureCreationClaimId: '',
@@ -77,13 +73,6 @@ class Bank extends Component{
       availableClaimsForClosuresForEthAddress: [],
       availableClaimsForEthAddress: [],
     };
-
-    let id = 0;
-
-    function createData(ethID, RequestedAttributes, GrantedQuery, Status){
-      id += 1;
-      return { ethID, RequestedAttributes, GrantedQuery, Status };
-    }
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -103,6 +92,7 @@ class Bank extends Component{
     this.switchClosureOperationLinguisticValueAndProgrammaticValue = this.switchClosureOperationLinguisticValueAndProgrammaticValue.bind(this);
     this.clearStaticValueOfNullForTable = this.clearStaticValueOfNullForTable.bind(this);
     this.prepareClosureCreationDateOutput = this.prepareClosureCreationDateOutput.bind(this);
+    this.cleanFormClosures = this.cleanFormClosures.bind(this);
   }
 
   componentDidMount(){
@@ -139,17 +129,18 @@ class Bank extends Component{
   switchClosureOperationLinguisticValueAndProgrammaticValue(val){
     console.log('Morphing ' + val + ' back.');
     switch (val){
-      case 'EQ': return 'gleich';
-      case 'NEQ': return 'ungleich';
-      case 'GT': return 'größer als';
-      case 'LT': return 'kleiner als';
-      case 'LE': return 'kleiner gleich';
-      case 'gleich': return 'EQ';
-      case 'ungleich': return 'NEQ';
-      case 'größer als': return 'GT';
-      case 'größer gleich': return 'GE';
-      case 'kleiner als': return 'LT';
-      case 'kleiner gleich': return 'LE';
+      case 'EQ': return 'equals';
+      case 'NEQ': return 'does not equal';
+      case 'GT': return 'greater than';
+      case 'GE': return 'greater or equals';
+      case 'LT': return 'less than';
+      case 'LE': return 'less or equals';
+      case 'equals': return 'EQ';
+      case 'does not equal': return 'NEQ';
+      case 'greater than': return 'GT';
+      case 'greater or equals': return 'GE';
+      case 'less than': return 'LT';
+      case 'less or equals': return 'LE';
     }
   }
 
@@ -216,26 +207,6 @@ class Bank extends Component{
 
   handleChangeOptionalAttributeSelection(event){
     this.setState({ optionalAttributes: event.target.value });
-  }
-
-  addClickRequiredAttributes(){
-    this.setState((prevState) => ({ requiredAttributes: [...prevState.requiredAttributes, ''] }));
-  }
-
-  removeClickRequiredAttributes(i){
-    const requiredAttributes = [...this.state.requiredAttributes];
-    requiredAttributes.splice(i, 1);
-    this.setState({ requiredAttributes });
-  }
-
-  addClickOptionalAttributes(){
-    this.setState((prevState) => ({ optionalAttributes: [...prevState.optionalAttributes, ''] }));
-  }
-
-  removeClickOptionalAttributes(i){
-    const optionalAttributes = [...this.state.optionalAttributes];
-    optionalAttributes.splice(i, 1);
-    this.setState({ optionalAttributes });
   }
 
   // Get new information about granted requests etc.
@@ -414,7 +385,7 @@ class Bank extends Component{
       //  console.log(error);
       // });
 
-    this.cleanForm();
+    this.cleanFormClaims();
   }
 
   handleSubmitClosure(event){
@@ -443,9 +414,9 @@ class Bank extends Component{
     console.log('Closure request is: ', closureRequests);
     const postRequest = {
       closureRequests: closureRequests,
-      optionalClaims: this.state.optionalAttributes,
+      optionalClaims: [],
       providerURL: 'http://srv01.snet.tu-berlin.de:8100',
-      requiredClaims: this.state.requiredAttributes,
+      requiredClaims: [],
       userEthID: this.state.closureCreationEthAddress,
     };
     console.log('Preparing following body for POST: ', JSON.stringify(postRequest));
@@ -468,6 +439,7 @@ class Bank extends Component{
     // }).catch((error) => {
     //  console.log(error);
     // });
+    this.cleanFormClosures();
   }
 
   handleGetClosuresForClaimsForEthAddress(event){
@@ -514,19 +486,20 @@ class Bank extends Component{
       })
   }
 
-  cleanForm(){
+  cleanFormClaims(){
     // console.log('test', this.state);
-    console.log(this.state.requiredAttributes, this.state.optionalAttributes);
-    for (let i = 0; i < this.state.requiredAttributes.length; i += 1) {
-      console.log(`required attribute: ${i}`);
-      this.removeClickRequiredAttributes(this, i);
-    }
-    for (let i = 0; i < this.state.optionalAttributes.length; i += 1) {
-      console.log(`optional attribute: ${i}`);
-      this.removeClickOptionalAttributes(this, i);
-    }
     this.setState({
-      ethAddress: '',
+      requiredAttributes: [],
+      optionalAttributes: [],
+    });
+  }
+
+  cleanFormClosures(){
+    // console.log('test', this.state);
+    this.setState({
+      closureCreationClaimId: '',
+      closureCreationClaimOperation: '',
+      closureCreationClaimValue: '',
     });
   }
 
@@ -546,7 +519,7 @@ class Bank extends Component{
   };
 
   prepareClosureOutput(c){
-    console.log('Preparing closure for returnString: ', c);
+    // console.log('Preparing closure for returnString: ', c);
     let returnString = '';
     if (c.length > 0){
       for (let entry of c) {
@@ -554,7 +527,9 @@ class Bank extends Component{
         returnString = returnString +
           '[' + entry.payload.claimID + ' ' +
           this.switchClosureOperationLinguisticValueAndProgrammaticValue(entry.payload.claimOperation) +
-          ' ' + this.clearStaticValueOfNullForTable(entry.payload.staticValue) + ']; ';
+          ' ' + this.clearStaticValueOfNullForTable(entry.payload.staticValue) + ': ' +
+          entry.payload.expressionResult +
+          ']; ';
       }
     } else {
       returnString = '';
@@ -596,7 +571,7 @@ class Bank extends Component{
     if (!staticValue.value){
       let staticValueTimeValueNoSingleChar = [];
       for (let number of staticValue.timeValue) {
-        console.log('Iterating over: ' + number + ' is smaller than 10: ' + (Number(number) < 10));
+        // console.log('Iterating over: ' + number + ' is smaller than 10: ' + (Number(number) < 10));
         if (Number(number) < 10) {
           staticValueTimeValueNoSingleChar.push(('0' + number));
         } else {
@@ -607,7 +582,7 @@ class Bank extends Component{
         staticValueTimeValueNoSingleChar[4] + ' Uhr) (' +
         staticValueTimeValueNoSingleChar[2] + '.' +
         staticValueTimeValueNoSingleChar[1] + '.' +
-        staticValueTimeValueNoSingleChar[0] + ')';
+        staticValueTimeValueNoSingleChar[0] + ')]';
     } else {
       return staticValue.value;
     }
@@ -641,7 +616,7 @@ class Bank extends Component{
                 raised
                 onClick={this.handleGetClaimsForEthAddress}
                 style={{ marginLeft: '15px', marginBottom: '100px' }}
-              >Get Claims</Button>
+              >Get Claim-IDs</Button>
               <FormControl
                 style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
                 <InputLabel htmlFor="select-multiple-required-claims">Required Claims</InputLabel>
@@ -672,7 +647,8 @@ class Bank extends Component{
                   ))}
                 </Select>
               </FormControl>
-              <FormControl
+              { this.state.requiredAttributes.length > 0
+              ? <FormControl
                 style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
                 <InputLabel htmlFor="select-multiple-optional-claims">Optional Claims</InputLabel>
                 <Select
@@ -684,17 +660,19 @@ class Bank extends Component{
                   { this.state.availableClaimsForEthAddress.map((c) => (
                     this.state.requiredAttributes.map((ra) => (
                       c.claimID === ra
-                      ? null
-                      : <MenuItem
-                        key={c.claimID}
-                        value={c.claimID}
+                        ? null
+                        : <MenuItem
+                          key={c.claimID}
+                          value={c.claimID}
                         >
-                        {c.claimID}
-                      </MenuItem>
+                          {c.claimID}
+                        </MenuItem>
                     ))
                   ))}
                 </Select>
               </FormControl>
+              : null
+              }
               <Button
                 raised
                 onClick={this.handleSubmit}
@@ -721,7 +699,7 @@ class Bank extends Component{
                 raised
                 onClick={this.handleGetClosuresForClaimsForEthAddress}
                 style={{ marginLeft: '15px', marginBottom: '100px' }}
-              >Get Claims</Button>
+              >Get Claim-IDs</Button>
               <FormControl
                 style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
                 <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
@@ -790,64 +768,51 @@ class Bank extends Component{
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <div>
-                <div>
-                  <Button
-                    raised
-                    style={{ marginTop: '15px', marginBottom: '5%' }}
-                    onClick={this.getNewMessages}
-                  >
-                    Request unseen Messages
-                  </Button>
-                  <Button
-                    raised
-                    style={{ marginTop: '15px', marginBottom: '5%' }}
-                    onClick={this.getAllMessages}
-                  >
-                    Request seen Messages
-                  </Button>
-                  <Button
-                    raised
-                    style={{ marginTop: '15px', marginBottom: '5%' }}
-                    onClick={this.putAllMessage(true)}
-                  >
-                    Mark all seen
-                  </Button>
-                </div>
+                <Button
+                  raised
+                  style={{ marginTop: '15px', marginBottom: '25px' }}
+                  onClick={this.getAllMessages}
+                >
+                  Request Users
+                </Button>
                 <Table>
                   <TableHead>
                     <TableRow>
                       <TableCell>ethID</TableCell>
                       <TableCell>Claims</TableCell>
-                      <TableCell>Closures</TableCell>
+                      <TableCell>Signed closures</TableCell>
                       <TableCell>Closure creation Date</TableCell>
-                      <TableCell>Mark as seen</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {this.state.tableData.map((n) => (
                       <TableRow key={n.ethId}>
                         <TableCell>{n.ethId}</TableCell>
-                        <TableCell>{n.claims.map((c) => (
+                        <TableCell
+                          style={{
+                            whiteSpace: 'normal',
+                            wordWrap: 'break-word'
+                          }}>{n.claims.map((c) => (
                           this.prepareClaimOutput(c)
                           )
                         )}</TableCell>
-                        <TableCell>
+                        <TableCell
+                          style={{
+                            whiteSpace: 'normal',
+                            wordWrap: 'break-word'
+                          }}>
                           { n.claims.map((c) => (
                             this.prepareClosureOutput(c.signedClosures)
                           ))}
                         </TableCell>
-                        <TableCell>
+                        <TableCell
+                          style={{
+                            whiteSpace: 'normal',
+                            wordWrap: 'break-word'
+                          }}>
                           { n.claims.map((c) => (
                             this.prepareClosureCreationDateOutput(c.signedClosures)
                           ))}
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            raised
-                            size="small"
-                          >
-                            Seen
-                          </Button>
                         </TableCell>
                       </TableRow>
                       )
