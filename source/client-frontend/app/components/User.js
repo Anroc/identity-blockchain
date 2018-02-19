@@ -6,6 +6,9 @@ import ExpansionPanel, {
   ExpansionPanelSummary,
 } from 'material-ui/ExpansionPanel';
 import Typography from 'material-ui/Typography';
+import Snackbar from 'material-ui/Snackbar';
+import IconButton from 'material-ui/IconButton';
+import CloseIcon from 'material-ui-icons/Close';
 
 import QRCode from './User/QR_Code';
 import request from '../auth/request';
@@ -16,17 +19,19 @@ import MessageSection from './User/Messages/MessageSection';
 import PermissionsSection from './User/PermissionSection';
 import PermissionForm from './User/PermissionForm';
 import PermissionRequestTable from './User/Permissions/PermissionRequestTable';
+import ClosureHistoryTable from './User/ClosureHistory/ClosureHistoryTable';
 
 class User extends Component {
   constructor() {
     super();
     this.showQRCode = this.showQRCode.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.toggleSnack = this.toggleSnack.bind(this);
     this.getMessages = this.getMessages.bind(this);
     this.getPermissionRequest = this.getPermissionRequest.bind(this);
     this.putMessageSeen = this.putMessageSeen.bind(this);
     this.putPermissionAnswer = this.putPermissionAnswer.bind(this);
-    this.sendPermissionAnswer = this.sendPermissionAnswer.bind(this);
+    // this.sendPermissionAnswer = this.sendPermissionAnswer.bind(this);
     this.getUserClaims = this.getUserClaims.bind(this);
     this.state = {
       swaggerData: '',
@@ -44,6 +49,8 @@ class User extends Component {
       permission: null,
       permissions: [],
       expanded: null,
+      snackOpen: false,
+      snackMessage: '',
     };
   }
 
@@ -59,12 +66,6 @@ class User extends Component {
   componentDidUpdate() {
     console.log('component did update');
   }
-
-  // todo change password
-  // todo error labelling
-  // todo claims erst spaeter requesten
-  // todo alle requests erst später stellen
-  // todo warning no recovery possible, keep your password safe
 
   /**
    * get user claims
@@ -83,6 +84,7 @@ class User extends Component {
 
     request('http://srv01.snet.tu-berlin.de:1112/claims', getUserClaimOptions)
       .then((json) => {
+        this.toggleSnack('got new user claims');
         console.log(JSON.stringify(json));
         this.setState({
           claims: json,
@@ -91,6 +93,7 @@ class User extends Component {
   }
 
   getPermissionRequest(message) {
+    this.toggleSnack('got permission request');
     const options = {
       method: 'GET',
       headers: {
@@ -115,6 +118,7 @@ class User extends Component {
   }
 
   getMessages() {
+    this.toggleSnack('Successfully got permission requests');
     const getUserInformationOptions = {
       method: 'GET',
       headers: {
@@ -155,6 +159,13 @@ class User extends Component {
       });
   }
 
+  toggleSnack(message) {
+    this.setState({
+      snackOpen: true,
+      snackMessage: message,
+    });
+  }
+
   putMessageSeen(permissionId) {
     if (permissionId === undefined || this.state.messages.length === 0) {
       return;
@@ -181,12 +192,14 @@ class User extends Component {
     request(`http://srv01.snet.tu-berlin.de:1112/messages/${currentMessage.id}`, messageSeenOptions);
   }
 
+  /*
   sendPermissionAnswer(messageId, requiredClaims, optionalClaims, closureRequest) {
     // put message seen
     this.putMessageSeen(messageId);
     // send approval with all the data to endpoint
     this.putPermissionAnswer(requiredClaims, optionalClaims, closureRequest);
   }
+  */
 
   /**
    */
@@ -216,25 +229,35 @@ class User extends Component {
     });
   }
 
-  showClaims() {
-    this.getUserClaims();
-  }
-
   handleChange(event, value) {
     this.setState({
       value,
     });
   }
 
-  handlePanel(event, expanded, panel) {
-    this.setState({
-      expanded: expanded ? panel : false,
-    });
-  }
-
   render() {
     return (
       <article>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          open={this.state.snackOpen}
+          autoHideDuration={6000}
+          onClose={() => { this.setState({ snackOpen: false }); }}
+          message={<span id="message-id">{this.state.snackMessage}</span>}
+          action={[
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => { this.setState({ snackOpen: false }); }}
+            >
+              <CloseIcon />
+            </IconButton>,
+          ]}
+        />
         <section className="text-section">
           <Welcome ethID={this.props.ethID} />
         </section>
@@ -264,6 +287,17 @@ class User extends Component {
             <PermissionRequestTable
               permissions={this.state.permissions}
               putMessageSeen={this.putMessageSeen}
+            />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+        <ExpansionPanel>
+          <ExpansionPanelSummary>
+            <Typography>Closure History</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <ClosureHistoryTable
+              claims={this.state.claims}
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>
