@@ -110,6 +110,7 @@ class User extends Component {
       .then((json) => {
         console.log('GOT RESULT TO PERMISSION');
         console.log(json);
+        this.putMessageSeen(message.subjectID);
         this.setState((prevState) => ({
           permissions: [...prevState.permissions, json],
         }));
@@ -227,7 +228,11 @@ class User extends Component {
 
   render() {
     return (
-      <article>
+      <article
+        style={{
+          marginBottom: '20px',
+        }}
+      >
         <Snackbar
           anchorOrigin={{
             vertical: 'top',

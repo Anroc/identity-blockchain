@@ -601,20 +601,17 @@ class Bank extends Component{
 
   clearStaticValueOfNullForTable(staticValue){
     if (!staticValue.value){
-      const staticValueTimeValueNoSingleChar = [];
+      const staticValueTimeValue = [];
       for (let number of staticValue.timeValue) {
         // console.log('Iterating over: ' + number + ' is smaller than 10: ' + (Number(number) < 10));
         if (Number(number) < 10) {
-          staticValueTimeValueNoSingleChar.push(('0' + number));
+          staticValueTimeValue.push((`0${number}`));
         } else {
-          staticValueTimeValueNoSingleChar.push(number);
+          staticValueTimeValue.push(number);
         }
       }
-      return '[(' + staticValueTimeValueNoSingleChar[3] + ':' +
-        staticValueTimeValueNoSingleChar[4] + ' Uhr) (' +
-        staticValueTimeValueNoSingleChar[2] + '.' +
-        staticValueTimeValueNoSingleChar[1] + '.' +
-        staticValueTimeValueNoSingleChar[0] + ')]';
+      return `[(${staticValueTimeValue[3]}:${staticValueTimeValue[4]} o'clock)
+      (${staticValueTimeValue[2]}.${staticValueTimeValue[1]}.${staticValueTimeValue[0]})]`;
     }
     return staticValue.value;
   }
