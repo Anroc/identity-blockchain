@@ -30,7 +30,6 @@ class User extends Component {
     this.getPermissionRequest = this.getPermissionRequest.bind(this);
     this.putMessageSeen = this.putMessageSeen.bind(this);
     this.putPermissionAnswer = this.putPermissionAnswer.bind(this);
-    // this.sendPermissionAnswer = this.sendPermissionAnswer.bind(this);
     this.getUserClaims = this.getUserClaims.bind(this);
     this.state = {
       swaggerData: '',
@@ -187,18 +186,8 @@ class User extends Component {
       }),
       credentials: 'include',
     };
-
     request(`http://srv01.snet.tu-berlin.de:1112/messages/${currentMessage.id}`, messageSeenOptions);
   }
-
-  /*
-  sendPermissionAnswer(messageId, requiredClaims, optionalClaims, closureRequest) {
-    // put message seen
-    this.putMessageSeen(messageId);
-    // send approval with all the data to endpoint
-    this.putPermissionAnswer(requiredClaims, optionalClaims, closureRequest);
-  }
-  */
 
   /**
    */
