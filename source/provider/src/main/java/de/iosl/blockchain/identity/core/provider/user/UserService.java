@@ -84,7 +84,7 @@ public class UserService {
     private boolean filterForClaimAttribute(User user, String claimValue) {
         return user.getClaims()
                 .stream()
-                .filter(claim -> claim.getClaimValue().getPayload().equals(claimValue))
+                .filter(claim -> claim.getClaimValue().getPayload().getUnifiedValue().equals(claimValue))
                 .findAny()
                 .isPresent();
     }
@@ -98,7 +98,7 @@ public class UserService {
         log.info("Registering user: {} ({})", user.getId(), user.getEthId());
         updateUser(user);
         ebaInterface.setRegisterApproval(keyChain.getAccount(), user.getRegisterContractAddress(), true);
-        heartBeatService.createBeat(user.getEthId(), EventType.NEW_CLAIMS);
+        heartBeatService.createURLBeat(user.getEthId(), EventType.NEW_CLAIMS);
         log.info("Registered user: {} ({})", user.getId(), user.getEthId());
     }
 }

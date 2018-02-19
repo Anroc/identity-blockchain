@@ -1,6 +1,7 @@
 package state.identity.blockchain.iosl.de.blockidclientqrscanner;
 
 import android.app.Activity;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -85,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
     private void processQRCode(String contents, String userId) {
         if(userId != null) {
             ApiRequest apiRequest = logic.approveUser(contents);
+            if(apiRequest == null) {
+                Log.e("Help", "not right format");
+                Toast.makeText(this, "QR-code was not in the right format.", Toast.LENGTH_SHORT).show();
+                return;
+            }
             new PostUserCredentials(this).execute(logic, userId, apiRequest);
         } else {
             Log.i("Help", "user id was null");

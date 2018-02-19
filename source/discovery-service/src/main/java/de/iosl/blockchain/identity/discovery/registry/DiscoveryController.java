@@ -1,8 +1,8 @@
 package de.iosl.blockchain.identity.discovery.registry;
 
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
-import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.discovery.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.lib.dto.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.dto.RequestDTO;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;

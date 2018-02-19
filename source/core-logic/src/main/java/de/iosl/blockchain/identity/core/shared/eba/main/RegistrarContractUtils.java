@@ -9,7 +9,6 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.tx.Contract;
 
 import java.math.BigInteger;
 import java.util.concurrent.ExecutionException;
@@ -20,7 +19,7 @@ public class RegistrarContractUtils {
 
     public String deployRegistrarContract(Account account, Web3j web3j) {
         try {
-            log.info("wallet balance before deployment", getBalanceWei(web3j, account.getAddress()));
+            log.info("wallet balance before deployment {}", getBalanceWei(web3j, account.getAddress()));
             Registrar_sol_FirstContract contract = Registrar_sol_FirstContract.deploy(
                     web3j,
                     account.getCredentials(),

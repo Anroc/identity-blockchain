@@ -1,10 +1,8 @@
 package de.iosl.blockchain.identity.core.shared.message.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
 
@@ -12,7 +10,6 @@ import java.util.Date;
 
 @Data
 @Document
-@AllArgsConstructor
 @NoArgsConstructor
 public class Message {
 
@@ -25,12 +22,15 @@ public class Message {
     @Field
     private boolean seen;
     @Field
-    @CreatedDate
+    private String subjectID;
+    @Field
     private Date creationDate;
 
-    public Message(String id, MessageType messageType, boolean seen) {
+    public Message(String id, MessageType messageType, boolean seen, String subjectID) {
         this.id = id;
         this.messageType = messageType;
         this.seen = seen;
+        this.subjectID = subjectID;
+        this.creationDate = new Date();
     }
 }

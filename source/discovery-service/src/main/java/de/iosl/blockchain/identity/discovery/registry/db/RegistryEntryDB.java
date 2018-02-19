@@ -30,9 +30,13 @@ public class RegistryEntryDB extends CouchbaseWrapper<RegistryEntry, String> {
         return registryEntryRepository.findAll();
     }
 
+    public void deleteEntity(@NonNull String id) {
+        registryEntryRepository.delete(id);
+    }
+
     public void updateLastSeen(@NonNull String ethID, @NonNull Date date) {
         try {
-            bucket.mutateIn(ethID).upsert("creationDate", date, true).execute();
+            bucket.mutateIn(ethID).upsert("lastSeen", date, true).execute();
         } catch (DocumentDoesNotExistException e) {
             throw new ServiceException(e, HttpStatus.NOT_FOUND);
         }

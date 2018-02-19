@@ -6,12 +6,16 @@ import de.iosl.blockchain.identity.core.shared.api.client.APIClientRegistry;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
+import de.iosl.blockchain.identity.core.shared.message.MessageService;
+import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
-import de.iosl.blockchain.identity.core.user.claims.repository.UserClaimDB;
+import de.iosl.blockchain.identity.core.user.claims.db.UserClaimDB;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.beats.SubjectType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class APIClientService {
 
@@ -30,6 +35,8 @@ public class APIClientService {
     private UserClaimDB userClaimDB;
     @Autowired
     private HeartBeatService heartBeatService;
+    @Autowired
+    private MessageService messageService;
 
     private final EthereumSigner ethereumSigner;
     private final APIClientRegistry<UserAPIClient> apiClientRegistry;
@@ -46,8 +53,14 @@ public class APIClientService {
                 (event, eventType) -> {
                     switch (eventType) {
                         case NEW_CLAIMS:
-                            apiClientRegistry.register(event.getSubject());
-                            getAndSaveClaims(event.getSubject());
+                            if(event.getSubjectType() == SubjectType.URL) {
+                                apiClientRegistry.register(event.getSubject());
+                                log.info("Retrieving claims from provider...");
+                                getAndSaveClaims(event.getSubject());
+
+                                log.info("Creating new message: NEW_CLAIMS");
+                                messageService.createMessage(MessageType.NEW_CLAIMS, null);
+                            }
                             break;
                     }
                 }
@@ -63,9 +76,11 @@ public class APIClientService {
 
         ECKeyPair ecKeyPair = new ECKeyPair(keyChain.getAccount().getPrivateKey(), keyChain.getAccount().getPublicKey());
 
+        BasicEthereumDTO basicEthereumDTO = new BasicEthereumDTO(keyChain.getAccount().getAddress());
+
         SignedRequest<BasicEthereumDTO> claimRequest = new SignedRequest<>(
                 new BasicEthereumDTO(keyChain.getAccount().getAddress()),
-                ECSignature.fromSignatureData(ethereumSigner.sign(keyChain.getAccount().getAddress(), ecKeyPair))
+                ECSignature.fromSignatureData(ethereumSigner.sign(basicEthereumDTO, ecKeyPair))
         );
 
 
