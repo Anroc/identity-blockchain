@@ -75,7 +75,6 @@ class Bank extends Component{
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getNewMessages = this.getNewMessages.bind(this);
-    this.getAllMessages = this.getAllMessages.bind(this);
     this.prepareClaimOutput = this.prepareClaimOutput.bind(this);
     this.handleChangeClosureCreationClaimId = this.handleChangeClosureCreationClaimId.bind(this);
     this.handleChangeClosureCreationClaimOperation = this.handleChangeClosureCreationClaimOperation.bind(this);
@@ -91,6 +90,7 @@ class Bank extends Component{
     this.clearStaticValueOfNullForTable = this.clearStaticValueOfNullForTable.bind(this);
     this.prepareClosureCreationDateOutput = this.prepareClosureCreationDateOutput.bind(this);
     this.cleanFormClosures = this.cleanFormClosures.bind(this);
+    this.getAllMessages = this.getAllMessages.bind(this);
     this.handleClickSnack = this.handleClickSnack.bind(this);
     this.handleCloseSnack = this.handleCloseSnack.bind(this);
   }
@@ -119,14 +119,14 @@ class Bank extends Component{
       snackOpen: open,
       snackMessage: message,
     });
-  };
+  }
 
   handleCloseSnack(){
     this.setState({
       snackOpen: false,
       snackMessage: '',
     });
-  };
+  }
 
   handleChange(event){
     this.setState({ ethAddress: event.target.value });
@@ -141,7 +141,7 @@ class Bank extends Component{
   }
 
   switchClosureOperationLinguisticValueAndProgrammaticValue(val){
-    console.log('Morphing ' + val + ' back.');
+    console.log(`Morphing ${val} back.`);
     switch (val){
       case 'EQ': return 'equals';
       case 'NEQ': return 'does not equal';
@@ -155,6 +155,7 @@ class Bank extends Component{
       case 'greater or equals': return 'GE';
       case 'less than': return 'LT';
       case 'less or equals': return 'LE';
+      default: return '';
     }
   }
 
@@ -182,21 +183,24 @@ class Bank extends Component{
         closureOperations = ['EQ', 'NEQ'];
         console.log('Setting ClaimOperationsChoices to: ', closureOperations);
         break;
+      default:
+        closureOperations = [];
+        console.log('Setting ClaimOperationChoices to default');
     }
     this.setState({
       closureCreationClaimId: event.target.value,
       closureCreationClaimOperationOptions: closureOperations,
     });
-  };
+  }
 
   handleChangeClosureCreationClaimOperation(event){
     console.log('Setting ClaimOperation to: ', event.target.value);
-    this.setState({closureCreationClaimOperation: event.target.value});
-  };
+    this.setState({ closureCreationClaimOperation: event.target.value });
+  }
 
   handleChangeClosureCreationStaticValue(event){
     console.log('Preparing to set new closureValue to: ', event.target.value);
-    let date = moment(event.target.value);
+    const date = moment(event.target.value);
     if (date.isValid()){
       const splitDate = event.target.value.split('-');
       this.setState({
@@ -213,7 +217,7 @@ class Bank extends Component{
         },
       });
     }
-  };
+  }
 
   handleChangeRequiredAttributeSelection(event){
     this.setState({ requiredAttributes: event.target.value });
@@ -253,7 +257,7 @@ class Bank extends Component{
         this.setState({
           userIDs: Array.from(new Set(this.state.userIDs)),
         });
-        for (let user of this.state.userIDs) {
+        for (const userID of this.state.userIDs) {
           const getUser = {
             method: 'GET',
             headers: {
@@ -264,8 +268,8 @@ class Bank extends Component{
             mode: 'cors',
             credentials: 'include',
           };
-          console.log('Requesting user through GET: ', user);
-          request('http://srv01.snet.tu-berlin.de:8102/users/' + user, getUser)
+          console.log('Requesting user through GET: ', userID);
+          request(`http://srv01.snet.tu-berlin.de:8102/users/${userID}`, getUser)
             .then((json) => {
               // console.log(JSON.stringify(json));
               const newTableData = this.state.tableData;
@@ -317,7 +321,7 @@ class Bank extends Component{
         this.setState({
           userIDs: Array.from(new Set(this.state.userIDs)),
         });
-        for (let user of this.state.userIDs) {
+        for (const userID of this.state.userIDs) {
           const getUser = {
             method: 'GET',
             headers: {
@@ -328,8 +332,8 @@ class Bank extends Component{
             mode: 'cors',
             credentials: 'include',
           };
-          console.log('Requesting user through GET: ', user);
-          request('http://srv01.snet.tu-berlin.de:8102/users/' + user, getUser)
+          console.log('Requesting user through GET: ', userID);
+          request(`http://srv01.snet.tu-berlin.de:8102/users/${userID}`, getUser)
             .then((json) => {
               // console.log(JSON.stringify(json));
               const newTableData = this.state.tableData;
@@ -348,7 +352,7 @@ class Bank extends Component{
   };
 
   putAllMessage(seen) {
-    for (let message of this.state.messages) {
+    for (const message of this.state.messages) {
       console.log('PUT MESSAGE TO SEEN:', message);
       const getUserInformationOptions = {
         method: 'PUT',
@@ -358,7 +362,7 @@ class Bank extends Component{
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          seen: seen
+          seen
         }),
         credentials: 'include',
       };
@@ -430,7 +434,7 @@ class Bank extends Component{
     ];
     console.log('Closure request is: ', closureRequests);
     const postRequest = {
-      closureRequests: closureRequests,
+      closureRequests,
       optionalClaims: [],
       providerURL: 'http://srv01.snet.tu-berlin.de:8100',
       requiredClaims: [],
@@ -527,15 +531,15 @@ class Bank extends Component{
     let returnString = '';
     if (c.claimValue != null && c.id != null){
       if (c.claimValue.payload.value != null) {
-        returnString += '[' + c.id + '(' + c.claimValue.payload.value + ')' + ']; ';
+        returnString += `[${c.id}(${c.claimValue.payload.value})];`;
       } else {
-        returnString += '[' + c.id + '(' + c.claimValue.payload.timeValue + ')' + ']; ';
+        returnString += `[${c.id}(${c.claimValue.payload.timeValue})];`;
       }
     } else {
-      returnString += '[' + c.id + '(NULL)' + ']; ';
+      returnString += `[${c.id}(NULL)];`;
     }
     return returnString;
-  };
+  }
 
   prepareClosureOutput(c){
     // console.log('Preparing closure for returnString: ', c);
@@ -543,7 +547,7 @@ class Bank extends Component{
     if (c.length > 0){
       for (let entry of c) {
         // console.log('Current closure entry is: ', entry);
-        returnString = returnString +
+        returnString +=
           '[' + entry.payload.claimID + ' ' +
           this.switchClosureOperationLinguisticValueAndProgrammaticValue(entry.payload.claimOperation) +
           ' ' + this.clearStaticValueOfNullForTable(entry.payload.staticValue) + ': ' +
@@ -554,41 +558,30 @@ class Bank extends Component{
       returnString = '';
     }
     return returnString
-  };
+  }
 
   prepareClosureCreationDateOutput(c){
     console.log('Preparing closure creation date for returnString: ', c);
-    let returnString = '';
     if (c.length > 0){
       for (let entry of c) {
-        let creationDateNoSingleChar = [];
-        for (let number of entry.payload.creationDate) {
-          // console.log('Iterating over: ' + number + ' is smaller than 10: ' + (Number(number) < 10) );
+        const creationDate = [];
+        entry.payload.creationDate.forEach((number) => {
           if (Number(number) < 10) {
-            creationDateNoSingleChar.push(('0' + number));
+            creationDate.push((`0${number}`));
           } else {
-            creationDateNoSingleChar.push(number);
+            creationDate.push(number);
           }
-        }
-        // console.log('Current closure entry is: ', entry);
-        returnString = returnString +
-          '[(' + creationDateNoSingleChar[3] + ':' +
-          creationDateNoSingleChar[4] + ':' +
-          creationDateNoSingleChar[5] + ' Uhr) (' +
-          creationDateNoSingleChar[2] + '.' +
-          creationDateNoSingleChar[1] + '.' +
-          creationDateNoSingleChar[0] +
-        ')]; ';
+        });
+        return `[(${creationDate[3]}:${creationDate[4]}:${creationDate[5]} o'clock)
+      (${creationDate[2]}.${creationDate[1]}.${creationDate[0]})]`;
       }
-    } else {
-      returnString = '';
     }
-    return returnString
-  };
+    return '';
+  }
 
   clearStaticValueOfNullForTable(staticValue){
     if (!staticValue.value){
-      let staticValueTimeValueNoSingleChar = [];
+      const staticValueTimeValueNoSingleChar = [];
       for (let number of staticValue.timeValue) {
         // console.log('Iterating over: ' + number + ' is smaller than 10: ' + (Number(number) < 10));
         if (Number(number) < 10) {
@@ -602,17 +595,18 @@ class Bank extends Component{
         staticValueTimeValueNoSingleChar[2] + '.' +
         staticValueTimeValueNoSingleChar[1] + '.' +
         staticValueTimeValueNoSingleChar[0] + ')]';
-    } else {
-      return staticValue.value;
     }
-  };
+    return staticValue.value;
+  }
 
   render(){
     return (
-      <article style={{
-        max: '100%',
-        width: '100%',
-      }}>
+      <article
+        style={{
+          max: '100%',
+          width: '100%',
+        }}
+      >
         <Snackbar
           anchorOrigin={{
             vertical: 'top',
@@ -639,7 +633,8 @@ class Bank extends Component{
               <Typography>Create new permission request</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails
-              style={{ display: 'flex', flexWrap: 'wrap' }}>
+              style={{ display: 'flex', flexWrap: 'wrap' }}
+            >
               <FormControl
                 aria-describedby="ethAddress-text"
                 style={{ marginBottom: '15px', minWidth: '75%' }}
@@ -653,7 +648,8 @@ class Bank extends Component{
                 style={{ marginLeft: '15px', marginBottom: '100px' }}
               >Get Claim-IDs</Button>
               <FormControl
-                style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
+                style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+              >
                 <InputLabel htmlFor="select-multiple-required-claims">Required Claims</InputLabel>
                 <Select
                   multiple
@@ -666,46 +662,50 @@ class Bank extends Component{
                     ? this.state.optionalAttributes.map((oa) => (
                       c.claimID === oa
                       ? null
-                      : <MenuItem
+                      :
+                      <MenuItem
                         key={c.claimID}
                         value={c.claimID}
-                        >
+                      >
                         {c.claimID}
                       </MenuItem>
                     ))
-                    : <MenuItem
-                      key={c.claimID}
-                      value={c.claimID}
+                    :
+                      <MenuItem
+                        key={c.claimID}
+                        value={c.claimID}
                       >
-                      {c.claimID}
-                    </MenuItem>
+                        {c.claimID}
+                      </MenuItem>
                   ))}
                 </Select>
               </FormControl>
               { this.state.requiredAttributes.length > 0
-              ? <FormControl
-                style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
-                <InputLabel htmlFor="select-multiple-optional-claims">Optional Claims</InputLabel>
-                <Select
-                  multiple
-                  value={this.state.optionalAttributes}
-                  onChange={this.handleChangeOptionalAttributeSelection}
-                  input={<Input id="select-multiple" />}
+              ?
+                <FormControl
+                  style={{ marginBottom: '15px', max: '100%', width: '100%' }}
                 >
-                  { this.state.availableClaimsForEthAddress.map((c) => (
-                    this.state.requiredAttributes.map((ra) => (
-                      c.claimID === ra
-                        ? null
-                        : <MenuItem
-                          key={c.claimID}
-                          value={c.claimID}
-                        >
-                          {c.claimID}
-                        </MenuItem>
-                    ))
-                  ))}
-                </Select>
-              </FormControl>
+                  <InputLabel htmlFor="select-multiple-optional-claims">Optional Claims</InputLabel>
+                  <Select
+                    multiple
+                    value={this.state.optionalAttributes}
+                    onChange={this.handleChangeOptionalAttributeSelection}
+                    input={<Input id="select-multiple" />}
+                  >
+                    { this.state.availableClaimsForEthAddress.map((c) => (
+                      this.state.requiredAttributes.map((ra) => (
+                        c.claimID === ra
+                          ? null
+                          : <MenuItem
+                            key={c.claimID}
+                            value={c.claimID}
+                          >
+                            {c.claimID}
+                          </MenuItem>
+                      ))
+                    ))}
+                  </Select>
+                </FormControl>
               : null
               }
               <Button
@@ -722,7 +722,8 @@ class Bank extends Component{
               <Typography>Create a new Closure request</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails
-              style={{ display: 'flex', flexWrap: 'wrap' }}>
+              style={{ display: 'flex', flexWrap: 'wrap' }}
+            >
               <FormControl
                 aria-describedby="closureCreationEthAddress-text"
                 style={{ marginBottom: '15px', minWidth: '75%' }}
@@ -736,7 +737,8 @@ class Bank extends Component{
                 style={{ marginLeft: '15px', marginBottom: '100px' }}
               >Get Claim-IDs</Button>
               <FormControl
-                style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
+                style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+              >
                 <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
                 <Select
                   value={this.state.closureCreationClaimId}
@@ -752,7 +754,8 @@ class Bank extends Component{
                 </Select>
               </FormControl>
               <FormControl
-                style={{ marginBottom: '15px', max: '100%', width: '100%' }}>
+                style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+              >
                 <InputLabel htmlFor="claimOperation">Claim-Operation</InputLabel>
                 <Select
                   value={this.state.closureCreationClaimOperation}
@@ -763,7 +766,8 @@ class Bank extends Component{
                       ? c.claimOperations.map((o) => (
                         <MenuItem
                           key={this.state.closureOperationDescriptions[o]}
-                          value={this.state.closureOperationDescriptions[o]}>
+                          value={this.state.closureOperationDescriptions[o]}
+                        >
                           {this.state.closureOperationDescriptions[o]}
                         </MenuItem>
                     )) : null
@@ -791,9 +795,11 @@ class Bank extends Component{
                     style={{ marginBottom: '15px', max: '100%', width: '100%' }}
                   >
                     <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
-                    <Input id="closureCreationClaimValue"
+                    <Input
+                      id="closureCreationClaimValue"
                       value={this.state.closureCreationClaimValue}
-                      onChange={this.handleChangeClosureCreationStaticValue}/>
+                      onChange={this.handleChangeClosureCreationStaticValue}
+                    />
                   </FormControl>
                 : null
               ))}
@@ -836,7 +842,8 @@ class Bank extends Component{
                           style={{
                             whiteSpace: 'normal',
                             wordWrap: 'break-word'
-                          }}>{n.claims.map((c) => (
+                          }}
+                        >{n.claims.map((c) => (
                           this.prepareClaimOutput(c)
                           )
                         )}</TableCell>
@@ -844,7 +851,8 @@ class Bank extends Component{
                           style={{
                             whiteSpace: 'normal',
                             wordWrap: 'break-word'
-                          }}>
+                          }}
+                        >
                           { n.claims.map((c) => (
                             this.prepareClosureOutput(c.signedClosures)
                           ))}
@@ -853,7 +861,8 @@ class Bank extends Component{
                           style={{
                             whiteSpace: 'normal',
                             wordWrap: 'break-word'
-                          }}>
+                          }}
+                        >
                           { n.claims.map((c) => (
                             this.prepareClosureCreationDateOutput(c.signedClosures)
                           ))}
