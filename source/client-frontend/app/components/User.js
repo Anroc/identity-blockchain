@@ -13,7 +13,6 @@ import CloseIcon from 'material-ui-icons/Close';
 import QRCode from './User/QR_Code';
 import request from '../auth/request';
 import ClaimsTable from './User/ClaimsTable';
-import Welcome from './User/Welcome';
 import DefaultClaims from './User/DefaultClaims';
 import MessageSection from './User/Messages/MessageSection';
 import PermissionsSection from './User/PermissionSection';
@@ -259,13 +258,14 @@ class User extends Component {
           ]}
         />
         <section className="text-section">
-          <Welcome ethID={this.props.ethID} />
+          <div><h1>Dashboard</h1></div>
         </section>
         <ExpansionPanel>
           <ExpansionPanelSummary>
             <Typography>General information</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
+            <Typography>EthID {this.props.ethID}</Typography>
             <QRCode showQRCode={this.showQRCode} showQR={this.state.showQR} />
           </ExpansionPanelDetails>
         </ExpansionPanel>
@@ -287,6 +287,7 @@ class User extends Component {
             <PermissionRequestTable
               permissions={this.state.permissions}
               putMessageSeen={this.putMessageSeen}
+              toggleSnack={this.toggleSnack}
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>

@@ -66,8 +66,7 @@ class PermissionForm extends React.Component {
     this.props.putMessageSeen(this.props.permission.id);
     // send approval with all the data to endpoint
     this.putPermissionAnswer(this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
-    /*
-    */
+    this.props.toggleSnack('Successfully sent permission answer.');
   }
 
   /**
@@ -176,6 +175,7 @@ class PermissionForm extends React.Component {
 PermissionForm.propTypes = {
   permission: PropTypes.object,
   putMessageSeen: PropTypes.func,
+  toggleSnack: PropTypes.func,
 };
 
 export default PermissionForm;

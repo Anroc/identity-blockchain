@@ -22,6 +22,7 @@ class PermissionRequestTable extends React.Component {
             <Paper key={permission.id}>
               <PermissionForm
                 permission={permission}
+                toggleSnack={this.props.toggleSnack}
                 putMessageSeen={this.props.putMessageSeen}
               />
             </Paper>
@@ -35,6 +36,7 @@ class PermissionRequestTable extends React.Component {
 PermissionRequestTable.propTypes = {
   permissions: PropTypes.array,
   putMessageSeen: PropTypes.func,
+  toggleSnack: PropTypes.func,
 };
 
 export default PermissionRequestTable;
