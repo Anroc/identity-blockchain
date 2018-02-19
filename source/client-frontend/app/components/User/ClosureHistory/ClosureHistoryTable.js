@@ -21,8 +21,11 @@ class ClosureHistoryTable extends Component {
                 claim.signedUserClosures && claim.signedUserClosures.map((closure) => (
                   <TableRow key={claim.id}>
                     <TableCell><div>{closure.blindedDescription}</div></TableCell>
-                    <TableCell><div>{closure.signedClosure.ethID}</div></TableCell>
-                    <TableCell><div>closure.signedClosure.creationDate</div></TableCell>
+                    <TableCell><div>{closure.signedClosure.payload.ethID}</div></TableCell>
+                    <TableCell><div>closure.signedClosure.payload.creationDate</div></TableCell>
+                    <TableCell numeric><div>
+                      {closure.signedClosure.payload.creationDate === null && (`${closure.signedClosure.payload.creationDate[0]}.${closure.signedClosure.payload.creationDate[1]}.${closure.signedClosure.payload.creationDate[2]} ${closure.signedClosure.payload.creationDate[3]}:${closure.signedClosure.payload.creationDate[4]}:${closure.signedClosure.payload.creationDate[5]}`)}
+                    </div></TableCell>
                   </TableRow>
                 ))
               ))}
