@@ -125,7 +125,7 @@ class PermissionForm extends React.Component {
 
   render() {
     return (
-      <section style={{ marginBottom: '20px' }}>
+      <section style={{ marginBottom: '20px', marginLeft: '20px' }}>
         <FormControl component="fieldset" required error>
           <FormLabel component="legend">
             New permission request:

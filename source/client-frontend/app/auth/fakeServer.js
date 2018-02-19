@@ -18,7 +18,6 @@ const server = {
   * Populates the users, similar to seeding a database in the real world
   */
   init() {
-    localStorage.clear();
     if (localStorage.users === undefined || !localStorage.encrypted) {
       // Set default user
       const juan = 'juan';
@@ -42,7 +41,6 @@ const server = {
  * @param  {string} password The password of the user
  */
   login(username, password, accountType) {
-    localStorage.clear();
     const userExists = this.doesUserExist(username);
 
     return new Promise((resolve, reject) => {
@@ -74,7 +72,6 @@ const server = {
  * @param  {string} password The password of the user
  */
   register(username, password, accountType) {
-    localStorage.clear();
     return new Promise((resolve, reject) => {
       // If the username isn't used, hash the password with bcrypt to store it in localStorage
       if (!this.doesUserExist(username)) {
@@ -93,7 +90,6 @@ const server = {
  * Pretends to log a user out and resolves
  */
   logout() {
-    localStorage.clear();
     return new Promise((resolve) => {
       localStorage.removeItem('token');
       resolve(true);
