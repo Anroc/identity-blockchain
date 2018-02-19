@@ -376,9 +376,27 @@ class Bank extends Component{
     this.handleClickSnack(true, 'Permission has been requested');
     // alert('A name was submitted: ' + this.state.requiredAttributes.join(', '));
     event.preventDefault();
+    const claimOperationMorphed = this.switchClosureOperationLinguisticValueAndProgrammaticValue(this.state.closureCreationClaimOperation);
+    this.setState({
+      closureRequests: [
+        {
+          claimID: this.state.closureCreationClaimId,
+          claimOperation: claimOperationMorphed,
+          staticValue: this.state.closureCreationStaticValue,
+        }
+      ],
+    });
+
+    const closureRequests = [
+      {
+        claimID: this.state.closureCreationClaimId,
+        claimOperation: claimOperationMorphed,
+        staticValue: this.state.closureCreationStaticValue,
+      }
+    ];
 
     const postRequest = {
-      closureRequests: this.state.closureRequests,
+      closureRequests,
       optionalClaims: this.state.optionalAttributes,
       providerURL: 'http://srv01.snet.tu-berlin.de:8100',
       requiredClaims: this.state.requiredAttributes,
@@ -406,6 +424,7 @@ class Bank extends Component{
       // });
 
     this.cleanFormClaims();
+    this.cleanFormClosures();
   }
 
   handleSubmitClosure(event){
@@ -413,7 +432,7 @@ class Bank extends Component{
     // alert('A name was submitted: ' + this.state.requiredAttributes.join(', '));
     event.preventDefault();
     const claimOperationMorphed = this.switchClosureOperationLinguisticValueAndProgrammaticValue(this.state.closureCreationClaimOperation);
-    console.log('Claim operator was morphed back to: ', claimOperationMorphed);
+    // console.log('Claim operator was morphed back to: ', claimOperationMorphed);
     this.setState({
       closureRequests: [
         {
@@ -424,7 +443,7 @@ class Bank extends Component{
       ],
     });
 
-    console.log('Closure request: claim-id' + this.state.closureCreationClaimId + ', claimOperation ' + claimOperationMorphed + ', value ' + this.state.closureCreationStaticValue);
+    // console.log('Closure request: claim-id' + this.state.closureCreationClaimId + ', claimOperation ' + claimOperationMorphed + ', value ' + this.state.closureCreationStaticValue);
     const closureRequests = [
       {
         claimID: this.state.closureCreationClaimId,
@@ -432,12 +451,12 @@ class Bank extends Component{
         staticValue: this.state.closureCreationStaticValue,
       }
     ];
-    console.log('Closure request is: ', closureRequests);
+    // console.log('Closure request is: ', closureRequests);
     const postRequest = {
       closureRequests,
-      optionalClaims: [],
+      optionalClaims: this.state.optionalAttributes,
       providerURL: 'http://srv01.snet.tu-berlin.de:8100',
-      requiredClaims: [],
+      requiredClaims: this.state.requiredAttributes,
       userEthID: this.state.closureCreationEthAddress,
     };
     console.log('Preparing following body for POST: ', JSON.stringify(postRequest));
@@ -461,6 +480,7 @@ class Bank extends Component{
     //  console.log(error);
     // });
     this.cleanFormClosures();
+    this.cleanFormClaims();
   }
 
   handleGetClosuresForClaimsForEthAddress(event){
@@ -531,12 +551,12 @@ class Bank extends Component{
     let returnString = '';
     if (c.claimValue != null && c.id != null){
       if (c.claimValue.payload.value != null) {
-        returnString += `[${c.id}(${c.claimValue.payload.value})];`;
+        returnString += `[${c.id}(${c.claimValue.payload.value})]; `;
       } else {
-        returnString += `[${c.id}(${c.claimValue.payload.timeValue})];`;
+        returnString += `[${c.id}(${c.claimValue.payload.timeValue})]; `;
       }
     } else {
-      returnString += `[${c.id}(NULL)];`;
+      returnString += `[${c.id}(NULL)]; `;
     }
     return returnString;
   }
