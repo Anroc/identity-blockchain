@@ -256,8 +256,10 @@ class User extends Component {
             <Typography>General information</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <Typography>EthID {this.props.ethID}</Typography>
-            <QRCode showQRCode={this.showQRCode} showQR={this.state.showQR} />
+            <div>
+              <Typography>EthID {this.props.ethID}</Typography>
+              <QRCode showQRCode={this.showQRCode} showQR={this.state.showQR} />
+            </div>
           </ExpansionPanelDetails>
         </ExpansionPanel>
 
