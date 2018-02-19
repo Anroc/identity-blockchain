@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
 import ErrorMessage from '../ErrorMessage';
 import LoadingButton from '../LoadingButton';
@@ -9,7 +10,7 @@ class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      accountTypes: ['user', 'government', 'bank'],
+      accountTypes: ['user', 'bank'],
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -85,9 +86,6 @@ class Form extends Component {
 
     return (
       <form className="form" onSubmit={this.onSubmit}>
-        <div>
-          account type {this.props.data.accountType}
-        </div>
         {error ? <ErrorMessage error={error} /> : null}
         <div className="form__field-wrapper">
           <div className="container text-center">
@@ -153,8 +151,8 @@ class Form extends Component {
                 autoCapitalize="off"
                 spellCheck="false"
               />
-              <label className="form__field-label" htmlFor="governmentName">
-                Government name
+              <label className="form__field-label" htmlFor="institutionalName">
+                Institutional name
               </label>
             </div>
             <div className="form__field-wrapper">

@@ -63,7 +63,7 @@
 .form__field-radioPad__wrapper {
   display: block;
   cursor: pointer;
-  background: #a37a05;
+  background: #6CC0E5;/*#a37a05;*/
   color: #fff;
   text-transform: uppercase;
   font-size: 1rem;
@@ -73,10 +73,10 @@
 }
 .form__field-radioPad__wrapper:active,
 .form__field-radioPad__wrapper--selected {
-  background: #dea607 !important;
+  background: dodgerblue !important; /* #dea607 !important; */
 }
 .form__field-radioPad__wrapper:hover {
-  background: #bc8d06;
+  background: steelblue;/*#bc8d06;*/
 }
 .form__field-radioPad__radio {
   visibility: hidden;
