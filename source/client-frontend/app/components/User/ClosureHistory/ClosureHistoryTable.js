@@ -22,9 +22,8 @@ class ClosureHistoryTable extends Component {
                   <TableRow key={claim.id}>
                     <TableCell><div>{closure.blindedDescription}</div></TableCell>
                     <TableCell><div>{closure.signedClosure.payload.ethID}</div></TableCell>
-                    <TableCell><div>closure.signedClosure.payload.creationDate</div></TableCell>
                     <TableCell numeric><div>
-                      {closure.signedClosure.payload.creationDate === null && (`${closure.signedClosure.payload.creationDate[0]}.${closure.signedClosure.payload.creationDate[1]}.${closure.signedClosure.payload.creationDate[2]} ${closure.signedClosure.payload.creationDate[3]}:${closure.signedClosure.payload.creationDate[4]}:${closure.signedClosure.payload.creationDate[5]}`)}
+                      {closure.signedClosure.payload.staticValue.timeValue === null && (`${closure.signedClosure.payload.staticValue.timeValue[0]}.${closure.signedClosure.payload.staticValue.timeValue[1]}.${closure.signedClosure.payload.staticValue.timeValue[2]} ${closure.signedClosure.payload.staticValue.timeValue[3]}:${closure.signedClosure.payload.staticValue.timeValue[4]}:${closure.signedClosure.payload.staticValue.timeValue[5]}`)}
                     </div></TableCell>
                   </TableRow>
                 ))
