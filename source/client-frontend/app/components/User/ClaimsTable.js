@@ -5,6 +5,17 @@ import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 
 class ClaimsTable extends Component {
+
+  constructor() {
+    super();
+    this.clickClaims = this.clickClaims.bind(this);
+  }
+
+  clickClaims() {
+    this.props.toggleSnack('got new user claims');
+    this.props.getUserClaims();
+  }
+
   render() {
     return (
       <section>
@@ -41,7 +52,7 @@ class ClaimsTable extends Component {
           <Button
             raised
             color="primary"
-            onClick={this.props.getUserClaims}
+            onClick={this.clickClaims}
           >
             Refresh claims table
           </Button>
@@ -55,6 +66,7 @@ class ClaimsTable extends Component {
 ClaimsTable.propTypes = {
   claims: PropTypes.array,
   getUserClaims: PropTypes.func,
+  toggleSnack: PropTypes.func,
 };
 
 export default ClaimsTable;

@@ -23,10 +23,9 @@ public class DiscoveryService {
 
     public RegistryEntry putEntry(@NonNull RegistryEntry registryEntry) {
         if(registryEntryDB.exist(registryEntry.getId())) {
-            return registryEntryDB.update(registryEntry);
-        } else {
-            return registryEntryDB.insert(registryEntry);
+            registryEntryDB.deleteEntity(registryEntry.getId());
         }
+        return registryEntryDB.insert(registryEntry);
     }
 
     public Collection<RegistryEntry> getEntries() {

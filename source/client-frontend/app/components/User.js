@@ -82,11 +82,12 @@ class User extends Component {
 
     request('http://srv01.snet.tu-berlin.de:1112/claims', getUserClaimOptions)
       .then((json) => {
-        this.toggleSnack('got new user claims');
-        console.log(JSON.stringify(json));
-        this.setState({
-          claims: json,
-        });
+        if (json !== this.state.claims) {
+          console.log(JSON.stringify(json));
+          this.setState({
+            claims: json,
+          });
+        }
       });
   }
 
@@ -116,7 +117,6 @@ class User extends Component {
   }
 
   getMessages() {
-    this.toggleSnack('Successfully got permission requests');
     const getUserInformationOptions = {
       method: 'GET',
       headers: {
@@ -140,6 +140,8 @@ class User extends Component {
               if (message.messageType === 'PERMISSION_REQUEST') {
                 console.log('getting permission request');
                 this.getPermissionRequest(message);
+
+                this.toggleSnack('Successfully got permission requests');
                 if (message.subjectID !== undefined) {
                   this.putMessageSeen(message.subjectID);
                 }
@@ -254,8 +256,10 @@ class User extends Component {
             <Typography>General information</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <Typography>EthID {this.props.ethID}</Typography>
-            <QRCode showQRCode={this.showQRCode} showQR={this.state.showQR} />
+            <div>
+              <Typography>EthID {this.props.ethID}</Typography>
+              <QRCode showQRCode={this.showQRCode} showQR={this.state.showQR} />
+            </div>
           </ExpansionPanelDetails>
         </ExpansionPanel>
 
@@ -264,7 +268,11 @@ class User extends Component {
             <Typography>My Claims</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <ClaimsTable claims={this.state.claims} getUserClaims={this.getUserClaims} />
+            <ClaimsTable
+              claims={this.state.claims}
+              getUserClaims={this.getUserClaims}
+              toggleSnack={this.toggleSnack}
+            />
           </ExpansionPanelDetails>
         </ExpansionPanel>
 

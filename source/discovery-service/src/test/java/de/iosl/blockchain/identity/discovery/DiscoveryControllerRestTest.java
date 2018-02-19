@@ -2,8 +2,8 @@ package de.iosl.blockchain.identity.discovery;
 
 import de.iosl.blockchain.identity.discovery.registry.DiscoveryService;
 import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntry;
-import de.iosl.blockchain.identity.discovery.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.RegistryEntryDTO;
 import de.iosl.blockchain.identity.lib.dto.RequestDTO;
 import org.junit.Before;
 import org.junit.Test;

@@ -44,7 +44,7 @@ public abstract class SymmetricCryptEngine<T> extends CypherProcessor {
      *
      * @return a new Key Pair
      */
-    public Key generateKey() {
+    protected Key generateKey() {
         KeyGenerator keyGen;
         try {
             keyGen = KeyGenerator.getInstance(ALGORITHM);

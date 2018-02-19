@@ -1,10 +1,11 @@
 package de.iosl.blockchain.identity.core.user.claims.claim;
 
 import com.couchbase.client.java.repository.annotation.Field;
+import com.google.common.collect.Lists;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
-import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
-import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
-import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
+import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
+import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
+import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ public class UserClaim extends SharedClaim {
     private String targetUserEthID;
 
     public UserClaim(String id, Date modificationDate, Provider provider, Payload claimValue, String targetUserEthID) {
-        super(modificationDate, provider, claimValue);
+        super(modificationDate, provider, claimValue, Lists.newArrayList());
         this.id = id;
         this.targetUserEthID = targetUserEthID;
     }

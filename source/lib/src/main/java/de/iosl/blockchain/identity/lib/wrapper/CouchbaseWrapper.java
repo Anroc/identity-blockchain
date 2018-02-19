@@ -1,9 +1,8 @@
 package de.iosl.blockchain.identity.lib.wrapper;
 
 import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.query.Delete;
-import com.couchbase.client.java.query.N1qlQueryResult;
-import com.couchbase.client.java.query.Statement;
+import com.couchbase.client.java.query.*;
+import com.couchbase.client.java.query.consistency.ScanConsistency;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import lombok.Getter;
 import lombok.NonNull;
@@ -42,7 +41,7 @@ public class CouchbaseWrapper<T, ID extends Serializable> {
     }
 
     public T insert(T entity) {
-        couchbaseTemplate.insert(entity);
+        repository.save(entity);
         return entity;
     }
 
@@ -55,12 +54,15 @@ public class CouchbaseWrapper<T, ID extends Serializable> {
         Statement statement =
                 Delete.deleteFrom(i(bucket.name()))
                         .where(i("_class").eq(s(clazz.getCanonicalName())));
-
         query(statement);
     }
 
     private N1qlQueryResult query(Statement statement) {
-        N1qlQueryResult result = bucket.query(statement);
+        N1qlQueryResult result = bucket.query(
+                N1qlQuery.simple(
+                        statement,
+                        N1qlParams.build().consistency(ScanConsistency.STATEMENT_PLUS))
+        );
         if (!result.finalSuccess()) {
             throw new ServiceException("Could not delete bucket. Reasons: %s",
                     HttpStatus.INTERNAL_SERVER_ERROR,

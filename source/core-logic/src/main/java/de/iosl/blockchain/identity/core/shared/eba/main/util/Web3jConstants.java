@@ -17,10 +17,12 @@ public class Web3jConstants {
 	private String port;
 
 	public static final BigInteger GAS_PRICE = BigInteger.ZERO;
+	public static final BigInteger GAS_PRICE_2_ETHER = BigInteger.valueOf(20000000000L);
 	
 	public static final BigInteger GAS_LIMIT_ETHER_TX = BigInteger.valueOf(21_000);
 	public static final BigInteger GAS_LIMIT_GREETER_TX = BigInteger.valueOf(500_000L);
 	public static final BigInteger GAS_LIMIT_REGISTRAR_TX = BigInteger.valueOf(500_000L);
+	public static final BigInteger GAS_LIMIT_PERMISSION_TX = BigInteger.valueOf(5_000_000L);
 
 	public static final int CONFIRMATION_ATTEMPTS = 5;
 	public static final int SLEEP_DURATION = 1000;
@@ -32,6 +34,8 @@ public class Web3jConstants {
 
 	public static final String DEFAULT_START_AMOUNT = "0.0";
 	public static final String GOV_MONEY_FROM_COAINBASE = "0.0";
+
+	public static final String NO_CLOSURE_ADDRESS ="0x0000000000000000000000000000000000000000";
 
 
 	public static BigInteger amountToEther(String amount) {

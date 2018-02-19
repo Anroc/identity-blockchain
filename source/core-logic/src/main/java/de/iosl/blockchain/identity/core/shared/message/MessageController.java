@@ -30,6 +30,7 @@ public class MessageController {
                 .collect(Collectors.toList());
     }
 
+
     @PutMapping("/{id}")
     public MessageDTO updateMessage(
             @PathVariable("id") @NotBlank String id,

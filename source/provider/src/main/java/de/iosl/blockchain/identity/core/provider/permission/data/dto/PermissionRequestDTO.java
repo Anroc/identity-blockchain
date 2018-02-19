@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import java.util.HashSet;
-import java.util.Set;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,10 +23,13 @@ public class PermissionRequestDTO {
     @ApiModelProperty(required = true, example = "https://deutscheBank.de:4123")
     private String providerURL;
 
-    @NotEmpty
-    @ApiModelProperty(required = true)
-    private Set<String> requiredClaims;
+    @ApiModelProperty()
+    private List<String> requiredClaims = new ArrayList<>();
 
-    @ApiModelProperty(required = false)
-    private Set<String> optionalClaims = new HashSet<>();
+    @ApiModelProperty()
+    private List<String> optionalClaims = new ArrayList<>();
+
+    @Valid
+    @ApiModelProperty()
+    private List<ClosureRequestDTO> closureRequests = new ArrayList<>();
 }

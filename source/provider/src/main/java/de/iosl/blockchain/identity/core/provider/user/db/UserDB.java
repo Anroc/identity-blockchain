@@ -1,6 +1,6 @@
 package de.iosl.blockchain.identity.core.provider.user.db;
 
-import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.error.DocumentDoesNotExistException;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.lib.wrapper.CouchbaseWrapper;
@@ -13,13 +13,11 @@ import java.util.Optional;
 @Component
 public class UserDB extends CouchbaseWrapper<User, String> {
     private final UserRepository userRepository;
-    private final Bucket bucket;
 
     @Autowired
-    public UserDB(UserRepository userRepository, Bucket bucket) {
+    public UserDB(UserRepository userRepository) {
         super(userRepository);
         this.userRepository = userRepository;
-        this.bucket = bucket;
     }
 
 
@@ -32,25 +30,24 @@ public class UserDB extends CouchbaseWrapper<User, String> {
     }
 
     public void deleteUser(String id) {
-        if (checkUserExists(id)) {
+        if (exist(id)) {
             userRepository.delete(id);
         }
-    }
-
-    public Optional<User> getUser(String id) {
-        return Optional.of(userRepository.findOne(id));
     }
 
     public Optional<User> findUserByEthId(String ethId) {
         return userRepository.findByEthID(ethId);
     }
 
-    public Optional<User> findOne(String id) {
-        return Optional.of(userRepository.findOne(id));
-    }
-
     public void addClaimToUser(String id, ProviderClaim providerClaim) {
-        bucket.mutateIn(id).arrayAppend("claims", providerClaim, false).execute();
+        Optional<User> userOptional = Optional.of(userRepository.findOne(id));
+        if(! userOptional.isPresent()) {
+            throw new DocumentDoesNotExistException("Document with id " + id + "does not exist");
+        }
+        userOptional.ifPresent(user -> {
+            user.getClaims().add(providerClaim);
+            userRepository.save(user);
+        });
     }
 
     public void removeClaimFromUser(String id, ProviderClaim providerClaim) {
@@ -60,9 +57,4 @@ public class UserDB extends CouchbaseWrapper<User, String> {
             userRepository.save(user);
         });
     }
-
-    private boolean checkUserExists(String id) {
-        return userRepository.exists(id);
-    }
-
 }
