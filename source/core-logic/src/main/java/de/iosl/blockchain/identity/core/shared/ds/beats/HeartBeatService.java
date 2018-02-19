@@ -4,12 +4,13 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.JsonLongDocument;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.config.BlockchainIdentityConfig;
+import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
+import de.iosl.blockchain.identity.lib.dto.RegistryEntryDTO;
+import de.iosl.blockchain.identity.lib.dto.RequestDTO;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.lib.dto.beats.HeartBeatRequest;
-import de.iosl.blockchain.identity.lib.dto.ECSignature;
-import de.iosl.blockchain.identity.lib.dto.RequestDTO;
-import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.dto.beats.SubjectType;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import feign.FeignException;
@@ -56,20 +57,44 @@ public class HeartBeatService {
         this.eventListeners = new ConcurrentLinkedQueue<>();
     }
 
+    public Optional<RegistryEntryDTO> discover(@NonNull String ethID) {
+        RequestDTO<RegistryEntryDTO> requestDTO = heartBeatAdapter.discover(ethID);
+        if(signer.verifySignature(
+                requestDTO.getPayload(),
+                requestDTO.getSignature().toSignatureData(),
+                requestDTO.getPayload().getEthID())
+                && requestDTO.getPayload().getEthID().equals(ethID)) {
+
+            log.info("Trusted register entry at {}.", ethID);
+            return Optional.of(requestDTO.getPayload());
+        } else {
+            log.warn("Untrusted register entry at {}.", ethID);
+            return Optional.empty();
+        }
+    }
+
     public void subscribe(@NonNull EventListener eventListener) {
         eventListeners.add(eventListener);
     }
 
-    public Beat createBeat(@NonNull String ethID, @NonNull EventType eventType) {
+    public Beat createURLBeat(@NonNull String ethID, @NonNull EventType eventType) {
+        return createBeat(ethID, eventType, config.getHostUrl(), SubjectType.URL);
+    }
+
+    public Beat createEthIdBeat(@NonNull String ethID, @NonNull EventType eventType, @NonNull String subjectEthId) {
+        return createBeat(ethID, eventType, subjectEthId, SubjectType.ETHEREUM_ADDRESS);
+    }
+
+    private Beat createBeat(@NonNull String ethId, @NonNull EventType eventType, @NonNull String subject, @NonNull SubjectType subjectType) {
         if(! keyChain.isActive()) {
             throw new ServiceException("Keychain is not unlocked.", HttpStatus.UNAUTHORIZED);
         }
 
         HeartBeatRequest heartBeatRequest = new HeartBeatRequest(
                 keyChain.getAccount().getAddress(),
-                config.getHostUrl(),
+                subject,
                 eventType,
-                SubjectType.URL
+                subjectType
         );
 
         ECKeyPair ecKeyPair = ECKeyPair.create(keyChain.getAccount().getPrivateKey());
@@ -78,8 +103,8 @@ public class HeartBeatService {
                 ECSignature.fromSignatureData(signer.sign(heartBeatRequest, ecKeyPair))
         );
 
-        log.info("Creating beat for {} with event {}", ethID, eventType);
-        return heartBeatAdapter.createBeat(ethID, heartBeatRequestRequestDTO);
+        log.info("Creating beat for {} with event {} for subject {} and subjectType", ethId, eventType, subject, subjectType);
+        return heartBeatAdapter.createBeat(ethId, heartBeatRequestRequestDTO);
     }
 
     @Scheduled(fixedRate = RATE, initialDelay = INITIAL_DELAY)

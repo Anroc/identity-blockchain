@@ -3,12 +3,13 @@ package de.iosl.blockchain.identity.core.provider.user;
 import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
+import de.iosl.blockchain.identity.core.provider.user.data.dto.ClaimInformationResponse;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
 import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
-import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
+import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -51,8 +53,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation("Create a new user")
     public UserDTO createUser(@RequestBody @Valid @NonNull UserDTO userRequest) {
-        User user = userService.insertUser(
-                userRequest.toUser(UUID.randomUUID().toString()));
+        User user = userRequest.toUser(UUID.randomUUID().toString());
+        user.getClaims().forEach(this::validateClaim);
+
+        user = userService.insertUser(user);
 
         return new UserDTO(user);
     }
@@ -65,6 +69,8 @@ public class UserController {
             throw new ServiceException("Could not find user with id [%s]", HttpStatus.NOT_FOUND, userId);
         }
         User user = userRequest.toUser(userId);
+        user.getClaims().forEach(this::validateClaim);
+
         user = userService.updateUser(user);
         return new UserDTO(user);
     }
@@ -84,6 +90,7 @@ public class UserController {
         User user = getUserOrFail(userId);
 
         SharedClaim claim = userService.createClaim(user, new ProviderClaim(claimDTO));
+        validateClaim(claim);
         return new ClaimDTO(claim);
     }
 
@@ -134,4 +141,33 @@ public class UserController {
             @RequestParam(value = "familyName", defaultValue = "") String familyName) {
         return userService.search(givenName, familyName).stream().map(User::getId).collect(Collectors.toList());
     }
+
+    @GetMapping("/ethID/{ethID}/claimIDs")
+    @ApiOperation("Get the claimIDs of a user")
+    public Set<ClaimInformationResponse> getClaimInformation(@PathVariable("ethID") @NotBlank String ethID) {
+        User user = userService.findUserByEthID(ethID).orElseThrow(
+                () -> new ServiceException("Could not find user with ethID [%s]", HttpStatus.NOT_FOUND, ethID)
+        );
+
+        return user.getClaims()
+                .stream()
+                .filter(sharedClaims -> sharedClaims.getId() != null)
+                .map(sharedClaim -> new ClaimInformationResponse(
+                        sharedClaim.getId(),
+                        sharedClaim.getClaimValue().getPayloadType(),
+                        sharedClaim.getClaimValue().getPayloadType().getSupportedClaimOperation()
+                ))
+                .collect(Collectors.toSet());
+    }
+
+    private void validateClaim(@NonNull SharedClaim claim) {
+        if(! claim.getClaimValue().getPayloadType().validateType(claim.getClaimValue().getPayload())) {
+            throw new ServiceException(
+                    "Invalid payload [%s] for payload type [%s].",
+                    HttpStatus.BAD_REQUEST,
+                    claim.getClaimValue().getPayload(),
+                    claim.getClaimValue().getPayloadType());
+        }
+    }
+
 }

@@ -18,8 +18,8 @@ public class MessageDB extends CouchbaseWrapper<Message, String> {
         this.repository = repository;
     }
 
-    public List<Message> findMessagesBySeen(boolean seen) {
-        return repository.findAllBySeen(seen);
+    public List<Message> findAll() {
+        return repository.findAll();
     }
 
 }

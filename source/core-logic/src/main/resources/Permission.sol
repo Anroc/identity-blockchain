@@ -2,20 +2,20 @@ pragma solidity ^0.4.11;
 
 contract PermissionContract{
 
-    address owner;
-    address user;
-    string claims;
-    bool claimsApproved;
+    address private owner;
+    address private user;
+    address private clouserContract;
+    string private claims;
 
-    function PermissionContract(address _user, string _claims) public{
+    function PermissionContract(address _user, string _claims, address _clouserContract) public{
         owner=msg.sender;
         user=_user;
         claims=_claims;
-        claimsApproved=false;
+        clouserContract=_clouserContract;
     }
 
-    function getClaimsApproved() public constant returns(bool){
-        return claimsApproved;
+    function getClouserContractAddress() public constant returns (address){
+        return clouserContract;
     }
 
     function getClaims() public constant returns (string) {
@@ -24,7 +24,6 @@ contract PermissionContract{
 
     function setAndApproveClaims(string _claims) public ifUser{
         claims=_claims;
-        claimsApproved=true;
     }
 
 

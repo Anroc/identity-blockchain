@@ -1,11 +1,12 @@
 package de.iosl.blockchain.identity.core.shared.eba.main.util;
 
-import java.util.*;
 import java.io.*;
+import java.util.Base64;
 
 /**
  * Usage sample serializing SomeClass instance
  */
+
 public class ObjectToString {
 
 //    public static void main( String [] args )  throws IOException,

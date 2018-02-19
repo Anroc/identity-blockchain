@@ -1,12 +1,10 @@
 package de.iosl.blockchain.identity.core.shared.api;
 
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractCreationDTO;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractResponse;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.SignedClaimRequestDTO;
-
-import java.util.List;
 
 public interface ProviderAPI {
 
@@ -27,5 +25,5 @@ public interface ProviderAPI {
      *                            That request is signed again by the requesting party
      * @return List of requested claims.
      */
-    List<ClaimDTO> retrieveClaimsByPPR(String ethID, SignedRequest<SignedClaimRequestDTO> singedClaimsRequest);
+    PermissionContractResponse retrieveClaimsByPPR(String ethID, SignedRequest<SignedClaimRequestDTO> singedClaimsRequest);
 }

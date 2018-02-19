@@ -4,15 +4,18 @@ import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
+import de.iosl.blockchain.identity.core.provider.user.data.dto.ClaimInformationResponse;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
-import de.iosl.blockchain.identity.core.shared.claims.claim.SharedClaim;
-import de.iosl.blockchain.identity.lib.dto.beats.Beat;
-import de.iosl.blockchain.identity.lib.dto.beats.EventType;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
+import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
+import de.iosl.blockchain.identity.lib.dto.beats.Beat;
+import de.iosl.blockchain.identity.lib.dto.beats.EventType;
+import org.assertj.core.util.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +29,10 @@ import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -175,7 +180,7 @@ public class UserControllerRestTest extends RestTestSuite {
         Credentials stateCredentials = loadWallet(STATE_FILE, WALLET_PW);
 
         Beat beat = new Beat();
-        doReturn(beat).when(heartBeatService).createBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
+        doReturn(beat).when(heartBeatService).createURLBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
         doNothing().when(ebaInterface).setRegisterApproval(any(Account.class), eq("0x123"), eq(true));
 
         RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO(
@@ -198,13 +203,13 @@ public class UserControllerRestTest extends RestTestSuite {
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        user = userDB.findOne(user.getId()).get();
+        user = userDB.findEntity(user.getId()).get();
 
         assertThat(user.getEthId()).isEqualTo(registerRequest.getPayload().getEthID());
         assertThat(user.getPublicKey()).isEqualTo(registerRequest.getPayload().getPublicKey());
         assertThat(user.getRegisterContractAddress()).isEqualTo(registerRequest.getPayload().getRegisterContractAddress());
         assertThat(userDB.findUserByEthId(user.getEthId())).isPresent();
-        verify(heartBeatService, times(1)).createBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
+        verify(heartBeatService, times(1)).createURLBeat(eq(userCredentials.getAddress()), eq(EventType.NEW_CLAIMS));
     }
 
     @Test
@@ -214,6 +219,29 @@ public class UserControllerRestTest extends RestTestSuite {
                         HttpEntity.EMPTY, Object.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    public void getClaimIds() {
+        final ProviderClaim claim1 = claimFactory.create("IS_DUMP", ClaimType.BOOLEAN, true);
+        final ProviderClaim claim2 = claimFactory.create("BIRTHDAY", ClaimType.DATE, LocalDateTime.now());
+        final ProviderClaim claim3 = claim2;
+        user.setClaims(Sets.newHashSet());
+        user.getClaims().add(claim1);
+        user.getClaims().add(claim2);
+        user.getClaims().add(claim3);
+        userDB.update(user);
+
+        ResponseEntity<Set<ClaimInformationResponse>> responseEntity = restTemplate.exchange(
+                String.format("/users/ethID/%s/claimIDs", user.getEthId()),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Set<ClaimInformationResponse>>() {});
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).containsExactlyInAnyOrder(
+                new ClaimInformationResponse(claim1.getId(), claim1.getClaimValue().getPayloadType(), claim1.getClaimValue().getPayloadType().getSupportedClaimOperation()),
+                new ClaimInformationResponse(claim2.getId(), claim2.getClaimValue().getPayloadType(), claim2.getClaimValue().getPayloadType().getSupportedClaimOperation()));
     }
 
 }

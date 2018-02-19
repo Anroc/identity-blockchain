@@ -39,7 +39,7 @@ public class Logic {
         String[] content = contents.split(":");
 
         if(content.length != 3) {
-            throw new RuntimeException("Not right format: " + contents);
+            return null;
         }
 
         Payload payload = new Payload(content[0], content[1], content[2]);

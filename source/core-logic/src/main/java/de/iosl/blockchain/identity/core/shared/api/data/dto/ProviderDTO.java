@@ -1,6 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.api.data.dto;
 
-import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
+import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

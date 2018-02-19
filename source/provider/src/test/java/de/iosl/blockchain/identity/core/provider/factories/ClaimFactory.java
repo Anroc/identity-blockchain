@@ -1,8 +1,9 @@
 package de.iosl.blockchain.identity.core.provider.factories;
 
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
-import de.iosl.blockchain.identity.core.shared.claims.payload.Payload;
-import de.iosl.blockchain.identity.core.shared.claims.provider.Provider;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
+import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
+import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
 
 import java.util.Date;
 import java.util.UUID;
@@ -21,6 +22,10 @@ public class ClaimFactory {
 
     public ProviderClaim create(String claimId) {
         return create(claimId, providerFactory.create(), payloadFactory.create());
+    }
+
+    public ProviderClaim create(String claimId, ClaimType claimType, Object payload) {
+        return create(claimId, providerFactory.create(), payloadFactory.create(payload, claimType));
     }
 
     private ProviderClaim create(String claimId, Provider provider, Payload payload) {

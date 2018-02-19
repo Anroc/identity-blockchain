@@ -4,7 +4,6 @@ import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Set;
 
 public interface EBAInterface {
 
@@ -55,18 +54,14 @@ public interface EBAInterface {
     /**
      * Creates a new permission contract
      * @param sender the creator of this permission contract
-     * @param recipient the reciepient of the contract
-     * @param requesterAddress the address of provider requesting the claims
-     * @param requiredClaims a set of strings (claim ids) that are the required by the requesting provider
-     * @param optionalClaims a set of strings (claim ids) that are not required by the requesting provider
+     * @param recipient the recipient of the contract
+     * @param permissionContractContent object holding all information that shell be present in the contract
      * @return the address of this smart contract
      */
     String deployPermissionContract(
             Account sender,
             String recipient,
-            String requesterAddress,
-            Set<String> requiredClaims,
-            Set<String> optionalClaims);
+            PermissionContractContent permissionContractContent);
 
     /**
      * Returns the content of the given permission contract.
@@ -74,7 +69,7 @@ public interface EBAInterface {
      * @param account the account performing the action
      * @param smartContractAddress the address of the permission contract
      * @return the object holding the requested permissions and the requester's address.
-     * See {@link #deployPermissionContract(Account, String, String, Set, Set)} for information how to where to find
+     * See {@link #deployPermissionContract(Account, String, PermissionContractContent)} for information how to where to find
      * this information
      */
     PermissionContractContent getPermissionContractContent(Account account, String smartContractAddress);
