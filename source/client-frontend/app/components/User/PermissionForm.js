@@ -62,8 +62,9 @@ class PermissionForm extends React.Component {
 
   sendPermissionAnswer() {
     console.log('in state:', this.props.permission.id, this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
+
     // put message seen
-    this.props.putMessageSeen(this.props.permission.id);
+    // this.props.putMessageSeen(this.props.permission.id);
     // send approval with all the data to endpoint
     this.putPermissionAnswer(this.state.requiredClaims, this.state.optionalClaims, this.state.closureRequestDTO);
     this.props.toggleSnack('Successfully sent permission answer.');
@@ -126,7 +127,7 @@ class PermissionForm extends React.Component {
   render() {
     return (
       <section style={{ marginBottom: '20px', marginLeft: '20px' }}>
-        <FormControl component="fieldset" required error>
+        <FormControl component="fieldset" style={{ marginLeft: '20px' }} required error>
           <FormLabel component="legend">
             New permission request:
           </FormLabel>

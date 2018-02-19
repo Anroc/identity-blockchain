@@ -175,7 +175,9 @@ class User extends Component {
 
     const currentMessage = this.state.messages
       .find((message) => (message.subjectID === permissionId));
-
+    if (!currentMessage) {
+      return;
+    }
     console.log('found current message', currentMessage);
     const messageSeenOptions = {
       method: 'PUT',
