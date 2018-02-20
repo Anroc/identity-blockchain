@@ -338,7 +338,8 @@ class Bank extends Component{
               let newTableData = this.state.tableData;
               for (let i = 0; i < this.state.tableData.length; i++) {
                 if (this.state.tableData[i].ethAddress === json.ethAddress) {
-                  console.log('Found element already in array.');
+                  console.log('Found element already in array, replacing it.');
+                  this.state.tableData[i] = json;
                 } else {
                   console.log('Pushed new element into tableData: ', json);
                   newTableData.push(json);
