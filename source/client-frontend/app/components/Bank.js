@@ -639,7 +639,7 @@ class Bank extends Component{
         <section>
           <ExpansionPanel>
             <ExpansionPanelSummary>
-              <Typography>Create new permission request</Typography>
+              <Typography>Create new Permission/Closure request</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails
               style={{ flexDirection: 'row', flexWrap: 'wrap', flexFlow: 'column' }}
@@ -660,7 +660,7 @@ class Bank extends Component{
               <div>
                 <ExpansionPanel>
                   <ExpansionPanelSummary>
-                    <Typography>Create a new Claim request</Typography>
+                    <Typography>Create a new Permission request</Typography>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails
                     style={{ display: 'flex', flexWrap: 'wrap' }}
