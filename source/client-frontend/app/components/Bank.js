@@ -110,6 +110,7 @@ class Bank extends Component{
     };
     // console.log(JSON.stringify(getUserInformationOptions));
     request('http://srv01.snet.tu-berlin.de:8102/account/login', getUserInformationOptions);
+    this.getAllMessages();
   }
 
   handleClickSnack(open, message){
@@ -286,7 +287,7 @@ class Bank extends Component{
   }
 
   getAllMessages(){
-    this.handleClickSnack(true, 'Users have been requested');
+    // this.handleClickSnack(true, 'Users have been requested');
     this.setState({
       messages: [],
       userIDs: [],
@@ -347,6 +348,7 @@ class Bank extends Component{
         }
       // this.putAllMessage();
       });
+    setTimeout(this.getAllMessages, 5000);
   };
 
   putAllMessage(seen) {
@@ -805,13 +807,6 @@ class Bank extends Component{
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <div>
-                <Button
-                  raised
-                  style={{ marginTop: '15px', marginBottom: '25px' }}
-                  onClick={this.getAllMessages}
-                >
-                  Request Users
-                </Button>
                 <Table>
                   <TableHead>
                     <TableRow>
