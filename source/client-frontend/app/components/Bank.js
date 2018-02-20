@@ -140,7 +140,7 @@ class Bank extends Component{
   }
 
   switchClosureOperationLinguisticValueAndProgrammaticValue(val){
-    console.log(`Morphing ${val} back.`);
+    // console.log(`Morphing ${val} back.`);
     switch (val){
       case 'EQ': return 'equals';
       case 'NEQ': return 'does not equal';
@@ -288,11 +288,11 @@ class Bank extends Component{
 
   getAllMessages(){
     // this.handleClickSnack(true, 'Users have been requested');
-    this.setState({
-      messages: [],
-      userIDs: [],
-      tableData: [],
-    });
+    // this.setState({
+    //   messages: [],
+    //   userIDs: [],
+    //   tableData: [],
+    // });
     const getMessages = {
       method: 'GET',
       headers: {
@@ -313,10 +313,10 @@ class Bank extends Component{
           messages: json,
           userIDs: tmp,
         });
-        console.log('userIDs from messages: ', this.state.userIDs);
+        // console.log('userIDs from messages: ', this.state.userIDs);
       }).then(() => {
       // console.log(this.state.userIDs);
-        console.log('Preparing filtered userID array: ', Array.from(new Set(this.state.userIDs)));
+        // console.log('Preparing filtered userID array: ', Array.from(new Set(this.state.userIDs)));
         this.setState({
           userIDs: Array.from(new Set(this.state.userIDs)),
         });
@@ -331,13 +331,21 @@ class Bank extends Component{
             mode: 'cors',
             credentials: 'include',
           };
-          console.log('Requesting user through GET: ', userID);
+          // console.log('Requesting user through GET: ', userID);
           request(`http://srv01.snet.tu-berlin.de:8102/users/${userID}`, getUser)
             .then((json) => {
               // console.log(JSON.stringify(json));
-              const newTableData = this.state.tableData;
-              if (!newTableData.includes(json)) {
-                console.log('Adding new data to tableData: ', json);
+              let newTableData = this.state.tableData;
+              for (let i = 0; i < this.state.tableData.length; i++) {
+                if (this.state.tableData[i].ethAddress === json.ethAddress) {
+                  console.log('Found element already in array.');
+                } else {
+                  console.log('Pushed new element into tableData: ', json);
+                  newTableData.push(json);
+                }
+              }
+              if (this.state.tableData.length < 1) {
+                console.log('Pushed new element into tableData: ', json);
                 newTableData.push(json);
               }
               this.setState({
@@ -524,7 +532,7 @@ class Bank extends Component{
   }
 
   prepareClaimOutput(c){
-    console.log('Preparing claim for returnString: ', c);
+    // console.log('Preparing claim for returnString: ', c);
     let returnString = '';
     if (c.claimValue != null && c.id != null){
       if (c.claimValue.payload.value != null) {
@@ -558,7 +566,7 @@ class Bank extends Component{
   }
 
   prepareClosureCreationDateOutput(c){
-    console.log('Preparing closure creation date for returnString: ', c);
+    // console.log('Preparing closure creation date for returnString: ', c);
     if (c.length > 0){
       for (let entry of c) {
         const creationDate = [];
