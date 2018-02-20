@@ -24,6 +24,8 @@ public class HeartBeatRequest extends Payload {
     @NotNull
     private EventType eventType;
 
+    private IntegrityCheck integrityCheck;
+
     public HeartBeatRequest(String ethID, String subject, EventType eventType, SubjectType subjectType) {
         super(ethID);
         this.subject = subject;
