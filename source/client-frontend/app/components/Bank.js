@@ -336,14 +336,20 @@ class Bank extends Component{
             .then((json) => {
               // console.log(JSON.stringify(json));
               let newTableData = this.state.tableData;
+              let pushElement = false;
               for (let i = 0; i < this.state.tableData.length; i++) {
-                if (this.state.tableData[i].ethAddress === json.ethAddress) {
-                  console.log('Found element already in array, replacing it.');
+                if (this.state.tableData[i].ethId === json.ethId) {
+                  console.log(`EthAddress ${json.ethId} was successfully updated with new data.`);
                   this.state.tableData[i] = json;
+                  pushElement = false;
+                  break;
                 } else {
-                  console.log('Pushed new element into tableData: ', json);
-                  newTableData.push(json);
+                  pushElement = true;
                 }
+              }
+              if (pushElement === true) {
+                console.log('Pushed new element into tableData: ', json);
+                newTableData.push(json);
               }
               if (this.state.tableData.length < 1) {
                 console.log('Pushed new element into tableData: ', json);
@@ -352,7 +358,7 @@ class Bank extends Component{
               this.setState({
                 tableData: newTableData,
               });
-              console.log('tableData is now: ', this.state.tableData);
+              // console.log('tableData is now: ', this.state.tableData);
             });
         }
       // this.putAllMessage();
@@ -641,7 +647,7 @@ class Bank extends Component{
               <div>
                 <FormControl
                   aria-describedby="ethAddress-text"
-                  style={{ marginBottom: '15px', minWidth: '75%' }}
+                  style={{ marginBottom: '15px', max: '100%', width: '100%' }}
                 >
                   <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
                   <Input id="ethAddress"
