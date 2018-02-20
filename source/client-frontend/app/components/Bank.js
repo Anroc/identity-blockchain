@@ -66,7 +66,6 @@ class Bank extends Component{
         timeValue: '',
         value: '',
       },
-      availableClaimsForClosuresForEthAddress: [],
       availableClaimsForEthAddress: [],
       snackOpen: false,
       snackMessage: '',
@@ -82,7 +81,6 @@ class Bank extends Component{
     this.handleChangeClosureCreationClaimValue = this.handleChangeClosureCreationClaimValue.bind(this);
     this.handleChangeClosureCreationEthAddress = this.handleChangeClosureCreationEthAddress.bind(this);
     this.handleSubmitClosure = this.handleSubmitClosure.bind(this);
-    this.handleGetClosuresForClaimsForEthAddress = this.handleGetClosuresForClaimsForEthAddress.bind(this);
     this.handleGetClaimsForEthAddress = this.handleGetClaimsForEthAddress.bind(this);
     this.handleChangeRequiredAttributeSelection = this.handleChangeRequiredAttributeSelection.bind(this);
     this.handleChangeOptionalAttributeSelection = this.handleChangeOptionalAttributeSelection.bind(this);
@@ -483,31 +481,8 @@ class Bank extends Component{
     this.cleanFormClaims();
   }
 
-  handleGetClosuresForClaimsForEthAddress(event){
-    this.handleClickSnack(true, 'All available claims have been requested');
-    const getMessages = {
-      method: 'GET',
-      headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      mode: 'cors',
-      credentials: 'include',
-    };
-
-    request(`http://srv01.snet.tu-berlin.de:8100/users/ethID/${this.state.closureCreationEthAddress}/claimIDs`, getMessages)
-      .then((json) => {
-        // console.log(JSON.stringify(json));
-        this.setState({
-          availableClaimsForClosuresForEthAddress: json,
-        });
-        console.log('Available closures for claims for given eth address: ', this.state.availableClaimsForClosuresForEthAddress);
-      })
-  }
-
   handleGetClaimsForEthAddress(event){
-    this.handleClickSnack(true, 'All available claims have been requested');
+    // this.handleClickSnack(true, 'All available claims have been requested');
     const getMessages = {
       method: 'GET',
       headers: {
@@ -650,179 +625,174 @@ class Bank extends Component{
               <Typography>Create new permission request</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails
-              style={{ display: 'flex', flexWrap: 'wrap' }}
+              style={{ flexDirection: 'row', flexWrap: 'wrap', flexFlow: 'column' }}
             >
-              <FormControl
-                aria-describedby="ethAddress-text"
-                style={{ marginBottom: '15px', minWidth: '75%' }}
-              >
-                <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
-                <Input id="ethAddress" value={this.state.ethAddress} onChange={this.handleChange}/>
-              </FormControl>
-              <Button
-                raised
-                onClick={this.handleGetClaimsForEthAddress}
-                style={{ marginLeft: '15px', marginBottom: '100px' }}
-              >Get Claim-IDs</Button>
-              <FormControl
-                style={{ marginBottom: '15px', max: '100%', width: '100%' }}
-              >
-                <InputLabel htmlFor="select-multiple-required-claims">Required Claims</InputLabel>
-                <Select
-                  multiple
-                  value={this.state.requiredAttributes}
-                  onChange={this.handleChangeRequiredAttributeSelection}
-                  input={<Input id="select-multiple" />}
-                >
-                  { this.state.availableClaimsForEthAddress.map((c) => (
-                    this.state.optionalAttributes.length > 0
-                    ? this.state.optionalAttributes.map((oa) => (
-                      c.claimID === oa
-                      ? null
-                      :
-                      <MenuItem
-                        key={c.claimID}
-                        value={c.claimID}
-                      >
-                        {c.claimID}
-                      </MenuItem>
-                    ))
-                    :
-                      <MenuItem
-                        key={c.claimID}
-                        value={c.claimID}
-                      >
-                        {c.claimID}
-                      </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              { this.state.requiredAttributes.length > 0
-              ?
+              <div>
                 <FormControl
-                  style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+                  aria-describedby="ethAddress-text"
+                  style={{ marginBottom: '15px', minWidth: '75%' }}
                 >
-                  <InputLabel htmlFor="select-multiple-optional-claims">Optional Claims</InputLabel>
-                  <Select
-                    multiple
-                    value={this.state.optionalAttributes}
-                    onChange={this.handleChangeOptionalAttributeSelection}
-                    input={<Input id="select-multiple" />}
-                  >
-                    { this.state.availableClaimsForEthAddress.map((c) => (
-                      this.state.requiredAttributes.map((ra) => (
-                        c.claimID === ra
-                          ? null
-                          : <MenuItem
-                            key={c.claimID}
-                            value={c.claimID}
-                          >
-                            {c.claimID}
-                          </MenuItem>
-                      ))
-                    ))}
-                  </Select>
+                  <InputLabel htmlFor="ethAddress-helper">Ethereum Address</InputLabel>
+                  <Input id="ethAddress"
+                    value={this.state.ethAddress}
+                    onChange={this.handleChange}
+                    onBlur={this.handleGetClaimsForEthAddress}
+                  />
                 </FormControl>
-              : null
-              }
+              </div>
+              <div>
+                <ExpansionPanel>
+                  <ExpansionPanelSummary>
+                    <Typography>Create a new Claim request</Typography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails
+                    style={{ display: 'flex', flexWrap: 'wrap' }}
+                  >
+                    <FormControl
+                      style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+                    >
+                      <InputLabel htmlFor="select-multiple-required-claims">Required Claims</InputLabel>
+                      <Select
+                        multiple
+                        value={this.state.requiredAttributes}
+                        onChange={this.handleChangeRequiredAttributeSelection}
+                        input={<Input id="select-multiple" />}
+                      >
+                        { this.state.availableClaimsForEthAddress.map((c) => (
+                          this.state.optionalAttributes.length > 0
+                            ? this.state.optionalAttributes.map((oa) => (
+                              c.claimID === oa
+                                ? null
+                                :
+                                <MenuItem
+                                  key={c.claimID}
+                                  value={c.claimID}
+                                >
+                                  {c.claimID}
+                                </MenuItem>
+                            ))
+                            :
+                              <MenuItem
+                                key={c.claimID}
+                                value={c.claimID}
+                              >
+                                {c.claimID}
+                              </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    { this.state.requiredAttributes.length > 0
+                      ?
+                        <FormControl
+                          style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+                        >
+                          <InputLabel htmlFor="select-multiple-optional-claims">Optional Claims</InputLabel>
+                          <Select
+                            multiple
+                            value={this.state.optionalAttributes}
+                            onChange={this.handleChangeOptionalAttributeSelection}
+                            input={<Input id="select-multiple" />}
+                          >
+                            { this.state.availableClaimsForEthAddress.map((c) => (
+                              this.state.requiredAttributes.map((ra) => (
+                                c.claimID === ra
+                                  ? null
+                                  : <MenuItem
+                                    key={c.claimID}
+                                    value={c.claimID}
+                                  >
+                                    {c.claimID}
+                                  </MenuItem>
+                              ))
+                            ))}
+                          </Select>
+                        </FormControl>
+                      : null
+                    }
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+              </div>
+              <div>
+                <ExpansionPanel>
+                  <ExpansionPanelSummary>
+                    <Typography>Create a new Closure request</Typography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails
+                    style={{ display: 'flex', flexWrap: 'wrap' }}
+                  >
+                    <FormControl
+                      style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+                    >
+                      <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
+                      <Select
+                        value={this.state.closureCreationClaimId}
+                        onChange={this.handleChangeClosureCreationClaimId}
+                      >
+                        {this.state.availableClaimsForEthAddress.map((c) => (
+                          <MenuItem
+                            value={c.claimID}
+                            key={c.claimID}
+                          >{c.claimID}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl
+                      style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+                    >
+                      <InputLabel htmlFor="claimOperation">Claim-Operation</InputLabel>
+                      <Select
+                        value={this.state.closureCreationClaimOperation}
+                        onChange={this.handleChangeClosureCreationClaimOperation}
+                      >
+                        {this.state.availableClaimsForEthAddress.map((c) => (
+                          c.claimID === this.state.closureCreationClaimId
+                            ? c.claimOperations.map((o) => (
+                              <MenuItem
+                                key={this.state.closureOperationDescriptions[o]}
+                                value={this.state.closureOperationDescriptions[o]}
+                              >
+                                {this.state.closureOperationDescriptions[o]}
+                              </MenuItem>
+                            )) : null
+                        ))}
+                      </Select>
+                    </FormControl>
+                    { this.state.availableClaimsForEthAddress.map((c) => (
+                      c.claimID === this.state.closureCreationClaimId
+                        ? c.claimType === 'DATE'
+                        ? <FormControl>
+                          <TextField
+                            id="date"
+                            type="date"
+                            label="date"
+                            key={'closureDateValueInput'}
+                            value={this.state.closureCreationClaimValue}
+                            onChange={this.handleChangeClosureCreationStaticValue}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                          />
+                        </FormControl>
+                        : <FormControl
+                          aria-describedby="closureCreationClaimValue-text"
+                          style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+                        >
+                          <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
+                          <Input
+                            id="closureCreationClaimValue"
+                            value={this.state.closureCreationClaimValue}
+                            onChange={this.handleChangeClosureCreationStaticValue}
+                          />
+                        </FormControl>
+                        : null
+                    ))}
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+              </div>
               <Button
                 raised
                 onClick={this.handleSubmit}
-                style={{ marginTop: '15px', marginLeft: '15px', marginBottom: '15px' }}
-              >Submit</Button>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
-        </section>
-        <section>
-          <ExpansionPanel>
-            <ExpansionPanelSummary>
-              <Typography>Create a new Closure request</Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails
-              style={{ display: 'flex', flexWrap: 'wrap' }}
-            >
-              <FormControl
-                aria-describedby="closureCreationEthAddress-text"
-                style={{ marginBottom: '15px', minWidth: '75%' }}
-              >
-                <InputLabel htmlFor="closureCreationEthAddress-helper">Ethereum Address</InputLabel>
-                <Input id="closureCreationEthAddress" value={this.state.closureCreationEthAddress} onChange={this.handleChangeClosureCreationEthAddress}/>
-              </FormControl>
-              <Button
-                raised
-                onClick={this.handleGetClosuresForClaimsForEthAddress}
-                style={{ marginLeft: '15px', marginBottom: '100px' }}
-              >Get Claim-IDs</Button>
-              <FormControl
-                style={{ marginBottom: '15px', max: '100%', width: '100%' }}
-              >
-                <InputLabel htmlFor="claimId">Claim-ID</InputLabel>
-                <Select
-                  value={this.state.closureCreationClaimId}
-                  onChange={this.handleChangeClosureCreationClaimId}
-                >
-                  {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
-                    <MenuItem
-                      value={c.claimID}
-                      key={c.claimID}
-                    >{c.claimID}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl
-                style={{ marginBottom: '15px', max: '100%', width: '100%' }}
-              >
-                <InputLabel htmlFor="claimOperation">Claim-Operation</InputLabel>
-                <Select
-                  value={this.state.closureCreationClaimOperation}
-                  onChange={this.handleChangeClosureCreationClaimOperation}
-                >
-                  {this.state.availableClaimsForClosuresForEthAddress.map((c) => (
-                    c.claimID === this.state.closureCreationClaimId
-                      ? c.claimOperations.map((o) => (
-                        <MenuItem
-                          key={this.state.closureOperationDescriptions[o]}
-                          value={this.state.closureOperationDescriptions[o]}
-                        >
-                          {this.state.closureOperationDescriptions[o]}
-                        </MenuItem>
-                    )) : null
-                  ))}
-                </Select>
-              </FormControl>
-              { this.state.availableClaimsForClosuresForEthAddress.map((c) => (
-                c.claimID === this.state.closureCreationClaimId
-                ? c.claimType === 'DATE'
-                  ? <FormControl>
-                    <TextField
-                      id="date"
-                      type="date"
-                      label="date"
-                      key={'closureDateValueInput'}
-                      value={this.state.closureCreationClaimValue}
-                      onChange={this.handleChangeClosureCreationStaticValue}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                  </FormControl>
-                  : <FormControl
-                    aria-describedby="closureCreationClaimValue-text"
-                    style={{ marginBottom: '15px', max: '100%', width: '100%' }}
-                  >
-                    <InputLabel htmlFor="closureCreationClaimValue-helper">Value</InputLabel>
-                    <Input
-                      id="closureCreationClaimValue"
-                      value={this.state.closureCreationClaimValue}
-                      onChange={this.handleChangeClosureCreationStaticValue}
-                    />
-                  </FormControl>
-                : null
-              ))}
-              <Button
-                raised
-                onClick={this.handleSubmitClosure}
                 style={{ marginTop: '15px', marginLeft: '15px', marginBottom: '15px' }}
               >Submit</Button>
             </ExpansionPanelDetails>
