@@ -131,20 +131,24 @@ class PermissionForm extends React.Component {
           <FormLabel component="legend">
             New permission request:
           </FormLabel>
-          {this.state.requiredClaims && (
+          {this.state.requiredClaims && Object.entries(this.state.requiredClaims).map(([key, value]) => (
             <ClaimSwitch
               claims={this.state.requiredClaims}
+              claimKey={key}
+              claimValue={value}
               claimType="Required"
               changeClaim={this.changeClaim}
             />
-          )}
-          {this.state.optionalClaims && (
+          ))}
+          {this.state.optionalClaims && Object.entries(this.state.requiredClaims).map(([key, value]) => (
             <ClaimSwitch
               claims={this.state.optionalClaims}
+              claimKey={key}
+              claimValue={value}
               claimType="Optional"
               changeClaim={this.changeClaim}
             />
-          )}
+          ))}
           {this.state.closureRequestDTO && (
             <ClosureSwitch
               closures={this.state.closureRequestDTO}

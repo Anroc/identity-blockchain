@@ -31,18 +31,16 @@ class ClaimSwitch extends React.Component {
           <div>
             {this.props.claimType}
             <br />
-            {Object.entries(this.props.claims).map(([key, value]) => (
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={this.props.claims[key]}
-                    onChange={() => this.props.changeClaim(this.props.claimType, key)}
-                  />
-                }
-                label={this.props.claims[key] ? `Allow sharing information of ${key}` :
-                  `Allow sharing information of ${key}`}
-              />
-          ))}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={this.props.claimValue}
+                  onChange={() => this.props.changeClaim(this.props.claimType, this.props.claimKey)}
+                />
+              }
+              label={this.props.claimValue ? `Allow sharing information of ${this.props.claimKey}` :
+                `Deny sharing information of ${this.props.claimKey}`}
+            />
           </div>
       ) : null}
       </div>
@@ -54,6 +52,8 @@ ClaimSwitch.propTypes = {
   claimType: PropTypes.string,
   claims: PropTypes.object,
   changeClaim: PropTypes.func,
+  claimKey: PropTypes.string,
+  claimValue: PropTypes.bool,
 };
 
 export default ClaimSwitch;
