@@ -140,7 +140,7 @@ class PermissionForm extends React.Component {
               changeClaim={this.changeClaim}
             />
           ))}
-          {this.state.optionalClaims && Object.entries(this.state.requiredClaims).map(([key, value]) => (
+          {this.state.optionalClaims && Object.entries(this.state.optionalClaims).map(([key, value]) => (
             <ClaimSwitch
               claims={this.state.optionalClaims}
               claimKey={key}

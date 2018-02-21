@@ -23,7 +23,7 @@ class ClosureHistoryTable extends Component {
                     <TableCell><div>{closure.blindedDescription}</div></TableCell>
                     <TableCell><div>{closure.signedClosure.payload.ethID}</div></TableCell>
                     <TableCell numeric><div>
-                      {closure.signedClosure.payload.staticValue.timeValue === null && (`${closure.signedClosure.payload.staticValue.timeValue[0]}.${closure.signedClosure.payload.staticValue.timeValue[1]}.${closure.signedClosure.payload.staticValue.timeValue[2]} ${closure.signedClosure.payload.staticValue.timeValue[3]}:${closure.signedClosure.payload.staticValue.timeValue[4]}:${closure.signedClosure.payload.staticValue.timeValue[5]}`)}
+                      {closure.signedClosure.payload.staticValue.timeValue !== null && (`${closure.signedClosure.payload.staticValue.timeValue[0]}.${closure.signedClosure.payload.staticValue.timeValue[1]}.${closure.signedClosure.payload.staticValue.timeValue[2]} ${closure.signedClosure.payload.staticValue.timeValue[3]}:${closure.signedClosure.payload.staticValue.timeValue[4]}:${closure.signedClosure.payload.staticValue.timeValue[5]}`)}
                     </div></TableCell>
                   </TableRow>
                 ))
