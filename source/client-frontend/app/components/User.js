@@ -80,7 +80,7 @@ class User extends Component {
       credentials: 'include',
     };
 
-    request('http://srv01.snet.tu-berlin.de:1112/claims', getUserClaimOptions)
+    request('http://localhost:8080/claims', getUserClaimOptions)
       .then((json) => {
         if (json !== this.state.claims) {
           console.log(JSON.stringify(json));
@@ -106,7 +106,7 @@ class User extends Component {
     console.log('GET PERMISSION REQUEST');
     console.log('current´s message permission id is:', message.subjectID);
 
-    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${message.subjectID}`, options)
+    request(`http://localhost:8080/permissions/${message.subjectID}`, options)
       .then((json) => {
         console.log('GOT RESULT TO PERMISSION');
         console.log(json);
@@ -129,7 +129,7 @@ class User extends Component {
       credentials: 'include',
     };
     console.log('GET MESSAGES');
-    request('http://srv01.snet.tu-berlin.de:1112/messages', getUserInformationOptions)
+    request('http://localhost:8080/messages', getUserInformationOptions)
       .then((json) => {
         console.log('get messages json: ', json);
         if (json !== this.state.messages) {
@@ -191,7 +191,7 @@ class User extends Component {
       }),
       credentials: 'include',
     };
-    request(`http://srv01.snet.tu-berlin.de:1112/messages/${currentMessage.id}`, messageSeenOptions);
+    request(`http://localhost:8080/messages/${currentMessage.id}`, messageSeenOptions);
   }
 
   /**
@@ -212,7 +212,7 @@ class User extends Component {
       credentials: 'include',
     };
     console.log(`Permission answer: ${JSON.stringify(getUserInformationOptions)}`);
-    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.state.permissionId}`, getUserInformationOptions);
+    request(`http://localhost:8080/permissions/${this.state.permissionId}`, getUserInformationOptions);
   }
 
   showQRCode() {

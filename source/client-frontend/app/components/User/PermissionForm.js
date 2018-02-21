@@ -57,7 +57,7 @@ class PermissionForm extends React.Component {
       credentials: 'include',
     };
 
-    request(`http://srv01.snet.tu-berlin.de:1112/messages/${messageId}`, messageSeenOptions);
+    request(`http://localhost:8080/messages/${messageId}`, messageSeenOptions);
   }
 
   sendPermissionAnswer() {
@@ -89,7 +89,7 @@ class PermissionForm extends React.Component {
       credentials: 'include',
     };
     console.log(`Permission answer: ${JSON.stringify(getUserInformationOptions)}`);
-    request(`http://srv01.snet.tu-berlin.de:1112/permissions/${this.props.permission.id}`, getUserInformationOptions);
+    request(`http://localhost:8080/permissions/${this.props.permission.id}`, getUserInformationOptions);
   }
 
   changeClaim(claimType, key) {

@@ -54,7 +54,7 @@ const userConnector = {
       credentials: 'include',
     };
 
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/login', options)
+    const actualRequest = request('http://localhost:8080/account/login', options)
       .then((json) => {
         console.log(`login content ${JSON.stringify(json)}`);
         this.setState({
@@ -69,7 +69,7 @@ const userConnector = {
    */
   register(password) {
     console.log(`loggin in with ${password}`);
-    return fetch('http://srv01.snet.tu-berlin.de:1112/account/register', postOptions);
+    return fetch('http://localhost:8080/account/register', postOptions);
 
     /*
       .then((json) => {
@@ -97,7 +97,7 @@ const userConnector = {
       credentials: 'include',
     };
 
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/logout', options)
+    const actualRequest = request('http://localhost:8080/account/logout', options)
       .then((json) => {
         console.log(`logout content ${JSON.stringify(json)}`);
         this.setState({
@@ -119,7 +119,7 @@ const userConnector = {
       credentials: 'include',
     };
 
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/logout', options)
+    const actualRequest = request('http://localhost:8080/account/logout', options)
       .then((json) => {
         console.log(`logout content ${JSON.stringify(json)}`);
         this.setState({

@@ -30,7 +30,7 @@ class Register extends Component {
       credentials: 'include',
     };
 
-    const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/register', options)
+    const actualRequest = request('http://localhost:8080/account/register', options)
       .then((json) => {
         console.log(`content' + ${JSON.stringify(json)}`);
         this.setState({
@@ -80,7 +80,7 @@ class Register extends Component {
       credentials: 'include',
     };
     // TODO currently setting it in wrong state
-    request('http://srv01.snet.tu-berlin.de:1112/account/register', options)
+    request('http://localhost:8080/account/register', options)
       .then((json) => {
         const ethId = json.ethereumID;
         console.log('ETH ID', ethId);

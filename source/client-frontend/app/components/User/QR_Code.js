@@ -24,7 +24,7 @@ class QRCode extends React.Component {
         <div>
           {this.props.showQR ?
             <LazyImage
-              src="http://srv01.snet.tu-berlin.de:1112/account/qr-code"
+              src="http://localhost:8080/account/qr-code"
               alt="qr-code"
             /> : null}
         </div>

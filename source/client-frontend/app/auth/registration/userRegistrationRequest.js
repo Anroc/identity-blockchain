@@ -15,7 +15,7 @@ function* userRegistrationRequest(password) {
     credentials: 'include',
   };
   // TODO currently setting it in wrong state
-  yield request('http://srv01.snet.tu-berlin.de:1112/account/register', options)
+  yield request('http://localhost:8080/account/register', options)
     .then((json) => {
       const ethId = json.ethereumID;
       console.log('ETH ID', ethId);

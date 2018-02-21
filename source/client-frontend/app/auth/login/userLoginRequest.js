@@ -15,7 +15,7 @@ function userLoginRequest(password) {
     credentials: 'include',
   };
 
-  const actualRequest = request('http://srv01.snet.tu-berlin.de:1112/account/login', options)
+  const actualRequest = request('http://localhost:8080/account/login', options)
     .then((json) => {
       console.log(`content' + ${JSON.stringify(json)}`);
       this.setState({
