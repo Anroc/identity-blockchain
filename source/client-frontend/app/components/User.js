@@ -40,7 +40,7 @@ class User extends Component {
       loaded: false,
       error: false,
       user: [],
-      claims: DefaultClaims,
+      claims: [],
       value: '',
       messages: [],
       permissionId: '',
