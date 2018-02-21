@@ -48,9 +48,9 @@ public class PermissionController extends AbstractAuthenticator {
             setApprovedFlagForClosures(permissionRequest, permissionRequestDTO);
         }
 
-        if(permissionRequest.getRequiredClaims() != null && permissionRequest.getOptionalClaims() != null) {
-            if (permissionRequest.getOptionalClaims().containsValue(true) && permissionRequest.getRequiredClaims().containsValue(false)) {
-                throw new ServiceException("Either accept no claims or all required claims.", HttpStatus.BAD_REQUEST);
+        if(permissionRequest.getRequiredClaims() != null) {
+            if (permissionRequest.getRequiredClaims().containsValue(false) && permissionRequest.getRequiredClaims().containsValue(true)) {
+                throw new ServiceException("Either accept no required claims or all required claims.", HttpStatus.BAD_REQUEST);
             }
         }
 
