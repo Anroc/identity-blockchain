@@ -110,10 +110,20 @@ class User extends Component {
       .then((json) => {
         console.log('GOT RESULT TO PERMISSION');
         console.log(json);
+        let uniquePermissions = this.state.permissions;
+        uniquePermissions.push(json);
+        uniquePermissions = uniquePermissions.filter((item, pos) => (
+          uniquePermissions.indexOf(item) === pos
+        ));
         this.putMessageSeen(message.subjectID);
+        this.setState({
+          permissions: uniquePermissions,
+        });
+        /*
         this.setState((prevState) => ({
           permissions: [...prevState.permissions, json],
         }));
+        */
       });
   }
 
