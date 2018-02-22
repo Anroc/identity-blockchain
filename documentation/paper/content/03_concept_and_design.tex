@@ -3,6 +3,26 @@
 
 \section{General}
 
+\section{Challanges}
+\label{sec:challanges}
+
+\subsection{Security Goals}
+\label{sec:securityGoals}
+
+Designing a identity management systems comes with various legal implications. We are referring here to § 9 “Technical and organizational actions” in the “Federal Data Protection Act”\footnote{Translated from the German language “Bundesdatenschutzgesetz”} were an identity management system shell enforce all necessary measures to protect identity information.\cite{bdsg}
+
+So we will focus on the following security goals:
+\begin{enumerate}
+\item \textbf{Confidentiality:} Data shell be secured on its transmission. This includes the blockchain and communication over the internet. 
+\item \textbf{Integrity:} The integrity of the data needs to be assured so that no entity can change identity information without knowledge. 
+\item \textbf{Authenticity:} Identity information are protected against unauthorized access. 
+\item \textbf{Non-Repudiation:} No entity can deny having taken an action.
+\item \textbf{Privacy:} The privacy of a user is preserved while interacting with the system. 
+\end{enumerate}
+
+We further also see the blockchain as a world open readable ledger were everyone can read transactions or information stored on the blockchain. So interactions with the blockchain need to ensure to not expose any identity information. 
+It is not allowed to store hashes or encryption of claim in the blockchain, since it is a tamper-proof data storage, information can not be removed once written. So if the hash or encryption gets broken the identity information is leaked and can not be removed.  
+
 \section{Processes}
 
 \subsection{Registration}
