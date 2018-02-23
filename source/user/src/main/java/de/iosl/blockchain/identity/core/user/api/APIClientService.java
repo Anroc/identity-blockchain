@@ -5,9 +5,11 @@ import de.iosl.blockchain.identity.core.shared.api.client.APIClientBeanFactory;
 import de.iosl.blockchain.identity.core.shared.api.client.APIClientRegistry;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.BasicEthereumDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.Closure;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.message.MessageService;
 import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
+import de.iosl.blockchain.identity.core.shared.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import de.iosl.blockchain.identity.core.user.claims.db.UserClaimDB;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
@@ -35,6 +37,8 @@ public class APIClientService {
     private UserClaimDB userClaimDB;
     @Autowired
     private HeartBeatService heartBeatService;
+    @Autowired
+    private ECSignatureValidator signatureValidator;
     @Autowired
     private MessageService messageService;
 
@@ -86,8 +90,24 @@ public class APIClientService {
 
         return userApiClient.getClaims(claimRequest)
                 .stream()
+                .filter(claimDTO -> validateSignedRequest(claimDTO.getSignedClaimDTO()) && validateSignedRequestCollection(claimDTO.getSignedClosures()))
                 .map(claimDTO -> new UserClaim(claimDTO, keyChain.getAccount().getAddress()))
                 .collect(Collectors.toList());
+    }
+
+    private boolean validateSignedRequest(SignedRequest<?> signedRequest) {
+        boolean valid = signatureValidator.isRequestValid(signedRequest);
+
+        if(! valid ) {
+            log.warn("Signature for was not valid: {}", signedRequest);
+        }
+        return valid;
+    }
+
+    private boolean validateSignedRequestCollection(List<SignedRequest<Closure>> signedRequestCollection) {
+        log.info("Validating closure...");
+        long count = signedRequestCollection.stream().filter(this::validateSignedRequest).count();
+        return count == signedRequestCollection.size();
     }
 
     public List<UserClaim> getAndSaveClaims(@NonNull String url) {

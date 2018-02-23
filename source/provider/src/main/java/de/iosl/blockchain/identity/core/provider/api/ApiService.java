@@ -192,7 +192,10 @@ public class ApiService {
                             () -> new IllegalStateException("Could not find claim with id " + closure.getClaimID() + ".")
                     );
 
-            ClosureExpression closureExpression = new ClosureExpression(providerClaim.getClaimValue(), closure.getClaimOperation(), closure.getStaticValue());
+            ClosureExpression closureExpression = new ClosureExpression(
+                    providerClaim.getClaimValue().toPayload(),
+                    closure.getClaimOperation(),
+                    closure.getStaticValue());
             closure.setUserEthId(user.getEthId());
             closure.setExpressionResult(closureExpression.evaluate());
             closure.setCreationDate(LocalDateTime.now());

@@ -119,7 +119,7 @@ public class PermissionService {
                 );
 
         ClosureExpression closureExpression = new ClosureExpression(
-                userClaim.getClaimValue(),
+                userClaim.getSignedClaim().getPayload().getClaimValue().toPayload(),
                 closureContractRequest.getClosureContractRequestPayload().getClaimOperation(),
                 closureContractRequest.getClosureContractRequestPayload().getStaticValue().getUnifiedValue()
         );

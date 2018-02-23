@@ -6,12 +6,11 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.Closure;
 import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
-import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
-import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.user.Application;
-import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
+import de.iosl.blockchain.identity.core.user.factories.ClaimFactory;
 import de.iosl.blockchain.identity.core.user.claims.claim.dto.UserClaimDTO;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import org.assertj.core.util.Lists;
@@ -27,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +39,8 @@ public class ClaimControllerRestTest extends RestTestSuite {
     private final String claimID_age = "BIRTHDAY";
     private final String claimID_zip = "MAIN_RESIDENT_ZIP_CODE";
 
+    private final ClaimFactory claimFactory = new ClaimFactory();
+
     @SpyBean
     private KeyChain keyChain;
 
@@ -50,11 +50,10 @@ public class ClaimControllerRestTest extends RestTestSuite {
     public void setup() {
         keyChain.setAccount(new Account("asd", null, null, null, null));
 
-        userClaimDB.insert(new UserClaim(claimID_familyName, new Date(), new Provider("0x111", "gov"), new Payload(new ValueHolder("Wurst"), ClaimType.STRING), keyChain.getAccount().getAddress()));
-        birthday = new UserClaim(claimID_age, new Date(), new Provider("0x111", "gov"), new Payload(new ValueHolder(
-                LocalDateTime.of(2000,04,11,12,12,12)), ClaimType.DATE), keyChain.getAccount().getAddress());
+        userClaimDB.insert(claimFactory.create(claimID_familyName, ClaimType.STRING, "Wurst", keyChain.getAccount().getAddress()));
+        birthday = claimFactory.create(claimID_age, ClaimType.DATE, LocalDateTime.of(2000,04,11,12,12,12), keyChain.getAccount().getAddress());
         userClaimDB.insert(birthday);
-        userClaimDB.insert(new UserClaim(claimID_zip, new Date(), new Provider("0x111", "gov"), new Payload(new ValueHolder(3.4), ClaimType.NUMBER), keyChain.getAccount().getAddress()));
+        userClaimDB.insert(claimFactory.create(claimID_zip, ClaimType.NUMBER, 3.4, keyChain.getAccount().getAddress()));
     }
 
     @Test

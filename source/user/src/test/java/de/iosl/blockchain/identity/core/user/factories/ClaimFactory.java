@@ -1,10 +1,10 @@
-package de.iosl.blockchain.identity.core.provider.factories;
+package de.iosl.blockchain.identity.core.user.factories;
 
-import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.*;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
+import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
 
 import java.util.Date;
@@ -15,20 +15,24 @@ public class ClaimFactory {
     private PayloadFactory payloadFactory = PayloadFactory.instance();
     private ProviderFactory providerFactory = ProviderFactory.instance();
 
-    public ProviderClaim create() {
+    public UserClaim create() {
         return create(UUID.randomUUID().toString());
     }
 
-    public ProviderClaim create(String claimId) {
-        return create(claimId, providerFactory.create(), payloadFactory.create());
+    public UserClaim create(String claimId) {
+        return create(claimId, providerFactory.create(), payloadFactory.create(), "0xabc");
     }
 
-    public ProviderClaim create(String claimId, ClaimType claimType, Object payload) {
-        return create(claimId, providerFactory.create(), payloadFactory.create(payload, claimType));
+    public UserClaim create(String claimId, ClaimType claimType, Object payload) {
+        return create(claimId, providerFactory.create(), payloadFactory.create(payload, claimType), "0xabc");
     }
 
-    private ProviderClaim create(String claimId, Provider provider, Payload payload) {
-        return new ProviderClaim(
+    public UserClaim create(String claimId, ClaimType claimType, Object payload, String targetUserId) {
+        return create(claimId, providerFactory.create(), payloadFactory.create(payload, claimType), targetUserId);
+    }
+
+    private UserClaim create(String claimId, Provider provider, Payload payload, String targetUserId) {
+        return new UserClaim(
                 new ClaimDTO(
                         new SignedRequest<>(
                                 new SignedClaimDTO(
@@ -37,7 +41,8 @@ public class ClaimFactory {
                                 new ECSignature("r", "s", (byte) 3)
                         ),
                         null
-                ));
+                ),
+                targetUserId);
     }
 
     public static ClaimFactory instance() {

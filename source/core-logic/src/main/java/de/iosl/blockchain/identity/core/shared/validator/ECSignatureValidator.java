@@ -1,4 +1,4 @@
-package de.iosl.blockchain.identity.core.provider.validator;
+package de.iosl.blockchain.identity.core.shared.validator;
 
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
