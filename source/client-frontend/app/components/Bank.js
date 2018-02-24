@@ -79,8 +79,6 @@ class Bank extends Component{
     this.handleChangeClosureCreationClaimOperation = this.handleChangeClosureCreationClaimOperation.bind(this);
     this.handleChangeClosureCreationStaticValue = this.handleChangeClosureCreationStaticValue.bind(this);
     this.handleChangeClosureCreationClaimValue = this.handleChangeClosureCreationClaimValue.bind(this);
-    this.handleChangeClosureCreationEthAddress = this.handleChangeClosureCreationEthAddress.bind(this);
-    this.handleSubmitClosure = this.handleSubmitClosure.bind(this);
     this.handleGetClaimsForEthAddress = this.handleGetClaimsForEthAddress.bind(this);
     this.handleChangeRequiredAttributeSelection = this.handleChangeRequiredAttributeSelection.bind(this);
     this.handleChangeOptionalAttributeSelection = this.handleChangeOptionalAttributeSelection.bind(this);
@@ -129,10 +127,6 @@ class Bank extends Component{
 
   handleChange(event){
     this.setState({ ethAddress: event.target.value });
-  }
-
-  handleChangeClosureCreationEthAddress(event){
-    this.setState({ closureCreationEthAddress: event.target.value });
   }
 
   handleChangeClosureCreationClaimValue(event){
@@ -363,7 +357,7 @@ class Bank extends Component{
         }
       // this.putAllMessage();
       });
-    setTimeout(this.getAllMessages, 5000);
+    setTimeout(this.getAllMessages, 20000);
   };
 
   putAllMessage(seen) {
@@ -409,14 +403,24 @@ class Bank extends Component{
         staticValue: this.state.closureCreationStaticValue,
       }
     ];
+    let postRequest = {};
+    if (this.state.closureCreationClaimId === '') {
+      postRequest = {
+        optionalClaims: this.state.optionalAttributes,
+        providerURL: 'http://srv01.snet.tu-berlin.de:8100',
+        requiredClaims: this.state.requiredAttributes,
+        userEthID: this.state.ethAddress,
+      };
+    } else {
+      postRequest = {
+        closureRequests,
+        optionalClaims: this.state.optionalAttributes,
+        providerURL: 'http://srv01.snet.tu-berlin.de:8100',
+        requiredClaims: this.state.requiredAttributes,
+        userEthID: this.state.ethAddress,
+      };
+    }
 
-    const postRequest = {
-      closureRequests,
-      optionalClaims: this.state.optionalAttributes,
-      providerURL: 'http://srv01.snet.tu-berlin.de:8100',
-      requiredClaims: this.state.requiredAttributes,
-      userEthID: this.state.ethAddress,
-    };
     console.log('Preparing following body for POST: ', JSON.stringify(postRequest));
     const getUserInformationOptions = {
       method: 'POST',
@@ -440,62 +444,6 @@ class Bank extends Component{
 
     this.cleanFormClaims();
     this.cleanFormClosures();
-  }
-
-  handleSubmitClosure(event){
-    this.handleClickSnack(true, 'Closure has been requested');
-    // alert('A name was submitted: ' + this.state.requiredAttributes.join(', '));
-    event.preventDefault();
-    const claimOperationMorphed = this.switchClosureOperationLinguisticValueAndProgrammaticValue(this.state.closureCreationClaimOperation);
-    // console.log('Claim operator was morphed back to: ', claimOperationMorphed);
-    this.setState({
-      closureRequests: [
-        {
-          claimID: this.state.closureCreationClaimId,
-          claimOperation: claimOperationMorphed,
-          staticValue: this.state.closureCreationStaticValue,
-        }
-      ],
-    });
-
-    // console.log('Closure request: claim-id' + this.state.closureCreationClaimId + ', claimOperation ' + claimOperationMorphed + ', value ' + this.state.closureCreationStaticValue);
-    const closureRequests = [
-      {
-        claimID: this.state.closureCreationClaimId,
-        claimOperation: claimOperationMorphed,
-        staticValue: this.state.closureCreationStaticValue,
-      }
-    ];
-    // console.log('Closure request is: ', closureRequests);
-    const postRequest = {
-      closureRequests,
-      optionalClaims: this.state.optionalAttributes,
-      providerURL: 'http://srv01.snet.tu-berlin.de:8100',
-      requiredClaims: this.state.requiredAttributes,
-      userEthID: this.state.closureCreationEthAddress,
-    };
-    console.log('Preparing following body for POST: ', JSON.stringify(postRequest));
-    const getUserInformationOptions = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(postRequest),
-      mode: 'cors',
-      credentials: 'include',
-    };
-    // console.log(JSON.stringify(getUserInformationOptions));
-    request('http://srv01.snet.tu-berlin.de:8102/permissions', getUserInformationOptions);
-    // .then((json) => {
-    //  this.setState({
-    //    claims: json,
-    //  });
-    // }).catch((error) => {
-    //  console.log(error);
-    // });
-    this.cleanFormClosures();
-    this.cleanFormClaims();
   }
 
   handleGetClaimsForEthAddress(event){
@@ -535,6 +483,7 @@ class Bank extends Component{
       closureCreationClaimId: '',
       closureCreationClaimOperation: '',
       closureCreationClaimValue: '',
+      closureCreationStaticValue: {},
     });
   }
 
@@ -676,20 +625,9 @@ class Bank extends Component{
                         input={<Input id="select-multiple" />}
                       >
                         { this.state.availableClaimsForEthAddress.map((c) => (
-                          this.state.optionalAttributes.length > 0
-                            ? this.state.optionalAttributes.map((oa) => (
-                              c.claimID === oa
-                                ? null
-                                :
-                                <MenuItem
-                                  key={c.claimID}
-                                  value={c.claimID}
-                                >
-                                  {c.claimID}
-                                </MenuItem>
-                            ))
-                            :
-                              <MenuItem
+                          this.state.optionalAttributes.includes(c.claimID)
+                            ? null
+                              : <MenuItem
                                 key={c.claimID}
                                 value={c.claimID}
                               >
@@ -699,31 +637,28 @@ class Bank extends Component{
                       </Select>
                     </FormControl>
                     { this.state.requiredAttributes.length > 0
-                      ?
-                        <FormControl
-                          style={{ marginBottom: '15px', max: '100%', width: '100%' }}
+                      ? <FormControl
+                        style={{ marginBottom: '15px', max: '100%', width: '100%' }}
                         >
-                          <InputLabel htmlFor="select-multiple-optional-claims">Optional Claims</InputLabel>
-                          <Select
-                            multiple
-                            value={this.state.optionalAttributes}
-                            onChange={this.handleChangeOptionalAttributeSelection}
-                            input={<Input id="select-multiple" />}
-                          >
-                            { this.state.availableClaimsForEthAddress.map((c) => (
-                              this.state.requiredAttributes.map((ra) => (
-                                c.claimID === ra
-                                  ? null
-                                  : <MenuItem
-                                    key={c.claimID}
-                                    value={c.claimID}
-                                  >
-                                    {c.claimID}
-                                  </MenuItem>
-                              ))
-                            ))}
-                          </Select>
-                        </FormControl>
+                        <InputLabel htmlFor="select-multiple-optional-claims">Optional Claims</InputLabel>
+                        <Select
+                          multiple
+                          value={this.state.optionalAttributes}
+                          onChange={this.handleChangeOptionalAttributeSelection}
+                          input={<Input id="select-multiple" />}
+                        >
+                          { this.state.availableClaimsForEthAddress.map((c) => (
+                            this.state.requiredAttributes.includes(c.claimID) > 0 || Object.entries(this.state.optionalAttributes.includes(c.claimID)).length > 1
+                            ? null
+                              : <MenuItem
+                                key={c.claimID}
+                                value={c.claimID}
+                              >
+                                {c.claimID}
+                              </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                       : null
                     }
                   </ExpansionPanelDetails>
