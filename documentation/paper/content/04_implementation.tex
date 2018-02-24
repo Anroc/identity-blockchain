@@ -2,24 +2,22 @@
 \label{cha:implementation}
 
 \section{Core-Logic}
-% TODO: korrektur lesen
-% PPR graphic ueberarbeiten
 Blockchain-Identity is always focus around two actors: The user and his interaction with the blockchain and identity providers and their interaction with the user in an on- and off-blockchain fashion. We model our system in the same way but needed to make some specifications for the provider service which comes with two different motivations and rights:
 
 \begin{itemize}
-\item \textbf{Normal Provider}: Holds domain specific personal data about their consumers that are not exposed to the outside world. They have an interest in requesting user data to extend their system and to make new costumer registration easier. This services are untrusted and can not write to the blockchain. However they can read from the blockchain to verify transactions or extract information out of it. In general everyone can setup a provider service and request user data. They don’t need to be verified in any kind. 
+\item \textbf{Normal Provider}: Holds domain specific personal data about their customers that are not exposed to the outside world. They have an interest in requesting user data to extend their system and to make new costumer registration easier. This services are untrusted and can not write to the blockchain. However they can read from the blockchain to verify transactions or extract information out of it. In general everyone can setup a provider service and request user data. They don’t need to be verified in any kind. 
 \item \textbf{Government}: Single trusted entity that holds verifiable citizen information. This information are backed by the representative citizen office or other federal trusted institutions. The government usually verifies user data.
 The government service is the only service that can read and write to the blockchain. 
 
-The client application, on the other hand, has read and write rights and can interact with this providers.
+The client application, on the other hand, has read and write access to the blockchain and can interact with this providers.
 
-This following sections descriptes the different provider/client applications and their interactions with the other components: frontend, Etherem-Blockchain-Adapter – EBA and the database.
+This following sections describes the different provider/client applications and their interactions with the other components: frontend, Etherem-Blockchain-Adapter (EBA) and the database.
 \end{itemize}
 
 \subsection{Motivation}
-Since we are dealing with provider which are providing user information data we decided to implement a normal client-server architecture. Here we can use all the advantages TCP is providing us like transport layer encryption with SSL/TLS and the reliability/inorder-delivery TCP comes with. Where we would have to deal with our own encrypt-scheme if we would use UDP with peer-to-peer communication and port discovery, even if peer-to-peer communication seems like the more fitting solution since we are already in the domain of blockchain and decentralized applications. 
+Since we are dealing with services which are providing user data we decided to implement a normal client-server architecture. Here we can use all the advantages TCP is providing us like transport layer encryption with SSL/TLS and the reliability/inorder-delivery TCP comes with. Where we would have to deal with our own encryption-scheme if we would use UDP with peer-to-peer communication and port discovery, even if peer-to-peer communication seems like the more fitting solution since we are already in the domain of blockchain and decentralized applications. 
 
-Choosing a client-server architecture comes with the drawback that the government service can not notify the client about incoming messages. The communication via the blockchain is not possible since the provider have not permission to write to it. To overcome this challenge we implemented a discovery service where each components registers to on bootstrap. (See section \ref{sec:discoveryService}).
+Choosing a client-server architecture comes with the drawback that the government service can not notify the client about incoming messages. The communication via the blockchain is not possible since the provider have not permission to write to it (it would also not be feasible regarding the cost writing to the blockchain comes with). To overcome this challenge we implemented a discovery service where each components registers to on bootstrap. (See section \ref{sec:discoveryService}).
 
 We further decided to design our services RESTful (Representational state transfer). This in mind spring boot\footnote{\url{https://projects.spring.io/spring-boot/}} is a good choice in the Java domain for rapid prototyping. Spring boot also offers good integration for database adapters and spring security\footnote{\url{https://projects.spring.io/spring-security/}} a authentication and authorization framework. 
 
@@ -27,23 +25,24 @@ We further decided to design our services RESTful (Representational state transf
 Besides Sprint Boot and Spring Security we further committed us to the following technology stack: 
 
 \begin{itemize}
-\item Springfox\footnote{\url{https://springfox.github.io/springfox/}}: A API documentation framework. Additionally is is specifically designed for spring boot.
-\item Feigen\footnote{\url{https://github.com/OpenFeign/feign}}: Framework that make writing API calls easier. You only need to provide an interface and specify it with annotations to produce a HTTP request to specific domain. Mapping and error handling is mostly done by Feigen. 
-\item Lombok\footnote{\url{https://projectlombok.org/}}: Lombok reduces the boilerplate code in Java by directly translating data or logging annotation into java byte code. It helps us to reduce the size of our models to a minimum by obscuring the setter, getter and constructors. 
-\item Bouncy Castle\footnote{\url{https://www.bouncycastle.org/java.html}}: The unofficial default cryptographic library for java. It implements the java security provider interface and provides a functions like RSA encryption or signature mechanism.
+\item Springfox\footnote{\url{https://springfox.github.io/springfox/}}: A API documentation framework. Additionally it is specifically designed for Spring Boot.
+\item Feign\footnote{\url{https://github.com/OpenFeign/feign}}: Framework that make writing API calls easier. You only need to provide an interface and specify it with annotations to produce a HTTP request to a specific domain. Mapping and error handling is mostly done by Feign. 
+\item Lombok\footnote{\url{https://projectlombok.org/}}: Lombok reduces the boilerplate code in Java by directly translating data or logging annotation into Java byte code. It helps us to reduce the size of our models to a minimum by omitting the setter, getter and constructors. 
+\item Bouncy Castle\footnote{\url{https://www.bouncycastle.org/java.html}}: The unofficial default cryptographic library for Java. It implements the Java security provider interface and provides a functions like RSA encryption or signature mechanism.
 \item Zxing\footnote{\url{https://github.com/zxing/zxing}}: Library to generate QR- and bar-codes. 
 \item Web3j\footnote{\url{https://web3j.io/}}: Library providing the Ethereum adapter. (More in section \ref{section:eba}. In this section this library is mainly used to generate ECDSA (Elliptic Curve with Digital Signature Algorithm) signatures. 
 \end{itemize}
 
-Further the following technologies are used for testing:
+Further the following testing technologies are used:
 
 \begin{itemize}
-\item AssertJ\footnote{\url{https://joel-costigliola.github.io/assertj/}}: A fluent assertion semantic for java. 
+\item AssertJ\footnote{\url{https://joel-costigliola.github.io/assertj/}}: A fluent assertion semantic for Java. 
 \item Mockito\footnote{\url{http://site.mockito.org/}}: Mocking library to make unit and rest test more modular and encapsulated from outstanding components. 
+\item Spring Boot Test\footnote{\url{https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html}}: Integration test framework for Spring Boot. 
 \end{itemize}
 
 \subsection{Claims}
-The Blockchain-Identity is centralized around user claims. Claims are bits of personal information, that can be made about a person. It shell describe the an atomic unit of information you receive if you continue to cut bigger personal information chunks into smaller onces. We introduce 5 different claim types: 
+The Blockchain-Identity is centralized around user claims. Claims are atomic statements of personal information, that can be made about a person. They describe units of information you receive if you continue to cut bigger personal information chunks into smaller onces. We introduce 5 different claim types: 
 
 \begin{itemize}
 \item \textbf{Boolean}: Boolean-claims are claims that can be answered with a simple yes or no answer.
@@ -52,109 +51,117 @@ Example: "Has HVI?"
 Example: "Which street lives Bob in?"
 \item \textbf{Number}: Number-claims hold numbers (in double representation) as values. 
 Example: "What is Bobs ZIP code?"
-\item \textbf{Date}: Date-claims relate to claims that referee to a specific time or date. They are saved as LocalDateTime objects.
+\item \textbf{Date}: Date-claims relate to claims that refer to a specific time or date. They are saved as LocalDateTime objects.
 Example: "When was Bob born?"  
-\item \textbf{Object}: All other claims that are not representable with the above definitions needs to be saved as generic objects. This may be lists of claims, or even more complex representations like whole documents. Since we decided that in our prototype you can break down every claim in a subset of the above definition, this claim is lacking support in a closure related context. 
+\item \textbf{Object}: All other claims that are not representable with the above definitions need to be saved as generic objects. This may be lists of claims, or even more complex representations like whole documents. Since we decided that in our prototype you can break down every claim in a subset of the above definition, this claim is lacking support in a closure related context. 
 Example: "What is Bobs whole medical record?"
 \end{itemize}
 
-The claim are structured all over the system in the save way. In their core they consist of ID, type and value. The ID defines a unique string that is well defined and is strictly bound to a claim type. 
-An overview about all current defined claim IDs can be found in appendix \ref{appendix:claimID}. Claim IDs are explicitly choose as strings and not an enums since they shell be expendable and each provider shell be able to include their own claim IDs if they are not yet present. If an wrong type is defined for a claim an exception will raise. 
+Claims are structured in the same way in every implemented system. A claim in its core consists of an identifier (ID), type and value. The ID defines a unique string that is well known and is strictly bound to a claim type. 
+An overview about all current defined claim IDs can be found in appendix \ref{appendix:claimID}. Claim IDs are on propose defined as strings and not an enums since they shell be expendable and each provider shell be able to include their own claim IDs if non of the defined claim IDs fits their needs. With each new defined claim ID a claim type needs to be chosen. On runtime this type is validated against the claim value and if the value is not from the same type an exception will raise. 
 
-The claim type is bound to claim operations. Claim operations are logical operations that can be interpreted by the closure expression engine. We will introduce in detail how that work in section \ref{sec:closure}. 
+The claim type is bound to claim operations. Claim operations are logical operations that can be interpreted by the closure expression engine. We will explain in detail how that work in section \ref{sec:closure}. 
 
-The claim value is simply from type object. Some could had imagine that it shell be a generic, but they are hard to serialize and deserialize. Since generic’s type are defined on compile time and claims are often read from and to the database and send via the network, the overhead of type determination would be larger then just parsing it into an object and checking the type manual. 
+The claim value is implemented as an universal type (class object) to be as generic as possible. Some could imagine that it shell be a generic (introduced since Java 1.6), but they are hard to serialize and deserialize. Since generics are defined on compile time and claims are often read from and to the database as well as send via the network, the overhead of type determination would be larger then just parsing it into an object and checking the type manual. 
 
-Claims also hold some meta information about who is the issuer (reference to the provider, original issuing this claim), and a modification date which gets updated each time a claim is changed. The modification date enables us to see if a claim is outdated and needs to be updated again. Claims are of nature unsigned, but can be signed by on request. 
+Claims also hold some meta information about who is the issuer (reference to the provider, original issuing this claim) of this claim, and a modification date which gets updated each time a claim is changed. The modification date enables us to see if a claim is outdated and needs to be updated again. Claims are of nature signed. The signature is generated by the provider validated the claim. 
 
 \subsection{Components}
 \begin{figure}
 \includegraphics[width=0.7\textwidth]{impl/ComponentDiagram.png}
 \centering
-\caption{Overview about the components of an individual service and their exposed endpoints. Left is the provider service providing also a provider API and provider API client. Right the user service implementing the client API client.}
+\caption{Overview about the components of an individual service and their exposed endpoints. On the left side is the provider service displayed, serving, additional to the user service, a provider API and provider API client. On the right side is the user service located implementing the client API client.}
 \label{fig:componentDiagram}
 \end{figure}
 
-In figure \ref{fig:componentDiagram} you can see an overview about the components in the provider and user service. All boxes that are drown over the border are representations of exposed endpoints or clients and inside the box are the core components listed.
+In figure \ref{fig:componentDiagram} you can see an overview about the core components of the provider and user service. All boxes that are drown over the border are representations of exposed endpoints or clients and inside the box are the internal components listed.
 
 \subsubsection{Internal components}
-The crypt engine is the main framework for encrypting, decrypting, signing, validating signatures and generating hashes. It provides methods for symmetric and asymmetric encryption. It uses bouncy castles as security provider to generate keys and handle cryptography. To generate elliptic curve signatures it uses the framework provided by web3j. 
+The crypt engine is the main framework for encrypting, decrypting, signing, validating signatures and generating secure hashes. It provides methods for symmetric and asymmetric encryption. It uses bouncy castles as security provider to generate keys and handle cryptography. To generate elliptic curve signatures it uses the framework provided by web3j. 
 
-We are using spring data to provide a very easy interface to couchbase, our database storage (section \ref{sec:database}). The keychain is the current session object holding the RSA key-pair, EC key-pair and some other meta information about the current state of the service. This objects gets cleared if the services logs out and restored if the service logs in (section \ref{sec:registerContract}). 
+We are using spring data to provide a very easy interface to couchbase, our database storage (section \ref{sec:database}). The keychain is the a session object holding the RSA key-pair, EC key-pair and some other meta information about the current state of the service. This objects gets cleared if the services logs out and restored if the service logs in (section \ref{sec:registerContract}). 
 
 \subsubsection{User API}
 \label{sec:userAPI}
-The user api provided by a provider service and requested by the user service defines the central entry point of client requests to a provider. The user and the provider API (section \ref{sec:providerAPI} is implemented as a normal Java interface. The provider service is implementing this interface and mapping the defined methods to REST endpoints which then are bounded to a predefined paths. The user service on the other hand, extends this interface in a new interface which then serves as a Feign adapter bound to the same predefined paths. This is really convenient because Feign needs an annotated interface to build an REST client out if it. We only have to bind Feign to the same resources paths the provider is exposing so that they can communicate to each other. 
+The user API provided by a provider service and requested by the user service defines the central entry point of client requests to a provider. The user and the provider API (section \ref{sec:providerAPI} is implemented as a normal Java interface. The provider service is implementing this interface and mapping the defined methods to REST endpoints which then are bounded to a predefined paths. The user service on the other hand, extends this interface in a new interface which then serves as a Feign adapter bound to the same predefined paths. This is really convenient because Feign needs an annotated interface to build an REST client out if it. We only have to bind Feign to the same resources paths the provider is exposing so that they can communicate to each other. 
+
+Using this interface for the client and server side implementation allows us to easy extend the API without leaving many room for errors. Changing one endpoint on server side will directly effect the implementation on client side. 
 
 \subsubsection{Provider API}
 \label{sec:providerAPI}
-The provider API is a unified interface which each provider is offering in form of REST endpoints. Each provider builds also a Feign client (see section \ref{sec:userAPI}) to talk to other providers.  Via this API provider an interact with each other to exchange requests or offering services. Notably is that each request needs to be authenticated via a SignedRequest (see section \ref{sec:ecdsa}) to ensure that only authenticated entities request this API. 
+The provider API is a unified interface which each provider is offering in form of REST endpoints. Each provider builds also a Feign client (see section \ref{sec:userAPI}) to talk to other providers.  Via this API provider an interact with each other provider to exchange information or offering services. Notably is that each request needs to be authenticated via a SignedRequest (see section \ref{sec:ecdsa}) to ensure that only authenticated entities request this API. 
 
 \subsubsection{REST API}
-The rest API is the connection to the frontend. Here the frontend can ask for user resources and claims to display them a web admin or the end user. This requests are backed by a basic authentication mechanism which is not optimal because the password and user name is transmitted in plain text if no transport layer encryption is used. The plan was to change this mechanism since to a more secure scheme like Json-Web-Token (JWT) authentication, but that would require changes in other components and was also out of scope of the core focus of this project. 
+The general REST API is the connection to the frontend. Here the frontend can ask for user resources and claims to display them a web administrator or the end user. This requests are authenticated via “basic authentication”, a mechanism which is not optimal because the password and user name is transmitted in plain text if no transport layer encryption is used. The plan was to change this mechanism to a more secure scheme like Json-Web-Token (JWT, signature based) authentication, but that would require changes in other components and was also out of scope of the focus of this project. 
 
 \subsubsection{HeartBeatAdapter and EBA}
-Ethereum Blockchain Adapter (EBA) is the entry point to communicate with the blockchain. We defined an interface (EBAInterface) between the blockchain component and the core-logic to develop in a parallel fashion. Relate to the section \ref{sec:eba} where everything related to the blockchain is explained.
+The Ethereum Blockchain Adapter (EBA) is the entry point to communicate with the blockchain. We defined an interface (EBAInterface) between the blockchain component and the core-logic to make the core-logic ethereum independent. Relate to the section \ref{sec:eba} where everything related to the blockchain is explained. If we for some reason decide to use a different blockchain implementation we could reimplement the EBAInterface.
 
 The HeartBeatAdapter is the connection to the Discovery Service (section \ref{sec:discoveryService}). A service can register itself to the discovery service, create or subscribe to new beats.
 
 \subsection{Notable methods}
-The follow sections describe problem and challenges that occurred during development.
+The follow sections describe challenges that occurred during development and how they were solved. 
 
 \subsubsection{Serializing and deserialization of arbitrary objects}
 \label{sec:serialobject}
 
-Serialization of arbitrary objects is a challenge in systems where the order of serialization is imported (e.g. building a signature via hashing over the serialization outcome). A common serialization method is the JSON-String serialization, where an arbitrary object state gets converted into a JSON representation. This can be done by (for example) the Jackson object mapper\footnote{\url{https://github.com/FasterXML/jackson}}. We need, however, define the order  in which each field of the object gets serialized. Serializing all objects into JSON representation allows us to serialize the objects in the same way all the time, no matter if it is a signed request against the blockchain or a response to the frontend. 
+Serialization of arbitrary objects is a challenge in systems where the order of serialization is imported (in our case: building a signature via hashing over the serialization outcome). A common serialization method is the JSON-String serialization, where an arbitrary object state gets converted into a JSON representation. This can be done by (for example) the Jackson object mapper\footnote{\url{https://github.com/FasterXML/jackson}}. Different configuration of the object mapper makes it difficult to receive the same serialization outcome on each system. To overcome this problem, we defined a universal object mapper configuration for Spring, crypt- engine and database. For example we need define the order  in which each field of the object gets serialized. The big advantage by using the JSON-string serialization is that we don’t have to binary encode the signed object on transmitting it to the frontend to ensure its integrity. We only have to make our serialization configuration public so that every party, obtaining a signed JSON, can verify its authenticity.
 
-The other approach is to use Javas serialization API. Classes that implement "Serializable" will then be converted to a stream which then can be collected to a byte array. Since Java serialization will take care of the serialization order by itself we don’t have to bother with that. 
+An alternative approach was to use Javas serialization API. Classes that implement "Serializable" will then be converted to a stream which then can be collected to a byte array. Since Java serialization will take care of the serialization order of fields by itself we don’t have to bother with that. 
 
-However, we need to find a unique way to serialize objects since building a hash-based signature via objects must be done always in the same way, no matter on which system the signing or verification of the signature is happening. We decided to use JSON serialization approach (with explicitly defining the order in which properties shell be serialized) since it is language independent, easier to implement and to debug, even if it is not as efficient as raw byte representation. How signatures are build and verified is described in the next section \ref{sec:ecdsa}. 
+However, we need to find a unique way to serialize objects since building a hash-based signature via objects must be done always in the same way, no matter on which system the signing or verification of the signature is happening. We decided to use JSON serialization approach (with explicitly defining the order in which properties shell be serialized) since it is language independent, easier to implement and to debug, even if it is not as efficient as raw byte representation. How exactly signatures are build and verified is described in the next section \ref{sec:ecdsa}. 
 
-The implementation of sets in the Java Virtual Machine needed also consideration. Sets are of nature unordered and it depends on the order of object initialization on the heap to define the real order the elements returned in. If you want the same order of object each time, you need to use lists. Building a hash over an object holding sets is obviously a bad idea since the order of attributes may be different from machine to machine, so the hash will be a different.  
+The implementation of sets in the Java Virtual Machine needed also consideration. Sets are of nature unordered and it depends on the order of object initialization on the heap to define the real order the elements are returned in. If you want the same order of object each time, you need to use lists. Building a hash over an object holding sets is obviously a bad idea since the order of attributes may be different from system to system, so the hash will be a different too.  
 
-Another problem related to serialization was that variables of type "Object" will be converted into a string representation and on deseralization this string will not be converted back in the original type since "String" itself extends "Object". This became a problem on serialization of LocalDateTime values, which were not parsed back into a LocalDateTime. 
+Another problem related to serialization was that variables of type "Object" will be converted into a string representation and on deseralization this string will not be converted back into the original type since "String" itself extends "Object". This became a problem on serialization of LocalDateTime values, which were not parsed back into a LocalDateTime (the other values that were serialized are primitive types and so were correctly parsed). 
 
-To temporary handle the different conversions we implemented a "ValueHolder", a simple class separating LocalDateTime values from generic Object values. By converting explicit into a LocalDateTime the Jackson converter recognizes the string representation and deserialize it into the correct object representation. Future improvements can be made by including the target class of the serialized value as meta information, so that in deseralization the value can be parsed back to its original class. Further the object mapper need to be adapted adequately. 
+To temporary handle the different conversions we implemented a "ValueHolder", a simple class separating LocalDateTime values from generic Object values. By converting explicit into a LocalDateTime the Jackson converter recognizes the string representation and deserialize it into the correct object representation. Future improvements can be made by including the target class of the serialized value as meta information, so that on deseralization the value can be parsed back to its original class. Additionally the object mapper needs to be adapted adequately. 
 
-\subsubsection{ECDSA and SignedRequests}
+\subsubsection{ECDSA and Signed-Requests}
 \label{sec:ecdsa}
 
-Elliptic Curve Digital Signature Algorithm (ECDSA) in the SECP256k1 configuration is used by Bitcoin and Ethereum to sign transaction to the blockchain. \cite{mayer2016ecdsa} This ensures integrity and authenticity to the sender and the content of the transaction. 
+Elliptic Curve Digital Signature Algorithm (ECDSA) in the SECP256k1 configuration is used by Bitcoin and Ethereum to sign transaction to the blockchain. \cite{mayer2016ecdsa} This ensures integrity and authenticity to the sender and the content of the transaction. But it does not provide confidentiality in any kind, since Bitcoin or Ethereum want to stay as transparent as possible. 
+A ethereum address is the hexadecimal representation of the elliptic curve public key prepended with a “0x”. 
 
-To populate this security properties also between services we use ECDSA also for inter service communication. This is done by generating a so called "signedRequest". This object can hold a generic payload and the EC Digital-Signature over this payload. This payload but needs to include the ethereum address of the sender (similar to ethereum transactions). A signature is then build in the following way: 
-
-\begin{enumerate}
-\item The payload (holding also the ethereum address of the signer) gets converted to a JSON as defined in section \ref{sec:serialobject}
-\item A SHA-256 hash is build over the given JSON
-\item This hash will then be signed by the ECDSA and the private key (EC) of the signer
-\item The resulting signature gets appended in the signed request for validation
-\end{enumerate}
-
-\noindent The validator on the other hand can validate the signature by applying the following steps:
+To populate this security properties also between services we use ECDSA also for inter service communication (and additionally TLS/SSL to enforce confidentiality\footnote{Due to time limitations that feature could not be implemented. See section \ref{sec:securityEvaluation} for more information). This is done by generating a so called \lstinline{SignedRequest<T extends BasicEthereumDTO>}. This object can hold a generic payload that extends the BasicEthereumDTO and the EC Digital-Signature over this payload. The BasicEthereumDTO enforces that the ethereum address of the sender (similar to ethereum transactions) is included in the signature. This value can later be used to validate the signature. A signature is then build in the following way: 
 
 \begin{enumerate}
-\item Convert the payload to a JSON with the same object mapper configuration as used for serialization.
-\item Create a SHA-256 hash itself over the generated JSON
-\item Validate the provided signature against the computed hash. Interesting to know is that his validation does not yield a boolean flag but a computed ethereum address the algorithm "thinks" that signed the request. 
-\item We take this generated ethereum address to check it against the included ethereum address in the payload. If they are equal yield true, else false. 
+\item The payload gets converted to a JSON as defined in section \ref{sec:serialobject}
+\item A SHA-256 hash is build over the given serialized JSON
+\item This hash will then be signed by the ECDSA using the private key (EC) of the signer
+\item The resulting signature gets appended to the payload
 \end{enumerate}
 
-If we would not have include the ethereum address of the sender inside the signed payload an malicious attacker may have exchanged it against a valid signature address. 
+\noindent The receiver of this signed request can validate the signature by applying the following steps:
+
+\begin{enumerate}
+\item Serialize the payload into a JSON with the same object mapper configuration as used for serialization.
+\item Create a SHA-256 hash over the generated JSON
+\item Validate the provided signature against the computed hash. Interesting to know is that web3j validation does not yield a boolean flag indicating a valid signature, but a computed ethereum address which would fit the signature of the payload. 
+\item We take this generated ethereum address to check it against the included ethereum address in the payload. If they are equal the integrity of the message is ensured. 
+\item In the final step we have to validate that the ethereum address is indeed the sender of this request. This can be done off-blockchain for example by querying the database and see if the saved ethereum address matches the requesting one. If that also yields true the authenticity of the request is also ensured. 
+\end{enumerate}
+
+Please note to completely be save against man-in-the-middle attacks we further needs to encrypt the  signature asymmetric to make it tamper proof. Without that only users are secured against man-in-the-middle attacks since their ethereum address is verified and bound to their identity. However since provider are not verified they are attackable. TLS/SSL would also help us here. If the whole message would be encrypted an attacker first have to break TLS to change the signature. This only adds an layer of security but the problem remains that the providers EC key pair is not certificated. 
+(An proposed solution to this problem is given in the next section.)
+
 To validate and build signatures over Java objects we are using the Jackson object mapper module \lstinline{jackson-datatype-jsr310} in version \lstinline{2.8.10}. This module is further configuration to write time values as a time stamp in the ISO-8601 format. 
 
 \subsection{Discovery Service}
 \label{sec:discoveryService}
 As mentioned in the previous section the Discovery Service is the result of a client-server architecture in a peer-to-peer environment. But it further serves additional purpose for holding and distributing RSA public keys, discovering domain names, where to find the exposed API and if the requested service is online. 
 
-While all the stored information is public visible no sensitive data is exposed in the Discovery Service. It just provides connection information and serves as a message broker. Each stored entry needs to be signed by the author with the private key bound to his ethereum address. All unauthorized requests are rejected by the service. By ensuring the authenticity of each entry creation or update it is ensured that no service spoofing can happen. Only the holder of the private key bound to his ethereum address can update his connection information.
+While all the stored information is public visible no sensitive data is exposed to the Discovery Service. It just provides connection information and serves as a message broker. Each stored entry needs to be signed by the author with the private key bound to his ethereum address. All unauthorized requests are rejected by the service. By ensuring the authenticity of each entry creation or update it is ensured that no service spoofing can happen. Only the holder of the private key bound to his ethereum address can update his connection information.
+
+However, we need some kind of mechanism to verify the connection between ethereum address and provided URL to hinder URL spoofing. SSL-Ceritifcates or DNSSEC may help us here if we use the private key of the referenced public key (either in the certificate or stored in the DNSKEY entry) to sign the ethereum address. This would fill the missing trust in the provider ethereum address and make the system overall more secure against spoofing and man-in-the-middle attacks. It is left open for future work to implement this approach properly. 
 
 \subsubsection{Beats}
 \label{sec:beats}
-Beats are the messages that are routed by the Discovery Service. A \textit{beat} a small package containing an event type describing that kind of message it is and a subject field referencing the location where the new information is to find. Each beat is uniquely identified by the combination of recipient ethereum address and the current beat number (incrementing per beat). 
+Beats are the messages that are routed by the Discovery Service. A \textit{beat} is a small package containing an event type describing that kind of message it is and a subject field referencing the location where the new information is to find. Each beat is uniquely identified by the combination of recipient ethereum address and the current beat number (incrementing per beat). 
 
 There are two types of subjects: The URL references a API endpoint where new or updates information are now present. The recipient is requested to request this API endpoint to update his information state. The other kind of subject is a ethereum address: The recipient is requested to query the blockchain for the given address to process the information stored at this address. 
 
-On registration entities start to periodically (each 10 seconds) ping the Discovery Service to wait for new incoming beats. Since the discovery service itself is not a trusted entity, each beat gets verified before processing and it is checked that the signature matches the senders ethereum address.
+On registration entities start to periodically (each 10 seconds) ping the Discovery Service to wait for new incoming beats. Since the discovery service itself is not a trusted entity, each beat gets verified before processing and it is checked that the signature matches the senders (provider/user) ethereum address.
 
 \subsubsection{PKI}
 \label{sec:pki}
@@ -287,3 +294,11 @@ Due to time limitation it was not possible to implement the change claim concept
 
 To sum up the implementation in the backend, we created a powerful and scalable solution of provider – user interactions. A unified provider API let provider talk to each other in a well defined manner. This API is easily expendable to add further functionality to the system. Further the backend operates though well defined interface to the other components like the REST API to the frontend and the EBA interface to the ethereum blockchain. Besides the component definition we explained and discussed how signatures are generated and validated and which challenges arise in a distributed system by generating signatures over arbitrary objects.  We shortly examined the drawbacks of object to string conversions and how to overcome this obstacles. Further the design of closures and claims were explained, how closure expressions are evaluated and how to produce a user friendly lingual expression out of a logical condition. Finally we explained the flow of register, permission granting and closure requesting in detail and pointed out the code parts where the previous introduces methods where used.
 
+\section{Ethereum Blockchain Adapter - EBA}
+\label{sec:eba}
+
+\section{Web Frontend}
+\label{sec:frontend}
+
+\section{Database}
+\label{sec:database}
