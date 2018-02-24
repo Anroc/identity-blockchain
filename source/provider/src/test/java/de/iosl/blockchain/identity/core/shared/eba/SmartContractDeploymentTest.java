@@ -68,7 +68,7 @@ public class SmartContractDeploymentTest {
         Boolean decision = true;
 
         String govWalletName = "gov-wallet.json";
-        String govPassword = "penispumpe";
+        String govPassword = "password";
 
         Credentials govCred = RestTestSuite.loadWallet(govWalletName, govPassword);
         Account governmentAccount =new Account (

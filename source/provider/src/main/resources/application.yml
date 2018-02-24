@@ -17,7 +17,7 @@ blockchain.identity:
     stateWallet: "0x92a1a8f45af1a0e5387a0a9d38a3b86ca9698b0b"
     credentials:
       username: admin
-      password: penispumpe
+      password: password
 
 ---
 spring:

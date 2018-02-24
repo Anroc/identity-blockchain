@@ -38,7 +38,7 @@ public class TransferEther {
     @Before
     public void setUp() throws IOException, CipherException {
         String govWalletName = "gov-wallet.json";
-        String govPassword = "penispumpe";
+        String govPassword = "password";
 
         Credentials govCred = RestTestSuite.loadWallet(govWalletName, govPassword);
         this.governmentAccount=new Account (

@@ -1,15 +1,14 @@
 package de.iosl.blockchain.identity.core.shared.api.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.Closure;
 import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -17,22 +16,25 @@ import java.util.List;
 @NoArgsConstructor
 public class ClaimDTO {
 
-    @NotBlank
-    private String id;
-
-    private Date modificationDate;
     @Valid
-    private ProviderDTO provider;
-    @Valid
-    private PayloadDTO claimValue;
+    private SignedRequest<SignedClaimDTO> signedClaimDTO;
     @Valid
     private List<SignedRequest<Closure>> signedClosures;
 
-    public ClaimDTO(@NonNull SharedClaim claim) {
-        this.id = claim.getId();
-        this.modificationDate = claim.getModificationDate();
-        this.provider = (claim.getProvider() != null)? new ProviderDTO(claim.getProvider()) : null;
-        this.claimValue = (claim.getClaimValue() != null)? new PayloadDTO(claim.getClaimValue()) : null;
-        this.signedClosures = claim.getSignedClosures();
+    public ClaimDTO(@NonNull SharedClaim sharedClaim) {
+        this.signedClaimDTO = sharedClaim.getSignedClaim();
+        this.signedClosures = sharedClaim.getSignedClosures();
+    }
+
+    @JsonIgnore
+    public String getId() {
+        if(signedClaimDTO == null) {
+            if(signedClosures.isEmpty()) {
+                return null;
+            }
+            return signedClosures.get(0).getPayload().getClaimID();
+        } else {
+            return signedClaimDTO.getPayload().getId();
+        }
     }
 }

@@ -8,15 +8,13 @@ import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContra
 import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
-import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
-import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
 import de.iosl.blockchain.identity.core.shared.eba.ClosureContent;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.shared.message.data.Message;
 import de.iosl.blockchain.identity.core.shared.message.data.MessageType;
 import de.iosl.blockchain.identity.core.user.Application;
-import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
+import de.iosl.blockchain.identity.core.user.factories.ClaimFactory;
 import de.iosl.blockchain.identity.core.user.permission.data.ClosureRequest;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.crypt.CryptEngine;
@@ -37,7 +35,6 @@ import java.io.IOException;
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,6 +59,8 @@ public class PermissionServiceRestTest extends RestTestSuite {
     private final Set<String> optionalClaims = Sets.newHashSet(claimID_age);
     private final String permissionContractAddress = "0xabc";
 
+    private final ClaimFactory claimFactory = new ClaimFactory();
+
     @SpyBean
     private KeyChain keyChain;
 
@@ -80,9 +79,9 @@ public class PermissionServiceRestTest extends RestTestSuite {
         keyChain.setAccount(getAccountFromCredentials(USER_CREDENTIALS));
         keyChain.setRsaKeyPair(CryptEngine.generate().string().rsa().getAsymmetricCipherKeyPair());
 
-        userClaimDB.insert(new UserClaim(claimID_givenName, new Date(), new Provider("0x111", "gov"), new Payload(new ValueHolder("Hans"), ClaimType.STRING), keyChain.getAccount().getAddress()));
-        userClaimDB.insert(new UserClaim(claimID_familyName, new Date(), new Provider("0x111", "gov"), new Payload(new ValueHolder("Wurst"), ClaimType.STRING), keyChain.getAccount().getAddress()));
-        userClaimDB.insert(new UserClaim(claimID_age, new Date(), new Provider("0x111", "gov"), new Payload(new ValueHolder(LocalDateTime.of(2000,04,11,12,12,12)), ClaimType.DATE), keyChain.getAccount().getAddress()));
+        userClaimDB.insert(claimFactory.create(claimID_givenName, ClaimType.STRING, "Hans", keyChain.getAccount().getAddress()));
+        userClaimDB.insert(claimFactory.create(claimID_familyName, ClaimType.STRING, "Wurst", keyChain.getAccount().getAddress()));
+        userClaimDB.insert(claimFactory.create(claimID_age, ClaimType.DATE, LocalDateTime.of(2000,04,11,12,12,12), keyChain.getAccount().getAddress()));
     }
 
     @Test

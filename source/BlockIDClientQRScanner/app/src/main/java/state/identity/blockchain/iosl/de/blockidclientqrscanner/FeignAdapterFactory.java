@@ -16,7 +16,7 @@ public class FeignAdapterFactory {
 
     public static <T> T buildBean(Class<T> clazz, String url) {
         return Feign.builder()
-                .requestInterceptor(new BasicAuthRequestInterceptor("admin", "penispumpe"))
+                .requestInterceptor(new BasicAuthRequestInterceptor("admin", "password"))
                 .encoder(new GsonEncoder())
                 .decoder(new GsonDecoder())
                 .target(clazz, url);

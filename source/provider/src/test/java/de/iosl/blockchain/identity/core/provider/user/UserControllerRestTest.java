@@ -1,24 +1,32 @@
 package de.iosl.blockchain.identity.core.provider.user;
 
+import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.ClaimInformationResponse;
+import de.iosl.blockchain.identity.core.provider.user.data.dto.UnsignedClaimDTO;
+import de.iosl.blockchain.identity.core.provider.user.data.dto.UserCreationRequestDTO;
 import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
+import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.PayloadDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.ProviderDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
-import org.assertj.core.util.Sets;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -43,8 +51,17 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
 public class UserControllerRestTest extends RestTestSuite {
 
+    private static Credentials USER_CREDENTIALS;
     private User user;
     private MultiValueMap<String, String> headers;
+
+    @Autowired
+    private KeyChain keyChain;
+
+    @BeforeClass
+    public static void init() throws IOException, CipherException {
+        USER_CREDENTIALS = loadWallet(USER_FILE, WALLET_PW);
+    }
 
     @Before
     public void setup() {
@@ -54,19 +71,22 @@ public class UserControllerRestTest extends RestTestSuite {
         this.headers = map;
 
         user = userFactory.create();
+        user.setEthId(USER_CREDENTIALS.getAddress());
         userDB.insert(user);
+
+        keyChain.setAccount(getAccountFromCredentials(USER_CREDENTIALS));
     }
 
     @Test
     public void create() {
-        UserDTO userDTO = new UserDTO(user);
-        userDTO.setEthId(null);
-        userDTO.setPublicKey(null);
-        userDTO.setId(null);
-
+        UserCreationRequestDTO userDTO = new UserCreationRequestDTO();
+        userDTO.setClaims(Sets.newHashSet(
+                new UnsignedClaimDTO("GIVEN_NAME",
+                        new ProviderDTO("0x123", "gov"),
+                        new PayloadDTO(new ValueHolder("Hans"), ClaimType.STRING))));
 
         ResponseEntity<UserDTO> responseEntity = restTemplate
-                .exchange("/users", HttpMethod.POST,
+                .exchange("/v2/users", HttpMethod.POST,
                         new HttpEntity<>(userDTO, headers), UserDTO.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.CREATED);
@@ -80,7 +100,7 @@ public class UserControllerRestTest extends RestTestSuite {
     @Test
     public void get() {
         ResponseEntity<UserDTO> responseEntity = restTemplate
-                .exchange("/users/" + user.getId(), HttpMethod.GET,
+                .exchange("/v2/users/" + user.getId(), HttpMethod.GET,
                         new HttpEntity<>(headers), UserDTO.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
@@ -98,7 +118,7 @@ public class UserControllerRestTest extends RestTestSuite {
         userDB.insert(user3);
 
         ResponseEntity<List<UserDTO>> responseEntity = restTemplate
-                .exchange("/users/", HttpMethod.GET,
+                .exchange("/v2/users/", HttpMethod.GET,
                         new HttpEntity<>(headers),
                         new ParameterizedTypeReference<List<UserDTO>>() {});
 
@@ -113,7 +133,7 @@ public class UserControllerRestTest extends RestTestSuite {
     @Test
     public void deleteUser() {
         ResponseEntity<Void> responseEntity = restTemplate
-                .exchange("/users/" + user.getId(), HttpMethod.DELETE,
+                .exchange("/v2/users/" + user.getId(), HttpMethod.DELETE,
                         new HttpEntity<>(headers),
                         Void.class);
 
@@ -131,7 +151,7 @@ public class UserControllerRestTest extends RestTestSuite {
         UserDTO request = new UserDTO(user);
 
         ResponseEntity<UserDTO> responseEntity = restTemplate
-                .exchange("/users/" + user.getId(), HttpMethod.PUT,
+                .exchange("/v2/users/" + user.getId(), HttpMethod.PUT,
                         new HttpEntity<>(request, headers),
                         UserDTO.class);
 
@@ -147,17 +167,19 @@ public class UserControllerRestTest extends RestTestSuite {
     public void updateClaim() {
         final ProviderClaim claim = claimFactory.create("new_Claim_id");
 
-        ClaimDTO claimDTO = new ClaimDTO(claim);
+        UnsignedClaimDTO claimDTO = new UnsignedClaimDTO(claim.getId(),
+                claim.getProvider(),
+                claim.getClaimValue());
 
         ResponseEntity<ClaimDTO> responseEntity = restTemplate
-                .exchange("/users/" + user.getId() + "/claim/", HttpMethod.POST,
+                .exchange("/v2/users/" + user.getId() + "/claim/", HttpMethod.POST,
                         new HttpEntity<>(claimDTO, headers),
                         ClaimDTO.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
         Optional<ProviderClaim> claimFromDB = userDB.findEntity(user.getId()).get().findClaim(claimDTO.getId());
         assertThat(claimFromDB).isPresent();
-        assertThat(claimFromDB.get()).isEqualToIgnoringGivenFields(claim, "modificationDate");
+        assertThat(responseEntity.getBody().getSignedClaimDTO().getPayload()).isEqualToIgnoringGivenFields(claim.getSignedClaim().getPayload(), "ethID", "modificationDate");
     }
 
     @Test
@@ -165,7 +187,7 @@ public class UserControllerRestTest extends RestTestSuite {
         final String claimId = user.getClaims().stream().findFirst().map(SharedClaim::getId).get();
 
         ResponseEntity<Void> responseEntity = restTemplate
-                .exchange("/users/" + user.getId() + "/claim/" + claimId, HttpMethod.DELETE,
+                .exchange("/v2/users/" + user.getId() + "/claim/" + claimId, HttpMethod.DELETE,
                         new HttpEntity<>(headers),
                         Void.class);
 
@@ -195,7 +217,7 @@ public class UserControllerRestTest extends RestTestSuite {
         );
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
-                "/users/" + user.getId() + "/register",
+                "/v2/users/" + user.getId() + "/register",
                 HttpMethod.POST,
                 new HttpEntity<>(registerRequest),
                 Void.class
@@ -215,7 +237,7 @@ public class UserControllerRestTest extends RestTestSuite {
     @Test
     public void authorizationTest() {
         ResponseEntity<?> responseEntity = restTemplate
-                .exchange("/users/" + user.getId(), HttpMethod.GET,
+                .exchange("/v2/users/" + user.getId(), HttpMethod.GET,
                         HttpEntity.EMPTY, Object.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.UNAUTHORIZED);
@@ -233,7 +255,7 @@ public class UserControllerRestTest extends RestTestSuite {
         userDB.update(user);
 
         ResponseEntity<Set<ClaimInformationResponse>> responseEntity = restTemplate.exchange(
-                String.format("/users/ethID/%s/claimIDs", user.getEthId()),
+                String.format("/v2/users/ethID/%s/claimIDs", user.getEthId()),
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Set<ClaimInformationResponse>>() {});

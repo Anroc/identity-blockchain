@@ -4,7 +4,7 @@ import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
 import de.iosl.blockchain.identity.core.provider.user.UserService;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
-import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.core.shared.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.account.AbstractAuthenticator;
 import de.iosl.blockchain.identity.core.shared.api.ClientAPI;
 import de.iosl.blockchain.identity.core.shared.api.ProviderAPI;
@@ -55,7 +55,7 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
 
         return user.getClaims()
                 .stream()
-                .map(ClaimDTO::new)
+                .map(claim -> new ClaimDTO(claim.getSignedClaim(), claim.getSignedClosures()))
                 .collect(Collectors.toList());
     }
 
@@ -128,11 +128,7 @@ public class ApiController extends AbstractAuthenticator implements ClientAPI, P
 
         log.info("Returning {} to provider", claims);
         List<ClaimDTO> claimDTOs = claims.stream()
-                .map(ClaimDTO::new)
-                .map(claimDTO -> {
-                    claimDTO.setSignedClosures(null);
-                    return claimDTO;
-                })
+                .map(claim -> new ClaimDTO(claim.getSignedClaim(), null))
                 .collect(Collectors.toList());
         return new PermissionContractResponse(claimDTOs, closures);
     }

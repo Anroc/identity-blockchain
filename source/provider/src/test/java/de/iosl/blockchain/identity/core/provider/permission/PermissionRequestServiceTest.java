@@ -12,7 +12,7 @@ import de.iosl.blockchain.identity.core.provider.user.UserService;
 import de.iosl.blockchain.identity.core.provider.user.data.PermissionGrand;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
-import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.core.shared.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;

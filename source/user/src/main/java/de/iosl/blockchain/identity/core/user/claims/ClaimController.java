@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/claims")
+@RequestMapping("/v2/claims")
 public class ClaimController extends AbstractAuthenticator {
 
     @Autowired

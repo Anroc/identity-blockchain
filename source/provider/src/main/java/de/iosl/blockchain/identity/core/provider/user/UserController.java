@@ -3,13 +3,16 @@ package de.iosl.blockchain.identity.core.provider.user;
 import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
-import de.iosl.blockchain.identity.core.provider.user.data.dto.ClaimInformationResponse;
-import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
-import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.core.provider.user.data.dto.*;
+import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.account.AbstractAuthenticator;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
+import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
-import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
+import de.iosl.blockchain.identity.core.shared.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
+import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
 import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
@@ -20,14 +23,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/v2/users")
+public class UserController extends AbstractAuthenticator {
 
     @Autowired
     private UserService userService;
@@ -35,6 +39,10 @@ public class UserController {
     private ECSignatureValidator ecSignatureValidator;
     @Autowired
     private ProviderConfig providerConfig;
+    @Autowired
+    private KeyChain keyChain;
+
+    private EthereumSigner ethereumSigner = new EthereumSigner();
 
     @GetMapping
     @ApiOperation("Gets all users")
@@ -52,12 +60,19 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation("Create a new user")
-    public UserDTO createUser(@RequestBody @Valid @NonNull UserDTO userRequest) {
-        User user = userRequest.toUser(UUID.randomUUID().toString());
+    public UserDTO createUser(@RequestBody @Valid @NonNull UserCreationRequestDTO userRequest) {
+        UserDTO userDTO = new UserDTO(
+                userRequest.getId(),
+                userRequest.getEthId(),
+                userRequest.getPublicKey(),
+                userRequest.getRegisterContractAddress(),
+                userRequest.getClaims().stream().map(this::buildClaimDTO).collect(Collectors.toSet())
+        );
+
+        User user = userDTO.toUser(UUID.randomUUID().toString());
         user.getClaims().forEach(this::validateClaim);
 
         user = userService.insertUser(user);
-
         return new UserDTO(user);
     }
 
@@ -86,10 +101,11 @@ public class UserController {
     @PostMapping("/{userId}/claim")
     @ApiOperation(value = "Updates or inserts a claim")
     public ClaimDTO createClaim(@PathVariable("userId") final String userId,
-            @Valid @RequestBody @NotNull  ClaimDTO claimDTO) {
+            @Valid @RequestBody @NotNull UnsignedClaimDTO unsignedClaimDTO) {
+        checkAuthentication();
         User user = getUserOrFail(userId);
 
-        SharedClaim claim = userService.createClaim(user, new ProviderClaim(claimDTO));
+        ProviderClaim claim = userService.createClaim(user, new ProviderClaim(buildClaimDTO(unsignedClaimDTO)));
         validateClaim(claim);
         return new ClaimDTO(claim);
     }
@@ -160,7 +176,7 @@ public class UserController {
                 .collect(Collectors.toSet());
     }
 
-    private void validateClaim(@NonNull SharedClaim claim) {
+    private void validateClaim(@NonNull ProviderClaim claim) {
         if(! claim.getClaimValue().getPayloadType().validateType(claim.getClaimValue().getPayload())) {
             throw new ServiceException(
                     "Invalid payload [%s] for payload type [%s].",
@@ -168,6 +184,26 @@ public class UserController {
                     claim.getClaimValue().getPayload(),
                     claim.getClaimValue().getPayloadType());
         }
+    }
+
+    private ClaimDTO buildClaimDTO(@NonNull UnsignedClaimDTO unsignedClaimDTO) {
+        SignedClaimDTO signedClaimDTO = new SignedClaimDTO(
+                keyChain.getAccount().getAddress(),
+                unsignedClaimDTO.getId(),
+                new Date(),
+                unsignedClaimDTO.getProvider(),
+                unsignedClaimDTO.getClaimValue()
+        );
+
+        ClaimDTO claimDTO = new ClaimDTO(
+                new SignedRequest<>(
+                        signedClaimDTO,
+                        ECSignature.fromSignatureData(ethereumSigner.sign(signedClaimDTO, keyChain.getAccount().getECKeyPair()))
+                ),
+                null
+        );
+
+        return claimDTO;
     }
 
 }

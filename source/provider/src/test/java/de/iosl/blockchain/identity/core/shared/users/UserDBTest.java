@@ -1,21 +1,21 @@
 package de.iosl.blockchain.identity.core.shared.users;
 
+import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
+import de.iosl.blockchain.identity.core.provider.factories.ClaimFactory;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
-import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
-import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
-import de.iosl.blockchain.identity.core.shared.claims.data.Provider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,19 +25,14 @@ public class UserDBTest extends RestTestSuite {
     private User user;
     private ProviderClaim providerClaim;
     private ProviderClaim providerClaimTwo;
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private Date lastModifiedDate = new Date();
+
+    private final ClaimFactory claimFactory = new ClaimFactory();
 
     @Before
     public void init() {
-        providerClaim = new ProviderClaim("1", lastModifiedDate,
-                new Provider("1", "1"),
-                new Payload(new ValueHolder("1"), ClaimType.STRING));
-        providerClaimTwo = new ProviderClaim("2", lastModifiedDate,
-                new Provider("2", "2"),
-                new Payload(new ValueHolder(true), ClaimType.BOOLEAN));
-        Set<ProviderClaim> providerClaimHashSet = new HashSet<>();
-        providerClaimHashSet.add(providerClaim);
+        providerClaim = claimFactory.create("1", ClaimType.STRING, "1");
+        providerClaimTwo = claimFactory.create("2", ClaimType.BOOLEAN, true);
+        Set<ProviderClaim> providerClaimHashSet = Sets.newHashSet(providerClaim);
         user = new User("1", "1", "1", null, new ArrayList<>(), providerClaimHashSet);
     }
 

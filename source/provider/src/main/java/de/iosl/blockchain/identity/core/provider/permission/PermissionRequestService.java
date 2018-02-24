@@ -9,7 +9,7 @@ import de.iosl.blockchain.identity.core.provider.user.UserService;
 import de.iosl.blockchain.identity.core.provider.user.data.PermissionGrand;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
-import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.core.shared.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
@@ -190,10 +190,8 @@ public class PermissionRequestService {
                 () -> new ServiceException("User who's claims shell be updated was not found! EthID: [%s]",
                         HttpStatus.INTERNAL_SERVER_ERROR,
                         ethID));
-        Date currentDate = new Date();
         claims.forEach(
                 claim -> {
-                    claim.setModificationDate(currentDate);
                     Optional<ProviderClaim> providerClaim = user.findClaim(claim.getId());
                     if(providerClaim.isPresent()) {
                         List<SignedRequest<Closure>> closures = providerClaim.get().getSignedClosures();
@@ -237,9 +235,7 @@ public class PermissionRequestService {
     }
 
     private void initClaimForClosure(User user, Set<String> newClaimIds) {
-        newClaimIds.stream()
-                .map(claimId -> new ProviderClaim(claimId, new Date(), null, null))
-                .forEach(user::putClaim);
+        newClaimIds.stream().map(ProviderClaim::init).forEach(user::putClaim);
     }
 
     private User updateUserPermissionGrants(User user, String permissionContractAddress, List<ProviderClaim> claims, List<SignedRequest<Closure>> signedClosures) {

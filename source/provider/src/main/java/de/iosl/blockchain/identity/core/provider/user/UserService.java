@@ -5,14 +5,13 @@ import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.user.db.UserDB;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
-import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
+import de.iosl.blockchain.identity.lib.dto.beats.EventType;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,12 +42,10 @@ public class UserService {
     }
 
     public User insertUser(@NonNull User user) {
-        user = updateModificationDateForClaims(user);
         return userDB.insert(user);
     }
 
     public User updateUser(User user) {
-        user = updateModificationDateForClaims(user);
         return userDB.update(user);
     }
 
@@ -61,7 +58,6 @@ public class UserService {
     }
 
     public ProviderClaim createClaim(@NonNull User user, @NonNull ProviderClaim claim) {
-        claim.setModificationDate(new Date());
         user.putClaim(claim);
         userDB.update(user);
         return claim;
@@ -73,7 +69,6 @@ public class UserService {
     }
 
     public List<User> search(String givenName, String familyName) {
-        // TODO: refactore
         return userDB.findAll()
                 .stream()
                 .filter(user -> filterForClaimAttribute(user, givenName))
@@ -87,11 +82,6 @@ public class UserService {
                 .filter(claim -> claim.getClaimValue().getPayload().getUnifiedValue().equals(claimValue))
                 .findAny()
                 .isPresent();
-    }
-
-    private User updateModificationDateForClaims(@NonNull User user) {
-        user.getClaims().forEach(claim -> claim.setModificationDate(new Date()));
-        return user;
     }
 
     public void registerUser(@NonNull User user) {
