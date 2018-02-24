@@ -86,7 +86,7 @@ public class UserControllerRestTest extends RestTestSuite {
                         new PayloadDTO(new ValueHolder("Hans"), ClaimType.STRING))));
 
         ResponseEntity<UserDTO> responseEntity = restTemplate
-                .exchange("/users", HttpMethod.POST,
+                .exchange("/v2/users", HttpMethod.POST,
                         new HttpEntity<>(userDTO, headers), UserDTO.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.CREATED);
@@ -100,7 +100,7 @@ public class UserControllerRestTest extends RestTestSuite {
     @Test
     public void get() {
         ResponseEntity<UserDTO> responseEntity = restTemplate
-                .exchange("/users/" + user.getId(), HttpMethod.GET,
+                .exchange("/v2/users/" + user.getId(), HttpMethod.GET,
                         new HttpEntity<>(headers), UserDTO.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
@@ -118,7 +118,7 @@ public class UserControllerRestTest extends RestTestSuite {
         userDB.insert(user3);
 
         ResponseEntity<List<UserDTO>> responseEntity = restTemplate
-                .exchange("/users/", HttpMethod.GET,
+                .exchange("/v2/users/", HttpMethod.GET,
                         new HttpEntity<>(headers),
                         new ParameterizedTypeReference<List<UserDTO>>() {});
 
@@ -133,7 +133,7 @@ public class UserControllerRestTest extends RestTestSuite {
     @Test
     public void deleteUser() {
         ResponseEntity<Void> responseEntity = restTemplate
-                .exchange("/users/" + user.getId(), HttpMethod.DELETE,
+                .exchange("/v2/users/" + user.getId(), HttpMethod.DELETE,
                         new HttpEntity<>(headers),
                         Void.class);
 
@@ -151,7 +151,7 @@ public class UserControllerRestTest extends RestTestSuite {
         UserDTO request = new UserDTO(user);
 
         ResponseEntity<UserDTO> responseEntity = restTemplate
-                .exchange("/users/" + user.getId(), HttpMethod.PUT,
+                .exchange("/v2/users/" + user.getId(), HttpMethod.PUT,
                         new HttpEntity<>(request, headers),
                         UserDTO.class);
 
@@ -172,7 +172,7 @@ public class UserControllerRestTest extends RestTestSuite {
                 claim.getClaimValue());
 
         ResponseEntity<ClaimDTO> responseEntity = restTemplate
-                .exchange("/users/" + user.getId() + "/claim/", HttpMethod.POST,
+                .exchange("/v2/users/" + user.getId() + "/claim/", HttpMethod.POST,
                         new HttpEntity<>(claimDTO, headers),
                         ClaimDTO.class);
 
@@ -187,7 +187,7 @@ public class UserControllerRestTest extends RestTestSuite {
         final String claimId = user.getClaims().stream().findFirst().map(SharedClaim::getId).get();
 
         ResponseEntity<Void> responseEntity = restTemplate
-                .exchange("/users/" + user.getId() + "/claim/" + claimId, HttpMethod.DELETE,
+                .exchange("/v2/users/" + user.getId() + "/claim/" + claimId, HttpMethod.DELETE,
                         new HttpEntity<>(headers),
                         Void.class);
 
@@ -217,7 +217,7 @@ public class UserControllerRestTest extends RestTestSuite {
         );
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
-                "/users/" + user.getId() + "/register",
+                "/v2/users/" + user.getId() + "/register",
                 HttpMethod.POST,
                 new HttpEntity<>(registerRequest),
                 Void.class
@@ -237,7 +237,7 @@ public class UserControllerRestTest extends RestTestSuite {
     @Test
     public void authorizationTest() {
         ResponseEntity<?> responseEntity = restTemplate
-                .exchange("/users/" + user.getId(), HttpMethod.GET,
+                .exchange("/v2/users/" + user.getId(), HttpMethod.GET,
                         HttpEntity.EMPTY, Object.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualByComparingTo(HttpStatus.UNAUTHORIZED);
@@ -255,7 +255,7 @@ public class UserControllerRestTest extends RestTestSuite {
         userDB.update(user);
 
         ResponseEntity<Set<ClaimInformationResponse>> responseEntity = restTemplate.exchange(
-                String.format("/users/ethID/%s/claimIDs", user.getEthId()),
+                String.format("/v2/users/ethID/%s/claimIDs", user.getEthId()),
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Set<ClaimInformationResponse>>() {});

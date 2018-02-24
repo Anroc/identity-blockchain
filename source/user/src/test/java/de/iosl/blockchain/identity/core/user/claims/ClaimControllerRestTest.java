@@ -6,12 +6,12 @@ import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.Closure;
 import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
-import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.user.Application;
-import de.iosl.blockchain.identity.core.user.factories.ClaimFactory;
+import de.iosl.blockchain.identity.core.user.claims.claim.UserClaim;
 import de.iosl.blockchain.identity.core.user.claims.claim.dto.UserClaimDTO;
+import de.iosl.blockchain.identity.core.user.factories.ClaimFactory;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
@@ -59,7 +59,7 @@ public class ClaimControllerRestTest extends RestTestSuite {
     @Test
     public void getClaims() {
         ResponseEntity<List<UserClaimDTO>> claimDTOS = restTemplate.exchange(
-                "/claims",
+                "/v2/claims",
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<List<UserClaimDTO>>() {});
@@ -92,7 +92,7 @@ public class ClaimControllerRestTest extends RestTestSuite {
         userClaimDB.insert(birthday);
 
         ResponseEntity<List<UserClaimDTO>> claimDTOS = restTemplate.exchange(
-                "/claims",
+                "/v2/claims",
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<List<UserClaimDTO>>() {});

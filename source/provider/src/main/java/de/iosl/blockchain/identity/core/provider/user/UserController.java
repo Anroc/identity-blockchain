@@ -3,17 +3,14 @@ package de.iosl.blockchain.identity.core.provider.user;
 import de.iosl.blockchain.identity.core.provider.config.ProviderConfig;
 import de.iosl.blockchain.identity.core.provider.user.data.ProviderClaim;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
-import de.iosl.blockchain.identity.core.provider.user.data.dto.ClaimInformationResponse;
-import de.iosl.blockchain.identity.core.provider.user.data.dto.UnsignedClaimDTO;
-import de.iosl.blockchain.identity.core.provider.user.data.dto.UserCreationRequestDTO;
-import de.iosl.blockchain.identity.core.provider.user.data.dto.UserDTO;
-import de.iosl.blockchain.identity.core.shared.validator.ECSignatureValidator;
+import de.iosl.blockchain.identity.core.provider.user.data.dto.*;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.account.AbstractAuthenticator;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.ClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedClaimDTO;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.register.data.dto.RegisterRequestDTO;
+import de.iosl.blockchain.identity.core.shared.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.dto.ECSignature;
 import de.iosl.blockchain.identity.lib.exception.ServiceException;
@@ -33,7 +30,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/v2/users")
 public class UserController extends AbstractAuthenticator {
 
     @Autowired
