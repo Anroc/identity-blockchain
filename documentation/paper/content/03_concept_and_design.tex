@@ -61,7 +61,12 @@ Lastly the agency signs and approves this registrar contract. By adding its sign
 \subsection{Permission Request}
 After registration the user is now able to use \projectName{} for identification and verification purposes. Lets consider opening a new bank account using \projectName() for verification.
 
-
+% Please agument why the user if he is holding signed claims is not providing his claims directly to the requesting provider
+% Include the following arguments:
+% 1. request shell be populated through the blockchain so that every entity can acknowledge the claim sharing
+% 2. populatring thre reuqest through the blockchain gives us the possibility to explicit approve the sharing
+% 3. generating a signed query can also have additional attributes like a reuse flag to indicate if the query could be used again if the claim changed
+% 4. user don't have to pay for the creation of the smart contract. only for the updating of the signed values
 
 \begin{enumerate}
 \item \label{permission_request_item_one}
@@ -135,4 +140,3 @@ Bob does then pull the blockchain, and requests the signed version of his new fa
 
 \textbf{b) Enforced claim changes:}
 Bob has lost his driving license by a moderate traffic crime. Since bob is still holding a signed version of his driving license in his local database he could easy rend a new car. So the government enforces a claim change by publishing a “Change Claim Contract” to the blockchain referencing Bobs ethereum ID, the driving license claim ID and a time period (6 month). Each entity observing the blockchain can within his 6 month distrust the driving license claim value provided by Bob if the provided signature is older then the creation time of the “Change Claim Contract”. However, Bob can query the government for the updated claim values and retrieve the temporary restricted driving license, which is then also trusted, because it is up to date. After 6 month no new claim change contract needs to be setup because an entity can simply compute that the restriction time is expired and that no new claim change was published by the government. 
->>>>>>> 111-task-documentation-write-evaluation
