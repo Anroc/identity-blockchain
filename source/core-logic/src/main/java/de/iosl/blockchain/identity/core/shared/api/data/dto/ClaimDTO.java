@@ -28,6 +28,13 @@ public class ClaimDTO {
 
     @JsonIgnore
     public String getId() {
-        return signedClaimDTO.getPayload().getId();
+        if(signedClaimDTO == null) {
+            if(signedClosures.isEmpty()) {
+                return null;
+            }
+            return signedClosures.get(0).getPayload().getClaimID();
+        } else {
+            return signedClaimDTO.getPayload().getId();
+        }
     }
 }

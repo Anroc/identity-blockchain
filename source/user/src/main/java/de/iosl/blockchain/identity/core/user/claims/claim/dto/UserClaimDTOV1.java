@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import java.util.Date;
@@ -17,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 public class UserClaimDTOV1 {
 
-    @NotBlank
     private String id;
     private Date modificationDate;
     @Valid
