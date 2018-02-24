@@ -3,7 +3,7 @@ import request from 'request';
 const getOptions = {
   method: 'GET',
   headers: {
-    Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+    Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },

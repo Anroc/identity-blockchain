@@ -72,7 +72,7 @@ class User extends Component {
     const getUserClaimOptions = {
       method: 'GET',
       headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
@@ -96,7 +96,7 @@ class User extends Component {
     const options = {
       method: 'GET',
       headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
@@ -121,7 +121,7 @@ class User extends Component {
     const getUserInformationOptions = {
       method: 'GET',
       headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
@@ -182,7 +182,7 @@ class User extends Component {
     const messageSeenOptions = {
       method: 'PUT',
       headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
@@ -200,7 +200,7 @@ class User extends Component {
     const getUserInformationOptions = {
       method: 'PUT',
       headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },

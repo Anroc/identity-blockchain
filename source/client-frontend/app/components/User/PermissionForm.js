@@ -47,7 +47,7 @@ class PermissionForm extends React.Component {
     const messageSeenOptions = {
       method: 'PUT',
       headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
@@ -77,7 +77,7 @@ class PermissionForm extends React.Component {
     const getUserInformationOptions = {
       method: 'PUT',
       headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },

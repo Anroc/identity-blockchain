@@ -231,7 +231,7 @@ class Bank extends Component{
     const getMessages = {
       method: 'GET',
       headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
@@ -260,7 +260,7 @@ class Bank extends Component{
           const getUser = {
             method: 'GET',
             headers: {
-              Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+              Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
               Accept: 'application/json',
               'Content-Type': 'application/json',
             },
@@ -296,7 +296,7 @@ class Bank extends Component{
     const getMessages = {
       method: 'GET',
       headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
@@ -324,7 +324,7 @@ class Bank extends Component{
           const getUser = {
             method: 'GET',
             headers: {
-              Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+              Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
               Accept: 'application/json',
               'Content-Type': 'application/json',
             },
@@ -372,7 +372,7 @@ class Bank extends Component{
       const getUserInformationOptions = {
         method: 'PUT',
         headers: {
-          Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+          Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
@@ -503,7 +503,7 @@ class Bank extends Component{
     const getMessages = {
       method: 'GET',
       headers: {
-        Authorization: 'Basic YWRtaW46cGVuaXNwdW1wZQ==',
+        Authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
