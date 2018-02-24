@@ -106,8 +106,12 @@ public class APIClientService {
 
     private boolean validateSignedRequestCollection(List<SignedRequest<Closure>> signedRequestCollection) {
         log.info("Validating closure...");
-        long count = signedRequestCollection.stream().filter(this::validateSignedRequest).count();
-        return count == signedRequestCollection.size();
+        if(signedRequestCollection != null) {
+            return signedRequestCollection.stream().filter(this::validateSignedRequest).count()
+                    == signedRequestCollection.size();
+        } else {
+            return true;
+        }
     }
 
     public List<UserClaim> getAndSaveClaims(@NonNull String url) {
