@@ -8,10 +8,10 @@
 \subsection{Requirements}
 
 \subsubsection{GDPR compliance}
-The General Data Protection Regulation (GDPR) is a regulation by the European Parliament, Council of the European Union and the European Commission focussed on strengthening EU citizens digital privacy.  Its main focus is on giving citizens control over their digital personal information and simplyfying the regulatory environment for multinational corporations. However it also adds a strict data compliance regime, by penalizing transgressions with up to 4\% worldwide turnover. Furthermore this regulation does not have to be verified by each EU's regulatory body, since it is a EU regulation, compared to an EU directive which has to be ratified by each EU signatory state.
+The General Data Protection Regulation (GDPR) is a regulation by the European Parliament, Council of the European Union and the European Commission focused on strengthening EU citizens digital privacy.  Its main focus is on giving citizens control over their digital personal information and simplifying the regulatory environment for multinational corporations. However it also adds a strict data compliance regime, by penalizing transgressions with up to 4\% worldwide turnover. Furthermore this regulation does not have to be verified by each EU's regulatory body, since it is a EU regulation, compared to an EU directive which has to be ratified by each EU signatory state.
 
 \section{Challanges}
-\label{sec:challanges}
+\label{sec:challenges}
 
 \subsection{Security Goals}
 \label{sec:securityGoals}
@@ -30,6 +30,23 @@ So we will focus on the following security goals:
 We further also see the blockchain as a world open readable ledger were everyone can read transactions or information stored on the blockchain. So interactions with the blockchain need to ensure to not expose any identity information. 
 It is not allowed to store hashes or encryption of claim in the blockchain, since it is a tamper-proof data storage, information can not be removed once written. So if the hash or encryption gets broken the identity information is leaked and can not be removed.  
 
+\subsection{User Acceptance}
+\label{sec:userAcceptance}
+
+TODO Oskar
+Switching from offline to online identity is an unspecified burden that falls into the eye of a common pleb.
+Especially for elderly and uneducated the imagination of not having a piece of paper with an id and not having a central
+institution that takes care of one's identity is suspect, if not horrifying.
+Not only the lack of a trusted party but also the concept of blockchain, smart contracts and all of its gists are unknown
+to most people. This leads to further distrust in the system.
+
+By introducing such system, a lot of clarification for non-technical people and common folks therefore needs to have a
+high priority.
+
+Without understanding the process and system, users run the risk of being exploited and not being aware of what information
+they are currently sharing.
+
+
 \section{Processes}
 
 \subsection{Registration}
@@ -41,7 +58,7 @@ The user creates an ethereum address and a private public key pair, the combinat
 \item \label{registrar_item_two}
 For verification and auditing purposes these have to be verified by a trusted party, so that third parties can be sure of the identity of the individuals. We are using a specially designed smart contract, where the user inputs his ethereum address and his public key. Once filled, he writes it to the blockchain and waits for the trusted party, in our case a governmental agency, to check the contents, fulfill and sign the contract.
 \item \label{registrar_item_three}
-The user now verifies himself using the eID online verification system. After successfully verifiying he sends the governmental agency, entrusted with handling digital identity services, his ethereum address and public key. These are used for the upcoming smart contract verification.
+The user now verifies himself using the eID online verification system. After successfully verifying he sends the governmental agency, entrusted with handling digital identity services, his ethereum address and public key. These are used for the upcoming smart contract verification.
 \begin{comment}
 DONT NEED: The user can now have his ethereum address and private public key pair verified by a governmental agency.
 \end{comment}
@@ -69,7 +86,7 @@ We have a user called Tom who has just recently moved and is interested in openi
 \item \label{permission_request_item_two}
 The bank teller now enters that information into a \textbf{Request Permission} form and sends it to the government for verification purposes.
 \item \label{permission_request_item_three}
-The government now writes a new permission request contract into the ethereum blockchain. This contract contains the following information:
+The government now writes a new permission request contract into the Ethereum blockchain. This contract contains the following information:
 \begin{itemize}
 \item @EthereumAddress; This is Toms Address, as his information is requested
 \item ThirdPartyName; This is the requesting Party's Name Bank 
