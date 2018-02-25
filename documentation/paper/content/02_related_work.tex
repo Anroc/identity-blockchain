@@ -1,13 +1,26 @@
 \chapter{Related Work}
 \label{cha:relatedwork}
 
+\section{MedRec}
+
+MedRec is contextually focused on patients handling their medical data as sovereign and as convenient possible,
+implemented with a blockchain-based approach.
+There are three main roles in the use case: the patient, the health company and the requesting third party.
+Blockchain based communication is only allowed by certified members, here the patients and health company.
+When a third party wants to get data from a patient, they would have to ask a health company to then ask through the
+ethereum blockchain with a smart contract, which the patient can then answer by allowing or denying to share
+information that was asked for by the third party.
+Also patients are able to change already existing information, its access or limit it by time which make the patient
+sovereign over the access to his data.
+this is a TODO for oskar.
+
 \section{uPort}
-Uport is a blockchain-based, decentralized pulic key infrastructure which a high focus on self sovereignity. Uport, in comparision to our solution, relies excplicitly not on a centralized thrid party to verify user data.\cite[p. 2]{uPortWhitePaper}
+Uport is a blockchain-based, decentralized pulic key infrastructure which a high focus on self sovereignty. Uport, in comparision to our solution, relies excplicitly not on a centralized thrid party to verify user data.\cite[p. 2]{uPortWhitePaper}
 Identity information are stored in an off-blockchain data storage that is link via the hash of the user information to the blockchain. 
 
-Uport is strictly build arround three smart contracts. 
+Uport is strictly build around three smart contracts.
 \begin{enumerate}
-\item \textbf{Controller Contract:} This contract interacts with the user and verfies the signatures of assoziated with his digital identity.
+\item \textbf{Controller Contract:} This contract interacts with the user and verifies the signatures of assoziated with his digital identity.
 
 It further also serves for key recovery and collects approvals from the deligators -- known trusted nodes -- to verify the new key generated in case of loss.
 The proxy contract acts on its behalf. 
