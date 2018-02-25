@@ -18,7 +18,7 @@ this is a TODO for oskar.
 uPort is a blockchain-based, decentralized public key infrastructure with a high focus on self sovereignty. uPort, in comparison to our solution, relies explicitly not on a centralized third party to verify user data.\cite[p. 2]{uPortWhitePaper}
 Identity information are stored in an off-blockchain data storage (IPFS - InterPlanetary File System) that is link via the hash of the user information to the ethereum blockchain. This data storage is organized in a decentralized fashion so that there is no trusted entity, or single point of failure. 
 
-\noIndent uPort is strictly build around three smart contracts.
+\noindent uPort is strictly build around three smart contracts.
 \begin{enumerate}
 \item \textbf{Controller Contract:} This contract interacts with the user and handles signature based authentication mechanism using the users public key. Valid requests are forwarded to the proxy contract, which acts on its behalf. 
 It further also serves for key recovery and collects approvals from the delegators - known trusted nodes - to verify the new key generated in case of loss.
