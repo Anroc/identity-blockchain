@@ -4,31 +4,49 @@
 \section{Core-Logic}
 % TODO: korrektur lesen
 % PPR graphic ueberarbeiten
-Blockchain-Identity is always focus around two actors: The user and his interaction with the blockchain and identity providers and their interaction with the user in an on- and off-blockchain fashion. We model our system in the same way but needed to make some specifications for the provider service which comes with two different motivations and rights:
+Blockchain-Identity is always focused around two actors: The user and his interaction with the blockchain and identity
+providers and their interaction with the user in an on- and off-blockchain fashion. We model our system in the same way
+but needed to make some specifications for the provider service which comes with two different motivations and rights:
 
 \begin{itemize}
-\item \textbf{Normal Provider}: Holds domain specific personal data about their consumers that are not exposed to the outside world. They have an interest in requesting user data to extend their system and to make new costumer registration easier. This services are untrusted and can not write to the blockchain. However they can read from the blockchain to verify transactions or extract information out of it. In general everyone can setup a provider service and request user data. They don’t need to be verified in any kind. 
-\item \textbf{Government}: Single trusted entity that holds verifiable citizen information. This information are backed by the representative citizen office or other federal trusted institutions. The government usually verifies user data.
+\item \textbf{Normal Provider}: Holds domain specific personal data about their consumers that are not exposed to the
+outside world. They have an interest in requesting user data to extend their system and to make new costumer
+registration easier. This services are untrusted and can not write to the blockchain. However they can read from the
+blockchain to verify transactions or extract information out of it. In general everyone can setup a provider service
+and request user data. They don’t need to be verified in any kind.
+\item \textbf{Government}: Single trusted entity that holds verifiable citizen information. This information are backed
+by the representative citizen office or other federal trusted institutions. The government usually verifies user data.
 The government service is the only service that can read and write to the blockchain. 
 
 The client application, on the other hand, has read and write rights and can interact with this providers.
 
-This following sections descriptes the different provider/client applications and their interactions with the other components: frontend, Etherem-Blockchain-Adapter – EBA and the database.
+This following sections describes the different provider/client applications and their interactions with the other
+components: frontend, Etherem-Blockchain-Adapter – EBA and the database.
 \end{itemize}
 
 \subsection{Motivation}
-Since we are dealing with provider which are providing user information data we decided to implement a normal client-server architecture. Here we can use all the advantages TCP is providing us like transport layer encryption with SSL/TLS and the reliability/inorder-delivery TCP comes with. Where we would have to deal with our own encrypt-scheme if we would use UDP with peer-to-peer communication and port discovery, even if peer-to-peer communication seems like the more fitting solution since we are already in the domain of blockchain and decentralized applications. 
+Since we are dealing with provider which are providing user information data we decided to implement a normal
+client-server architecture. Here we can use all the advantages TCP is providing us like transport layer encryption with
+SSL/TLS and the reliability/in-order-delivery TCP comes with. Where we would have to deal with our own encrypt-schema
+if we would use UDP with peer-to-peer communication and port discovery, even if peer-to-peer communication seems like
+the more fitting solution since we are already in the domain of blockchain and decentralized applications.
 
-Choosing a client-server architecture comes with the drawback that the government service can not notify the client about incoming messages. The communication via the blockchain is not possible since the provider have not permission to write to it. To overcome this challenge we implemented a discovery service where each components registers to on bootstrap. (See section \ref{sec:discoveryService}).
+Choosing a client-server architecture comes with the drawback that the government service can not notify the client
+about incoming messages. The communication via the blockchain is not possible since the provider have not permission to
+write to it. To overcome this challenge we implemented a discovery service where each components registers to on
+bootstrap. (See section \ref{sec:discoveryService}).
 
-We further decided to design our services RESTful (Representational state transfer). This in mind spring boot\footnote{\url{https://projects.spring.io/spring-boot/}} is a good choice in the Java domain for rapid prototyping. Spring boot also offers good integration for database adapters and spring security\footnote{\url{https://projects.spring.io/spring-security/}} a authentication and authorization framework. 
+We further decided to design our services RESTful (Representational state transfer). This in mind spring
+boot\footnote{\url{https://projects.spring.io/spring-boot/}} is a good choice in the Java domain for rapid prototyping.
+Spring Boot also offers good integration for database adapters and spring security
+\footnote{\url{https://projects.spring.io/spring-security/}} a authentication and authorization framework.
 
 \subsubsection{Tools and Technologies}
-Besides Sprint Boot and Spring Security we further committed us to the following technology stack: 
+Besides Spring Boot and Spring Security we further committed us to the following technology stack:
 
 \begin{itemize}
 \item Springfox\footnote{\url{https://springfox.github.io/springfox/}}: A API documentation framework. Additionally is is specifically designed for spring boot.
-\item Feigen\footnote{\url{https://github.com/OpenFeign/feign}}: Framework that make writing API calls easier. You only need to provide an interface and specify it with annotations to produce a HTTP request to specific domain. Mapping and error handling is mostly done by Feigen. 
+\item Feign\footnote{\url{https://github.com/OpenFeign/feign}}: Framework that make writing API calls easier. You only need to provide an interface and specify it with annotations to produce a HTTP request to specific domain. Mapping and error handling is mostly done by Feigen.
 \item Lombok\footnote{\url{https://projectlombok.org/}}: Lombok reduces the boilerplate code in Java by directly translating data or logging annotation into java byte code. It helps us to reduce the size of our models to a minimum by obscuring the setter, getter and constructors. 
 \item Bouncy Castle\footnote{\url{https://www.bouncycastle.org/java.html}}: The unofficial default cryptographic library for java. It implements the java security provider interface and provides a functions like RSA encryption or signature mechanism.
 \item Zxing\footnote{\url{https://github.com/zxing/zxing}}: Library to generate QR- and bar-codes. 
@@ -262,7 +280,7 @@ In step 5 the user extracts the closure from the blockchain by first decrypting 
 \includegraphics[width=0.6\textwidth]{impl/closure_describtion.png}
 \centering
 \caption{Components of a closure description that is generated to create a user friendly literal expression.}
-\label{fig:closureDescribtion}
+\label{fig:closureDescription}
 \end{figure}
 
 The user can now decide to either approve or reject this closure. For each approved closure the closure is signed and the static value is again encrypted with a newly generated session key which is then again asymmetrically encrypted. The difference now is that the contract is now addressed to the requesting provider, so the static values need to be encrypted with the public key of the requesting provider. Since the user may not know this public key he can discover it. This is simply done by querying the discovery service that is holding all public keys to ethereum address mappings. To validate that the retrieved public key indeed belongs to the ethereum address of the requesting provider, the user service verifies the signature of the received entry and compares the computed ethereum address with the requested provider’s ethereum address. The PPR is updated with the new information (step 7.1) and a new beat is created to notify the provider (step 7.2). 
@@ -282,8 +300,62 @@ As already known from the PPR the signatures over the closure request is used to
 To finally provide the user with the power of self distributing the newly generated closures they are also forward to the user. Closures are saved as an additional field in the claims, which enables us to simply create a new beat with the message of "NEW\_CLAIMS" (step 11.1). This will trigger the user service to use the (in the beat) provided URL and its signature to query the government service for new claims (step 13.) and retrieve the update claims with the receptive closures (step 14.). If an other provider requests the same closure the user can simply provide the closure to him. The provider verifies the signature and decides whether the closure is fresh enough or an update is needed. In the last case the whole process will start again. 
 
 \subsection{Summary}
-\label{sec:coreCummary}
+\label{sec:coreSummary}
 Due to time limitation it was not possible to implement the change claim concept. But since the processes that would be needed to implement it were already described in the last sections we let this open for further work. 
 
 To sum up the implementation in the backend, we created a powerful and scalable solution of provider – user interactions. A unified provider API let provider talk to each other in a well defined manner. This API is easily expendable to add further functionality to the system. Further the backend operates though well defined interface to the other components like the REST API to the frontend and the EBA interface to the ethereum blockchain. Besides the component definition we explained and discussed how signatures are generated and validated and which challenges arise in a distributed system by generating signatures over arbitrary objects.  We shortly examined the drawbacks of object to string conversions and how to overcome this obstacles. Further the design of closures and claims were explained, how closure expressions are evaluated and how to produce a user friendly lingual expression out of a logical condition. Finally we explained the flow of register, permission granting and closure requesting in detail and pointed out the code parts where the previous introduces methods where used.
+
+\section{Frontend}
+\label{imp:frontend}
+
+
+\subsection{Motivation}
+
+The frontend is the interface for both users and third parties to interact with the system.
+The user interfaces' focus is to purely show information and an appropriate way and have a bare and minimal design
+in order to not get distracted by other features.
+Further, responsiveness is a key aspect to make sure that the system can be used on any device. This for one makes the
+system more attractive to use but also grants the user a higher accessibility to his sovereignty.
+
+\subsubsection{Tools and Technologies}
+
+As previously described, the backend read and write access is implemented with a RESTful API.
+With ReactJS as a frontend library we improved the development speed of the user interfaces so we could purely focus
+on functionality.
+For the actual communication and updating of state we used Redux-Saga, which is a state management storage with a heavy focus
+on data fetching and asynchronous tasks, which comes in handy for this application.
+
+Besides ReactJS and Redux-Saga we further committed us to the following technology stack:
+
+\begin{itemize}
+\item material-ui\footnote{\url{https://material-ui-next.com/}}: A ReactJS implementation of Google's Material Design.
+\end{itemize}
+
+Further the following technologies are used for testing:
+
+\begin{itemize}
+\item Jest\footnote{\url{https://facebook.github.io/jest/}}: A common Javascript testing framework
+\item Enzyme\footnote{\url{http://airbnb.io/enzyme/}}: A ReactJS testing framework.
+\end{itemize}
+
+\subsection{Claims}
+\subsection{Registration}
+\label{sec:registerContract}
+
+TODO claims
+
+\subsection{Permission Requests}
+\label{sec:ppr}
+
+TODO permission requests
+
+\subsection{Closures}
+\label{sec:closure}
+
+TODO closures
+
+\subsection{Summary}
+\label{sec:frontendSummary}
+TODO Summary
+
 
