@@ -15,38 +15,38 @@ sovereign over the access to his data.
 this is a TODO for oskar.
 
 \section{uPort}
-Uport is a blockchain-based, decentralized pulic key infrastructure which a high focus on self sovereignty. Uport, in comparision to our solution, relies excplicitly not on a centralized thrid party to verify user data.\cite[p. 2]{uPortWhitePaper}
+Uport is a blockchain-based, decentralized pulic key infrastructure which a high focus on self sovereignty. Uport, in comparison to our solution, relies explicitly not on a centralized third party to verify user data.\cite[p. 2]{uPortWhitePaper}
 Identity information are stored in an off-blockchain data storage that is link via the hash of the user information to the blockchain. 
 
 Uport is strictly build around three smart contracts.
 \begin{enumerate}
-\item \textbf{Controller Contract:} This contract interacts with the user and verifies the signatures of assoziated with his digital identity.
+\item \textbf{Controller Contract:} This contract interacts with the user and verifies the signatures of associated ????? with his digital identity.
 
-It further also serves for key recovery and collects approvals from the deligators -- known trusted nodes -- to verify the new key generated in case of loss.
+It further also serves for key recovery and collects approvals from the delegators -- known trusted nodes -- to verify the new key generated in case of loss.
 The proxy contract acts on its behalf. 
 
 \item \textbf{Proxy Contract:}
 Forwards the request to an application contract. This step is needed to create a static entry point.
-The biggest adventage in this contract is the fact that in case of the key or identity loss the proxy still remains the same and can help in key and wallet recovery.
+The biggest advantage in this contract is the fact that in case of the key or identity loss the proxy still remains the same and can help in key and wallet recovery.
 
-This contract can also regulate the spendings done by users to maintain the balance of power and prevent the creation of super nodes or mining comunities.
+This contract can also regulate the spendings done by users to maintain the balance of power and prevent the creation of super nodes or mining communities.
 
 However, users are able to change the owner of the proxy contract or simply forward an transaction to an external address\cite[p. 6]{uPortWhitePaper}.
 
 \item \textbf{uPort Registry:}
 For registration the registration contract is called to link the hash of the users data to the off-blockchain data storage. The hash can later be used to validate data integrity. 
 
-For data lookup this entity knows where the off-blockchain data storages are located.
+For data lookup this entity knows where the off-blockchain data stores are located.
 
 \end{enumerate}
 
-To authenticate against a thrid party service the off-blockchain data can be used with a self signed signature to create a web-token. This token would then contain all nessecary information to identify the user against a thrid party and can even be verified via tha hash stored in the blockchain.
+To authenticate against a third party service the off-blockchain data can be used with a self signed signature to create a web-token. This token would then contain all necessary information to identify the user against a third party and can even be verified via tha hash stored in the blockchain.
 
-To setup a new device key in case the old key got stolen the recovery contract is used to create together with the new device key an updated user adress in the controller contract. This information gets porpulated until it arrives in the off-blockchain data storage. This action is timed boxed so that the recovery process is limited to a timeslot. This recovery process is triggered by the \textit{recovery quantom contract} where trusted entities (friends or family) can collectivly vote to change the main address of the users controller contract. To prevent an attacker to change the member of quorums in the meantime, the time lock also locks the quorum members.
+To setup a new device key in case the old key got stolen the recovery contract is used to create together with the new device key an updated user adress in the controller contract. This information gets populated until it arrives in the off-blockchain data storage. This action is timed boxed so that the recovery process is limited to a time slot. This recovery process is triggered by the \textit{recovery quorum contract} where trusted entities (friends or family) can collectively vote to change the main address of the users controller contract. To prevent an attacker to change the member of quorums in the meantime, the time lock also locks the quorum members.
 
-Another implemented use case is how identity information are connected to the already existing identity profile in the blockchain. Uport porvides the possibilit of a two factore verification where you can claim a specific service account and provide a proof that you own this account in the data that you write into the off-blockchain storage. In this way everyone will know that indeed you craeted this entry and also that the account belongs to you since you provided this proof. A proof can be as simple as writing a certain string publicly into your profile. 
+Another implemented use case is how identity information are connected to the already existing identity profile in the blockchain. Uport provides the possibility of a two factor verification where you can claim a specific service account and provide a proof that you own this account in the data that you write into the off-blockchain storage. In this way everyone will know that indeed you created this entry and also that the account belongs to you since you provided this proof. A proof can be as simple as writing a certain string publicly into your profile.
 
-Since uPort is aimed to be user friendly the acceptance of requests is made faily easly. To accept a transaction the user scans the QRCode of his transaction partner, accepts the conditions and sends the result to the requesting entity.
+Since uPort is aimed to be user friendly the acceptance of requests is made fairly easy. To accept a transaction the user scans the QRCode of his transaction partner, accepts the conditions and sends the result to the requesting entity.
 
 
 % Each user has its own proxy contract 
@@ -56,7 +56,7 @@ Since uPort is aimed to be user friendly the acceptance of requests is made fail
 
 \section{Hawk}
 \subsection{General Information}
-Hawk is a framework working on top of the blockchain client focussing on improving privacy and security. In short it is a decentralized smart contract system focussing on a bid system just like eBay. Central aspect is that transactional data is not stored in the clear on the blockchain, therefore retaining transactional privacy for all contractual parties.
+Hawk is a framework working on top of the blockchain client focusing on improving privacy and security. In short it is a decentralized smart contract system focusing on a bid system just like eBay. Central aspect is that transactional data is not stored in the clear on the blockchain, therefore retaining transactional privacy for all contractual parties.
 
 The framework offers developers ease of use in developing cryptographically secure transactions by automating the entire cryptograpy. Developers write smart contracts just like they would normally and the Hawk compiler then automatically generates an efficient cryptographic protocol for this contract. Additionally they secure the point of communication with cryptographic primitives such as zero-knowledge proofs.
 
@@ -106,7 +106,7 @@ Contractual Security is ensured by protecting contract participants from damagin
 \subsection{Manager}
 The manager is a special entity who ensures that each contract is fulfilled as it was defined. The manager is not a static entity across the entire Hawk ecosystem, it is simply an additional role added onto each smart contract. This manager can be chosen randomly from a pool of managers, ensuring that there is no monopoly on the managing role. This is important since the manager has access to the private data submitted by each bidder and he is trusted to ensure that this data is kept secret. Since he is ultimately paid by each bidder he is equitable to each party. Lastly the manager is designed so that it can only run on trusted execution environments such as Intel SGX or if there is no trusted execution environment the manager program can be split so that it is run across multiple user instances.
 
-\subsection{Pecularities Of Hawk}
+\subsection{Peculiarities Of Hawk}
 According to the authors of the paper Hawk is the first framework to allow for transactional privacy while still keeping the programmatic freedom of smart contracts. They achieve this by modularizing the contract into seperate parts, to be executed by different parties to the contract, and wrapping a custom made crytography suite around the smart contracts. This ensures that the smart contract developers do not have to implement any cryptography at all, since the compiler will add all the required functionality on compilation. Hawk is a system designed for the specifics of a hidden bid transaction.
 
 While it is not directly useable for this project it nevertheless offers a rich set of ideas and methodson how to handle highly confidential information securely.
@@ -119,12 +119,12 @@ For authentication they build upon UMA, which is a broader superset of OIDC 1.0 
 Lastly they use the established 4-Cornes model, which is already used in the banking sector for authentication and authorization.
 
 \subsection{Saved Information}
-During the creation of a permissioned identity, the requester sends his public key and zero-knowledge proofs to the permissions verifier. This entity then saves this information for upcoming verification processes. This database therefore contains a list of public keys and timestamps for the successful zero-knowledge proof protocol completion.
+During the creation of a authorized identity, the requester sends his public key and zero-knowledge proofs to the permissions verifier. This entity then saves this information for upcoming verification processes. This database therefore contains a list of public keys and timestamps for the successful zero-knowledge proof protocol completion.
 
 \subsection{Privacy and Verification}
-The projects aim was to establish a privacy preserving permissioned transaction network. In order for these to work, they established a permissioned group system. These groups represent the rights a user has in the system by way of public private key infrastructure. For a user to be able to trigger a permissioned transaction, he has to be part of that permissioned group.
+The projects aim was to establish a privacy preserving authorized transaction network. In order for these to work, they established a authorized group system. These groups represent the rights a user has in the system by way of public private key infrastructure. For a user to be able to trigger a authorized transaction, he has to be part of that authorized group.
 
-The proposed system consists of a permission issuing identity and multiple permission verification identities. Each of these permission verification entities may manage or verify multiple permissioned groups.
+The proposed system consists of a permission issuing identity and multiple permission verification identities. Each of these permission verification entities may manage or verify multiple authorized groups.
 
 The entire flow is illustrated in the following graphic.
 
