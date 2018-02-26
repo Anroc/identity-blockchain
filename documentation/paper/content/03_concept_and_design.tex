@@ -1,3 +1,4 @@
+
 \chapter{Concept and Design}
 \label{cha:conceptanddesign}
 
@@ -8,6 +9,7 @@
 \subsection{Requirements}
 
 \subsubsection{GDPR compliance}
+\label{subsubsec:GDPR_compliance}
 The General Data Protection Regulation (GDPR) is a regulation by the European Parliament, Council of the European Union and the European Commission focused on strengthening EU citizens digital privacy.  Its main focus is on giving citizens control over their digital personal information and simplifying the regulatory environment for multinational corporations. However it also adds a strict data compliance regime, by penalizing transgressions with up to 4\% worldwide turnover\cite{gdpr}. Furthermore this regulation does not have to be verified by each EU's regulatory body, since it is a EU regulation, compared to an EU directive which has to be ratified by each EU signatory state.
 
 \section{Challenges}
@@ -60,7 +62,7 @@ This however would also cancel the independent miners motivation to be part of t
 \section{Processes}
 
 \subsection{Registration}
-In order to be part of our distributed digital identity system that we envisioned, it is necessary to register with it first. The registration process consists of the following steps (See Figure \ref{fig:registration_concept}):
+In order to be part of our distributed digital identity system that we envisioned, it is necessary to register with it first. The registration process consists of the following steps:
 
 \begin{figure}[ht]
 \centering
@@ -73,7 +75,8 @@ In order to be part of our distributed digital identity system that we envisione
 \item \label{registrar_item_one}
 The user creates an ethereum address and a private public key pair, the combination of these two are now used as the users digital identity. Jointly they act as a digital identity card. They are safely and securely stored in the users own database.
 \item \label{registrar_item_two}
-For verification and auditing purposes these have to be verified by a trusted party, so that third parties can be sure of the identity of the individuals. We are using a specially designed smart contract, where the user inputs his ethereum address and his public key. Once filled, he writes it to the blockchain and waits for the trusted party, in our case a governmental agency, to check the contents, fulfill and sign the contract.
+For verification and auditing purposes these have to be verified by a trusted party, so that third parties can be sure of the identity of the individuals.
+We are using a specially designed smart contract, where the user inputs his ethereum address and his public key. Once filled, he writes it to the blockchain and waits for the trusted party, in our case a governmental agency, to check the contents, fulfill and sign the contract.
 \item \label{registrar_item_three}
 In order for that to happen, the user has to physically visit his citizen office with pre-existing identification documents. After verifying himself to the authorities they can use a specifically generated QR code to quickly check his digital identity.
 \item \label{registrar_item_four}
@@ -84,15 +87,92 @@ After finding a corresponding user they extend their existing entity with the ne
 The second to last step now is signing and approving the citizens registration contract.
 \item \label{registrar_item_seven}
 After approving the users registration contract the government creates a data blob containing all of the users information, signs it and lastly sends this signed user data to the user.
-\item \label{registrar_item_eigth}
 \end{enumerate}
-
 The user is now a fully registered member within our community. Henceforth he can use this identity to request services and offer claims to and from other registered parties. 
 
 \subsection{Permission Request}
-Permission requests are an integral part of our system. They are the 
+With registration complete it is now time to use the system for its intended purpose. Meaning requesting services or purchasing goods from providers such as Banks, 
+Car Rental Agencies, Airlines using \projectName{} for verification. In order to better understand how \projectName{} facilitates these transactions it is important to understand that
+each identity is defined by an enormous amount of characteristics. These could be, but are not limited to, their given name, family name, age, full address, employer, e-mail address, physical characteristics such as facial structure, eye color, etc.
+Each of these is mapped to a single so called claim within \projectName{}. In detail a claim represents a manifestation of one of these attributes. For example their given name could be Andrew or their eye color could be blue.
+However just mapping these attributes to claims is not enough, they have to be verified by a trusted entity. To not set unrealistic expectations we focussed on information that has already been verified by the government in the form of an id card or other easily verifiable information such as
+e-mail addresses. Lets continue on to the actual flow of how these claims are exchanged and afterwards there will be a brief explanation for why this flow was designed as shown. 
 
-After registration the user is now able to use \projectName{} for identification and verification purposes. Lets consider opening a new bank account using \projectName() for verification.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{concept/permission_contract_general.png}
+\caption{Permission Request}
+\label{fig:permission_request}
+\end{figure}
+
+\begin{enumerate}
+\item \label{permission_request_item_one}
+The first step consists of a user requesting an actual service with his ethereum address and public key, in this example we are examining the creation of a new bank account.
+\begin{comment}
+"An" goes before all words that begin with vowels:
+An egg
+With two exceptions:
+When "u" makes the same sound as the "y" in you, or "o" makes the same sound as "w" in won, then "a" is used:
+a union
+a united front
+a unicorn
+a used napkin
+a U.S. ship
+a one-legged man
+https://english.stackexchange.com/questions/105116/is-it-a-user-or-an-user
+\end{comment}
+\item \label{permission_request_item_two}
+The bank teller now enters that information into a \textbf{Request Permission} form additionally containing all claims that they deem necessary. These may contain claims such as
+family name, given name, date of birth, current address, etc. After completion of the form it is sent to our trusted entity, the government, for further processing.
+\item \label{permission_request_item_three}
+The government now checks whether this user is part of \projectName{} and if successful creates a new message containing the target users ethereum address, requested claims and entity requesting the claims.
+Therefore the message is loosely structured as follows:
+\begin{itemize}
+\item \textbf{EthereumAddress:} This is the users ethereum address
+\item \textbf{ThirdPartyName:} The Banks name
+\item \textbf{Requested claims:} Actually contains two separate arrays.
+One holds all the required claims, without which the bank account registration will fail and the other contains optional claims.
+These optional claims might be additional information that the bank would like to have for their data storage, but which also is not integral to creating a bank account.
+\end{itemize}
+\item \label{permission_request_item_four}
+The user now polls the blockchain for new messages and finds this permission request by the bank.
+\item \label{permission_request_item_five}
+The user now checks each requested claim and decides whether he is willing to share these with the bank.
+Since the claims importance, meaning whether they are required or optional, is visible, the user has full knowledge over his shared claims and information.
+He may also decide that he isn't willing to share some required claims, knowing that his service request may be denied because of it.
+\item \label{permission_request_item_five}
+After this decision a signed query containing the shared claims and a signed hash of the shared claims is written to the blockchain.
+\item \label{permission_request_item_six}
+The government and bank notice the users answer and poll the blockchain for the new message.
+\item \label{permission_request_seven}
+The bank can now use the signed query to send it to the government for information retrieval.
+\item \label{permission_request_eight}
+The government checks the query against the blockchain and executes it.
+\item \label{permission_request_nine}
+After the query results are calculated the government sends a signed object containing the claims and their values, and a signed hash of these to the bank.
+\end{enumerate}
+After fully exploring how a permission request works in \projectName{} it is important to explain some of the pecularities of the design.
+\begin{itemize}
+\item \label{design_pecularity_one} \textbf{Why is it so convoluted?}
+This is in part because it was our utmost priority to keep the users data as secure as possible while still allowing for information to be shared digitally.
+This is however not just motivated by our own beliefs and opinions, but also because of the upcoming GDPR\ref{subsubsec:GDPR_compliance} regulation.
+\item \label{design_pecularity_two} \textbf{Why use the blockchain at all if only a small amount of the user base is allowed to write to it?}
+The main advantage of blockchain technologies are that they are based upon an open ledger concept. This basically means that every entity that is part of the network has full access to all entries in the blockchain.
+This enables every entity to check for the flow of information and whether a transaction actually took place. Lastly all information that has been written is immutable which enables every participant to verify whether they are dealing with
+fraudulent or correct information.
+These concepts enable our system and allow us to stay within the tight regulations of the GDPR\ref{subsubsec:GDPR_compliance} while still offering identity services. Using the blockchain for transactional information instead of identity information
+secures a users right to privacy while allowing him to share his information with third parties. Since third parties have read access, they can verify whether their requests have actually been sent to the user they are in contact with and
+whether that user agreed to share his information with the third party.
+In conclusion using the blockchains immutability and open ledger principles third parties can be sure that their requests have been handled and responded to, without the possibility of tampering after writing.
+This enables every participant to acknowledge that some form of claim sharing has occured and is therefore verifiable.
+Furthermore writing a permission request to the blockchain removes the possibility for third parties to alter their information requests after they have been sent and therefore increases the users trust in the system.
+Mainly because users now have to give explicit consent to each and every single claim that is being requested without the possibility of third parties intervening and adding claims to the request after they have been granted or denied.
+\item \label{design_pecularity_three} \textbf{Are there any additional benefits to handling information this way?}
+The signed queries could be enriched with flags to increase functionality and usability. For example a user might define a query to only be usable x times or only to be valid up until a specific date in the future.
+This further reinforces his right to self-sovereignity by only allowing access to his information for a limited time. 
+\item \label{design_pecularity_four} \textbf{What are the costs associated with this process for the user?}
+Users don't pay for the creation of the smart contract handling this information sharing request. However should claims change that have been shared as part of a permission request contract the user is financially responsible for the transaction costs of changing these signed claims.
+\end{itemize}
 
 % Please agument why the user if he is holding signed claims is not providing his claims directly to the requesting provider
 % Include the following arguments:
@@ -101,30 +181,7 @@ After registration the user is now able to use \projectName{} for identification
 % 3. generating a signed query can also have additional attributes like a reuse flag to indicate if the query could be used again if the claim changed
 % 4. user don't have to pay for the creation of the smart contract. only for the updating of the signed values
 
-\begin{enumerate}
-\item \label{permission_request_item_one}
-We have a user called Tom who has just recently moved and is interested in opening a new bank account for his local dealings. He therefore visits a local branch of Bank X and requests a new bank account. He now hands his ethereum address, public key, Name, Address etc. to the bank teller.
-\item \label{permission_request_item_two}
-The bank teller now enters that information into a \textbf{Request Permission} form and sends it to the government for verification purposes.
-\item \label{permission_request_item_three}
-The government now writes a new permission request contract into the Ethereum blockchain. This contract contains the following information:
-\begin{itemize}
-\item @EthereumAddress; This is Toms Address, as his information is requested
-\item ThirdPartyName; This is the requesting Party's Name Bank 
-\item AttributesRequested[GivenName, FamilyName, StreetName, StreetNumber, PostalCode, DateOfBirth, ...]; This is an Array containing all Variables requested by the Third Party
-\end{itemize}
-\item \label{permission_request_item_four}
-The user now polls the blockchain for new messages and finds this permission request by the third party.
-\item \label{permission_request_item_five}
-Tom now checks each requested attribute and selects the attributes he wants to share with the third party. After his selection a specific query is created imitating his choices.
-\end{enumerate}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\textwidth]{concept/permission_request_bank.png}
-\caption{Permission Request}
-\label{fig:permission_request}
-\end{figure}
 
 \subsection{Closures}
 %Create closure figure in draw.io and insert here
@@ -161,7 +218,7 @@ Here the change claim process is finished. However, as mentioned previous there 
 
 \subsection{Evaluation}
 
- \includegraphics[width=\textwidth]{concept/evaluation.png}
+\includegraphics[width=\textwidth]{concept/evaluation.png}
  
 \section{Use cases}
 
