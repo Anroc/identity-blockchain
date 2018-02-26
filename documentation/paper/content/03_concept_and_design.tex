@@ -52,10 +52,8 @@ In order for a new system to become succesful, it is imperative that it is econi
 However the total cost of ownership of an identity system where the blockchain is used for storing transactional information is extremely difficult to gauge. This is in part because it is a "living platform" which is constantly being changed, but also because of the volatility of cryptocurrencies.\cite{elendner2016cross}
 Due to cryptos nature it is difficult to keep costs stable or predictable, since accurate models are still actively being worked on.\cite{catania2018predicting} The slightest change in financial regulation, bad press, or just negative comments in social media can crash their prices.\cite{kim2016predicting}
 In contrast their prices can also rise in an astonishing fashion because of aforementioned reasons. 
-
 This projects aim however has not been to create an economically feasible platform, but a simple demonstrator, showcasing that blockchain technologies could be adapted to suit the societal needs of a digitalized society. \projectName{} can be used as a digital alternative to an already existing non-digital system.
 However before a full deployment could take place further development is necessary to minimize all costs associated with the interactions with the blockchain.
-
 As an alternative solution however it would be possible to replace the public blockchain with a governmentally run private network. This would reduce the costs of transactions by giving the owning entity full control over all costs associated with the blockchain transactions.
 This however would also cancel the independent miners motivation to be part of the system. Creating the need for different remuneration concepts or even state owned miners. These proposals however would introduce new risks into the system by defining a single trust anchor for the entire system. 
 
@@ -64,32 +62,35 @@ This however would also cancel the independent miners motivation to be part of t
 \subsection{Registration}
 In order to be part of our distributed digital identity system that we envisioned, it is necessary to register with it first. The registration process consists of the following steps (See Figure \ref{fig:registration_concept}):
 
-\begin{enumerate}
-\item \label{registrar_item_one}
-The user creates an ethereum address and a private public key pair, the combination of these two are now used as the users digital identity. Jointly they can be used as a digital identity card. They are safely and securely stored in the users own database.
-\item \label{registrar_item_two}
-For verification and auditing purposes these have to be verified by a trusted party, so that third parties can be sure of the identity of the individuals. We are using a specially designed smart contract, where the user inputs his ethereum address and his public key. Once filled, he writes it to the blockchain and waits for the trusted party, in our case a governmental agency, to check the contents, fulfill and sign the contract.
-\item \label{registrar_item_three}
-The user now verifies himself using the eID online verification system. After successfully verifying he sends the governmental agency, entrusted with handling digital identity services, his ethereum address and public key. These are used for the upcoming smart contract verification.
-\begin{comment}
-DONT NEED: The user can now have his ethereum address and private public key pair verified by a governmental agency.
-\end{comment}
-\item \label{registrar_item_four}
-The aforementioned governmental agency can now check the blockchain for the requesting users registrar contract, verify its content against already received (See \ref{registrar_item_three}) or saved information and then link the existing user to the ethereum address and public key. After extending the database entry the agency now collects all existing claims for that individual, packages them into a single claims object and sends it to the user for his record keeping and claim query construction.  
-\item \label{registrar_item_five}
-Lastly the agency signs and approves this registrar contract. By adding its signature the user is now a fully registered member within our community. Henceforth he can use this identity to request services and offer claims to and from other registered parties. 
-\end{enumerate}
-
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\textwidth]{concept/registration.png}
+\includegraphics[width=\textwidth]{concept/registration_contract_general}
 \caption{Registration}
 \label{fig:registration_concept}
 \end{figure}
 
+\begin{enumerate}
+\item \label{registrar_item_one}
+The user creates an ethereum address and a private public key pair, the combination of these two are now used as the users digital identity. Jointly they act as a digital identity card. They are safely and securely stored in the users own database.
+\item \label{registrar_item_two}
+For verification and auditing purposes these have to be verified by a trusted party, so that third parties can be sure of the identity of the individuals. We are using a specially designed smart contract, where the user inputs his ethereum address and his public key. Once filled, he writes it to the blockchain and waits for the trusted party, in our case a governmental agency, to check the contents, fulfill and sign the contract.
+\item \label{registrar_item_three}
+In order for that to happen, the user has to physically visit his citizen office with pre-existing identification documents. After verifying himself to the authorities they can use a specifically generated QR code to quickly check his digital identity.
+\item \label{registrar_item_four}
+With the information that is contained within the QR code the citizen office can now check their database for the corresponding entity.
+\item \label{registrar_item_five}
+After finding a corresponding user they extend their existing entity with the newly gathered ethereum address, the users RSA public key, and the registration contracts ethereum address.
+\item \label{registrar_item_six}
+The second to last step now is signing and approving the citizens registration contract.
+\item \label{registrar_item_seven}
+After approving the users registration contract the government creates a data blob containing all of the users information, signs it and lastly sends this signed user data to the user.
+\item \label{registrar_item_eigth}
+\end{enumerate}
+
+The user is now a fully registered member within our community. Henceforth he can use this identity to request services and offer claims to and from other registered parties. 
+
 \subsection{Permission Request}
 Permission requests are an integral part of our system. They are the 
-
 
 After registration the user is now able to use \projectName{} for identification and verification purposes. Lets consider opening a new bank account using \projectName() for verification.
 
