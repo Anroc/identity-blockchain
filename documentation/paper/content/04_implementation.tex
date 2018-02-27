@@ -496,7 +496,7 @@ Because of various other projects and work commitments we are very familiar with
 Because of the aforementioned reasons we chose couchbase as our primary data storage solution. Changing it to couchbase lite as soon as it is released in a finalized stable long term supported version.
 
 \subsection{Deployment}
-One of couchbases pecularities is the bucket design. A bucket is meant quite literally, as in you can put whatever data you want into it and save it until changed or deleted. Couchbase itself also offers very comfortable retrieval and updating mechanisms by
+One of couchbases particularities is the bucket design. A bucket is meant quite literally, as in you can put whatever data you want into it and save it until changed or deleted. Couchbase itself also offers very comfortable retrieval and updating mechanisms by
 offering a built-in upsert method. Which either retrieves an entity and overwrites it with a new verison or creates a new document from the given document.
 Our first approach was to create a bucket for each entity that is part of the system to simulate the envisioned system as closely as possible. However extreme memory limitations soon made us realize that we had to abandon that concept for the time being and adapt a more pragmatic approach.
 We created a single bucket for all our database persistence needs. Since couchbase allows the saving of different documents to the same bucket this was not a problem.
