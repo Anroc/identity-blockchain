@@ -410,11 +410,9 @@ adding new components and make a newly interwoven prototype with it.
 
 \subsection{Motivation}
 \label{sec:databaseMotivation}
-
 During the design stage of \projectName{} we focussed on designing the flow of transactions and information before deciding on a definitive database solution.
 After finalizing our ideas for how transactions and claims are structured we started evaluating multiple database alternatives.
 We started by establishing a small set of features we deemed necessary and indispensable. These features were:
-
 \begin{itemize}
 \item \label{db_req_one}
 Storage alternative that is deployable on mobile devices such as smart phones and tablets, since users hold their own claims.
@@ -438,7 +436,6 @@ Afterwards we checked the various types of data storage possibilities and rated 
 
 \subsubsection{RDBMS}
 \label{databaseRDBS}
-
 \begin{itemize}
 \item \label{rdbms_req_one} \textbf{Mobile deployability:}
 One of the most popular mobile databases is SQLite which follows the typical RDBMS schema.\cite{dbcharts} Therefore we strongly considered SQLite as our leading RDBMS alternative.
@@ -455,12 +452,10 @@ Working with SQLite is closely related to working with other RDBMS and therefore
 \item \label{rdbms_req_seven} \textbf{Compatibility}
 SQLite is not compatible with springboot out of the box.
 \end{itemize}
-
 In conclusion SQLite as our preferred RDBMS was simply not an option for implementation purposes.
 
 \subsubsection{Key-value store}
 \label{databaseKeyValueStore}
-
 \begin{itemize}
 \item \label{kv_req_one} \textbf{Mobile deployability:}
 We found LevelDB as an alternative to a mobile deployable key value store.
@@ -478,12 +473,10 @@ None of us has even worked with LevelDB before.
 \item \label{kv_req_seven} \textbf{Compatibility:}
 Springboot is compatible with apache camel which is a LevelDB based extension.
 \end{itemize}
-
 No indexing and impossiblity of querying elimited LevelDB from the list of alternatives.
 
 \subsubsection{Document based DBMS}
 \label{databaseDBMS}
-
 \begin{itemize}
 \item \label{doc_req_one} \textbf{Mobile deployability:}
 Couchbase lite is a couchbase based mobile derivative with upcoming mobile convergence. Meaning that depending on the use case they are interchangeable without having to modify the codebase.
@@ -500,11 +493,17 @@ Since it is a document driven database it is possible to directly store our sign
 \item \label{doc_req_six} \textbf{Familiarity}
 Because of various other projects and work commitments we are very familiar with document based communication and document based storage solutions in particular.
 \end{itemize}
-
-Because of the aforementioned reasons we chose couchbase as our primary data storage solution.
+Because of the aforementioned reasons we chose couchbase as our primary data storage solution. Changing it to couchbase lite as soon as it is released in a finalized stable long term supported version.
 
 \subsection{Deployment}
-
+One of couchbases pecularities is the bucket design. A bucket is meant quite literally, as in you can put whatever data you want into it and save it until changed or deleted. Couchbase itself also offers very comfortable retrieval and updating mechanisms by
+offering a built-in upsert method. Which either retrieves an entity and overwrites it with a new verison or creates a new document from the given document.
+Our first approach was to create a bucket for each entity that is part of the system to simulate the envisioned system as closely as possible. However extreme memory limitations soon made us realize that we had to abandon that concept for the time being and adapt a more pragmatic approach.
+We created a single bucket for all our database persistence needs. Since couchbase allows the saving of different documents to the same bucket this was not a problem.
+To add on to our memory woes we weren't able to create all of the required indices making querying slow at times and impossible at maximum memory utilisation.
+Lastly since we packaged each component into a seperate docker container, with the couchbase container utilising the majority of the memory, we had memory conflicts on our hands leading to unexpected container shutdowns.
 
 \subsection{Summary}
 \label{sec:databaseSummary}
+Couchbase enabled us to save our claims as we envisioned them without having to develop transformation and mapping methods.
+Additionally it allowed us to directly save signed documents further simplifying our database management.
