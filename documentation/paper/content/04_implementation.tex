@@ -341,25 +341,55 @@ Further the following technologies are used for testing:
 \item Enzyme\footnote{\url{http://airbnb.io/enzyme/}}: A ReactJS testing framework.
 \end{itemize}
 
-\subsection{Claims}
-\subsection{Registration}
-\label{sec:registerContract}
+\subsection{Third party}
 
-TODO claims
+As a third party the interface is focused on requesting data of a user. There are input fields for the user's Ethereum address
+and the parameters that can be requested. Those are claims and closures, which are described more in-depth in the concept.
+The third party can explicitly select claims and set them to either required or optional.
+Further closures can be constructed to be humanly readable by selecting predefined terms which result in a boolean result,
+such as "Is your birth date 02.02.2002 after 05.05.2005?". Its purpose is that the user can easily understand the query.
+Whenever the user interface triggers events to the backend, small snack bars inform the third party about the data exchange.
 
-\subsection{Permission Requests}
-\label{sec:ppr}
+\subsection{User}
+\label{sec:user}
 
-TODO permission requests
+The user interface is the main part of the application and consists of 4 minimally design sections, general information,
+claims, requests, and permission history. The user has the ability to show the sections or fold them together if needed.
+Whenever events that target the backend are fired, the user is informed by a notification with a snack bar on the top of
+the display.
 
-\subsection{Closures}
-\label{sec:closure}
+\subsubsection{General information}
 
-TODO closures
+The first section is about general information of the user, e.g. the own Ethereum Address and the option to verify yourself
+at the government by scanning a QR-code with the mobile app. The user has the ability to hide and show the qr code.
+
+\subsubsection{Claims}
+
+The second section hold a table with all the currently existing and verified claims by the system. There the user has an
+overview and can check his data and by whom is was approved.
+
+\subsubsection{Requests}
+
+In the third section we show incoming requests. Those requests stem from a third party which was approved by the government
+and contain asking for permissions for required claims, optional claims and closures. The user can then approve or deny
+each item that was asked for and send his answer. If a request is answered, it disappears from the section.
+
+\subsubsection{Permission History}
+
+The last section show all responses to already answered permission requests in the past. It is shown as a table since the
+user cannot directly change its data and only get informative data from previous data exchanges and permission grants.
+
+\subsection{Mobile App}
+
+The mobile app has the sole purpose of using the phone's camera to scan the user's QR-code and hereby approve the user in
+the system.
 
 \subsection{Summary}
 \label{sec:frontendSummary}
-TODO Summary
+
+All in all the frontend is feature complete and would need to be extended with more features such as changing claims in
+the future. Due to the nature of the framework being used, ReactJS, it is highly flexible and can be easily extended by
+adding new components and make a newly interwoven prototype with it.
 
 % ------------------------ DATABASE -----------------------------
 
