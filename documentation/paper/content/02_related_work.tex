@@ -3,24 +3,24 @@
 
 \section{MedRec}
 
-# what is medrec in one sentence
+% what is medrec in one sentence
 MedRec is contextually focused on patients uniformly handling their medical data across providers and treatment sides
 as sovereign, clear and convenient possible, implemented with a blockchain-based approach.
-# why? motivation
+% why? motivation
 The main goal is improving the ability to make smart decisions by facilitating patient-initiated data-sharing.
 Patients could authorize third parties to view their information and on the other hand health care industry stakeholders
 could renumerate miners by providing anonymized, aggregated data for research purposes.
 
-# implementation goal
+% implementation goal
 As their goal is not to build a novel electronic health record system they achieve it by using already existent data structures
 with database interfaces which all work with string-based queries.
 
-# why blockchain
+% why blockchain
 Blockchain technologies in general with the specifications of the Ethereum blockchain provide a sufficient set of the main goals.
 Especially with smart contracts which contain metadata about ownership, permissions and data integrity, MedRec decided to fork
 from the Ethereum blockchain as a privatized, small-scale blockchain with extensive APIs built on top.
 
-# raw implementation
+% raw implementation
 The implementation of MedRec was driven by four mayor issues which had to be challenged: fragmented, slow access to own
 medical data, lack of system interoperability, lack of patient agency over health care data and the need for improved
 data quality and quantity for medical research.
@@ -30,33 +30,33 @@ viewership rights or are data pointers to external databases.
 Providers can add medical records which patients can authorize and keep them informed in their evolution of their data.
 A synchronizing algorithm handles the data exchange between the provider and patient "off-chain".
 
-### MedRec System Architecture
+%%% MedRec System Architecture
 
 MedRec's blockchain system architecture is mainly implemented through its own blockchain, which has a restricted write access to
 certified institutions only, with 3 smart contracts:
 
-#### Registrar Contract
+%%%% Registrar Contract
 
 
 Policies coded in the registrar contract can regulate registering new identities or changing the mapping of existent ones.
 In the essence it maps identity string to an address on the blockchain (summary contract, explained below).
 
 
-#### Patient-Provider Relationship Contract
+%%%% Patient-Provider Relationship Contract
 
 The patient-provider relationship contract is a node that stores and manages medical records for the other and defines
 data pointers and associated access permissions. Each pointer consists of an immutable query string, hostname and port.
 Queries are added and modified by the care provider.
 
 
-#### Summary Contract
+%%%% Summary Contract
 
 A summary contract is a bread crumb trail for participants in the system and holds references to patient-provider relationship
 contracts, representing all previous and current relations. Providers have references to the patients they serve and third-parties
 with whom data-sharing is enabled. As long as there are nodes in the network, the blockchain is maintained.
 
 
-#### System Node Description
+%%%% System Node Description
 The overall system node describes four components, the backend library, which resembles the certified provider, the
 Ethereum clients, which are used by patients and third parties, database gatekeepers, which act as interfaces to databases
 and the electronic health manager, which is responsible for communication with patients' actual health records.
