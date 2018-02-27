@@ -408,6 +408,8 @@ adding new components and make a newly interwoven prototype with it.
 \section{Database}
 \label{sec:database}
 
+We selected Couchbase as our database management system. In the following sections we will motivate this decision.
+
 \subsection{Motivation}
 \label{sec:databaseMotivation}
 During the design stage of \projectName{} we focussed on designing the flow of transactions and information before deciding on a definitive database solution.
@@ -415,13 +417,13 @@ After finalizing our ideas for how transactions and claims are structured we sta
 We started by establishing a small set of features we deemed necessary and indispensable. These features were:
 \begin{itemize}
 \item \label{db_req_one}
-Storage alternative that is deployable on mobile devices such as smart phones and tablets, since users hold their own claims.
+Storage that is deployable on mobile devices such as smart phones and tablets, since users hold their own claims.
 \item \label{db_req_two}
 Free licensing structure for development.
 \item \label{db_item_three}
-Lightweight storage for user side claim management.\ref{db_req_one}
+Lightweight storage for user side claim management (section \ref{db_req_one}).
 \item \label{db_req_four}
-Schemaless files since claim structure can vary by claim type and value. Removing the need for strict typography of data attributes as used in RDBMS.
+Schemaless files since claim structure can vary by claim type and value. Removing the need for strict typography of data attributes as used in RDBMS (Relational Database Management Systems)
 \item \label{db_req_five}
 Possibility of directly writing our objects into a database without the need for transforming them, including cryptographically signed objects.
 \item \label{db_req_six}
@@ -432,9 +434,9 @@ Since we are using Springboot as our backend framework it is imperative that the
 
 \subsection{Alternatives}
 \label{sec:databaseAlternatives}
-Afterwards we checked the various types of data storage possibilities and rated them according to our criteria.
+Afterwards we checked the various types of data storage possibilities and we rated them according to our criteria.
 
-\subsubsection{RDBMS}
+\subsubsection{Relational Database Management Systems (RDBMS)}
 \label{databaseRDBS}
 \begin{itemize}
 \item \label{rdbms_req_one} \textbf{Mobile deployability:}
@@ -485,7 +487,7 @@ Exchanging couchbase with couchbase lite would just be a simple switch in the co
 \item \label{doc_req_two} \textbf{Licensing:}
 Couchbase lite is licensed with Apache2.0 and therefore is not infringing on our projects aims.
 \item \label{doc_item_three} \textbf{Lightweightness:}
-Couchbase lite is deployable on all modern operating systems including but not limited to iOS, Android, Windows.
+Couchbase lite is deployable on all modern operating systems including but not limited to iOS, Android and Windows.
 \item \label{doc_req_four} \textbf{Schemaless:}
 Couchbase is a schemaless storage solution focussing on writing so called documents containing keys and values. These documents follow the JSON schema and therefore are a perfect fit for a web focussed project dealing with a state of the art frontend and backend.
 \item \label{doc_req_five} \textbf{Transformation:}
@@ -496,8 +498,8 @@ Because of various other projects and work commitments we are very familiar with
 Because of the aforementioned reasons we chose couchbase as our primary data storage solution. Changing it to couchbase lite as soon as it is released in a finalized stable long term supported version.
 
 \subsection{Deployment}
-One of couchbases particularities is the bucket design. A bucket is meant quite literally, as in you can put whatever data you want into it and save it until changed or deleted. Couchbase itself also offers very comfortable retrieval and updating mechanisms by
-offering a built-in upsert method. Which either retrieves an entity and overwrites it with a new verison or creates a new document from the given document.
+One of couchbases particularities is the bucket design. A bucket is meant quite literally, as you can put whatever data you want into it and save it until changed or deleted. Couchbase itself also offers very comfortable retrieval and updating mechanisms by
+offering a built-in upsert method. Which either retrieves an entity and overwrites it with a new verison or creates a new document from the given content.
 Our first approach was to create a bucket for each entity that is part of the system to simulate the envisioned system as closely as possible. However extreme memory limitations soon made us realize that we had to abandon that concept for the time being and adapt a more pragmatic approach.
 We created a single bucket for all our database persistence needs. Since couchbase allows the saving of different documents to the same bucket this was not a problem.
 To add on to our memory woes we weren't able to create all of the required indices making querying slow at times and impossible at maximum memory utilisation.
