@@ -1,69 +1,90 @@
 \chapter{Introduction}
 \label{cha:introduction}
-\section{Digital identity and the current Problem}
+\section{Digital identity and the current Problem}\label{problem}
 
-The todays problem with a digital identity lies first of all in division of the data which makes a identity. With several data providers the data is heterogeneous and fragmented within multiple servers and each requires its own password and user name. So the best solution for an exchange of identity informations might be, to let each provider store the data of their users on one centralized server, controlled by one trusted party. Not only is this a issue regarding security, because one system can be more easily corrupted but also all user has to trust the one provider.
+The todays problem with a digital identity lies first of all in division of the data which makes a identity. With several data providers the data is heterogeneous and fragmented within multiple servers and each requires its own password and user name. So the best solution for an exchange of identity informations might be, to let each provider store the data of their users on one centralized server, controlled by one trusted party. Not only is this a issue regarding security, because one system can be more easily corrupted but also all users have to trust the one provider.
 Nevertheless these issues aren't simply solved, a overall system or framework to get identity information from several providers and make their exchange more easy is desirable. 
 
-\section{Digital Identity}
-Before a solution for these issues can be found a definition for the term identity is needed to identifiy what data can be collected. \cite{digitalIdentityDefinition} describes it as follows: A digital identity corresponds to the electronic information associated with an individual
-in a particular identity system. Identity systems are used by online service providers to authenticate and authorize users [...]
-With an increasing amount of online services and application a user creates more and more identites within different systems. Therefore the importance of managing those identites is growing \cite{managingIdentity}. 
-It enables the cooperation between multiple data providers to enable and improve their services and better target their products and services. Problem arises when individuals no longer have control over how their information is collected and used, which not seldom containing sensitive attributes. To solve this problem high requirements on privacy and confidentiality are prescribed by law.
+\section{Digital Identity}\label{digital_identity}
+Before a solution for these issues can be found a definition for the term identity is needed to identifiy what data can be collected. \cite{digitalIdentityDefinition} describes it as follows: A digital identity corresponds to the electronic information associated with an individual in a particular identity system. Identity systems are used by online service providers to authenticate and authorize users [...]
+With an increasing amount of online services and application a user creates more and more identites within different systems. Therefore the importance of managing those identites is growing \cite{managingIdentity} \label{managingIdentities}. 
+It enables the cooperation between multiple data providers and improve their services and better target their products and services. Problem arises when individuals no longer have control over how their information is collected and used, which not seldom containing sensitive attributes. To solve this problem high requirements on privacy and confidentiality are prescribed by law.
 
-\section{GDPR}
+\section{GDPR}\label{GDPR}
 
-General Data Protection Regulation (GDPR) is a regulation that provides rules how to process and collect personal data by private companies and authorities across the EU, to strengthen data protection. It's furthermore secures free data traffic across all members within the EU. \cite{gdpr}
+General Data Protection Regulation (GDPR) is a regulation that provides rules how to process and collect personal data by private companies and authorities across the EU, to strengthen data protection. It's furthermore secures free data traffic across all members within the EU. In May 2018 it will be translated from a directive into enforceable EU law. 
+Someone could say that this future law will not be applicable on a digital identity as we defined it in section ~\ref{digital_identity} due to the too widely interpretation of the data. But the EU commission defined, that personal data is any information relating to an individual, whether it relates to his or her private, professional or public life. It can be anything from a name, a home address, a photo, an email address, bank details, posts on social networking websites, medical information, or a computer’s IP address \cite{personalData} . Therefore it also matches electronic information associated with an individual. 
+Private companies and authorities are defined as a organization that collects data from EU residents or process over it and are called data controller. 
+In the following paragraph controllers will be referred as "service providers" or "data providers".
 
--> “data protection by design and default
--> pseudonymization (decoupling data from individual identity) and data minimization (sharing only absolutely necessary data points)
--> the GDPR aims to create an environment maximally friendly to individuals needing to transfer data between different vendors, governments, and institutions at their own discretion.
+The main changes of GDPR regarding data can be described as follows:
+\begin{itemize}  
+\item Right to be forgotten:  It allows a individual to take of the right of a data provider to hold personal data concerning him. Furthermore it obligate other service providers that are processing over this data to remove the link or copies.
+\item Data Portability: This should provide each individual to transmit their personal data from one data provider to another. With this requirement data providers should be forced to develop standardized formats in order to exchange them more easily.
+\item Privacy by Design, Privacy by Default: the main point of this requirement roots in following definition: The controller shall […] implement appropriate technical and organisational measures [...] in an effective way […] in order to meet the requirements of this Regulation and protect the rights of data subjects \cite{gdpr}. Developers of systems shall include data protection during the design phase, not later on as an additional feature. They have to choose default values that are somehow comforts data protection. 
+\item Consent: According to GDPR processing is based on consent, the controller shall be able to demonstrate that the data subject has consented to processing of his or her personal data \citep{gdpr} . This means it has to be ensured, that an individual has somehow agreed that a data provider has the right to collect or process his personal data. 
+\item Pseudonymisation: Pseudonymasation is defined in GDPR as the processing of personal data in such a way that the data can no longer be attributed to a specific data subject without the use of additional information. Its the process of decoupling data from individual identity. The additional data must be kept separately and not together with the personal data \cite{pseudonym}. Examples for the the process of pseudonymisation are encryption and tokenization \cite{pseudoExample}.
+\item Right of Access: The data subject shall have the right to obtain from the controller confirmation as to whether or not personal data concerning him or her are being processed, and, where that is the case, access to the personal data [...]\citep{gdpr} .
+\item Data minimization: In Article 5 it is stated, that collected or processed personal data shall be adequate, relevant and limited to what is necessary in relation to the purposes for which they are processed \citep{gdpr} .
+ \ldots 
+\end{itemize}
 
--> principles of digital self-sovereignty articulated by Christopher Allen in an influential 2016 essay.
+\section{Self-Sovereignty}\label{Self-Sovereignty}
 
+GDPR reflects many of the principles of digital self-sovereignty. Even though the term self-sovereign is currently widely used it is without an agreed definition. Christopher Allen describes the concept of self-owned and managed identity as "self-sovereign" identity and describe a set of 10 principles \citep{selfSov} 
 
-security -> decentralized technologies, key cryptography
-blockchain (private, public, permission ledger)
-how it works
-peer to peer
-ethereum
+\begin{enumerate}
+\item Existence: An individual can never exists only in digital form. It must have an independent existent.
+\item Control: An individual must be able to have control and authority over all their identities. This includes refer to it, update it, hide it and assign a access level (public/private) to it.
+\item Access: An individual must have direct access to their identity and all the related data without gatekeepers that could prevent the access. Furthermore no individual should have equal access to other identities and does not allow hidden data.
+\item Transparency: The system logic must be open, both in how they function and in how they are managed and updated.
+\item Persistence. Identities of an individual must be long-lived, at least for as long the user desires. But a user should be able to dispose of an identity if he wishes and claims should be modified or removed as appropriate over time.
+\item Portability: Information and services about identity must be transportable and the identity must no held by a singular third-party entity. Even if entities a trustworthy at the moment, environments can change over time and these entities can become dangerous or can disappear. 
+\item Interoperability: Identities of individuals should be as widely usable as possible, so identity information are widely available without losing user control.
+\item Consent:  Users must agree to the use of their identity or the sharing of data must only occur with the consent of the use. This consent don't have to be interactive but it must be comprehensibly.
+\item Minimalization:  Disclosure of claims must be minimized. This means to use the minimum amount of data that necessary in order to accomplish the task.
+\item Protection: The rights of a individual must be protected. If there is a conflict between the needs of the network and the rights of individual users, the users rights are at a higher priority.
+\end{enumerate}
 
-trusted party
-GDPR
-self suvireign
+\section{Blockchain and DTL}
+\subsection{Definition}
+Even Blockchain and Distributed Ledger are often mentioned in the same context they have to be distinguished. 
+A Blockchain refers to a continuously growing list of records, called blocks, where each blocked is linked and secured using cryptography and typically contains a cryptographic hash of the previous block, a timestamp and transaction data cite{blockchainWiki}. 
+A distributed ledger on the other hand describes a software that is executed on a distributed network of nodes and each of those nodes holds an identical copy of an immutable, verifiable, transparent ledger of all records. The ledger contains a history of every transaction made through DLT, and all copies of the ledger remain the same through a consensus mechanism operating across all the nodes rather than by utilizing a trusted third party. Transactions made through DLT are generally verified and secured through cryptographic public-private key pairs. The public key is transformed into or associated with an address that the user shares with the public (like an email address) and the private key allows that user (and only that user) to securely update the data held within the ledger entry identified by the public key (or address) \cite{dlt}. 
 
--> provider halten gerne daten und sammeln gerne daten
+\subsection{Private vs Public, Permissonless vs Permissioned}
 
--> peer to pper
--> Bitcoin has demonstrated
-in the financial space that trusted, auditable computing is possible
-using a decentralized network of peers accompanied by a public
-ledger
+The read and write rights separates blockchain technologies from each other.
+First distinction can be made between public and private blockchains, second with permissionless and permissioned.
+Permissonless blockchains allow every node to participate in the consensus protocol and validate transactions whereas on the permissioned side a node requires the the permisson of a governing entity.\cite{dtl}
+A public blockchain is accessable for every node in the system and anyone can create transactions on the ledger. The consensus is achived without central authority and thus can be considered fully decentralized \cite{publicBlockchain}. In private ones on the other hand, permissions to write entries to the ledger are restricted to a single centralized organization and read permissions can be either public or restricted\cite{dlt}
 
-->While we all reap the benefits of a data-driven society, there
-is a growing public concern about user privacy. Centralized
-organizations – both public and private, amass large quantities
-of personal and sensitive information. Individuals have little or
-no control over the data that is stored about them and how it
-is used. In recent years, public media has repeatedly covered
-controversial incidents related to privacy. Among the better
-known examples is the story about government surveillance
-[2], and Facebook’s large-scale scientific experiment that was
-apparently conducted without explicitly informing participants
+\subsection{Examples}
 
+Most known and popular examples for blockchain technologies can be found in cryptocurrencies such as Bitcoin or Ethereum.
 
+A pseudonymous software developer going by the name of Satoshi Nakamoto proposed bitcoin in 2008, as an electronic payment system based on mathematical proof. The idea was to produce a means of exchange, independent of any central authority, that could be transferred electronically in a secure, verifiable and immutable way \cite{bitcoin} .
 
-Personal data is distributed and untransparent for the user to view.\cite[p. 1]{uPortWhitePaper}
+Vitalik Buterin created Ethereum, a next generation blockchain which functions as smart contract and decentralized application platform \cite{ethereum} .
+The decentralized ledger has a built-in a Turing complete programming language, which allows anyone to create programs called ”smart contracts” with their own definition of ownership, messaging formats and state transition functions.
+These decentralized applications can contain value and perform transactions with that value if certain conditions are met \cite{overall} . While the name might suggest otherwise, smart contracts on a blockchain do not have any legal status and are not legally enforceable.
 
-Blockchain and decrentralization help to push the ownership back to the indiviuals so that they are in controll of their data. This principle is often refered as \textit{self-sovereignity}.\cite[p. 1]{uPortWhitePaper}
+\subsection{Why Blockchain?}
 
+To solve the problem in section \ref{problem} we want to create a system that allows the exchange of identity data and the managing of multiple identities. The data must be trusted by third parties as valid and has to be seen as an identifier of an individual. Furthermore the individual must have complete control over the data and must somehow provide access for other entities. The rules for how this control should look like is provided by GDPR .
+Many of the principles in section \ref{Self-Sovereignty} align with GDPR of section \ref{GDPR} and can be not only give guidelines on how to meet the requirements but furthermore how identity data can be stored and managed in our desired system. 
 
+To implement our system blockchain and its distributed ledger technology can be utilized. The distributed ledger provides information from an entity, that isn't controlled by one authority (Right of Access is guaranteed). Further on does blockchain uses a decentralized network of nodes, where the past changes and current validity is publicly verifiable (transparency \ref{Self-Sovereignty}). This allows it to be a trusted and neutral mechanism for self-management.
+And of top of it it not only can secretly store the data but if with another access grant mechanism (like storing a key etc.) it can grant and deny access (control requirement is met). Data providers like governments can add add identity information to an individals blockchain record as permitted or requested by the individual
 
+\section{goal}
+With GDPR, Self-Sovereignty and Blockchain we want to create an environment maximally friendly to individuals needing to transfer data between different vendors, governments, and institutions at their own discretion.	
+	
 
 
 % User-centric: Data is organized and managed by user but stored at thrid parties. 
 %  2008, Kim Cameron, Reinhard Posch and Kai Rannenberg describes “A User-Centric Identity Metasystem”. It details an abstracted design for a
 % cited in https://sovrin.org/wp-content/uploads/2017/07/The-Inevitable-Rise-of-Self-Sovereign-Identity.pdf page 9
 
-Self Sovereign individual control, security, and full portability
+%	Self Sovereign individual control, security, and full portability
 % https://sovrin.org/wp-content/uploads/2017/07/The-Inevitable-Rise-of-Self-Sovereign-Identity.pdf page 9
