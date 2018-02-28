@@ -412,7 +412,8 @@ We selected Couchbase as our database management system. In the following sectio
 
 \subsection{Motivation}
 \label{sec:databaseMotivation}
-During the design stage of \projectName{} we focussed on designing the flow of transactions and information before deciding on a definitive database solution.
+During the design stage of \projectName{} we focused on designing the flow of transactions and information before
+deciding on a definitive database solution.
 After finalizing our ideas for how transactions and claims are structured we started evaluating multiple database alternatives.
 We started by establishing a small set of features we deemed necessary and indispensable. These features were:
 \begin{itemize}
@@ -423,13 +424,15 @@ Free licensing structure for development.
 \item \label{db_item_three}
 Lightweight storage for user side claim management (section \ref{db_req_one}).
 \item \label{db_req_four}
-Schemaless files since claim structure can vary by claim type and value. Removing the need for strict typography of data attributes as used in RDBMS (Relational Database Management Systems)
+Schemaless files since claim structure can vary by claim type and value. Removing the need for strict typography of data
+ attributes as used in RDBMS (Relational Database Management Systems)
 \item \label{db_req_five}
-Possibility of directly writing our objects into a database without the need for transforming them, including cryptographically signed objects.
+Possibility of directly writing our objects into a database without the need for transforming them, including
+cryptographically signed objects.
 \item \label{db_req_six}
 In order to keep the workload manageable we decided on using a DBMS that we were already familiar with.
 \item \label{db_req_seven}
-Since we are using Springboot as our backend framework it is imperative that the chosen DBMS is compatible.
+Since we are using Spring Boot as our backend framework it is imperative that the chosen DBMS is compatible.
 \end{itemize}
 
 \subsection{Alternatives}
@@ -440,7 +443,8 @@ Afterwards we checked the various types of data storage possibilities and we rat
 \label{databaseRDBS}
 \begin{itemize}
 \item \label{rdbms_req_one} \textbf{Mobile deployability:}
-One of the most popular mobile databases is SQLite which follows the typical RDBMS schema.\cite{dbcharts} Therefore we strongly considered SQLite as our leading RDBMS alternative.
+One of the most popular mobile databases is SQLite which follows the typical RDBMS schema.\cite{dbcharts}
+Therefore we strongly considered SQLite as our leading RDBMS alternative.
 \item \label{rdbms_req_two} \textbf{Licensing:}
 SQLite is public domain and therefore the licensing is as unobstructive as can be.
 \item \label{rdbms_item_three} \textbf{Lightweightness:}
@@ -452,7 +456,7 @@ Since SQLite is not schemaless we would have had to develop a transformation sch
 \item \label{rdbms_req_six} \textbf{Familiarity}
 Working with SQLite is closely related to working with other RDBMS and therefore we would be familiar with that working environment.
 \item \label{rdbms_req_seven} \textbf{Compatibility}
-SQLite is not compatible with springboot out of the box.
+SQLite is not compatible with Spring Boot out of the box.
 \end{itemize}
 In conclusion SQLite as our preferred RDBMS was simply not an option for implementation purposes.
 
@@ -462,11 +466,14 @@ In conclusion SQLite as our preferred RDBMS was simply not an option for impleme
 \item \label{kv_req_one} \textbf{Mobile deployability:}
 We found LevelDB as an alternative to a mobile deployable key value store.
 \item \label{kv_req_two} \textbf{Licensing:}
-LevelDB comes with a fairly lax licensing scheme only requiring the licensee to not alter the license file in any way, shape or form. Additionally the license file is to be displayed as written by the licenser.
+LevelDB comes with a fairly lax licensing scheme only requiring the licensee to not alter the license file in any way,
+shape or form. Additionally the license file is to be displayed as written by the licensor.
 \item \label{kv_item_three} \textbf{Lightweightness:}
-LevelDB is a specialized key value store developed by google for their android operating system.This ensures that LevelDB is mobile ready out of the box.
+LevelDB is a specialized key value store developed by google for their android operating system.
+This ensures that LevelDB is mobile ready out of the box.
 \item \label{kv_req_four} \textbf{Schemaless:}
-Since LevelDB is a simple key value store it can be considered to be schemaless. It simply saves a combination of two byte arrays with arbitrary length as key:value.
+Since LevelDB is a simple key value store it can be considered to be schemaless.
+It simply saves a combination of two byte arrays with arbitrary length as key:value.
 \item \label{kv_req_five} \textbf{Transformation:}
 Due to LevelDB's nature we would have had to transform our objects into a fitting encoding for saving and retrieving purposes.
 Furthermore LevelDB has no indexing at all and therefore we would have had to design an intelligent retrieval scheme for specific entries.
@@ -481,30 +488,44 @@ No indexing and impossiblity of querying elimited LevelDB from the list of alter
 \label{databaseDBMS}
 \begin{itemize}
 \item \label{doc_req_one} \textbf{Mobile deployability:}
-Couchbase lite is a couchbase based mobile derivative with upcoming mobile convergence. Meaning that depending on the use case they are interchangeable without having to modify the codebase.
-However at the start of the project couchbase lite was still in pre-release forcing us to fall back to non-mobile couchbase service. However because of the upcoming mobile convergence it wouldn't hinder development at all.
+Couchbase lite is a couchbase based mobile derivative with upcoming mobile convergence.
+Meaning that depending on the use case they are interchangeable without having to modify the codebase.
+However at the start of the project couchbase lite was still in pre-release forcing us to fall back to non-mobile
+couchbase service. However because of the upcoming mobile convergence it wouldn't hinder development at all.
 Exchanging couchbase with couchbase lite would just be a simple switch in the configuration files.
 \item \label{doc_req_two} \textbf{Licensing:}
 Couchbase lite is licensed with Apache2.0 and therefore is not infringing on our projects aims.
 \item \label{doc_item_three} \textbf{Lightweightness:}
 Couchbase lite is deployable on all modern operating systems including but not limited to iOS, Android and Windows.
 \item \label{doc_req_four} \textbf{Schemaless:}
-Couchbase is a schemaless storage solution focussing on writing so called documents containing keys and values. These documents follow the JSON schema and therefore are a perfect fit for a web focussed project dealing with a state of the art frontend and backend.
+Couchbase is a schemaless storage solution focussing on writing so called documents containing keys and values.
+These documents follow the JSON schema and therefore are a perfect fit for a web focused project dealing with a state
+of the art frontend and backend.
 \item \label{doc_req_five} \textbf{Transformation:}
 Since it is a document driven database it is possible to directly store our signed JSONs into the database.
 \item \label{doc_req_six} \textbf{Familiarity}
-Because of various other projects and work commitments we are very familiar with document based communication and document based storage solutions in particular.
+Because of various other projects and work commitments we are very familiar with document based communication and
+document based storage solutions in particular.
 \end{itemize}
-Because of the aforementioned reasons we chose couchbase as our primary data storage solution. Changing it to couchbase lite as soon as it is released in a finalized stable long term supported version.
+Because of the aforementioned reasons we chose couchbase as our primary data storage solution. Changing it to couchbase
+lite as soon as it is released in a finalized stable long term supported version.
 
 \subsection{Deployment}
 \label{ssec:databaseDeployment}
-One of couchbases particularities is the bucket design. A bucket is meant quite literally, as you can put whatever data you want into it and save it until changed or deleted. Couchbase itself also offers very comfortable retrieval and updating mechanisms by
-offering a built-in upsert method. Which either retrieves an entity and overwrites it with a new verison or creates a new document from the given content.
-Our first approach was to create a bucket for each entity that is part of the system to simulate the envisioned system as closely as possible. However extreme memory limitations soon made us realize that we had to abandon that concept for the time being and adapt a more pragmatic approach.
-We created a single bucket for all our database persistence needs. Since couchbase allows the saving of different documents to the same bucket this was not a problem.
-To add on to our memory woes we weren't able to create all of the required indices making querying slow at times and impossible at maximum memory utilisation.
-Lastly since we packaged each component into a seperate docker container, with the couchbase container utilising the majority of the memory, we had memory conflicts on our hands leading to unexpected container shutdowns.
+One of couchbase's particularities is the bucket design.
+A bucket is meant literally, as you can put whatever data you want into it and save it until changed or deleted.
+Couchbase itself also offers very comfortable retrieval and updating mechanisms by
+offering a built-in upsert method. Which either retrieves an entity and overwrites it with a new version or creates
+a new document from the given content.
+Our first approach was to create a bucket for each entity that is part of the system to simulate the envisioned
+system as closely as possible. However extreme memory limitations soon made us realize that we had to abandon that
+concept for the time being and adapt a more pragmatic approach.
+We created a single bucket for all our database persistence needs. Since couchbase allows the saving of different
+documents to the same bucket this was not a problem.
+To add on to our memory woes we weren't able to create all of the required indices making querying slow at times and
+impossible at maximum memory utilisation.
+Lastly since we packaged each component into a separate docker container, with the couchbase container utilising the
+majority of the memory, we had memory conflicts on our hands leading to unexpected container shutdowns.
 
 \subsection{Summary}
 \label{sec:databaseSummary}
