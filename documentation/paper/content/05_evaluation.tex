@@ -1,7 +1,7 @@
 \chapter{Evaluation}
 \label{cha:evaluation}
 
-\projectName{} is a prototypical implementation of a GDPR compliant solution of self-sovereign identity management
+\projectName{} is a prototypical implementation of a GDPR compliant solution enabling self-sovereign identity management
 utilizing the blockchain. Since this project is a proof-of-concept rather than a working platform, we will do a critical
  review of the implementation and concept sections and outline the building blocks for future work.
 
@@ -14,8 +14,8 @@ security and stability in the proposed system.
 \label{sec:untrustedSystem}
 If we drop the principle of a private blockchain and let every provider write to the blockchain as well, we deescalate
 the government as single point of failure.
-To ensure further availability we could drop the discovery service and organize the discovery of an specific provider
-in a distributed hash table. Since we want still off-blockchain communication we could think about a peer-to-peer
+To ensure further availability we could drop the discovery service and organize the discovery of a specific provider
+in a distributed hash table. Since we still want off-blockchain communication we could think about a peer-to-peer
 implementation which will completely decentralize the system. The final problem that still remains is how to establish
 trust in a new user without having the government as a trusted party? Since we already considered the eID of the German
 government as a verification mechanism we can take this to the next level by allowing the peers to retrieve identity
