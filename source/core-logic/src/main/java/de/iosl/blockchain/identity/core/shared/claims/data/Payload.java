@@ -2,6 +2,7 @@ package de.iosl.blockchain.identity.core.shared.claims.data;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.couchbase.core.mapping.Document;
@@ -20,36 +21,20 @@ public class Payload {
 
     @NotNull
     @Field
-    private Object payload;
+    private ValueHolder payload;
 
     @NotNull
     @Field
     private ClaimType payloadType;
 
-    public Payload(Object payload, ClaimType payloadType) {
+    public Payload(ValueHolder payload, ClaimType payloadType) {
         setPayloadType(payloadType);
         setPayload(payload);
     }
 
-    public final void setPayload(Object payload) {
-        if(payload instanceof LocalDateTime) {
-            this.payload = DATE_TIME_FORMATTER.format((LocalDateTime) payload);
-        } else {
-            this.payload = payload;
-        }
-    }
-
-    public final Object getPayload() {
-        if(payload instanceof String && payloadType == ClaimType.DATE) {
-            return LocalDateTime.parse((String) payload, DATE_TIME_FORMATTER);
-        } else {
-            return payload;
-        }
-    }
-
     @JsonIgnore
     public <T> T getPayload(Class<T> clazz) {
-        return (T) getPayload();
+        return (T) getPayload().getUnifiedValue();
     }
 
     @JsonIgnore

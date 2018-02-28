@@ -4,9 +4,14 @@ import com.google.common.collect.Sets;
 import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.provider.Application;
 import de.iosl.blockchain.identity.core.provider.api.client.APIProviderService;
+import de.iosl.blockchain.identity.core.provider.permission.data.ClosureRequest;
+import de.iosl.blockchain.identity.core.provider.permission.data.PermissionRequest;
+import de.iosl.blockchain.identity.core.provider.permission.data.dto.ClosureRequestDTO;
 import de.iosl.blockchain.identity.core.provider.permission.data.dto.PermissionRequestDTO;
 import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,6 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
@@ -77,10 +83,10 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
 
     @Test
     public void createPermissionRequest_existingUser() {
-        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(userEthID, url, requiredClaims, optionalClaims);
+        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(userEthID, url, requiredClaims, optionalClaims, null);
 
         doNothing().when(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
-        doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(url, userEthID, requiredClaims, optionalClaims);
+        doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(any(PermissionRequest.class));
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
                 "/permissions",
@@ -101,10 +107,10 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
     @Test
     public void createPermissionRequest_nonExisitingUser() {
         final String otherEthID = "0xcafeaffe";
-        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(otherEthID, url, requiredClaims, optionalClaims);
+        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(otherEthID, url, requiredClaims, optionalClaims, null);
 
         doNothing().when(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
-        doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(url, otherEthID, requiredClaims, optionalClaims);
+        doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(any(PermissionRequest.class));
 
         ResponseEntity<Void> responseEntity = restTemplate.exchange(
                 "/permissions",
@@ -125,5 +131,40 @@ public class PermissionRequestControllerRestTest extends RestTestSuite {
                 .containsOnlyKeys(claimID_givenName, claimID_familyName).doesNotContainValue(true);
         assertThat(user.getPermissionGrands().get(0).getOptionalClaimGrants())
                 .containsOnlyKeys(claimID_age).doesNotContainValue(true);
+    }
+
+    @Test
+    public void createPermissionRequest_withClosureRequet() {
+        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(
+                userEthID,
+                url,
+                null,
+                null,
+                Sets.newHashSet(
+                        new ClosureRequestDTO(claimID_familyName, ClaimOperation.EQ, new ValueHolder("Hans"))
+                ));
+
+        doNothing().when(permissionRequestService).registerPermissionContractListener(permissionContractAddress, userEthID, url);
+        doReturn(permissionContractAddress).when(apiProviderService).requestUserClaims(any(PermissionRequest.class));
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange(
+                "/permissions",
+                HttpMethod.POST,
+                new HttpEntity<>(permissionRequestDTO, headers),
+                Void.class);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        User user = userDB.findEntity(this.user.getId()).get();
+        assertThat(user.getPermissionGrands()).hasSize(1);
+        assertThat(user.getPermissionGrands().get(0).getPermissionContractAddress()).isEqualTo(permissionContractAddress);
+        assertThat(user.getPermissionGrands().get(0).getRequiredClaimGrants()).isEmpty();
+        assertThat(user.getPermissionGrands().get(0).getOptionalClaimGrants()).isEmpty();
+        assertThat(user.getPermissionGrands().get(0).getClosureRequests()).hasSize(1);
+
+        ClosureRequest closureRequest = user.getPermissionGrands().get(0).getClosureRequests().get(0);
+        assertThat(closureRequest.getClaimID()).isEqualTo(claimID_familyName);
+        assertThat(closureRequest.getClaimOperation()).isEqualTo(ClaimOperation.EQ);
+        assertThat(closureRequest.getStaticValue().getUnifiedValue()).isEqualTo("Hans");
+        assertThat(closureRequest.isApproved()).isFalse();
     }
 }

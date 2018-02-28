@@ -53,8 +53,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation("Create a new user")
     public UserDTO createUser(@RequestBody @Valid @NonNull UserDTO userRequest) {
-        User user = userService.insertUser(
-                userRequest.toUser(UUID.randomUUID().toString()));
+        User user = userRequest.toUser(UUID.randomUUID().toString());
+        user.getClaims().forEach(this::validateClaim);
+
+        user = userService.insertUser(user);
 
         return new UserDTO(user);
     }
@@ -67,6 +69,8 @@ public class UserController {
             throw new ServiceException("Could not find user with id [%s]", HttpStatus.NOT_FOUND, userId);
         }
         User user = userRequest.toUser(userId);
+        user.getClaims().forEach(this::validateClaim);
+
         user = userService.updateUser(user);
         return new UserDTO(user);
     }
@@ -86,6 +90,7 @@ public class UserController {
         User user = getUserOrFail(userId);
 
         SharedClaim claim = userService.createClaim(user, new ProviderClaim(claimDTO));
+        validateClaim(claim);
         return new ClaimDTO(claim);
     }
 
@@ -152,6 +157,16 @@ public class UserController {
                         sharedClaim.getClaimValue().getPayloadType().getSupportedClaimOperation()
                 ))
                 .collect(Collectors.toSet());
+    }
+
+    private void validateClaim(@NonNull SharedClaim claim) {
+        if(! claim.getClaimValue().getPayloadType().validateType(claim.getClaimValue().getPayload())) {
+            throw new ServiceException(
+                    "Invalid payload [%s] for payload type [%s].",
+                    HttpStatus.BAD_REQUEST,
+                    claim.getClaimValue().getPayload(),
+                    claim.getClaimValue().getPayloadType());
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
@@ -17,13 +18,13 @@ public class ClosureExpressionTest {
 
     @Test
     public void describe() {
-        ClosureExpression<Boolean> closureExpression1 = new ClosureExpression<>(
-                new Payload(Boolean.TRUE, ClaimType.BOOLEAN),
+        ClosureExpression closureExpression1 = new ClosureExpression(
+                new Payload(new ValueHolder(Boolean.TRUE), ClaimType.BOOLEAN),
                 ClaimOperation.EQ,
                 true);
 
-        ClosureExpression<LocalDateTime> closureExpression2 = new ClosureExpression<>(
-                new Payload(LocalDateTime.of(1994, 4, 18, 0, 0), ClaimType.DATE),
+        ClosureExpression closureExpression2 = new ClosureExpression(
+                new Payload(new ValueHolder(LocalDateTime.of(1994, 4, 18, 0, 0)), ClaimType.DATE),
                 ClaimOperation.LT,
                 LocalDateTime.now().minus(18, ChronoUnit.YEARS));
 
@@ -37,8 +38,8 @@ public class ClosureExpressionTest {
     @Test
     public void invalidInput() {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
-                () -> new ClosureExpression<>(
-                        new Payload(3, ClaimType.NUMBER),
+                () -> new ClosureExpression(
+                        new Payload(new ValueHolder(3), ClaimType.NUMBER),
                         ClaimOperation.EQ,
                         true)
         );

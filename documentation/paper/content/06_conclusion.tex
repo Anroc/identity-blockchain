@@ -1,12 +1,25 @@
 \chapter{Conclusion}
 \label{cha:conclusion}
 
-Describe what you did here
+\projectName{} is a proposed solution to the GDPR regulations that will restrict the process how companies are handling personal identity information. Especially the “right to be forgotten” is a big challenge when dealing with blockchain based systems, since blockchains are by nature designed to be tramper proof. While related work is failing to provide support for this upcoming law, our prototype uses a combination of off- and on-blockchain communication to be GDPR compliant. With the pessimistic assumption in mind that cryptographic hashes or even strong encryption could be broken in near future, we implemented a system completely independent of any identity information in the blockchain. To maintain the transparency, that typically is a core feature of  distributed, public blockchain technologies, we are only publishing transactions between provider and users to the blockchain. Transactions are meta data that describe a request, action or reaction to identity information manipulation, population or validation that is exchanged in an off-blockchain fashion.  Thous transactions are organized in smart contracts that the Ethereum network is providing us.
 
-\subsection{Critical Review}
+With \projectName{} we build an overlay network on the decentralized Ethereum network to populate identity meta information trough the blockchain. In that way our system remains transparent, so that each user knows who is holding which information about him. The user itself is the centralized entity that summarizes all his identity attributes, while separated providers only save a subset of his information. Each sharing, changing or evaluation of his identity related data, is routed through the user so that he needs to provide his explicit approval for an action before proceeding, which makes our system self-sovereign.
 
-- Blockchain only used for management of communication flow, therefore not a real identity system through the blockcain per se
--- security reasons:
---- saving personal information, even if only hash is risky, since hash algorithm could be broken in near future
---- some claims are hidden to the user (part of medical records, doctors patient notes)
---- 
+\section{Critical Review}
+
+However, while designing and implementing \projectName{} we faced many challenges and often had to acknowledge that our choices of technologies, implementing or design were not perfectly fitting its purpose. We will summarize and examine the biggest issues in a critical review.
+ 
+\subsection{Centralized trusted system vs decentralized untrusted system}
+To fully understand the main issue with a centralized trusted system, we need to know how trust is established in such systems. Trust is predefined and relies heavily on that one, single component that handles all the data processing, forwarding or validation. However, the big advantage Ethereum or Bitcoin comes with, and what makes them so powerful, is decentralization.  Here trust needs to be established in the system itself rather then single components by mutually validating each other and the work that is done.  This system needs to be as transparent as possible since otherwise we could not monitor other participants to notice malicious activities. Building an identity management system, however, enforces a very high level of confidentiality since we are dealing with personal information that need to be protected from any adversary. This both facts are somewhat contractible. It is clear that to advocate one, we need to make compromises with the other. 
+
+Since we can not make compromises regarding the security handling of personal information, we need to make compromises with the transparency and how trust is organized. Reviewing our proposed solution we made clear trade-offs regarding the usage and decentralization of the blockchain. However, it is the current state of art and an open question how deal with this balance between trusted and untrusted nodes. It was further complicated by the GDPR requirements that pushed us more to the centralized, trusted solution. 
+
+\subsection{Ethereum blockchain}
+Reviewing our system, the Ethereum network as our blockchain foundation was not the right choice. Solidity, the scripting language to program smart contracts in Ethereum, is not yet fully developed and was lacking library and native support. While we still managed to find workable solutions for each problem, the information amount we needed to store in the blockchain continued growing. Since it was not one of our design goals to be as space efficient as possible, we noticed that our solution was not feasible regarding operation costs. Each transaction against the Ethereum network comes with the cost of transaction fees and deploying smart contracts isn’t cheap as well. So we are facing to fundamental design problems: First how to get the user bootstrapped with money and second, how to continually generating money to keep interacting with the system.
+
+We could solve this issue, by eliminating money as renumeration of miners. MedRec \cite{azaria2016medrec}, for example, used the transferred information itself as renumeration, by anonymizing the medical records and providing them to the miner so that they can use them for research purpose. We could think about a similar approach by blinding user attributes and providing them for demographic or social analyzes. However, both the user and the miners have to agree on this renumeration and it is further not clear if a large enough demand exist that makes this approach feasible.
+
+To sum up, Ethereum may not be the right choice. There are other blockchain technologies that are also especially designed for identity management. We could also think about implementing an own adaptation of a blockchain to make it fit our needs. 
+
+\section{Future work}
+We hope that future researches are made in the direction of an transparent and secure blockchain based, identity management system that puts the control of identity information back into the users domain. However, challenges will remain how such system will deal with trust and attribute validations, regulations like GDPR and other local federal laws.

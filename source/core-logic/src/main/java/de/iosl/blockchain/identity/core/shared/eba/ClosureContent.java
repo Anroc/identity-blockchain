@@ -5,6 +5,7 @@ import lombok.NonNull;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Set;
  * Note: Hibernate annotations are not evaluated jet.
  */
 @Data
-public class ClosureContent {
+public class ClosureContent implements Serializable{
 
     /**
      * Holds a unique set of encrypted (AES encrypted with the {@link #encryptedKey}) and encoded (base64) closure request

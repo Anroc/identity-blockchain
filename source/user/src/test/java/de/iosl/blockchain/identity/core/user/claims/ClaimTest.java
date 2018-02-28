@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.user.claims;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.user.Application;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
@@ -36,7 +37,7 @@ public class ClaimTest {
     public void init() {
         userClaim = new UserClaim("1", lastModifiedDate,
                 new Provider("1", "1"),
-                new Payload("1", ClaimType.STRING),
+                new Payload(new ValueHolder("1"), ClaimType.STRING),
                 "0x123");
     }
 
@@ -52,17 +53,17 @@ public class ClaimTest {
                 "id",
                 new Date(),
                 new Provider("1", "1"),
-                new Payload(LocalDateTime.now(), ClaimType.DATE),
+                new Payload(new ValueHolder(LocalDateTime.now()), ClaimType.DATE),
                 "0x123"
         );
 
-        assertThat(userClaim.getClaimValue().getPayload()).isInstanceOf(LocalDateTime.class);
+        assertThat(userClaim.getClaimValue().getPayload().getUnifiedValue()).isInstanceOf(LocalDateTime.class);
 
         userClaimDB.insert(userClaim);
         UserClaim retrievedClaim = userClaimDB.findEntity("id").get();
 
         assertThat(userClaim).isEqualTo(retrievedClaim);
-        assertThat(userClaim.getClaimValue().getPayload()).isInstanceOf(LocalDateTime.class);
+        assertThat(userClaim.getClaimValue().getPayload().getUnifiedValue()).isInstanceOf(LocalDateTime.class);
     }
 
     @Test

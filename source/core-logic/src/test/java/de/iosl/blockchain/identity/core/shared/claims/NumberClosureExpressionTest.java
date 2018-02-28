@@ -1,5 +1,6 @@
 package de.iosl.blockchain.identity.core.shared.claims;
 
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.claims.data.ClaimType;
 import de.iosl.blockchain.identity.core.shared.claims.data.Payload;
@@ -15,15 +16,15 @@ public class NumberClosureExpressionTest {
 
     @Before
     public void setup() {
-        payloadDouble = new Payload(3.4, ClaimType.NUMBER);
-        payloadInteger = new Payload((double) 18, ClaimType.NUMBER);
+        payloadDouble = new Payload(new ValueHolder(3.4), ClaimType.NUMBER);
+        payloadInteger = new Payload(new ValueHolder((double) 18), ClaimType.NUMBER);
     }
 
     @Test
     public void evaluateDouble_eq_true() {
         ClaimOperation claimOperation = ClaimOperation.EQ;
 
-        ClosureExpression<Double> closureExpression = new ClosureExpression<>(payloadDouble, claimOperation, 3.4);
+        ClosureExpression closureExpression = new ClosureExpression(payloadDouble, claimOperation, 3.4);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -32,7 +33,7 @@ public class NumberClosureExpressionTest {
     public void evaluateDouble_neq_false() {
         ClaimOperation claimOperation = ClaimOperation.NEQ;
 
-        ClosureExpression<Double> closureExpression = new ClosureExpression<>(payloadDouble, claimOperation, -123.3);
+        ClosureExpression closureExpression = new ClosureExpression(payloadDouble, claimOperation, -123.3);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -41,7 +42,7 @@ public class NumberClosureExpressionTest {
     public void evaluateInteger_eq_true() {
         ClaimOperation claimOperation = ClaimOperation.EQ;
 
-        ClosureExpression<Double> closureExpression = new ClosureExpression<>(payloadInteger, claimOperation, (double) 18);
+        ClosureExpression closureExpression = new ClosureExpression(payloadInteger, claimOperation, (double) 18);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -50,7 +51,7 @@ public class NumberClosureExpressionTest {
     public void evaluateInteger_double_neq_false() {
         ClaimOperation claimOperation = ClaimOperation.NEQ;
 
-        ClosureExpression<Double> closureExpression = new ClosureExpression<>(payloadInteger, claimOperation, -123.3);
+        ClosureExpression closureExpression = new ClosureExpression(payloadInteger, claimOperation, -123.3);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -59,7 +60,7 @@ public class NumberClosureExpressionTest {
     public void evaluateInteger_double_eq_true() {
         ClaimOperation claimOperation = ClaimOperation.EQ;
 
-        ClosureExpression<Double> closureExpression = new ClosureExpression<>(payloadInteger, claimOperation, 18.0);
+        ClosureExpression closureExpression = new ClosureExpression(payloadInteger, claimOperation, 18.0);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -68,7 +69,7 @@ public class NumberClosureExpressionTest {
     public void evaluateInteger_gt_true() {
         ClaimOperation claimOperation = ClaimOperation.GT;
 
-        ClosureExpression<Double> closureExpression = new ClosureExpression<>(payloadDouble, claimOperation, 3.3);
+        ClosureExpression closureExpression = new ClosureExpression(payloadDouble, claimOperation, 3.3);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -77,7 +78,7 @@ public class NumberClosureExpressionTest {
     public void evaluateInteger_gt_false() {
         ClaimOperation claimOperation = ClaimOperation.GT;
 
-        ClosureExpression<Double> closureExpression = new ClosureExpression<>(payloadDouble, claimOperation, 3.4);
+        ClosureExpression closureExpression = new ClosureExpression(payloadDouble, claimOperation, 3.4);
 
         assertThat(closureExpression.evaluate()).isFalse();
     }
@@ -86,7 +87,7 @@ public class NumberClosureExpressionTest {
     public void evaluateInteger_lt_true() {
         ClaimOperation claimOperation = ClaimOperation.LT;
 
-        ClosureExpression<Double> closureExpression = new ClosureExpression<>(payloadDouble, claimOperation, 3.5);
+        ClosureExpression closureExpression = new ClosureExpression(payloadDouble, claimOperation, 3.5);
 
         assertThat(closureExpression.evaluate()).isTrue();
     }
@@ -95,7 +96,7 @@ public class NumberClosureExpressionTest {
     public void evaluateInteger_lt_false() {
         ClaimOperation claimOperation = ClaimOperation.LT;
 
-        ClosureExpression<Double> closureExpression = new ClosureExpression<>(payloadDouble, claimOperation, 3.4);
+        ClosureExpression closureExpression = new ClosureExpression(payloadDouble, claimOperation, 3.4);
 
         assertThat(closureExpression.evaluate()).isFalse();
     }

@@ -3,6 +3,7 @@ package de.iosl.blockchain.identity.core.provider.permission;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.iosl.blockchain.identity.core.provider.api.client.APIProviderService;
+import de.iosl.blockchain.identity.core.provider.permission.data.ClosureRequest;
 import de.iosl.blockchain.identity.core.provider.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.provider.user.UserService;
 import de.iosl.blockchain.identity.core.provider.user.data.PermissionGrand;
@@ -11,7 +12,12 @@ import de.iosl.blockchain.identity.core.provider.user.data.User;
 import de.iosl.blockchain.identity.core.provider.validator.ECSignatureValidator;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
+import de.iosl.blockchain.identity.core.shared.api.permission.ClosureContentCryptEngine;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.Closure;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.ClosureContractRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.PermissionContractResponse;
+import de.iosl.blockchain.identity.core.shared.claims.data.SharedClaim;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
 import de.iosl.blockchain.identity.core.shared.eba.EBAInterface;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
@@ -48,6 +54,8 @@ public class PermissionRequestService {
     private KeyChain keyChain;
     @Autowired
     private HeartBeatService heartBeatService;
+    @Autowired
+    private ClosureContentCryptEngine closureContentCryptEngine;
 
     @Getter
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -55,11 +63,7 @@ public class PermissionRequestService {
     private final ECSignatureValidator ecSignatureValidator = new ECSignatureValidator();
 
     public void requestPermission(@NonNull PermissionRequest permissionRequest) {
-        String pprAddress = apiProviderService.requestUserClaims(
-                permissionRequest.getUrl(),
-                permissionRequest.getEthID(),
-                permissionRequest.getRequiredClaims(),
-                permissionRequest.getOptionalClaims());
+        String pprAddress = apiProviderService.requestUserClaims(permissionRequest);
 
         log.info("Retrieved PPR address at {}", pprAddress);
 
@@ -106,20 +110,37 @@ public class PermissionRequestService {
         Map<String, String> claimResult = new HashMap<>(contractContent.getRequiredClaims());
         claimResult.putAll(contractContent.getOptionalClaims());
 
-        log.info("Received claims via PPR: requried {} and optional {} for user {}", claimResult, ethID);
+        log.info("Received claims via PPR: requried {}, optional {} and closures {} for user {}",
+                contractContent.getRequiredClaims(),
+                contractContent.getOptionalClaims(),
+                contractContent.getClosureContent(),
+                ethID);
 
         List<SignedRequest<ApprovedClaim>> approvedClaims = mapResultsToApprovedClaimRequest(claimResult);
         log.info("Successful extracted {} approvedClaims.", approvedClaims.size());
-
         validateApprovedClaims(approvedClaims);
-        log.info("Successful validated {} approvedClaims for user [{}]", ethID, approvedClaims);
+        log.info("Successful validated {} approvedClaims for user [{}]", approvedClaims, ethID);
 
-        List<ProviderClaim> claims = apiProviderService.requestClaimsForPPR(url, ethID, pprAddress, approvedClaims);
+        Set<ClosureContractRequest> closureContractRequests;
+        if(contractContent.getClosureContent() != null) {
+            closureContractRequests = closureContentCryptEngine.decrypt(contractContent.getClosureContent(), keyChain.getRsaKeyPair().getPrivate());
+            log.info("Successful decrypted {} approved closure requests.", closureContractRequests.size());
+            validateClosures(closureContractRequests);
+            log.info("Successful validated {} approved closure requests {}", closureContractRequests);
+        } else {
+            log.info("No closures found.");
+            closureContractRequests = new HashSet<>();
+        }
 
+        PermissionContractResponse response = apiProviderService.requestClaimsForPPR(url, ethID, pprAddress, approvedClaims, closureContractRequests);
+
+        List<ProviderClaim> claims = response.getClaims().stream().map(ProviderClaim::new).collect(Collectors.toList());
         log.info("Received claims from Provider: {}", claims);
         User user = updateUserClaims(ethID, claims);
-        updateUserPermissionGrants(user, pprAddress, claims);
 
+        user = updateUserClosures(user, response.getSignedClosures());
+
+        updateUserPermissionGrants(user, pprAddress, claims, response.getSignedClosures());
         messageService.createMessage(MessageType.NEW_CLAIMS, user.getId(), null);
     }
 
@@ -141,6 +162,19 @@ public class PermissionRequestService {
                 }).collect(Collectors.toList());
     }
 
+    private void validateClosures(Set<ClosureContractRequest> closureContractRequests) {
+        closureContractRequests.forEach(
+                closureContractRequest -> {
+                    if(! getEcSignatureValidator().isSignatureValid(
+                            closureContractRequest.getClosureContractRequestPayload(),
+                            closureContractRequest.getEcSignature(),
+                            closureContractRequest.getClosureContractRequestPayload().getEthID())) {
+                        throw new ServiceException("Closure request was not valid! Object: %s", HttpStatus.INTERNAL_SERVER_ERROR, closureContractRequest);
+                    }
+                }
+        );
+    }
+
     private void validateApprovedClaims(List<SignedRequest<ApprovedClaim>> approvedClaims) {
         approvedClaims.forEach(
                 approvedClaimSignedRequest -> {
@@ -160,6 +194,11 @@ public class PermissionRequestService {
         claims.forEach(
                 claim -> {
                     claim.setModificationDate(currentDate);
+                    Optional<ProviderClaim> providerClaim = user.findClaim(claim.getId());
+                    if(providerClaim.isPresent()) {
+                        List<SignedRequest<Closure>> closures = providerClaim.get().getSignedClosures();
+                        claim.getSignedClosures().addAll(closures);
+                    }
                     user.putClaim(claim);
                 }
         );
@@ -167,7 +206,39 @@ public class PermissionRequestService {
         return userService.updateUser(user);
     }
 
-    private User updateUserPermissionGrants(User user, String permissionContractAddress, List<ProviderClaim> claims) {
+    private User updateUserClosures(User user, List<SignedRequest<Closure>> signedClosures) {
+        Set<String> newClaimIds = signedClosures.stream()
+                .map(SignedRequest::getPayload)
+                .map(Closure::getClaimID)
+                .collect(Collectors.toSet());
+
+        Set<String> knownClaimIds = user.getClaims().stream().map(SharedClaim::getId).collect(Collectors.toSet());
+        newClaimIds.removeAll(knownClaimIds);
+
+        initClaimForClosure(user, newClaimIds);
+
+        for(ProviderClaim providerClaim: user.getClaims()) {
+            List<SignedRequest<Closure>> closures = signedClosures.stream()
+                    .filter(signedClosure -> signedClosure.getPayload().getClaimID().equals(providerClaim.getId()))
+                    .collect(Collectors.toList());
+
+            if(providerClaim.getSignedClosures() == null) {
+                providerClaim.setSignedClosures(closures);
+            } else {
+                providerClaim.getSignedClosures().addAll(closures);
+            }
+        }
+
+        return userService.updateUser(user);
+    }
+
+    private void initClaimForClosure(User user, Set<String> newClaimIds) {
+        newClaimIds.stream()
+                .map(claimId -> new ProviderClaim(claimId, new Date(), null, null))
+                .forEach(user::putClaim);
+    }
+
+    private User updateUserPermissionGrants(User user, String permissionContractAddress, List<ProviderClaim> claims, List<SignedRequest<Closure>> signedClosures) {
         PermissionGrand permissionGrand = user.findPermissionGrand(permissionContractAddress)
                 .orElseThrow(() -> new IllegalStateException(
                         String.format("User [%s] does not have matching permission grands (%s).", user.getId(), permissionContractAddress))
@@ -175,10 +246,28 @@ public class PermissionRequestService {
 
         permissionGrand.setRequiredClaimGrants(updatePermissionGrands(permissionGrand.getRequiredClaimGrants(), claims));
         permissionGrand.setOptionalClaimGrants(updatePermissionGrands(permissionGrand.getOptionalClaimGrants(), claims));
+        permissionGrand.setClosureRequests(updateClosureRequests(permissionGrand.getClosureRequests(), signedClosures));
 
         user.putPermissionGrant(permissionGrand);
 
         return userService.updateUser(user);
+    }
+
+    private List<ClosureRequest> updateClosureRequests(List<ClosureRequest> closureRequests, List<SignedRequest<Closure>> signedClosures) {
+        if(signedClosures.isEmpty()) {
+            return closureRequests;
+        }
+
+        for(ClosureRequest closureRequest : closureRequests) {
+            if(signedClosures.stream().anyMatch(signedClosure ->
+                    signedClosure.getPayload().getClaimID().equals(closureRequest.getClaimID())
+                            && signedClosure.getPayload().getClaimOperation() == closureRequest.getClaimOperation()
+                            && signedClosure.getPayload().getStaticValue().getUnifiedValue().equals(closureRequest.getStaticValue().getUnifiedValue()))) {
+                closureRequest.setApproved(true);
+            }
+        }
+
+        return closureRequests;
     }
 
     private Map<String, Boolean> updatePermissionGrands(Map<String, Boolean> grands, List<ProviderClaim> claims) {
@@ -194,15 +283,24 @@ public class PermissionRequestService {
     }
 
     private void updateUser(User user, String pprAddress, PermissionRequest permissionRequest) {
-        PermissionGrand permissionGrand =
-                PermissionGrand.init(pprAddress, permissionRequest.getRequiredClaims(), permissionRequest.getOptionalClaims());
+        PermissionGrand permissionGrand = PermissionGrand.init(
+                pprAddress,
+                permissionRequest.getRequiredClaims(),
+                permissionRequest.getOptionalClaims(),
+                permissionRequest.getClosuresRequests()
+        );
         user.addPermissionGrant(permissionGrand);
         userService.updateUser(user);
     }
 
     private void createNewUser(String pprAddress, PermissionRequest permissionRequest) {
         List<PermissionGrand> permissionGrands = new ArrayList<>();
-        permissionGrands.add(PermissionGrand.init(pprAddress, permissionRequest.getRequiredClaims(), permissionRequest.getOptionalClaims()));
+        permissionGrands.add(
+                PermissionGrand.init(
+                        pprAddress,
+                        permissionRequest.getRequiredClaims(),
+                        permissionRequest.getOptionalClaims(),
+                        permissionRequest.getClosuresRequests()));
 
         User user = new User(
                 UUID.randomUUID().toString(),

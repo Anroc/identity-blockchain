@@ -8,12 +8,18 @@ import de.iosl.blockchain.identity.core.RestTestSuite;
 import de.iosl.blockchain.identity.core.shared.KeyChain;
 import de.iosl.blockchain.identity.core.shared.api.data.dto.SignedRequest;
 import de.iosl.blockchain.identity.core.shared.api.permission.data.dto.ApprovedClaim;
+import de.iosl.blockchain.identity.core.shared.claims.closure.ValueHolder;
+import de.iosl.blockchain.identity.core.shared.claims.data.ClaimOperation;
 import de.iosl.blockchain.identity.core.shared.ds.beats.HeartBeatService;
+import de.iosl.blockchain.identity.core.shared.ds.registry.data.RegistryEntryDTO;
 import de.iosl.blockchain.identity.core.shared.eba.PermissionContractContent;
 import de.iosl.blockchain.identity.core.shared.eba.main.Account;
 import de.iosl.blockchain.identity.core.user.Application;
+import de.iosl.blockchain.identity.core.user.permission.data.ClosureRequest;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequest;
 import de.iosl.blockchain.identity.core.user.permission.data.PermissionRequestDTO;
+import de.iosl.blockchain.identity.crypt.CryptEngine;
+import de.iosl.blockchain.identity.crypt.KeyConverter;
 import de.iosl.blockchain.identity.crypt.sign.EthereumSigner;
 import de.iosl.blockchain.identity.lib.dto.beats.Beat;
 import de.iosl.blockchain.identity.lib.dto.beats.EventType;
@@ -34,9 +40,8 @@ import org.web3j.crypto.Credentials;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.security.KeyPair;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,7 +91,8 @@ public class PermissionControllerRestTest extends RestTestSuite {
                 issuedProviderEthID,
                 permissionContractAddress,
                 requiredClaims.stream().collect(Collectors.toMap(s -> s, s -> false)),
-                optionalClaims.stream().collect(Collectors.toMap(s -> s, s -> false))
+                optionalClaims.stream().collect(Collectors.toMap(s -> s, s -> false)),
+                Sets.newHashSet()
         );
 
         permissionRequestDB.insert(permissionRequest);
@@ -200,6 +206,63 @@ public class PermissionControllerRestTest extends RestTestSuite {
                 PermissionRequestDTO.class);
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void updatePermissionRequest_closures() {
+        KeyPair keyPair = CryptEngine.generate().string().rsa().getAsymmetricCipherKeyPair();
+        KeyConverter keyConverter = new KeyConverter();
+
+        doReturn(mock(Beat.class)).when(heartBeatService)
+                .createEthIdBeat(providerEthID, EventType.PPR_UPDATE, permissionContractAddress);
+
+        doNothing().when(ebaInterface)
+                .approvePermissionContract(any(Account.class), eq(permissionContractAddress), any(PermissionContractContent.class));
+
+        doReturn(Optional.of(new RegistryEntryDTO(keyConverter.from(keyPair.getPublic()).toBase64(), "exmaple.com", 123)))
+                .when(heartBeatService).discover(providerEthID);
+
+        ClosureRequest closureRequest1 = new ClosureRequest(
+                "GIVEN_NAME",
+                ClaimOperation.EQ,
+                new ValueHolder("Hans"),
+                "asd",
+                true,
+                true
+        );
+
+
+        ClosureRequest closureRequest2 = new ClosureRequest(
+                "FAMILY_NAME",
+                ClaimOperation.EQ,
+                new ValueHolder("Peter"),
+                "asd",
+                true,
+                false
+        );
+
+        permissionRequest.setClosureRequests(
+            Sets.newHashSet(closureRequest1, closureRequest2)
+        );
+
+        permissionRequest.setRequiredClaims(new HashMap<>());
+        permissionRequest.setOptionalClaims(new HashMap<>());
+
+        permissionRequestDB.update(permissionRequest);
+
+        PermissionRequestDTO permissionRequestDTO = new PermissionRequestDTO(permissionRequest);
+
+        ResponseEntity<PermissionRequestDTO> result = restTemplate.exchange("/permissions/" + permissionRequestID,
+                HttpMethod.PUT,
+                new HttpEntity<>(permissionRequestDTO),
+                PermissionRequestDTO.class);
+
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isNotNull();
+
+        PermissionRequest permissionRequest = permissionRequestDB.findEntity(permissionRequestID).get();
+        assertThat(permissionRequest.getClosureRequests()).containsExactlyInAnyOrder(closureRequest1, closureRequest2);
+        verify(ebaInterface).approvePermissionContract(any(Account.class), eq(permissionContractAddress), any(PermissionContractContent.class));
     }
 
     private void assertPPRContent(Map<String, String> approvedClaims, Set<String> initialClaims) {

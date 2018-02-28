@@ -7,10 +7,14 @@ import org.bouncycastle.util.encoders.Base64;
 import org.hibernate.validator.constraints.NotBlank;
 import org.web3j.crypto.Sign;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ECSignature {
+public class ECSignature implements Serializable {
+
+    private static final long serialVersionUID = 9223372026394422605L;
 
     @NotBlank
     private String r;

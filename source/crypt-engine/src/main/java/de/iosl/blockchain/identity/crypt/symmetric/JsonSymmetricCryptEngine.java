@@ -2,6 +2,7 @@ package de.iosl.blockchain.identity.crypt.symmetric;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.iosl.blockchain.identity.crypt.ObjectMapperFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -16,7 +17,7 @@ public class JsonSymmetricCryptEngine extends StringSymmetricCryptEngine {
 
     public JsonSymmetricCryptEngine(int bitSecurity) {
         super(bitSecurity);
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = ObjectMapperFactory.create();
     }
 
     public String encryptEntity(Object data, Key key)

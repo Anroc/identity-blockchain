@@ -84,7 +84,7 @@ public class UserService {
     private boolean filterForClaimAttribute(User user, String claimValue) {
         return user.getClaims()
                 .stream()
-                .filter(claim -> claim.getClaimValue().getPayload().equals(claimValue))
+                .filter(claim -> claim.getClaimValue().getPayload().getUnifiedValue().equals(claimValue))
                 .findAny()
                 .isPresent();
     }
