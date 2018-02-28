@@ -1,12 +1,13 @@
 
 \chapter{Concept and Design}
 \label{cha:conceptanddesign}
+In the following sections we will introduce the general concept and design. We organized our project in four milestones:
+Registration, Permission Requests, Closures and Change Claims.
+We will further motivate each design and define our challenges and requirements.
 
-\section{General}
+\section{Requirements}
 
-\section{Requirements and Challenges}
-
-\subsection{Requirements}
+While the project requirements were quite loose, we defined one central goal to achieve.
 
 \subsubsection{GDPR compliance}
 \label{subsubsec:GDPR_compliance}
@@ -14,6 +15,8 @@ The General Data Protection Regulation (GDPR) is a regulation by the European Pa
 
 \section{Challenges}
 \label{sec:challenges}
+
+Further we self-defined our goals that we want to achieve in this project. In the follow sections we will summarize them.
 
 \subsection{Security Goals}
 \label{sec:securityGoals}
@@ -59,6 +62,7 @@ As an alternative solution, it would be possible to replace the public blockchai
 This would also cancel the independent miners motivation to be part of the system. Creating the need for different remuneration concepts or even state owned miners. These proposals would introduce new risks into the system by defining a single trust anchor for the entire system. 
 
 \section{Processes}
+We will now continue to define the concept and design of each of our mile stones: Registration, Permission Request, Closures and Change Claims. 
 
 \subsection{Registration}
 In order to be part of our distributed digital identity system that we envisioned, it is necessary to register with it first. The registration process consists of the following steps:
@@ -90,6 +94,7 @@ After approving the users registration contract the government creates a data bl
 The user is now a fully registered member within our community. Henceforth he can use this identity to request services and offer claims to and from other registered parties. 
 
 \subsection{Permission Request}
+\label{ssec:PermReq}
 With registration complete it is now time to use the system for its intended purpose. Meaning requesting services or purchasing goods from providers such as Banks, 
 Car Rental Agencies, Airlines using \projectName{} for verification. In order to better understand how \projectName{} facilitates these transactions it is important to understand that
 each identity is defined by an enormous amount of characteristics. These could be, but are not limited to, their given name, family name, age, full address, employer, e-mail address, physical characteristics such as facial structure, eye color, etc.
@@ -203,7 +208,7 @@ To introduce the concept behind \textit{closures}, lets say a web content provid
 \end{enumerate}
 
 Let us start by glancing at the closure requesting and creation flow as displayed in figure \ref{fig:closure}. We start off at the provider requesting a closure over the age of the user in step 1.
-The provider is referencing the user by his ethereum address so that the government that creates the closure contract, knows whom to address this contract to. In step 2 the government creates the “Closure Contract” containing the users attribute identifier “AGE”, the logical comparator “>=” (greater or equals) and the asymmetrically encrypted comparison value “18”.
+The provider is referencing the user by his Ethereum address so that the government that creates the closure contract, knows whom to address this contract to. In step 2 the government creates the “Closure Contract” containing the users attribute identifier “AGE”, the logical comparator “>=” (greater or equals) and the asymmetrically encrypted comparison value “18”.
 
 Since the blockchain is public, every observing party could notice this new closure contract. If the comparison value was not encrypted, we would expose semi-critical personal information about the user, even without populating the closure evaluation result through the blockchain. Imagine a longterm passive adversary that is observing closure contracts. This adversary could learn valuable Information about specific users from mapping closure requests to users over a long time period. Imagine a user that is using fixed rate payments often while shopping. So the provider would create a corresponding amount of closure requests concerning the users bank account to validate his liquidity. One closure over “>1.000\$ ?”  another one over “> 5.000\$” and lastly over “> 12.000 \$”. The adversary could learn that even without knowing the closure evaluation result that the users bank account is likely at least over 5.000\$ since the provider requested the 12.000\$ closure last. This would help an adversary to find valuable targets.
 To conclude we prevent this type of long-term observation attacks by encrypting the comparison value, so that only the user can encrypt this value.
@@ -245,6 +250,36 @@ Now the change claim process is finished. However, as mentioned previously there
 \includegraphics[width=\textwidth]{concept/evaluation.png}
  
 \section{Use cases}
+To demonstrate how our system works we will try to formulate a specific use caseses, in order to provide examples. An additional prerequisite we will define is that \projectName{} has been deployed by a centrally trusted entity like the government.
+
+\subsection{Registering with the system}
+\label{ssec:registerWithSystem}
+Lets consider aunt Trudy who is not very technologically knowledgeable. In order to refresh her identity card she visits the citizen center closest to her and the teller at the register informs her about a new digital identity service that can offer digital verification for a multitude of plattforms that Trudy frequents. She decides to give it a try since the teller informs her that it is conforming to the GDPR\cite{gdpr}.
+
+Because registration is quick and easy she decides to do it right there on the spot. She downloads the app and enters a name of her choice and decides on a password. The system now generates a new user account with Trudy's chosen settings. This sets up the "register contract" within the Ethereum network containing her information.\ref{ssec:PermReq} After she is logged in, which happens automatically after the registration process, the teller asks Trudy to open her personal Dashboard and click on "Show QR-Code". The teller then scans this QR-Code with a special app which then parses the information within the QR-Code and finds the corresponding registration contract within the blockchain. Now this the information within this contract is compared to the information within the QR-Code and either verified and approved, or denied.
+
+Now Trudy is part of the system and is ready to participate within the \projectName{} ecosystem. Additionally she got sent all available claims and can easily check which information she can share with other members.
+
+\subsection{Requesting permission from a user}
+\label{ssec:requestingPermission}
+In order to try out the system Trudy now decides to create a new bank account with a newly established heavily marketed bank. After waiting in line, it is finally her turn to speak with the bank teller. She tells her, that she would like to create a new bank account using \projectName{}, which is no problem at all. The teller asks her for her Ethereum address and her public key, which is easily shared through nfc or comparable protocols.
+The teller enters her Ethereum address into the registration form and waits for the available claims to arrive . Now the teller can decide on claims that are required and optional and sends the form to the government.
+The government now checks for that Ethereum address within its record and whether it is associated with an active user. After finding Trudy, it writes a new message in the form of a smart contract to the blockchain containing Trudy's Ethereum address and the request containing all required and optional attributes.
+Trudy's app automatically polls the blockchain every of couple seconds and notifies Trudy about a new permission request containing all Attributes the Teller requested. She now decides which information she is willing to share and which she isn't. After she is done deciding, the information is written in a new message to the blockchain, containing the information she approved for sharing purposes.
+The government also automatically polls the blockchain every couple of seconds and notices an answer to the previously created permission request.
+The Bank also has read access to the blockchain and notices the answer aswell. The Bank now takes the message containing the approved attributes and sends them as query to the government.
+The government verifies whether the query sent by the bank matches the one Trudy approved and if they are equal, the government queries its database and creates a result, which is then sent to the Bank.
+
+Now the teller informs Trudy of a successful sharing of claims and starts introducing Trudy to the Banks general rules and regulations, as she is now a new customer.
+
+\subsection{Closure}
+\label{sec:closureUserCase}
+
+Bob wants to watch his favorite show by his streaming provider. However, the show is age restricted so that Bob needs to provide a proof that he is over 18. Currently he would do so by taking a picture of his ID card with his web cam which then have to be validated by a employee. But with \projectName{} he can use a closure over his age to not expose his birthday and also not other identity information that would be captured from his ID card. 
+
+To do so his streaming provider is requesting the government for this closure. The government will ask Bob for his approval that the closure will be generated. If he provides his approval the government is evaluating if Bob is over 18, signing the evaluation result and returning this information back to the streaming provider. The streaming provider now has the assurance from the government that Bob is indeed over 18 and can continue to provide Bob the streaming service. 
+
+The government also sends Bob a copy of the generated closure, so that he can visit also other sides that are providing age restricted content, send them his new closure and as exchange, access to the service. 
 
 \subsection{Change a claim}
 \label{sec:changeClaimUseCase}
@@ -253,4 +288,4 @@ Lets have a user Bob Bobsen who has recently married Alice Alicon. Since Bob wan
 Bob then pulls the blockchain, and requests the signed version of his new family name from the government, which he saves in his local database.
 
 \textbf{b) Enforced claim changes:}
-Bob has lost his driving license by committing a traffic violation. Since Bob is still holding a signed version of his driving license in his local database he could easily rent a new car. So the government enforces a claim change by publishing a “Change Claim Contract” to the blockchain referencing Bobs ethereum ID, the driving license claim ID and a time period (6 months) during which his license is suspended. Each entity observing the blockchain now knows that the driving license claim value provided by Bob has been suspended for 6 months, if the provided signature is older then the creation date of the “Change Claim Contract”. However, Bob can query the government for the updated claim value and retrieve the temporary restricted driving license, which is then also trusted, because it is up to date. After 6 months no new claim change contract needs to be setup because an entity can simply compute that the suspension time is expired and that no new claim change was published by the government.
+Bob has lost his driving license by committing a traffic violation. Since Bob is still holding a signed version of his driving license in his local database he could easily rent a new car. So the government enforces a claim change by publishing a “Change Claim Contract” to the blockchain referencing Bobs Ethereum ID, the driving license claim ID and a time period (6 months) during which his license is suspended. Each entity observing the blockchain now knows that the driving license claim value provided by Bob has been suspended for 6 months, if the provided signature is older then the creation date of the “Change Claim Contract”. However, Bob can query the government for the updated claim value and retrieve the temporary restricted driving license, which is then also trusted, because it is up to date. After 6 months no new claim change contract needs to be setup because an entity can simply compute that the suspension time is expired and that no new claim change was published by the government.
