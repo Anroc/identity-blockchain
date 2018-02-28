@@ -18,19 +18,19 @@ The General Data Protection Regulation (GDPR) is a regulation by the European Pa
 \subsection{Security Goals}
 \label{sec:securityGoals}
 
-Designing a identity management systems comes with various legal implications. We are referring here to § 9 “Technical and organizational actions” in the “Federal Data Protection Act”\footnote{Translated from the German language “Bundesdatenschutzgesetz”} were an identity management system shell enforce all necessary measures to protect identity information.\cite{bdsg}
+Designing an identity management system comes with various legal implications. More specifically we are referring to § 9 “Technical and organizational actions” in the “Federal Data Protection Act”\footnote{Translated from the german version of the  “Bundesdatenschutzgesetz”} were an identity management system shall enforce all necessary measures to protect identity information.\cite{bdsg}
 
 So we will focus on the following security goals:
 \begin{enumerate}
-\item \textbf{Confidentiality:} Data shell be secured on its transmission. This includes the blockchain and communication over the internet. 
+\item \textbf{Confidentiality:} Data shall be secured on its transmission. This includes the blockchain and communication over the internet. 
 \item \textbf{Integrity:} The integrity of the data needs to be assured so that no entity can change identity information without knowledge. 
-\item \textbf{Authenticity:} Identity information are protected against unauthorized access. 
+\item \textbf{Authenticity:} Identity information is protected against unauthorized access. 
 \item \textbf{Non-Repudiation:} No entity can deny having taken an action.
 \item \textbf{Privacy:} The privacy of a user is preserved while interacting with the system. 
 \end{enumerate}
 
-We further also see the blockchain as a world open readable ledger were everyone can read transactions or information stored on the blockchain. So interactions with the blockchain need to ensure to not expose any identity information. 
-It is not allowed to store hashes or encryption of claim in the blockchain, since it is a tamper-proof data storage, information can not be removed once written. So if the hash or encryption gets broken the identity information is leaked and can not be removed.  
+We further also view the blockchain as a public ledger were everyone can read transactions or information stored on the blockchain. So interactions with the blockchain need to ensure to not expose any identity information. 
+It is not allowed to store hashes or encrypted claims in the blockchain, since it is a tamper-proof data storage, once written information can not be removed or changed. So if the hash or encryption gets broken the identity information is leaked and can not be deleted from the blockchain.  
 
 \subsection{User Acceptance}
 \label{sec:userAcceptance}
@@ -175,7 +175,7 @@ Users don't pay for the creation of the smart contract handling this information
 
 % Please agument why the user if he is holding signed claims is not providing his claims directly to the requesting provider
 % Include the following arguments:
-% 1. request shell be populated through the blockchain so that every entity can acknowledge the claim sharing
+% 1. request shall be populated through the blockchain so that every entity can acknowledge the claim sharing
 % 2. populatring thre reuqest through the blockchain gives us the possibility to explicit approve the sharing
 % 3. generating a signed query can also have additional attributes like a reuse flag to indicate if the query could be used again if the claim changed
 % 4. user don't have to pay for the creation of the smart contract. only for the updating of the signed values
@@ -202,7 +202,7 @@ To introduce the concept behind \textit{closures}, lets say a web content provid
 \end{enumerate}
 
 Let us start to follow the closure requesting and creation flow as displayed in figure \ref{fig:closure}. We start off at the provider requesting a closure over the age of the user in step 1. 
-The provider is referencing the user by this ethereum address so that the government that shell create the closure contract, knows to whom to address this contract. In step 2. the government creates the “Closure Contract” containing the users attribute identifier “AGE”, the logical comparator “>=” (greater equals) and the asymmetrically encrypted comparison value “18”.  
+The provider is referencing the user by this ethereum address so that the government that shall create the closure contract, knows to whom to address this contract. In step 2. the government creates the “Closure Contract” containing the users attribute identifier “AGE”, the logical comparator “>=” (greater equals) and the asymmetrically encrypted comparison value “18”.  
 
 Since the blockchain is world readable, every observing party may notice this new closure contract. If we would not encrypt the comparison value, we would expose semi-critical personal information about the user, even without populating the closure evaluation result through the blockchain. Imagen a longterm passive adversary that is observing closure contracts. This adversary could learn from mapping closure requests to users over a longer time period information about the user. Imagen a user that is uses rate payments very often while shopping. So provider would create many closure requests over the users bank account to validate his liquidity. Some over “>1.000\$ ?” then over “> 5.000\$” and finally over “> 12.000 \$”. The adversary could learn that even without knowing the closure evaluation result that the users bank account is likely at least over 5.000\$ since the provider requested even the 12.000\$ closure. This would help an adversary to find value targets. 
 To conclude we prevent this kind of long-term observation attack by encrypting the comparison value, so that only the user can encrypt this value. 
@@ -230,7 +230,7 @@ Changing claims in a self-sovereign manner with still providing the high level o
 
 Both actions are described as use cases in section \ref{sec:changeClaimUseCase}. For a) the use case that the user may want to change his family name because he got married recently. In the case of b) the government triggers a change claim as an law enforcement (e.g. the user looses his driving license for a certain time) or an other federal institution wants to update the users claims. Each scenarios are described in detail in this section. 
 
-To still serve as a self-sovereign system the user gets the possibility to create a “change claim contract request” (step 1., figure \ref{fig:changeClaimsFig}). This contract itself does not enforce any change of any attributes, but serves as a change claim application. The user states the claim IDs he wants to change inside the contract. He may even add additional attributes like a time period to define for how long the claim shell be changed. It is also possible to propose new claims the user want to add by himself. However, new or changed claims needs to be verifiable by the provider. The “change claim contract request” is likely addressed at the institution that would have the highest trust level in the system, since the signature over this claims is only trusted as much as the institution itself. In our scenario the government satisfies this trust level. Some might argue that it is not necessary to populate the “change claim contract request” trough the blockchain (since each transaction cost money), but it helps to establish more transparency in our system and relocates power to the user. He decides which claims he wants to change and which new claims he wants to have added to his digital identity. 
+To still serve as a self-sovereign system the user gets the possibility to create a “change claim contract request” (step 1., figure \ref{fig:changeClaimsFig}). This contract itself does not enforce any change of any attributes, but serves as a change claim application. The user states the claim IDs he wants to change inside the contract. He may even add additional attributes like a time period to define for how long the claim shall be changed. It is also possible to propose new claims the user want to add by himself. However, new or changed claims needs to be verifiable by the provider. The “change claim contract request” is likely addressed at the institution that would have the highest trust level in the system, since the signature over this claims is only trusted as much as the institution itself. In our scenario the government satisfies this trust level. Some might argue that it is not necessary to populate the “change claim contract request” trough the blockchain (since each transaction cost money), but it helps to establish more transparency in our system and relocates power to the user. He decides which claims he wants to change and which new claims he wants to have added to his digital identity. 
 
 The government pulls down the “change claim contract request” and evaluates, it in step 2., for which claims it needs a verification, e.g. a certificate. Off-blockchain the user is asked for a proof or certificate over his proposed claims (step 3.). Each provider can define which kind of proof the user must provide to get his claim changed. The level of trust in a provider grows with the amount of accuracy the provider puts in his claim validation. The user provides the proof in step 4. Since different provider may accept different proofs, it can be various documents, like photos of his ID card, certificates of his club membership or even audio recordings. However, if the user is not able to provide the necessary proofs, the contract will be killed and the change claim request rejected.
 The provider validates if the provided proofs satisfies his acceptance criteria in step 5.  If the proofs are sufficient the provider accepts the “Change claim contract request” by setting a flag in the contract, or even removing some claims from the contract on which the verification failed (step 6.). 
