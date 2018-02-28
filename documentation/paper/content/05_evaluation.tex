@@ -75,6 +75,18 @@ Such an decentralized system would also have a hard time not to store hashes ove
 claim values, since each other location or transmission would not be tamper proof.
 The proposed backend is a proof-of-concept that an identity in the blockchain system can work even with regulations like the GDPR. However there are still some improvements that could be made for future versions of \projectName{}. The proposed backend still offers some advantages compared to a decentralized system. The discovery service, an untrusted message broker and public key directory, is a simple and efficient solution to a peer-to-peer adaptation of a client-server architecture. Further, we can simply trust each entry made by the government, since it is a trusted entity itself. This would not be possible in a completly untrustworthy system, where each request needs to validated by the user. Such a decentralized system would also have a hard time not storing hashes of claims in the blockchain to validate claim values, since the location or transmission would not be tamper proof.
 
+\section{Ethereum Blockchain Adapter - EBA}
+\label{sec:ethereumBlockchainAdapterEval}
+
+While implementing we came accross several problems.
+First of all we had the problem of gaining money in our system. Because etherum is a cryptocurrency each transaction, which can be a normal transfer of money or the deployment of a smart contract, requires ether (the currency of ethereum). But if the user wants to create the registrar contract he probably have just created a new wallet, which has no money. So the ethereum/ gas management faced a big challenge. In order to implement our system the gas price for each transaction in the testrpc network is set to zero. The management itself has the scope of another project.
+In a normal system a user can create a wallet, join the ethereum network and be part of the mining system which rewards ethereum. But we wanted to have a system that gains access without any circumstances. In a future system ethereum or other cryptocurrency based blockchain should be replaced with a "money-free-ledger" and the reward of mining is the access itself.
+
+The second problem concerned the cost of the data in the smart contracts. Because sometimes we storing a 1450 caracter string in a contract a transaction will be very expensive.
+We came to the challange, that the storing of a list of closures exceeded the money of the coinbase. So to be able to store it we decided to store each closure in a separate transaction. But in order to get information out of the contract we also had to set the size of the closure list in the contract.
+
+And the third problem that came accross was the smart contract programming language Solidity. Its currently still in alpha release, so that important features (like storing a list of strings) are not implemented yet.
+
 \section{Database}
 \label{sec:databaseEval}
 As outlined in the previous sections we chose couchbase as our database technology.(Ref. \ref{sec:database})

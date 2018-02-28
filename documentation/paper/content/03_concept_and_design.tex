@@ -244,10 +244,6 @@ The provider validates if the provided proofs satisfy his acceptance criteria in
 Now every other provider in the system holding old claim values for the referenced user can create a new permission request to discover the newly changed claims from the provider handling the change claim contract. The user still needs to approve the new incoming permission requests. In step 7 the user gets the notification about the successful approval of the change claim contract and queries the provider to retrieve a signed version of his updated claims (step 8.).
 
 Now the change claim process is finished. However, as mentioned previously there is also a scenario where a federal institution wants to enforce a claim change (for example the temporary removal of a driving license). In that case we would directly start at step 6 where the government will publish an already approved “change claim contract” referring to the claim IDs that were changed and additional values restricting the duration of this enforcement. External observers of the blockchain will notice that it is a forced claim change since the user did not provide a “change claim contract request”. In the same way as described previously, the provider will take note about the claim change and can setup a new permission request to discover the new claims. As a side note: If the user rejects the permission requests the providers holding outdated claim values can simply distrust these values and decide if they are still willing to render services to that specific user. Please refer to section \ref{sec:changeClaimUseCase} for a use case.
-
-\subsection{Evaluation}
-
-\includegraphics[width=\textwidth]{concept/evaluation.png}
  
 \section{Use cases}
 To demonstrate how our system works we will try to formulate a specific use caseses, in order to provide examples. An additional prerequisite we will define is that \projectName{} has been deployed by a centrally trusted entity like the government.
