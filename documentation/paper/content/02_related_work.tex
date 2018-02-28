@@ -1,60 +1,123 @@
 \chapter{Related Work}
 \label{cha:relatedwork}
 
+\section{MedRec}
+
+% what is medrec in one sentence
+MedRec is contextually focused on patients uniformly handling their medical data across providers and treatment sides
+as sovereign, clear and convenient as possible, implemented through a blockchain-based approach.
+% why? motivation
+The main goal is improving the ability to make smart decisions by facilitating patient-initiated data-sharing.
+Patients could authorize third parties to view their information and on the other hand health care industry stakeholders
+could remunerate miners by providing anonymized, aggregated data for research purposes.
+
+% implementation goal
+As their goal is not to build a novel electronic health records system they achieve it by using already existent data structures
+with database interfaces which all work with string-based queries.
+
+% why blockchain
+Blockchain technologies in general with the specifications of the Ethereum blockchain provide a sufficient set of the main goals.
+Especially with smart contracts which contain metadata about ownership, permissions and data integrity, MedRec decided to fork
+from the Ethereum blockchain as a privatized, small-scale blockchain with extensive APIs built on top of it.
+
+% raw implementation
+The implementation of MedRec was driven by four major issues which had to be challenged: fragmented, slow access to own
+medical data, lack of system interoperability, lack of patient agency over health care data and the need for improved
+data quality and quantity for medical research.
+Those pinnacles are circumvented by using a privatized blockchain which grants on-chain-permissioning and data integrity logic
+where block content consists of data ownership, and viewership permissions, smart contracts allow tracking of changing
+viewership rights or are data pointers to external databases.
+Providers can add medical records which patients can authorize and keep them informed in their evolution of their data.
+A synchronizing algorithm handles the data exchange between the provider and patient "off-chain".
+
+%%% MedRec System Architecture
+
+MedRec's blockchain system architecture is mainly implemented through its own blockchain, which has a restricted write access to
+certified institutions only, with three smart contracts:
+
+%%%% Registrar Contract
+
+Policies coded in the registrar contract can regulate registering new identities or changing the mapping of existent ones.
+In essence it maps identity strings to an address on the blockchain (summary contract, explained below).
+
+
+%%%% Patient-Provider Relationship Contract
+
+The patient-provider relationship contract is a node that stores and manages medical records for the other side and defines
+data pointers and associated access permissions. Each pointer consists of an immutable query string, hostname and port.
+Queries are added and modified by the care provider.
+
+
+%%%% Summary Contract
+
+A summary contract is a bread crumb trail for participants in the system and holds references to patient-provider relationship
+contracts, representing all previous and current relations. Providers have references to the patients they serve and third-parties
+with whom data-sharing is enabled. As long as there are nodes in the network, the blockchain is maintained.
+
+
+%%%% System Node Description
+The overall system node describes four components, the backend library, which resembles the certified provider, the
+Ethereum clients, which are used by patients and third parties, database gatekeepers, which act as interfaces to databases
+and the electronic health manager, which is responsible for communication with patients' actual health records.
+Patient nodes may contain the same components as providers and can be executed on a local machine, such as a PC, Mac or phone.
+Missing data can be retrieved from the network by following the summary contract.
+
+
+There are three main roles in the use case: the patient, the health company and the requesting third party.
+Blockchain based communication is only allowed by certified members, the patients and health company.
+When a third party requests data from a patient, they would have to query the patients health company which then forwards this request through the
+Ethereum blockchain using a smart contract, which the patient ultimately can then answer by allowing or denying to share the originally requested
+information.
+Also patients are able to change already existing information, its access or limit it by time which enable the
+patient to act in a self-sovereign matter concerning other parties access to their personal data.
+
+
+As MedRec had the most detailed implementation of all papers it had a major impact on our development since
+a lot of reengineering had to be done.
+
 \section{uPort}
-Uport is a blockchain-based, decentralized pulic key infrastructure which a high focus on self sovereignity. Uport, in comparision to our solution, relies excplicitly not on a centralized thrid party to verify user data.\cite[p. 2]{uPortWhitePaper}
-Identity information are stored in an off-blockchain data storage that is link via the hash of the user information to the blockchain. 
+uPort is a blockchain-based, decentralized public key infrastructure highly prioritizing self sovereignty. uPort, in comparison to our solution, relies explicitly not on a centralized third party to verify user data.\cite[p. 2]{uPortWhitePaper}
+Identity information is stored in an off-blockchain data storage (IPFS - InterPlanetary File System) that is linked via the hash of the user information to the Ethereum blockchain. This data storage is organized in a decentralized fashion so that there is no trusted entity or single point of failure.
 
-Uport is strictly build arround three smart contracts. 
+\noindent uPort is strictly build around three smart contracts.
 \begin{enumerate}
-\item \textbf{Controller Contract:} This contract interacts with the user and verfies the signatures of assoziated with his digital identity.
-
-It further also serves for key recovery and collects approvals from the deligators -- known trusted nodes -- to verify the new key generated in case of loss.
-The proxy contract acts on its behalf. 
+\item \textbf{Controller Contract:} This contract interacts with the user and handles signature based authentication mechanisms utilizing the users public key. Valid requests are forwarded to the proxy contract, which acts on its behalf. 
+It also further serves as a key recovery instrument and collects approvals from so called delegators - known trusted nodes - to verify newly generated keys in case of key loss.
 
 \item \textbf{Proxy Contract:}
 Forwards the request to an application contract. This step is needed to create a static entry point.
-The biggest adventage in this contract is the fact that in case of the key or identity loss the proxy still remains the same and can help in key and wallet recovery.
-
-This contract can also regulate the spendings done by users to maintain the balance of power and prevent the creation of super nodes or mining comunities.
-
-However, users are able to change the owner of the proxy contract or simply forward an transaction to an external address\cite[p. 6]{uPortWhitePaper}.
+The biggest advantage in this contract is the fact that in case of key or identity loss the proxy still remains the same and can help in key and wallet recovery.
+This contract can also regulate the spendings done by users to maintain the balance of power and prevent the creation of super nodes or mining communities.
+However, users are able to change the owner of the proxy contract or simply forward a transaction to an external address\cite[p. 6]{uPortWhitePaper}.
 
 \item \textbf{uPort Registry:}
-For registration the registration contract is called to link the hash of the users data to the off-blockchain data storage. The hash can later be used to validate data integrity. 
-
-For data lookup this entity knows where the off-blockchain data storages are located.
+For registration the registration contract is called to link the hash of the user data to the off-blockchain data storage. The hash can later be used to validate data integrity. 
+For data lookup this entity knows where the off-blockchain data stores are located.
 
 \end{enumerate}
 
-To authenticate against a thrid party service the off-blockchain data can be used with a self signed signature to create a web-token. This token would then contain all nessecary information to identify the user against a thrid party and can even be verified via tha hash stored in the blockchain.
+To authenticate against a third party service the off-blockchain data can be used with a self signed signature to create a web-token. This token would then contain all necessary information to identify the user against a third party and can even be verified via the hash stored in the blockchain.
 
-To setup a new device key in case the old key got stolen the recovery contract is used to create together with the new device key an updated user adress in the controller contract. This information gets porpulated until it arrives in the off-blockchain data storage. This action is timed boxed so that the recovery process is limited to a timeslot. This recovery process is triggered by the \textit{recovery quantom contract} where trusted entities (friends or family) can collectivly vote to change the main address of the users controller contract. To prevent an attacker to change the member of quorums in the meantime, the time lock also locks the quorum members.
+To setup a new device key, in case the old key got stolen, the recovery contract is used in conjunction with the new device key to create an updated user address in the controller contract. This information gets populated until it arrives in the off-blockchain data storage. The action is time boxed so that the recovery process is limited to a specific time frame and the recovery process is triggered by the \textit{recovery quorum contract}, where trusted entities (friends or family) can collectively vote to change the main address of the users controller contract. To prevent an attacker from changing the members of the quorum in the meantime, the time lock also freezes the appointed quorum members.
 
-Another implemented use case is how identity information are connected to the already existing identity profile in the blockchain. Uport porvides the possibilit of a two factore verification where you can claim a specific service account and provide a proof that you own this account in the data that you write into the off-blockchain storage. In this way everyone will know that indeed you craeted this entry and also that the account belongs to you since you provided this proof. A proof can be as simple as writing a certain string publicly into your profile. 
+Another implemented use case is how identity information is connected to the already existing identity profile in the blockchain. uPort provides the possibility of an identity verification where you can claim to own a specific social media account and provide proof that you own this account by for example posting a certain message that is written into the off-blockchain storage. In this way everyone can easily link the social media account with your digital uPort identity by validating the proof you provided.
 
-Since uPort is aimed to be user friendly the acceptance of requests is made faily easly. To accept a transaction the user scans the QRCode of his transaction partner, accepts the conditions and sends the result to the requesting entity.
-
-
-% Each user has its own proxy contract 
-% To do so the controller contract saves two entries:
-% First the users address and seconds the revocery 
-% address.
+Since uPort is aimed to be user friendly the acceptance of information sharing is made fairly easy. To accept a transaction of user data the user scans the QR-code of his transaction partner, accepts the conditions and sends the data to the requesting entity.
 
 \section{Hawk}
 \subsection{General Information}
-Hawk is a framework working on top of the blockchain client focussing on improving privacy and security. In short it is a decentralized smart contract system focussing on a bid system just like eBay. Central aspect is that transactional data is not stored in the clear on the blockchain, therefore retaining transactional privacy for all contractual parties.
+Hawk is a framework working on top of the blockchain client focusing on improving privacy and security. In short it is a decentralized smart contract system with the papers main example being a bid a closed bid system in the form of a slightly modified eBay.\cite[p.840]{Hawk} However Hawk is more flexible than that and the authors present other possible use cases such as a Crowdfunding platform, a Rock Paper Scissors game and a "Swap" Financial Instrument.\cite[p.852]{Hawk} Central aspect is that transactional data is not stored in the clear on the blockchain, therefore retaining transactional privacy for all contractual parties.\cite[p.840]{Hawk}
 
-The framework offers developers ease of use in developing cryptographically secure transactions by automating the entire cryptograpy. Developers write smart contracts just like they would normally and the Hawk compiler then automatically generates an efficient cryptographic protocol for this contract. Additionally they secure the point of communication with cryptographic primitives such as zero-knowledge proofs.
+The framework offers developers ease of use in developing cryptographically secure transactions by automating the entire cryptograpy. Developers write smart contracts just like they would normally and the Hawk compiler then automatically generates an efficient cryptographic protocol for this contract. Additionally they secure the point of communication with cryptographic primitives such as zero-knowledge proofs.\cite[p.839-840]{Hawk}
 
 \subsubsection{Underlying Technology Stack}
-Hawk is built on top of the ethereum blockchain utilizing the established smart contract system and extending upon it. During the design phase of the Hawk protocol they also considered the Zerocash network which natively guarantees transactional privacy however is less programmatically extendable than bitcoin. Ultimately they have decided against using Zerocash for the aforementioned reasons.
+Hawk is built on top of the Ethereum blockchain utilizing the established smart contract system and extending upon it. During the design phase of the Hawk protocol they also considered the Zerocash network which natively guarantees transactional privacy however is less programmatically extendable than Bitcoin. Ultimately they have decided against using Zerocash for the aforementioned reasons.\cite[p.841]{Hawk}
 
 \subsection{Extended Smart Contract System}
-Since Hawk was developed for a bidding system it has more than two contractual parties. Just as in a real auction house, Hawk has a contract manager as a central integral part of an entire bidding process, The manager is acting in the role of the "auctioneer" in our auction house example. 
+Since a hawk contract is split into multiple parts it has more than two contractual parties. In addition to the two involved parties in a transaciton Hawk involves a so called manager to ensure the transactions security, privacy and validity. The manager is acting in the role of the "auctioneer" in our auction house example. 
 
 \subsubsection{Involved Parties}
-While compiling the smart contract, Hawk splits it into three seperate parts each representing a party to the bidding process:
+While compiling the smart contract, Hawk splits it into three seperate parts each representing a party to the bidding process:\cite[p.840]{Hawk}
 \begin{itemize}
 \item \textbf{Consensus nodes:}
 This is the part that is executed by the consensus nodes to decide whether a transaction is actually valid or not.
@@ -65,7 +128,7 @@ The contract part that is to be executed by the manager, dealing with the organi
 \end{itemize}
 
 \subsubsection{Deadlines}
-Furthermore these contracts are created with three mandatory deadlines, which are defined before the contract is set up. These are:
+Furthermore these contracts are created with three mandatory deadlines, which are defined before the contract is set up. These are:\cite[p.841]{Hawk}
 \begin{itemize}
 \item \textbf{$T_1$:} Hawk contract stops collecting bids from interested parties
 \item \textbf{$T_2$:} Bids have to be opened to the manager by this point. If a bid is not opened before $T_2$ has passed it is treated as 0 and all input data contained within it is treated as $\perp$. This is also established so that the manager can always continue with an auction after a certain time has passed, so that the contract can not be delayed indefinitely.
@@ -74,7 +137,7 @@ Furthermore these contracts are created with three mandatory deadlines, which ar
 
 \subsection{Privacy}
 The contract is additionally further split into a public and private portion to ensure as much privacy for all concerned parties as possible. These are actually two seperate programs that are run cooncurrently, so that each part only has access to the data it requires.
-Hawk ensures that the following contractual security requirements for parties are met:
+Hawk ensures that the following contractual security requirements for parties are met:\cite[p.841]{Hawk}
 \begin{itemize}
 \item \textbf{Input independet Privacy}
 Bidders have no information about the already submitted bids.
@@ -91,36 +154,41 @@ This ensures two aspects of security. Firstly the on-chain privacy of data that 
 Contractual Security is ensured by protecting contract participants from damaging or sabotaging each other by relying on a third party acting as the manager.
 
 \subsection{Manager}
-The manager is a special entity who ensures that each contract is fulfilled as it was defined. The manager is not a static entity across the entire Hawk ecosystem, it is simply an additional role added onto each smart contract. This manager can be chosen randomly from a pool of managers, ensuring that there is no monopoly on the managing role. This is important since the manager has access to the private data submitted by each bidder and he is trusted to ensure that this data is kept secret. Since he is ultimately paid by each bidder he is equitable to each party. Lastly the manager is designed so that it can only run on trusted execution environments such as Intel SGX or if there is no trusted execution environment the manager program can be split so that it is run across multiple user instances.
+The manager is a special entity who ensures that each contract is fulfilled as it was defined. The manager is not a static entity across the entire Hawk ecosystem, it is simply an additional role added onto each smart contract. This manager can be chosen randomly from a pool of managers, ensuring that there is no monopoly on the managing role. This is important since the manager has access to the private data submitted by each bidder and he is trusted to ensure that this data is kept secret. Since he is ultimately paid by each bidder he is equitable to each party. Lastly the manager is designed so that it can only run on trusted execution environments such as Intel SGX or if there is no trusted execution environment the manager program can be split so that it is run across multiple user instances.\cite[p.840]{Hawk}
 
-\subsection{Pecularities Of Hawk}
-According to the authors of the paper Hawk is the first framework to allow for transactional privacy while still keeping the programmatic freedom of smart contracts. They achieve this by modularizing the contract into seperate parts, to be executed by different parties to the contract, and wrapping a custom made crytography suite around the smart contracts. This ensures that the smart contract developers do not have to implement any cryptography at all, since the compiler will add all the required functionality on compilation. Hawk is a system designed for the specifics of a hidden bid transaction.
+\subsection{Peculiarities Of Hawk}
+According to the authors of the paper Hawk is the first framework to allow for transactional privacy while still keeping the programmatic freedom of smart contracts.\cite[p.842-843]{Hawk} They achieve this by modularizing the contract into seperate parts, to be executed by different parties to the contract, and wrapping a custom made crytography suite around the smart contracts. This ensures that the smart contract developers do not have to implement any cryptography at all, since the compiler will add all the required functionality on compilation. Hawk is a system designed for the specifics of a hidden bid transaction whatever specific form it might take.\cite[p.839]{Hawk}
 
-While it is not directly useable for this project it nevertheless offers a rich set of ideas and methodson how to handle highly confidential information securely.
+While it is not directly useable for this project it nevertheless offers a rich set of ideas and methods on how to handle highly confidential information securely while offering public verifiability.
 
 \section{Anonymous Identities for Permissioned Blockchains}
 
 \subsection{Technology Stack}
-The Project builds upon the Bitcoin technology stack. However Bitcoin was only picked for its popularity and the underlying stack is interchangeable with other blockchain technologies. For Security they depend on the Intel enhanced privacy ID (EPID) scheme building atop a DAA scheme. This is run through a Trusted Platform Module which is near ubiquitous in today's digital devices. Furthermore TPM has already been standardized by the International Organization for Standardization and is most often bound to specific tamper resistant hardware. The TPM Protocol allows for recovery of its hardware-based keys through a backup protocol.
-For authentication they build upon UMA, which is a broader superset of OIDC 1.0 and OAuth 2.0 including objects and RESTful API Endpoints.
-Lastly they use the established 4-Cornes model, which is already used in the banking sector for authentication and authorization.
+The Project builds upon the Bitcoin technology stack. However Bitcoin was only picked for its popularity and the underlying stack is interchangeable with other blockchain technologies.\cite[p.2]{hardjono2016anonymous} For Security they depend on the Intel enhanced privacy ID (EPID) scheme building atop a DAA scheme. This is run through a Trusted Platform Module which is near ubiquitous in today's digital devices. Furthermore TPM has already been standardized by the International Organization for Standardization and is most often bound to specific tamper resistant hardware. The TPM Protocol allows for recovery of its hardware-based keys through a backup protocol.\cite[p.2-3]{hardjono2016anonymous}
+For authentication they build upon UMA, which is a broader superset of OIDC 1.0 and OAuth 2.0 including objects and RESTful API Endpoints.\cite[p.13-14]{hardjono2016anonymous}
+Lastly they use the established 4-Cornes model, which is already used in the banking sector for authentication and authorization.\cite[p.13]{hardjono2016anonymous}
 
 \subsection{Saved Information}
-During the creation of a permissioned identity, the requester sends his public key and zero-knowledge proofs to the permissions verifier. This entity then saves this information for upcoming verification processes. This database therefore contains a list of public keys and timestamps for the successful zero-knowledge proof protocol completion.
+During the creation of an authorized identity, the requester sends his public key and zero-knowledge proofs to the permissions verifier. This entity then saves this information for upcoming verification processes. This database therefore contains a list of public keys and timestamps for the successful zero-knowledge proof protocol completion.\cite[p.5]{hardjono2016anonymous}
 
 \subsection{Privacy and Verification}
-The projects aim was to establish a privacy preserving permissioned transaction network. In order for these to work, they established a permissioned group system. These groups represent the rights a user has in the system by way of public private key infrastructure. For a user to be able to trigger a permissioned transaction, he has to be part of that permissioned group.
+The projects aim was to establish a privacy preserving authorized transaction network. In order for these to work, they established an authorized group system. These groups represent the rights a user has in the system by way of public private key infrastructure. For a user to be able to trigger an authorized transaction, he has to be part of that authorized group.
 
-The proposed system consists of a permission issuing identity and multiple permission verification identities. Each of these permission verification entities may manage or verify multiple permissioned groups.
+The proposed system consists of a permission issuing identity and multiple permission verification identities. Each of these permissioned groups may have multiple verification entities but always only a single permission issuer.\cite[p.5]{hardjono2016anonymous}
 
-The entire flow is illustrated in the following graphic.
+The entire flow is illustrated in the graphic in figure \ref{fig:permissionBlockchainRW}.
 
+\begin{figure}
  \includegraphics{anonymous_identities_for_permissioned_blockchains.png}
+ \centering
+ \caption{Flow of the permission blockchain}
+ \label{fig:permissionBlockchainRW}
+\end{figure}
 
-Privacy is established by spreading the non anonymous interaction of the user across multiple organizational entities, so that each entity only has access to a small part of the users non masked identity.
+Privacy is established by spreading the non anonymous interaction of the user across multiple organizational entities, so that each entity only has access to a small part of the users non masked identity.\cite[p.4-5]{hardjono2016anonymous}
 \begin{itemize}
 \item \textbf{Permission Issuer:}
-Knows each given users personal key pairs, but has no knowledge of their bitcoin keys.
+Knows each given users personal key pairs, but has no knowledge of their Bitcoin keys.
 \item \textbf{Permission Verifier:}
 Knows each given user's membership key pairs and transactional key pairs, but has no knowledge of their personal key pairs used in obtaining group membership key pairs. However each user part of the same group will look the same to the verifier
 \item \textbf{Additional Privacy:}
@@ -129,13 +197,14 @@ User is able to choose his own permission verification entity, so that the risk 
 
 \subsection{Assumptions about the underlying System}
 \begin{itemize}
-\item Permission issuer and permission verifier are separate entities and not in collusion (physically, operationally, legally separate entities)
-\item User has Trusted Platform Module
-\item Single permission issuer, however multiple permission verifier
-\item During setup it is assumed that the permission issuer has a secure channel with mutual authentication to the permission verifier for transference of the membership verification public key
-\item During user registration for permissioned groups it is assumed that the user and the permission issuer have a secure channel with mutual authentication
+\item Permission issuer and permission verifier are separate entities and not in collusion (physically, operationally, legally separate entities)\cite[p.4]{hardjono2016anonymous}
+\item User has Trusted Platform Module\cite[p.2-3]{hardjono2016anonymous}
+\item Single permission issuer, however multiple permission verifier\cite[p.5]{hardjono2016anonymous}
+\item During setup it is assumed that the permission issuer has a secure channel with mutual authentication to the permission verifier for transference of the membership verification public key\cite[p.5]{hardjono2016anonymous}
+\item During user registration for permissioned groups it is assumed that the user and the permission issuer have a secure channel with mutual authentication\cite[p.6]{hardjono2016anonymous}
 \end{itemize}
+
 \subsection{Continuing Work}
-In the coming months the authors are going to focus on supporting anonymous attribute groups in identity providers. These are called assertions in SAML2.0 or claims in OpenID-Connect and verification is obtained from external sources or attribute authorities. Furthermore they are working on implementing a RESTful design for their zero-knowledge proof protocol and support for Anti-Money Laundering (AML).
+In the coming months the authors are going to focus on supporting anonymous attribute groups in identity providers. These are called assertions in SAML2.0 or claims in OpenID-Connect and verification is obtained from external sources or attribute authorities. Furthermore they are working on implementing a RESTful design for their zero-knowledge proof protocol and support for Anti-Money Laundering (AML).\cite[p.17]{hardjono2016anonymous}
 
 
