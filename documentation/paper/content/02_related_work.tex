@@ -77,7 +77,7 @@ a lot of reengineering had to be done.
 
 \section{uPort}
 uPort is a blockchain-based, decentralized public key infrastructure highly prioritizing self sovereignty. uPort, in comparison to our solution, relies explicitly not on a centralized third party to verify user data.\cite[p. 2]{uPortWhitePaper}
-Identity information is stored in an off-blockchain data storage (IPFS - InterPlanetary File System) that is linked via the hash of the user information to the ethereum blockchain. This data storage is organized in a decentralized fashion so that there is no trusted entity or single point of failure. 
+Identity information is stored in an off-blockchain data storage (IPFS - InterPlanetary File System) that is linked via the hash of the user information to the Ethereum blockchain. This data storage is organized in a decentralized fashion so that there is no trusted entity or single point of failure.
 
 \noindent uPort is strictly build around three smart contracts.
 \begin{enumerate}
@@ -111,7 +111,7 @@ Hawk is a framework working on top of the blockchain client focusing on improvin
 The framework offers developers ease of use in developing cryptographically secure transactions by automating the entire cryptograpy. Developers write smart contracts just like they would normally and the Hawk compiler then automatically generates an efficient cryptographic protocol for this contract. Additionally they secure the point of communication with cryptographic primitives such as zero-knowledge proofs.\cite[p.839-840]{Hawk}
 
 \subsubsection{Underlying Technology Stack}
-Hawk is built on top of the ethereum blockchain utilizing the established smart contract system and extending upon it. During the design phase of the Hawk protocol they also considered the Zerocash network which natively guarantees transactional privacy however is less programmatically extendable than bitcoin. Ultimately they have decided against using Zerocash for the aforementioned reasons.\cite[p.841]{Hawk}
+Hawk is built on top of the Ethereum blockchain utilizing the established smart contract system and extending upon it. During the design phase of the Hawk protocol they also considered the Zerocash network which natively guarantees transactional privacy however is less programmatically extendable than Bitcoin. Ultimately they have decided against using Zerocash for the aforementioned reasons.\cite[p.841]{Hawk}
 
 \subsection{Extended Smart Contract System}
 Since a hawk contract is split into multiple parts it has more than two contractual parties. In addition to the two involved parties in a transaciton Hawk involves a so called manager to ensure the transactions security, privacy and validity. The manager is acting in the role of the "auctioneer" in our auction house example. 
@@ -183,7 +183,7 @@ The entire flow is illustrated in the following graphic.
 Privacy is established by spreading the non anonymous interaction of the user across multiple organizational entities, so that each entity only has access to a small part of the users non masked identity.\cite[p.4-5]{hardjono2016anonymous}
 \begin{itemize}
 \item \textbf{Permission Issuer:}
-Knows each given users personal key pairs, but has no knowledge of their bitcoin keys.
+Knows each given users personal key pairs, but has no knowledge of their Bitcoin keys.
 \item \textbf{Permission Verifier:}
 Knows each given user's membership key pairs and transactional key pairs, but has no knowledge of their personal key pairs used in obtaining group membership key pairs. However each user part of the same group will look the same to the verifier
 \item \textbf{Additional Privacy:}

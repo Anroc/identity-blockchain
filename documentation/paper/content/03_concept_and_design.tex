@@ -72,16 +72,16 @@ In order to be part of our distributed digital identity system that we envisione
 
 \begin{enumerate}
 \item \label{registrar_item_one}
-The user creates an ethereum address and a private public key pair, the combination of these two are now used as the users digital identity. Jointly they act as a digital identity card. They are safely and securely stored in the users own database.
+The user creates an Ethereum address and a private public key pair, the combination of these two are now used as the users digital identity. Jointly they act as a digital identity card. They are safely and securely stored in the users own database.
 \item \label{registrar_item_two}
 For verification and auditing purposes these have to be verified by a trusted party, so that third parties can be sure of the identity of the individuals.
-We are using a specially designed smart contract, where the user inputs his ethereum address and his public key. Once filled, he writes it to the blockchain and waits for the trusted party, in our case a governmental agency, to check the contents, fulfill and sign the contract.
+We are using a specially designed smart contract, where the user inputs his Ethereum address and his public key. Once filled, he writes it to the blockchain and waits for the trusted party, in our case a governmental agency, to check the contents, fulfill and sign the contract.
 \item \label{registrar_item_three}
 In order for that to happen, the user has to physically visit his citizen office with pre-existing identification documents. After verifying himself to the authorities they can use a specifically generated QR code to quickly check his digital identity.
 \item \label{registrar_item_four}
 With the information that is contained within the QR code the citizen office can now check their database for the corresponding entity.
 \item \label{registrar_item_five}
-After finding a corresponding user they extend their existing entity with the newly gathered ethereum address, the users RSA public key, and the registration contracts ethereum address.
+After finding a corresponding user they extend their existing entity with the newly gathered Ethereum address, the users RSA public key, and the registration contracts Ethereum address.
 \item \label{registrar_item_six}
 The second to last step now is signing and approving the citizens registration contract.
 \item \label{registrar_item_seven}
@@ -106,7 +106,7 @@ e-mail addresses. Lets continue on to the actual flow of how these claims are ex
 
 \begin{enumerate}
 \item \label{permission_request_item_one}
-The first step consists of a user requesting an actual service with his ethereum address and public key, in this example we are examining the creation of a new bank account.
+The first step consists of a user requesting an actual service with his Ethereum address and public key, in this example we are examining the creation of a new bank account.
 \begin{comment}
 "An" goes before all words that begin with vowels:
 An egg
@@ -124,10 +124,10 @@ https://english.stackexchange.com/questions/105116/is-it-a-user-or-an-user
 The bank teller now enters that information into a \textbf{Request Permission} form additionally containing all claims that they deem necessary. These may contain claims such as
 family name, given name, date of birth, current address, etc. After completion of the form it is sent to our trusted entity, the government, for further processing.
 \item \label{permission_request_item_three}
-The government now checks whether this user is part of \projectName{} and if successful creates a new message containing the target users ethereum address, requested claims and entity requesting the claims.
+The government now checks whether this user is part of \projectName{} and if successful creates a new message containing the target users Ethereum address, requested claims and entity requesting the claims.
 Therefore the message is loosely structured as follows:
 \begin{itemize}
-\item \textbf{EthereumAddress:} This is the users ethereum address
+\item \textbf{EthereumAddress:} This is the users Ethereum address
 \item \textbf{ThirdPartyName:} The Banks name
 \item \textbf{Requested claims:} Actually contains two separate arrays.
 One holds all the required claims, without which the bank account registration will fail and the other contains optional claims.
@@ -202,7 +202,7 @@ To introduce the concept behind \textit{closures}, lets say a web content provid
 \end{enumerate}
 
 Let us start to follow the closure requesting and creation flow as displayed in figure \ref{fig:closure}. We start off at the provider requesting a closure over the age of the user in step 1. 
-The provider is referencing the user by this ethereum address so that the government that shall create the closure contract, knows to whom to address this contract. In step 2. the government creates the “Closure Contract” containing the users attribute identifier “AGE”, the logical comparator “>=” (greater equals) and the asymmetrically encrypted comparison value “18”.  
+The provider is referencing the user by this Ethereum address so that the government that shall create the closure contract, knows to whom to address this contract. In step 2. the government creates the “Closure Contract” containing the users attribute identifier “AGE”, the logical comparator “>=” (greater equals) and the asymmetrically encrypted comparison value “18”.
 
 Since the blockchain is world readable, every observing party may notice this new closure contract. If we would not encrypt the comparison value, we would expose semi-critical personal information about the user, even without populating the closure evaluation result through the blockchain. Imagen a longterm passive adversary that is observing closure contracts. This adversary could learn from mapping closure requests to users over a longer time period information about the user. Imagen a user that is uses rate payments very often while shopping. So provider would create many closure requests over the users bank account to validate his liquidity. Some over “>1.000\$ ?” then over “> 5.000\$” and finally over “> 12.000 \$”. The adversary could learn that even without knowing the closure evaluation result that the users bank account is likely at least over 5.000\$ since the provider requested even the 12.000\$ closure. This would help an adversary to find value targets. 
 To conclude we prevent this kind of long-term observation attack by encrypting the comparison value, so that only the user can encrypt this value. 
@@ -252,4 +252,4 @@ Lets have a user Bob Bobsen who has recently married Alice Alicson. Since Bob wa
 Bob does then pull the blockchain, and requests the signed version of his new family name from the government, which he saves in his local database.
 
 \textbf{b) Enforced claim changes:}
-Bob has lost his driving license by a moderate traffic crime. Since Bob is still holding a signed version of his driving license in his local database he could easy rend a new car. So the government enforces a claim change by publishing a “Change Claim Contract” to the blockchain referencing Bobs ethereum ID, the driving license claim ID and a time period (6 month). Each entity observing the blockchain can within his 6 month distrust the driving license claim value provided by Bob, if the provided signature is older then the creation date of the “Change Claim Contract”. However, Bob can query the government for the updated claim value and retrieve the temporary restricted driving license, which is then also trusted, because it is up to date. After 6 month no new claim change contract needs to be setup because an entity can simply compute that the restriction time is expired and that no new claim change was published by the government. 
+Bob has lost his driving license by a moderate traffic crime. Since Bob is still holding a signed version of his driving license in his local database he could easy rend a new car. So the government enforces a claim change by publishing a “Change Claim Contract” to the blockchain referencing Bobs Ethereum ID, the driving license claim ID and a time period (6 month). Each entity observing the blockchain can within his 6 month distrust the driving license claim value provided by Bob, if the provided signature is older then the creation date of the “Change Claim Contract”. However, Bob can query the government for the updated claim value and retrieve the temporary restricted driving license, which is then also trusted, because it is up to date. After 6 month no new claim change contract needs to be setup because an entity can simply compute that the restriction time is expired and that no new claim change was published by the government.
