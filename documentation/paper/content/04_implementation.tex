@@ -306,14 +306,24 @@ To sum up the implementation in the backend, we created a powerful and scalable 
 \section{Ethereum Blockchain Adapter - EBA}
 \label{sec:eba}
 
-As the Ethereum blockchain is a core component in the work flow, an adapter to interact with it was conceptualized and
-afterwards implemented.
-It provides interfaces to the blockchain but also to the services such as core-logic and the discovery service.
-The interfaces regarding the service provide an appropriate communication flow to provide data in and out of the blockchain.
-Smart contracts are written trough the interfaces to the blockchain, which consist of mining smart contracts and using them
-with the Gas the user provides.
-By doing so, the user can use a registrar contract, closure contract and permission contract without persisting private
-data in the blockchain.
+The Ethereum Blockchain adapter is the middleware between the applications logic and the blockchain and connect them.
+
+\subsection{Used Technology}
+In order to access the blockchain the web3j libary is needed, which provides all the necessary functions. 
+It is a lightweight, highly modular, reactive, type safe Java and Android library for working with Smart Contracts and integrating with clients (nodes) on the Ethereum network. This allows us to work with the Ethereum blockchain, without the additional overhead of having to write your own integration code for the platform. The Java and the Blockchain talk provides an overview of blockchain, Ethereum and web3j. Features. \citep{web3j}
+
+Because we couldn’t use the real ethereum network for testing we chose to use testrpc. It is a Node.js based Ethereum client for testing and development. It uses ethereumjs to simulate full client behavior and make developing Ethereum applications much faster. It also includes all popular RPC functions and features (like events) and can be run deterministically to make development a breeze \cite{testrpc}.
+
+\subsection{Structure}
+The man entrance is defined by a interface which collects all necessary functions that are needed. It is divided by 3 basic functionalities.
+First there is the creation and the access of a ethereum wallet. Those two are needed in order to interact with ethereum in the first place. The created wallet will be stored in the user’s home directory and is a JSON file.The application will be storing all information like name of the wallet/JSON and the needed credentials in an account object that will be used further on.
+
+Second functionality leads to the deployment of the registrar contract and the verification of the contract.
+And the third one implements the permission process. Here we have distinguish the payload that is given by the logic. The application logic provides just one type of object that holds all necessary information for a permission request and could also have a list of closures. If the list of closures is empty we will just deploy the permission contract together with a object parsed string of the payload.
+If the payload contains additional closures we will create another closure contract which contains all closures. If this is the case the permission contract contains the address of the contract in order to reference the closures. We devided those to in order to save gas while deploying the smart contracts.
+
+\subsection{Smart Contracts}
+In our system we have three different types of contracts. The first one is the registrar contract, which gets deployed by the user and just contains one flag that can only be switched by the government. If the government sets the flag the user is considered as registered and verified. Second is the permission contract which is deployed by the government and contains a string, that can be parsed in a permission object which contains all information for one permission request. Only the concerning user is allowed to set a updated version of the object, which contains a approval or disapproval whether the request is accepted. And last we have the closure contract which will be linked in the permission contract. It contains all encrypted closures and the necessary keys in order to decrypt them.
 
 % ------------------------ FRONTEND -----------------------------
 
