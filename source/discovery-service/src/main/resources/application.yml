@@ -1,0 +1,34 @@
+spring:
+  application.name: Blockchain-Identity-Logic
+  profiles.active: default
+  couchbase:
+    env:
+      timeouts:
+        connect: 10000
+        query: 75000
+        view: 75000
+        socket-connect: 10000
+---
+spring:
+  profiles: default
+  couchbase:
+    bootstrap-hosts: localhost
+    bucket:
+      name: default
+      password: password
+---
+spring:
+  profiles: test
+  couchbase:
+    bootstrap-hosts: srv01.snet.tu-berlin.de
+    bucket:
+      name: discovery_test
+      password: 1234qwer
+---
+spring:
+  profiles: production
+  couchbase:
+    bootstrap-hosts: srv01.snet.tu-berlin.de
+    bucket:
+      name: discovery
+      password: 1234qwer

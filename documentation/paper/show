@@ -1,0 +1,4 @@
+#!/bin/sh
+
+./make.sh
+open main.pdf
