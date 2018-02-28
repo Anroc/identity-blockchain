@@ -76,19 +76,19 @@ As MedRec had the most detailed implementation of all papers it had a major impa
 a lot of reengineering had to be done.
 
 \section{uPort}
-uPort is a blockchain-based, decentralized public key infrastructure with a high focus on self sovereignty. uPort, in comparison to our solution, relies explicitly not on a centralized third party to verify user data.\cite[p. 2]{uPortWhitePaper}
-Identity information are stored in an off-blockchain data storage (IPFS - InterPlanetary File System) that is link via the hash of the user information to the ethereum blockchain. This data storage is organized in a decentralized fashion so that there is no trusted entity, or single point of failure. 
+uPort is a blockchain-based, decentralized public key infrastructure highly prioritizing self sovereignty. uPort, in comparison to our solution, relies explicitly not on a centralized third party to verify user data.\cite[p. 2]{uPortWhitePaper}
+Identity information is stored in an off-blockchain data storage (IPFS - InterPlanetary File System) that is linked via the hash of the user information to the ethereum blockchain. This data storage is organized in a decentralized fashion so that there is no trusted entity or single point of failure. 
 
 \noindent uPort is strictly build around three smart contracts.
 \begin{enumerate}
-\item \textbf{Controller Contract:} This contract interacts with the user and handles signature based authentication mechanism using the users public key. Valid requests are forwarded to the proxy contract, which acts on its behalf. 
-It further also serves for key recovery and collects approvals from the delegators - known trusted nodes - to verify the new key generated in case of loss.
+\item \textbf{Controller Contract:} This contract interacts with the user and handles signature based authentication mechanisms utilizing the users public key. Valid requests are forwarded to the proxy contract, which acts on its behalf. 
+It also further serves as a key recovery instrument and collects approvals from so called delegators - known trusted nodes - to verify newly generated keys in case of key loss.
 
 \item \textbf{Proxy Contract:}
 Forwards the request to an application contract. This step is needed to create a static entry point.
-The biggest advantage in this contract is the fact that in case of the key or identity loss the proxy still remains the same and can help in key and wallet recovery.
+The biggest advantage in this contract is the fact that in case of key or identity loss the proxy still remains the same and can help in key and wallet recovery.
 This contract can also regulate the spendings done by users to maintain the balance of power and prevent the creation of super nodes or mining communities.
-However, users are able to change the owner of the proxy contract or simply forward an transaction to an external address\cite[p. 6]{uPortWhitePaper}.
+However, users are able to change the owner of the proxy contract or simply forward a transaction to an external address\cite[p. 6]{uPortWhitePaper}.
 
 \item \textbf{uPort Registry:}
 For registration the registration contract is called to link the hash of the user data to the off-blockchain data storage. The hash can later be used to validate data integrity. 
@@ -98,9 +98,9 @@ For data lookup this entity knows where the off-blockchain data stores are locat
 
 To authenticate against a third party service the off-blockchain data can be used with a self signed signature to create a web-token. This token would then contain all necessary information to identify the user against a third party and can even be verified via the hash stored in the blockchain.
 
-To setup a new device key, in case the old key got stolen, the recovery contract is used to create together with the new device key an updated user address in the controller contract. This information gets populated until it arrives in the off-blockchain data storage. The action is timed boxed so that the recovery process is limited to a time slot and the recovery process is triggered by the \textit{recovery quorum contract}, where trusted entities (friends or family) can collectively vote to change the main address of the users controller contract. To prevent an attacker to change the member of quorums in the meantime, the time lock also locks the quorum members.
+To setup a new device key, in case the old key got stolen, the recovery contract is used in conjunction with the new device key to create an updated user address in the controller contract. This information gets populated until it arrives in the off-blockchain data storage. The action is time boxed so that the recovery process is limited to a specific time frame and the recovery process is triggered by the \textit{recovery quorum contract}, where trusted entities (friends or family) can collectively vote to change the main address of the users controller contract. To prevent an attacker from changing the members of the quorum in the meantime, the time lock also freezes the appointed quorum members.
 
-Another implemented use case is how identity information are connected to the already existing identity profile in the blockchain. uPort provides the possibility of a identity verification where you can claim to own specific social media account and provide a proof that you own this account by  for example posting a certain message that is written into the off-blockchain storage. In this way everyone can certainly link the social media account with your digital uPort identity by validating the proof you provided.
+Another implemented use case is how identity information is connected to the already existing identity profile in the blockchain. uPort provides the possibility of an identity verification where you can claim to own a specific social media account and provide proof that you own this account by for example posting a certain message that is written into the off-blockchain storage. In this way everyone can easily link the social media account with your digital uPort identity by validating the proof you provided.
 
 Since uPort is aimed to be user friendly the acceptance of information sharing is made fairly easy. To accept a transaction of user data the user scans the QR-code of his transaction partner, accepts the conditions and sends the data to the requesting entity.
 
