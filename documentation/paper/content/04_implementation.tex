@@ -306,6 +306,15 @@ To sum up the implementation in the backend, we created a powerful and scalable 
 \section{Ethereum Blockchain Adapter - EBA}
 \label{sec:eba}
 
+As the Ethereum blockchain is a core component in the work flow, an adapter to interact with it was conceptualized and
+afterwards implemented.
+It provides interfaces to the blockchain but also to the services such as core-logic and the discovery service.
+The interfaces regarding the service provide an appropriate communication flow to provide data in and out of the blockchain.
+Smart contracts are written trough the interfaces to the blockchain, which consist of mining smart contracts and using them
+with the Gas the user provides.
+By doing so, the user can use a registrar contract, closure contract and permission contract without persisting private
+data in the blockchain.
+
 % ------------------------ FRONTEND -----------------------------
 
 \section{Frontend}
