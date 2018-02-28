@@ -90,6 +90,7 @@ After approving the users registration contract the government creates a data bl
 The user is now a fully registered member within our community. Henceforth he can use this identity to request services and offer claims to and from other registered parties. 
 
 \subsection{Permission Request}
+\label{ssec:PermReq}
 With registration complete it is now time to use the system for its intended purpose. Meaning requesting services or purchasing goods from providers such as Banks, 
 Car Rental Agencies, Airlines using \projectName{} for verification. In order to better understand how \projectName{} facilitates these transactions it is important to understand that
 each identity is defined by an enormous amount of characteristics. These could be, but are not limited to, their given name, family name, age, full address, employer, e-mail address, physical characteristics such as facial structure, eye color, etc.
@@ -245,6 +246,28 @@ Now the change claim process is finished. However, as mentioned previously there
 \includegraphics[width=\textwidth]{concept/evaluation.png}
  
 \section{Use cases}
+
+\subsection{Registering with the system}
+\label{ssec:registerWithSystem}
+To demonstrate how our system works we will try to formulate a specific use case, in order to provide an example. An additional prerequisite we will define is that \projectName{} has been deployed by a centrally trusted entity like the government.
+
+Lets consider aunt Trudy who is not very technologically knowledgeable. In order to refresh her identity card she visits the citizen center closest to her and the teller at the register informs her about a new digital identity service that can offer digital verification for a multitude of plattforms that Trudy frequents. She decides to give it a try since the teller informs her that it is conforming to the GDPR\cite{gdpr}.
+
+Because registration is quick and easy she decides to do it right there on the spot. She downloads the app and enters a name of her choice and decides on a password. The system now generates a new user account with Trudy's chosen settings. This sets up the "register contract" within the ethereum network containing her information.\ref{ssec:PermReq} After she is logged in, which happens automatically after the registration process, the teller asks Trudy to open her personal Dashboard and click on "Show QR-Code". The teller then scans this QR-Code with a special app which then parses the information within the QR-Code and finds the corresponding registration contract within the blockchain. Now this the information within this contract is compared to the information within the QR-Code and either verified and approved, or denied.
+
+Now Trudy is part of the system and is ready to participate within the \projectName{} ecosystem. Additionally she got sent all available claims and can easily check which information she can share with other members.
+
+\subsection{Requesting permission from a user}
+\label{ssec:requestingPermission}
+In order to try out the system Trudy now decides to create a new bank account with a newly established heavily marketed bank. After waiting in line, it is finally her turn to speak with the bank teller. She tells her, that she would like to create a new bank account using \projectName{}, which is no problem at all. The teller asks her for her ethereum address and her public key, which is easily shared through nfc or comparable protocols.
+The teller enters her ethereum address into the registration form and waits for the available claims to arrive . Now the teller can decide on claims that are required and optional and sends the form to the government.
+The government now checks for that ethereum address within its record and whether it is associated with an active user. After finding Trudy, it writes a new message in the form of a smart contract to the blockchain containing Trudy's ethereum address and the request containing all required and optional attributes.
+Trudy's app automatically polls the blockchain every of couple seconds and notifies Trudy about a new permission request containing all Attributes the Teller requested. She now decides which information she is willing to share and which she isn't. After she is done deciding, the information is written in a new message to the blockchain, containing the information she approved for sharing purposes.
+The government also automatically polls the blockchain every couple of seconds and notices an answer to the previously created permission request.
+The Bank also has read access to the blockchain and notices the answer aswell. The Bank now takes the message containing the approved attributes and sends them as query to the government.
+The government verifies whether the query sent by the bank matches the one Trudy approved and if they are equal, the government queries its database and creates a result, which is then sent to the Bank.
+
+Now the teller informs Trudy of a successful sharing of claims and starts introducing Trudy to the Banks general rules and regulations, as she is now a new customer.
 
 \subsection{Change a claim}
 \label{sec:changeClaimUseCase}
