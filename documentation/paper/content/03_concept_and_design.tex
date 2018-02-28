@@ -250,13 +250,10 @@ Now the change claim process is finished. However, as mentioned previously there
 \includegraphics[width=\textwidth]{concept/evaluation.png}
  
 \section{Use cases}
-
-To get a closer understanding of the previous presented processes we will now give a short use case description for each of them. 
+To demonstrate how our system works we will try to formulate a specific use caseses, in order to provide examples. An additional prerequisite we will define is that \projectName{} has been deployed by a centrally trusted entity like the government.
 
 \subsection{Registering with the system}
 \label{ssec:registerWithSystem}
-To demonstrate how our system works we will try to formulate a specific use case, in order to provide an example. An additional prerequisite we will define is that \projectName{} has been deployed by a centrally trusted entity like the government.
-
 Lets consider aunt Trudy who is not very technologically knowledgeable. In order to refresh her identity card she visits the citizen center closest to her and the teller at the register informs her about a new digital identity service that can offer digital verification for a multitude of plattforms that Trudy frequents. She decides to give it a try since the teller informs her that it is conforming to the GDPR\cite{gdpr}.
 
 Because registration is quick and easy she decides to do it right there on the spot. She downloads the app and enters a name of her choice and decides on a password. The system now generates a new user account with Trudy's chosen settings. This sets up the "register contract" within the Ethereum network containing her information.\ref{ssec:PermReq} After she is logged in, which happens automatically after the registration process, the teller asks Trudy to open her personal Dashboard and click on "Show QR-Code". The teller then scans this QR-Code with a special app which then parses the information within the QR-Code and finds the corresponding registration contract within the blockchain. Now this the information within this contract is compared to the information within the QR-Code and either verified and approved, or denied.
