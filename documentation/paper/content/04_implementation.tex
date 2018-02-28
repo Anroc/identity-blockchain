@@ -273,7 +273,7 @@ The government, as holder of the claim value, can verify that the claim operatio
 In step 5 the user extracts the closure from the blockchain by first decrypting the session key with his RSA private key. He now can decrypt the static values of the closure requests. After that is done we can request the claim values from the database of the user to evaluate the closure expression. This is done by simply evaluating the claim value with the given claim operation and the given static value. We further can now compute the user friendly description of the closure expression. Since we assigned each claim operation a lingual expression (see appendix \ref{appendix:claimOperation}), we have all components together to build up a question. To know if a person is over 18 years old an description as in figure \ref{fig:closureDescription} is generated.
 
 \begin{figure}
-\includegraphics[width=0.6\textwidth]{impl/closure_describtion.png}
+\includegraphics[width=0.6\textwidth]{impl/closure_description.png}
 \centering
 \caption{Components of a closure description that is generated to create a user friendly literal expression.}
 \label{fig:closureDescription}
