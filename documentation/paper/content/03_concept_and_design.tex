@@ -1,12 +1,12 @@
 
 \chapter{Concept and Design}
 \label{cha:conceptanddesign}
+In the following sections we will introduce the general concept and design. We organized our project in four mile-stones: Registration, Permission Requests, Closures and Change Claims. 
+We will further motivate each design and define our challenges and requirements.
 
-\section{General}
+\section{Requirements}
 
-\section{Requirements and Challenges}
-
-\subsection{Requirements}
+While the project requirements were quite loose, we defined one central goal to archive.
 
 \subsubsection{GDPR compliance}
 \label{subsubsec:GDPR_compliance}
@@ -14,6 +14,8 @@ The General Data Protection Regulation (GDPR) is a regulation by the European Pa
 
 \section{Challenges}
 \label{sec:challenges}
+
+Further we self-defined our goals that we want to archive in this project. In the follow sections we will summarize them.
 
 \subsection{Security Goals}
 \label{sec:securityGoals}
@@ -59,6 +61,7 @@ As an alternative solution, it would be possible to replace the public blockchai
 This would also cancel the independent miners motivation to be part of the system. Creating the need for different remuneration concepts or even state owned miners. These proposals would introduce new risks into the system by defining a single trust anchor for the entire system. 
 
 \section{Processes}
+We will now continue to define the concept and design of each of our mile stones: Registration, Permission Request, Closures and Change Claims. 
 
 \subsection{Registration}
 In order to be part of our distributed digital identity system that we envisioned, it is necessary to register with it first. The registration process consists of the following steps:
@@ -247,6 +250,8 @@ Now the change claim process is finished. However, as mentioned previously there
  
 \section{Use cases}
 
+To get a closer understanding of the previous presented processes we will now give a short use case description for each of them. 
+
 \subsection{Registering with the system}
 \label{ssec:registerWithSystem}
 To demonstrate how our system works we will try to formulate a specific use case, in order to provide an example. An additional prerequisite we will define is that \projectName{} has been deployed by a centrally trusted entity like the government.
@@ -268,6 +273,15 @@ The Bank also has read access to the blockchain and notices the answer aswell. T
 The government verifies whether the query sent by the bank matches the one Trudy approved and if they are equal, the government queries its database and creates a result, which is then sent to the Bank.
 
 Now the teller informs Trudy of a successful sharing of claims and starts introducing Trudy to the Banks general rules and regulations, as she is now a new customer.
+
+\subsection{Closure}
+\label{sec:closureUserCase}
+
+Bob wants to watch his favorite show by his streaming provider. However, the show is age restricted so that Bob needs to provide a proof that he is over 18. Currently he would do so by taking a picture of his ID card with his web cam which then have to be validated by a employee. But with \projectName{} he can use a closure over his age to not expose his birthday and also not other identity information that would be captured from his ID card. 
+
+To do so his streaming provider is requesting the government for this closure. The government will ask Bob for his approval that the closure will be generated. If he provides his approval the government is evaluating if Bob is over 18, signing the evaluation result and returning this information back to the streaming provider. The streaming provider now has the assurance from the government that Bob is indeed over 18 and can continue to provide Bob the streaming service. 
+
+The government also sends Bob a copy of the generated closure, so that he can visit also other sides that are providing age restricted content, send them his new closure and as exchange, access to the service. 
 
 \subsection{Change a claim}
 \label{sec:changeClaimUseCase}
