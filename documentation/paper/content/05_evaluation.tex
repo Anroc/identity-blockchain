@@ -1,7 +1,7 @@
 \chapter{Evaluation}
 \label{cha:evaluation}
 
-\projectName{} is a prototype implementation of a GDPR complaint solution of self-sovereign identity management in the blockchain. Since this project is more a proof-of-concept then a working platform, we will do a critical review of the implementation and concept section and outline the building blocks for future work.  
+\projectName{} is a prototypical implementation of a GDPR compliant solution of self-sovereign identity management utilizing the blockchain. Since this project is a proof-of-concept rather than a working platform, we will do a critical review of the implementation and concept sections and outline the building blocks for future work.
 
 \section{Core-Logic}
 \label{sec:coreLogicEval}
@@ -33,3 +33,37 @@ To recap the security goals we managed to implement authenticity by appending a 
 
 \subsection{Summary}
 The proposed backend is a proof-of-concept that identity in the blockchain can work even with law enforcements like GDPR. Still there are some improvements that could take into account when implementing the next version of this project. However, the proposed backend still offers some advantages that would be lost on completely decentralizing the system. The discovery service, as untrusted message broker and public key directory, is a simple and efficient solution to an peer-to-peer adaption of a client-server architecture. Further, we can simply trust each entry that comes from the government, since it is a trusted entity itself. This would not be possible in a complete untrusted system, where each request needs to validated by the user. Such an decentralized system would also have a hard time not to store hashes over claims in the blockchain to validate claim values, since each other location or transmission would not be tamper proof. 
+
+\section{Database}
+\label{sec:databaseEval}
+As outlined in the previous Sections we chose couchbase as our database technology.(Ref. \ref{sec:database}) While this enabled us to directly work with the documents we were creating without the need for transforming them between database and code representations, it also brought problems with it aswell.
+As described in further detail in previous parts (Ref. \ref{ssec:databaseDeployment}) we ant to reexamine the problems we had with this choice and our conclusions upon finishing the demonstrator. We will however try to focus on couchbase light, as that was our intended database framework all along, whenever it is possible and fall back to couchbase when not.
+
+\subsection{Critique}
+\label{ssec:databaseEvalCrit}
+\begin{itemize}
+\item \label{db_crit_one} \textbf{Working with couchbase from a developer perspective:}
+While the team behind couchbase light promisses full mobile convergence between their upcoming solution and their current enterprise grade database, it is still possible that their definition of full mobile convergence might differ from ours.
+For example the entire database interface might be structured in a different way, forcing us to either rewrite large parts of our code or create a custom interface to interact with their new interface. Furthermore a new and different implementation might, under specific circumstances, handle in an unexpected way.
+While the methods might be the same, even a small difference in how certain methods are now being handled might break our code. Consider the possibility of a wrong implementation that still always delivered the intended result, simply because of how it is structured. Restructuring that interface might break the previously mentioned method.
+In conclusion, going with a more established solution and taking the time to write methods for transforming data representations between database and core-logic structures might have been a more prudent decision.
+\item \label{db_crit_two} \textbf{Working with couchbase from an operations standpoint:}
+We would like to evaluate our current system, since it is as of yet unknown how we would handle a deployment of couchbase light.
+During our work on \projectName{} we quickly realized that compared to other solutions, couchbase was very memory intensive. This has gotten up to a point where our VM was going into memory panic mode and shutting down other docker containers to release more memory and feed couchbases demand.
+Additionally this behaviour disallowed us from truly testing our intended deployment of creating a seperate bucket for each entity and forcing us to fall back to a one bucket for all situation. Additionally the memory constraints prevented us from creating more indices to quicken queries.
+This means that depending on current memory utilization levels some queries simply timed out and returned an error code instead of a result. This in turn made development for the frontend side of the project a little more communication intensive, to ask whether the frontend code itself was faulty or the database was running into
+memory problems again.
+Considering all these things we learned that in order to fully utilize couchbase and benefit from its schemaless design, we simply have to plan with a much higher memory allocation.
+\item \label{db_crit_three} \textbf{Implications of couchbase for the actual userbase:}
+Since couchbase light has not even been fully released yet, apart from pre-release test version, it carries a huge risk for the actual userbase. This is an unproven newly developed database framework coming into a marketplace that has already long been established with technologies that are now tried and true.
+These established databases had their kinks ironed out years ago and had their fair share of security breaches. This means that all major flaws should now already be fixed or atleast replaced with a workaround. Couchbase light however has not had that amount of exposure yet, apart from laboratory or small scale internal tests yet.
+Building on top of it demands a lot of trust into the developmental team behind couchbase light. More often than not potential security flaws are found by groups of it-experts with ill intentions and this could spill disaster for a system that is holding a persons entire identity information.\cite{biggestCyberSecurityDisasters2017}
+Compared to security breaches occuring at services like the Playstation Network, Yahoo, iCloud, \projectName{} holds the entirety of your identity. The aforementioned services only hold part of your identity, and while a breach could still have catastrophic implications, atleast only partial identites were broken into.
+All in all it seems like this burden is simply too much to bear. Considering that the company managing this system is then also responsible for any damage that any participant might incur. Lastly we would also like to mention that current digital services rendered by the german state are not fully secure as well.\cite{cccNewIdBroken,cccNewIdProblems}
+\end{itemize}
+
+\subsection{Evaluation}
+\label{ssec:databaseEvalEval}
+To summarize all above mentioned arguments, if we were to start from scratch we would reconsider our database choice strongly. We feel like solutions like SQLite, while not technically fitting because of our data layout, would still be a better contender.
+To add on to the above mentioned reasons we didn't even try to run our intended system which consists of a single bucket for each entity. We mainly wanted to handle it this way to ensure that our implementation followed our design choices as closely as possible.
+But since we had an enormous amount of memory limitation we had to abandon that notion. This is also probably why, with the knowledge we have gained during \projectName{}s developmental process, we would decide to go with a different database technology.
