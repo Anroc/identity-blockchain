@@ -77,8 +77,6 @@ node {
             }
         },
         java: {
-        	// disbaled
-        	return
             try {
                 stage('start test container') {
                     echo "TestRPC port: " + testRPCPort
@@ -117,8 +115,6 @@ node {
                 }
             }
         }, node: {
-        	// disabled
-        	return
             env.NODEJS_HOME = "${tool 'node-7.8.0'}"
             
             env.PATH="${env.NODEJS_HOME}/bin:${env.PATH}"
@@ -132,8 +128,6 @@ node {
         }
 
         stage('deploy') {
-        	// disabled
-        	return
             if("${env.BRANCH_NAME}" == "dev") {
                 echo "Restarting docker container 'srv01.snet.tu-berlin.de'"
                 sshagent (credentials: ['d76de830-c6b6-4aee-b397-5d8465864f17']) {
