@@ -2,7 +2,7 @@
 
 .btn {
   padding: 0.5em 1.5em;
-  color: '#6CC0E5';
+  color: $brand-color;
   border: 1px solid $brand-color;
   border-radius: 3px;
   text-decoration: none;

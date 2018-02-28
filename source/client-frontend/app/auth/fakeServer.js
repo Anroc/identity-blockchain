@@ -18,6 +18,7 @@ const server = {
   * Populates the users, similar to seeding a database in the real world
   */
   init() {
+    localStorage.clear();
     if (localStorage.users === undefined || !localStorage.encrypted) {
       // Set default user
       const juan = 'juan';
